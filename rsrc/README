@@ -1,0 +1,23 @@
+README
+/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/rsrc
+Creation date:	Thu Jan 12 12:31:31 PST 2012
+
+R functions for rlpSpec
+
+	script
+	demo.R		
+	funcs2.R
+funcs2.R:mod <- function(x,y){
+funcs2.R:plot.psd <- function(psd.df, niter=NULL){
+funcs2.R:  optset <- function(title="", legendpos="none"){
+	psdcore.R
+psdcore.R:psdcore <-function(x,  ntaper=1, ndecimate=1, plot=TRUE) {
+	pspectrum.R
+pspectrum.R:pspectrum <- function(x, 
+	qualcon.R
+qualcon.R:qualcon <-function(x, critvar=10) {
+qualcon.R:show.white <-function(wcrit, k1k2, x, x.w, limsc=2.5, pltlabs=TRUE) {
+	riedsid.R
+riedsid.R:riedsid <- function(psd, ntaper) {
+	whiten.R
+whiten.R:whiten <- function(x) {

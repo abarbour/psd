@@ -13,6 +13,13 @@ riedsid <- function(psd, ntaper) {
   #  tweaks due to RLP.  
   #  ntaper is the vector of taper lengths in the previous iteration.
   #
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour):
+  ##
   #  Initialize with ntaper=scalar
   eps <- 1e-78  #  A small number to protect against zeros
   
@@ -101,4 +108,5 @@ riedsid <- function(psd, ntaper) {
   kopt <- t(apply(rbind(t(kopt), ones*round(nf/2)),2,min))
   ##
   return(invisible(kopt))
-} # end riedsid
+} 
+# end riedsid

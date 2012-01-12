@@ -1,4 +1,4 @@
-psdcore <-function(x,  ntaper=1, ndecimate=1, plot=TRUE) {
+psdcore <-function(x,  ntaper=1, ndecimate=1, plotpsd=TRUE, plotcolor="#000000") {
   ###
   # PORT of RLP's psdcore.m
   # abarbour
@@ -23,6 +23,13 @@ psdcore <-function(x,  ntaper=1, ndecimate=1, plot=TRUE) {
   #  ndecimate: number of psds actually computed <- (1+n/2)/ndecimate
   #  these values are linearly interpolated into psd.
   #
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour):	
+  ##
   require(signal, quietly=T)
   # for interp1
   #   require(clim.pact, quietly=T)
@@ -100,8 +107,22 @@ psdcore <-function(x,  ntaper=1, ndecimate=1, plot=TRUE) {
   ## Normalize by variance
   area <- (sum(psd) - psd[1]/2 - psd[length(psd)]/2)/nhalf  # 2*Trapezoid
   psd <- as.matrix((2*varx/area)*psd)
+  psdtoplot <- 20*log10(psd[2:(nfreq-1)])
+  frq <- seq(0, 0.5, length.out=nfreq)
+  ftoplot <- frq[2:(nfreq-1)]
   ## Plot if desired
-  #   if (plot==TRUE) {plot(log2(psd),type="l",ylim=c(-2,20))}
-  if (plot==TRUE) {plot(psd, type="s")}
+  if (plotpsd) {
+    if (plotcolor=="#000000" || plotcolor==0){
+      # initial plot (black)
+      plot(ftoplot, psdtoplot, type="s",
+           main="Adaptive Sine-multitaper PSD Estimation",
+           xlab="Nyquist frequency",
+           ylab="PSD, dB rel. Nyquist")
+    } else {
+      # so adaptive estimation may be visualized
+      lines(ftoplot, psdtoplot, type="s", col=plotcolor)
+    }
+  }
   return(invisible(psd))
-} # end psdcore
+} 
+# end psdcore

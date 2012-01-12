@@ -21,17 +21,24 @@ whiten <- function(x) {
   #  Method:  solves Yule-Walker equations using autocorrelation
   #  functions based on a sine-multitaper spectrum.
   #
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour):
+  ##
   ## Prelims
   nord <- 4
   ntap <- 10
   nx <- length(x)
-  if (nx<10){ 
-    disp('Series too short to whiten') 
+  if (nx < 10){ 
+    print('Series too short to whiten') 
     return
   }
   ##
   #  Calculate psd with multitapers (fixed num tapers)
-  spec <- psdcore(x, ntap, plot=FALSE)
+  spec <- psdcore(x, ntap, plotpsd=FALSE)
   nf <- length(spec)        
   #  Fourier transform the psd to get the autocovariance function
   autoc <- Re(fft( c(spec[1]/2, spec[2:nf-1], matrix(0,nf-1,1)) ))
@@ -44,4 +51,5 @@ whiten <- function(x) {
   whitex <- convolve(x-mean(x), c(-1,coeffs), type="filter")
   ##
   return(invisible(whitex))
-} # end whiten
+}
+# end whiten

@@ -5,7 +5,7 @@ pspectrum <- function(x,
                       niter=5, 
                       ndec=1,
                       units=c("time","signal"),
-                      plot=TRUE, ylims=c(.07,3e4)) {
+                      plotpsd=TRUE, ylims=c(.07,3e4)) {
   ###
   # PORT of RLP's pspectrum.m
   # abarbour
@@ -29,6 +29,13 @@ pspectrum <- function(x,
   # -------  Tuning parameters -------------
   #   tapcap=maximum number of tapers allowed per freq then uncertainty
   #   of estimates >= psd/sqrt(Cap).
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour):	
+  ##
   Cap <- abs(tapcap)
   if (Cap == 0 || Cap > 1000){ Cap <- 1000 }
   #  Niter<-number of refinement iterations usually <= 5
@@ -46,39 +53,49 @@ pspectrum <- function(x,
   #
   #            -----------------
   #  Get pilot estimate of psd with fixed number of tapers and no decimation
-  psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plot=plot)
+  psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd)
   nf <<- length(psd)
   ones <- matrix(1,1,nf)  # row vec
   #  Iterative refinement of spectrum 
   ntaper <- ntapinit * ones
   cat("\t>>>> Adaptive estimation:\n")
+  # create a grayscale palette that begins slightly off black 
+  # (so plot is appended instead of recreated)
+  # optimal for visualization?
+  #   pal <- gray(1:Niter / Niter)
+  if (plotpsd){
+    pal <- terrain.colors(Niter)
+    require(RColorBrewer,quietly=TRUE)
+    pal <- brewer.pal(Niter, "Paired")
+  }
   for ( iterate in  1:Niter ) {
     cat(sprintf("\t\t>>>> taper optimization round\t%02i\n",iterate))
     kopt <- riedsid(psd, ntaper)
     # riedsid resets nf
     ntaper <- t(as.matrix(apply(rbind(matrix(1,1,nf)*Cap, kopt),2,min)))
-    psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, plot=FALSE)
+    psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, plotpsd=plotpsd, plotcolor=pal[iterate])
   }
   #  Scale to physical units and provide frequency vector
   psd <- psd/fsamp
   nf <<- length(psd)
   f <- t(t(seq(0, fsamp/2, length.out=nf)))
-  if (plot==TRUE) {
+  if (plotpsd==TRUE) {
     lims <- ylims
     par(las=1)
-    plot(f[2:nf], psd[2:nf], 
-         main="Adaptive Sine-multitaper PSD Estimation",
-         sub=sprintf("%i iterations",Niter),
-         log="y",
-         ylab=sprintf("PSD rel. 1 %s**2 * N * dT",units[2]),
-         ylim=lims, 
-         xlab=sprintf("Freq. in 1/N/dT (dT in %s)",units[1]), 
-         xlim=c(0,fsamp/2), xaxs="i",
-         type="s")
+#     plot(f[2:nf], psd[2:nf], 
+#          main="Adaptive Sine-multitaper PSD Estimation",
+#          sub=sprintf("%i iterations",Niter),
+#          log="y",
+#          ylab=sprintf("PSD rel. 1 %s**2 * N * dT",units[2]),
+#          ylim=lims, 
+#          xlab=sprintf("Freq. in 1/N/dT (dT in %s)",units[1]), 
+#          xlim=c(0,fsamp/2), xaxs="i",
+#          type="s")
   }
   # psd class? [ ]
   psd.df <- data.frame(f=f, psd=psd, ntaper=t(ntaper))
   cat("\t>>>> Results summary:\n")
   print(summary(psd.df))
   return(invisible(psd.df))
-} # end pspectrum
+} 
+# end pspectrum

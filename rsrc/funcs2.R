@@ -1,14 +1,35 @@
-#
+# Some supplementary figures to make porting from Matlab to R tractable
+# TODO(abarbour):
+#	ONES
+#	ZEROS
+
 mod <- function(x,y){
-  x1<-trunc(trunc(x/y)*y)
-  z<-trunc(x)-x1
+  ## modulo division
+  ## R %/% requires strict consideration of order of operations whereas this is
+  ## function internal and thus less prone to error, but perhaps less efficient?
+  ##
+  ## Args:	x	val 1
+  ##		y	val 2
+  ##
+  ## Returns:	modulo division of x vs y
+  ##
+  x1 <- trunc(trunc(x/y)*y)
+  z <- trunc(x)-x1
   z
 }
-#
+# end mod
+
 plot.psd <- function(psd.df, niter=NULL){
+  ## Plot the results of the PSD estimation
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour): convert this to a method [ ]
+  ##
   require(ggplot2, quietly=T)
   require(gridExtra, quietly=T)
-#   require(RColorBrewer)
   
   dims <- dim.data.frame(psd.df)
   nrow <- dims[1]
@@ -57,3 +78,4 @@ plot.psd <- function(psd.df, niter=NULL){
   plts <- grid.arrange(p1, p2, 
                        main=sprintf("Adaptive Sine-multitaper PSD Estimation\n%i iterations",niter))
 }
+# end plot.psd

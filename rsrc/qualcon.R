@@ -19,6 +19,13 @@ qualcon <-function(x, critvar=10) {
   #  Plots +-100 points of x and whitened x around error section.
   #  badpoints <- number error regions detected
   #
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour):	
+  ##
   lx <- length(x)
   x.w <- whiten(x)
   wcrit <- critvar * sqrt(var(x.w))
@@ -42,10 +49,18 @@ qualcon <-function(x, critvar=10) {
     }
   }
   return(invisible(toret))
-} # end qualcon
+} 
+# end qualcon
 
 show.white <-function(wcrit, k1k2, x, x.w, limsc=2.5, pltlabs=TRUE) {
-  #  Display the series and its filtered version
+  ##  Display the series and its filtered version, interactively
+  ##
+  ## Args:	
+  ##
+  ## Returns:	
+  ##
+  ## TODO(abarbour):	interative outlier identification
+  ##
   t1 <- k1k2[1]
   te <- k1k2[length(k1k2)]
   xplt <- x[k1k2]
@@ -84,4 +99,5 @@ show.white <-function(wcrit, k1k2, x, x.w, limsc=2.5, pltlabs=TRUE) {
   } else {
     cat(sprintf("No critical outliers found for threshold of  %.03f\n",wcrit))
   }
-} # end show.white
+} 
+# end show.white
