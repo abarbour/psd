@@ -30,7 +30,7 @@ psdcore <-function(x,  ntaper=1, ndecimate=1, plotpsd=TRUE, plotcolor="#000000")
   ##
   ## TODO(abarbour):	
   ##
-  require(signal, quietly=T)
+  require(signal, quietly=TRUE, warn.conflicts=FALSE)
   # for interp1
   #   require(clim.pact, quietly=T)
   #   for mod (just snaked and put in funcs.R)

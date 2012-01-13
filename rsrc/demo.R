@@ -52,14 +52,14 @@ run.demo <- function(){
   ##  This demonstrates the importance of having 'clean' data for the purposes of spectrum
   ##  estimation, since they can badly bias low frequencies.
   ##
-  psd.mag.raw <- pspectrum(mag$raw)
+  psd.mag.raw <<- pspectrum(mag$raw)
   plot.psd(psd.mag.raw)
   ##
   ## since it's clear we have outliers, let's run qualcon
 #   qualcon(psd.mag.raw)
   ##
   ## remove outlilers, and redo spectrum estimation
-  psd.mag.cln <- pspectrum(mag$clean)
+  psd.mag.cln <<- pspectrum(mag$clean)
   plot.psd(psd.mag.cln)
   ##
   ## the difference is not negligible

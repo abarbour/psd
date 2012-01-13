@@ -28,8 +28,8 @@ plot.psd <- function(psd.df, niter=NULL){
   ##
   ## TODO(abarbour): convert this to a method [ ]
   ##
-  require(ggplot2, quietly=T)
-  require(gridExtra, quietly=T)
+  require(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
+  require(gridExtra, quietly=TRUE, warn.conflicts=FALSE)
   
   dims <- dim.data.frame(psd.df)
   nrow <- dims[1]
@@ -74,8 +74,7 @@ plot.psd <- function(psd.df, niter=NULL){
     scale_x_log10("Frequency, log10 1/N/dT", minor_breaks=NA)+
     optset("B: Number of tapers applied", c(0.15,0.60))
   
-#   print(p1)
-  plts <- grid.arrange(p1, p2, 
-                       main=sprintf("Adaptive Sine-multitaper PSD Estimation\n%i iterations",niter))
+  #   print(p1)
+  plts <- grid.arrange(p1, p2, main=sprintf("Adaptive Sine-multitaper PSD Estimation\n%i iterations",niter))
 }
 # end plot.psd

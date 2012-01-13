@@ -65,7 +65,7 @@ pspectrum <- function(x,
   #   pal <- gray(1:Niter / Niter)
   if (plotpsd){
     pal <- terrain.colors(Niter)
-    require(RColorBrewer,quietly=TRUE)
+    require(RColorBrewer,quietly=TRUE, warn.conflicts=FALSE)
     pal <- brewer.pal(Niter, "Paired")
   }
   for ( iterate in  1:Niter ) {
