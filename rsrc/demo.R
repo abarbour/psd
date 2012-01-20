@@ -1,4 +1,4 @@
-setwd("/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/rsrc")
+##setwd("/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/rsrc")
 run.demo <- function(){
   ## Some basic tests
   ##  to demonstrate the adaptive estimation process
@@ -9,7 +9,7 @@ run.demo <- function(){
   ##
   ## TODO(abarbour):
   ##
-  setwd("~/kook.processing/R/dev/packages/rlpSpec/rsrc")
+  #setwd("~/kook.processing/R/dev/packages/rlpSpec/rsrc")
   # orig port loc: matlab.port/psd/test.rfiles")
   ##
   ## ported source
