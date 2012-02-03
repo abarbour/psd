@@ -1,0 +1,453 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AGUtmpl.tex: this template file is for articles formatted with LaTeX2e,
+% Modified March 2009
+%
+% This template includes commands and instructions
+% given in the order necessary to produce a final output that will
+% satisfy AGU requirements.
+%
+% PLEASE DO NOT USE YOUR OWN MACROS
+%
+% For more information on using the AGUTeX macro package,
+% see agudocs.tex or agudocs.pdf
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% All questions should be e-mailed to author.help@agu.org.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Step 1: set the \documentclass
+%
+% The three options for article format are: two-column (default),
+% draft, for initial article submission; and galley for narrow
+% single columns.
+%
+% PLEASE USE THE DRAFT OPTION TO SUBMIT YOUR PAPERS
+% The draft option produces double spaced output
+%
+% Choose the journal abbreviation for the journal you are
+% submitting to:
+% jgrga JOURNAL OF GEOPHYSICAL RESEARCH
+% gbc   GLOBAL BIOCHEMICAL CYCLES
+% grl   GEOPHYSICAL RESEARCH LETTERS
+% pal   PALEOCEANOGRAPHY
+% ras   RADIO SCIENCE
+% rog   REVIEWS OF GEOPHYSICS
+% tec   TECTONICS
+% wrr   WATER RESOURCES RESEARCH
+% gc    GEOCHEMISTRY, GEOPHYSICS, GEOSYSTEMS
+% (If you are submitting to a journal other than jgrga,
+% substitute the initials of the journal for "jgrga" below)
+\documentclass[draft,jgrga]{agutex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% optional article formats author might want to use
+% To produce a galley version:
+% \documentclass[galley,jgrga]{AGUTeX}
+% To produce a two columned version:
+% \documentclass[jgrga]{AGUTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OPTIONAL:
+% To print your article using PostScript fonts, uncomment this:
+% \usepackage{agu-ps}
+% You many need to edit the top of agu-ps to use the names of the PS
+% fonts on your system.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OPTIONAL:
+% To Create numbered lines:
+% If you don't already have lineno.sty, you can download it from
+% http://www.ctan.org/tex-archive/macros/latex/contrib/ednotes/
+% (or google lineno.sty ctan), available at TeX Archive Network (CTAN).
+% Take care that you always use the latest version.
+% To activate the commands, uncomment \usepackage{lineno}
+% and \linenumbers*[1]command, below:
+\usepackage{lineno}
+\linenumbers*[1]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figures and Tables
+%
+% When submitting articles through the GEMS system:
+% COMMENT OUT ANY COMMANDS THAT INCLUDE GRAPHICS.
+% (See FIGURES section near the end of the file)
+%  Figures and Tables should be placed at the end of the article,
+%  after the references.
+%
+%  Uncomment the following command to include .eps files
+%  (comment out this line for draft format):
+\usepackage[dvips]{graphicx}
+%
+%    Uncomment the following command to allow illustrations to print
+%    when using Draft:
+%  \setkeys{Gin}{draft=false}
+%
+% Substitute one of the following for [dvips] above
+% if you are using a different driver program and want to
+% proof your illustrations on your machine:
+%
+% [xdvi], [dvipdf], [dvipsone], [dviwindo], [emtex], [dviwin],
+% [pctexps],  [pctexwin],  [pctexhp],  [pctex32], [truetex], [tcidvi],
+% [oztex], [textures]
+%
+% See how to enter figures and tables at the end of the article, after
+% references.
+%
+%% ------------------------------------------------------------------------ %%
+%
+%  ENTER PREAMBLE
+%
+%% ------------------------------------------------------------------------ %%
+% Author names in capital letters:
+\authorrunninghead{BARBOUR ET AL.}
+% Shorter version of title entered in capital letters:
+\titlerunninghead{SHORT TITLE}
+% Author mailing address: please repeat this command for
+% each author and alphabetize authors:
+\authoraddr{A. J. Barbour,
+9500 Gilman Dr. , La Jolla, Ca 92093-0208, USA.
+(abarbour@ucsd.edu)}
+%\authoraddr{J. R. McConnell, Division of Hydrologic
+%Sciences, 123 Main Street, Desert Research Institute, Reno, NV
+%89512, USA.}
+%\authoraddr{E. Mosley-Thompson, Department of Geography,
+%Ohio State University, 123 Orange Boulevard, Columbus, OH 43210,
+%USA.}
+%\authoraddr{R. Williams, Department of Space Sciences, University of
+%Michigan, 123 Brown Avenue, Ann Arbor, MI 48109, USA.}
+\begin{document}
+%% ------------------------------------------------------------------------ %%
+%
+%  TITLE
+%
+%% ------------------------------------------------------------------------ %%
+\title{\input{title}}
+%
+% e.g., \title{Terrestrial ring current:
+% Origin, formation, and decay $\alpha\beta\Gamma\Delta$}
+% You may use \\ to break the title over several lines.
+%% ------------------------------------------------------------------------ %%
+%
+%  AUTHORS AND AFFILIATIONS
+%
+%% ------------------------------------------------------------------------ %%
+%Use \author{\altaffilmark{}} and \altaffiltext{}
+% \altaffilmark will produce footnote;
+% matching altaffiltext will appear at bottom of page.
+% May use \\ to start a new line.
+\authors{Andrew J. Barbour, \altaffilmark{1}}
+%E. Mosley-Thompson, \altaffilmark{2} R. Williams, \altaffilmark{3}
+%and J. R. McConnell\altaffilmark{4}}
+\altaffiltext{1}{Institute of Geophysics and Planetary Physics,
+Scripps Insitution of Oceanography,
+La Jolla, California, USA.}
+%\altaffiltext{2}{Department of Geography, Ohio State University,
+%Columbus, Ohio, USA.}
+%\altaffiltext{3}{Department of Space Sciences, University of
+%Michigan, Ann Arbor, Michigan, USA.}
+%\altaffiltext{4}{Division of Hydrologic Sciences, Desert Research
+%Institute, Reno, Nevada, USA.}
+%% ------------------------------------------------------------------------ %%
+%
+%  ABSTRACT
+%
+%% ------------------------------------------------------------------------ %%
+% >> Do NOT include any \begin...\end commands within
+% >> the body of the abstract.
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+\begin{article}
+\input{yule}
+\section{Introduction}
+(Article text here)
+cite \cite{2008o}
+%%% End of body of article:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Optional Appendix goes here
+%
+%%%%%%%%%%%%%%%%%
+% Geophysical Research Letters only allows an appendix without a letter.
+%% You can get this result with
+%  \section*{Appendix}
+%  or
+%  \section*{Appendix: Title}
+%%%%%%%%%%%%%%%%%
+%
+% \appendix resets counters and redefines section heads
+% but doesn't print anything.
+% After typing  \appendix
+%
+% \section{Here Is Appendix Title}
+% will print
+% Appendix A: Here Is Appendix Title
+%
+% \section*{Appendix}
+% will print
+% Appendix
+%
+% \section*{Appendix: Here Is Appendix Title}
+% will print
+% Appendix: Here Is Appendix Title
+%
+% For only 1 appendix \appendix \section{Appendix} is preferred.
+% which will print
+% Appendix A
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Optional Glossary or Notation section, goes here
+%
+%%%%%%%%%%%%%%
+%% ------------------------------------------------------------------------ %%
+%
+%  REFERENCE LIST AND TEXT CITATIONS
+%
+% Either type in your references using
+% \begin{thebibliography}{}
+% \bibitem{}
+% Text
+% \end{thebibliography}
+%
+% Or,
+%
+% If you use BiBTeX for your References, please produce your .bbl
+% file and copy the contents into your paper here.
+%
+% Follow these steps:
+% 1. Run LaTeX on your LaTeX file.
+%
+% 2. Run BiBTeX on your LaTeX file.
+%
+% 3. Open the new .bbl file containing the reference list and
+%   copy all the contents into your LaTeX file here.
+%
+% 4. Comment out the old \bibliographystyle and \bibliography commands.
+%
+% 5. Run LaTeX on your new file before submitting.
+%
+% AGU does not want a .bib or a .bbl file, but asks that you
+% copy in the contents of your .bbl file here.
+\begin{thebibliography}{}
+%\bibitem[{\textit{Kilby}(2008)}]{jskilby}
+%Kilby, J. S. (2008), Invention of the integrated circuit, {\it IEEE
+%Trans. Electron Devices,} \textit{23}, 648--650.
+%\bibitem[{\textit{Kilby et al.}(2008)}]{jskilbye}
+%Kilby, J. S., S. Smith, and R. Jones (2008), Invention of the
+%integrated circuit, {\it IEEE Trans. Electron Devices,} \textit{23},
+%648--650.
+\bibitem[{\textit{Brenguier et~al.}(2008)\textit{Brenguier, Campillo,
+  Hadziioannou, Shapiro, Nadeau, and Larose}}]{2008o}
+Brenguier, F., M.~Campillo, C.~Hadziioannou, N.~M. Shapiro, R.~M. Nadeau, and
+  E.~Larose (2008), Postseismic relaxation along the san andreas fault at
+  parkfield from continuous seismological observations, \textit{Science},
+  \textit{321}, 1478.
+\end{thebibliography}
+%Reference citation examples:
+%...as shown by \textit{Kilby} [2008].
+%...has been shown [\textit{Kilby et al.}, 2008].
+%...as shown by \cite{jskilby}.
+%...has been shown \citep{jskilbye}.
+%% ------------------------------------------------------------------------ %%
+%
+%  END ARTICLE
+%
+%% ------------------------------------------------------------------------ %%
+\end{article}
+%% Enter Figures and Tables here:
+% When submitting articles through the GEMS system:
+% COMMENT OUT ANY COMMANDS THAT INCLUDE GRAPHICS.
+% Figure captions go below this illustration; Table captions go above tables
+% ONE-COLUMN figure/table, including eps graphics
+%
+% \begin{figure}
+% \noindent\includegraphics[width=20pc]{samplefigure.eps}
+% \caption{Caption text here}
+% \end{figure}
+% \end{document}
+%
+% \begin{table}
+% \caption{}
+% \end{table}
+%
+% ---------------
+% TWO-COLUMN figure/table
+%
+% \begin{figure*}
+% \noindent\includegraphics[width=39pc]{samplefigure.eps}
+% \caption{Caption text here}
+% \end{figure*}
+%
+% \begin{table*}
+% \caption{Caption text here}
+% \end{table*}
+%
+% see below for how to make landscape figures or tables
+%%% End the article here:
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+More Information and Advice:
+%  SECTION HEADS
+ ---------------
+ Level 1 head
+ Use the \section{} command to identify level 1 heads;
+ type the appropriate head wording between the curly
+ brackets, as shown below.
+ Capitalize the first letter of each word (expect for
+ prepositions, conjunctions, and articles that are
+ three or fewer letters).
+ Do not hyphenate level 1 heads. To break lines,
+ type \protect\\ where you want the break to occur.
+ AGU prefers the inverted triangle, breaking before
+ prepositions, conjunctions, and articles, if possible.
+An example:
+\section{Level 1 Head: Introduction}
+ ---------------
+ Level 2 head
+ Use the \subsection{} command to identify level 2 heads.
+ Capitalize the first letter of each word (expect for
+ prepositions, conjunctions, and articles that are
+ three or fewer letters).
+ Do not hyphenate level 1 heads. To break lines,
+ type \protect\\ where you want the break to occur.
+ AGU prefers the inverted triangle, breaking before
+ prepositions, conjunctions, and articles, if possible.
+\subsection{Level 2 Head} An example.
+ ---------------
+ Level 3 head
+ Use the \subsubsection{} command to identify level 3 heads
+ Capitalize only the first letter of the first word, acronyms,
+ first letter of proper nouns, and first letter of first word
+ after a colon.
+ Hyphenation is permitted in level 3 heads, if needed.
+\subsubsection{Level 3 Head} An example.
+\subsubsubsection{Level 4 Head} An example.
+%% ------------------------------------------------------------------------ %%
+%
+%  IN-TEXT LISTS
+%
+%% ------------------------------------------------------------------------ %%
+% Do not use bulleted lists; enumerated lists are okay.
+ \begin{enumerate}
+ \item
+ \item
+ \item
+ \end{enumerate}
+%% ------------------------------------------------------------------------ %%
+%
+%  EQUATIONS
+%
+%% ------------------------------------------------------------------------ %%
+% Single-line equations are centered.
+ Math coded inside display math mode \[ ...\]
+ will not be numbered e.g.:
+ \[ x^2=y^2 + z^2\]
+ Math coded inside \begin{equation} and \end{equation} will
+ be automatically numbered e.g.:
+ \begin{equation}
+ x^2=y^2 + z^2
+ \end{equation}
+% IF YOU HAVE MULTI-LINE EQUATIONS, PLEASE
+% BREAK THE EQUATIONS INTO TWO OR MORE LINES
+% OF SINGLE COLUMN WIDTH (20 pc, 8.3 cm)
+% using double backslashes (\\).
+% To create multiline equations, use the
+% \begin{eqnarray} and \end{eqnarray} environment
+% as demonstrated below.
+\begin{eqnarray}
+  x_{1} & = & (x - x_{0}) \cos \Theta \nonumber \\
+        && + (y - y_{0}) \sin \Theta  \nonumber \\
+  y_{1} & = & -(x - x_{0}) \sin \Theta \nonumber \\
+        && + (y - y_{0}) \cos \Theta.
+\end{eqnarray}
+If you don't want an equation number, use the star form:
+\begin{eqnarray*}...\end{eqnarray*}
+% Break each line at a sign of operation
+% (+, -, etc.) if possible, with the sign of operation
+% on the new line.
+% Indent second and subsequent lines to align with
+% the first character following the equal sign on the
+% first line.
+% Use an \hspace{} command to insert horizontal space
+% into your equation if necessary. Place an appropriate
+% unit of measure between the curly braces, e.g.
+% \hspace{1in}; you may have to experiment to achieve
+% the correct amount of space.
+% There is another multiline equation environment:
+% \begin{aguleftmath}...\end{aguleftmath}
+% The equation is aligned left and the second line indents to
+% the width of a paragraph indent (AGU style)
+%% ------------------------------------------------------------------------ %%
+%
+%  EQUATION NUMBERING: COUNTER
+%
+%% ------------------------------------------------------------------------ %%
+% You may change equation numbering by resetting
+% the equation counter or by explicitly numbering
+% an equation.
+% To explicitly number an equation, type \eqnum{}
+% (with the desired number between the brackets)
+% after the \begin{equation} or \begin{eqnarray}
+% command.  The \eqnum{} command will affect only
+% the equation it appears with; LaTeX will number
+% any equations appearing later in the manuscript
+% according to the equation counter.
+%
+% To reset the equation counter, place the setcounter{equation}
+% command in front of your equation(s).
+%\setcounter{equation}{0}
+% Set the equation counter to 0 if the next
+% number needed is 1 or set it to 7 if the
+% next number needed is 8, etc.
+%
+% The \setcounter{equation} command does affect
+% equations appearing later in the manuscript.
+% If you have a multiline equation that needs only
+% one equation number, use a \nonumber command in
+% front of the double backslashes (\\) as shown in
+% the multiline equation above.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Landscape figure and table examples
+%
+% ---------------
+% Landscape (broadside) figure/table
+% (These objects will not display properly in draft mode, use galley.)
+%
+% ONE-COLUMN landscape figure and table
+%
+% \begin{landscapefigure}
+% \includegraphics[height=.75\mycolumnwidth,width=42pc]{samplefigure.eps}
+% \caption{Caption text here}
+% \end{landscapefigure}
+%
+% \begin{landscapetable}
+% \caption{Caption text here}
+% \begin{tabular*}{\hsize}{@{\extracolsep{\fill}}lcccc}
+% \tableline
+% ....
+% \tableline\\
+% \multicolumn5l{(a) Algorithms from Numerical Recipes}\\
+% \end{tabular*}
+% \tablenotetext{}{}
+% \tablecomments{}
+% \end{landscapetable}
+%
+% FULL-PAGE landscape figures and tables
+%
+% \begin{figure*}[p]
+% \begin{landscapefigure*}
+% illustration here
+% \caption{caption here}
+% \end{landscapefigure*}
+% \end{figure*}
+%
+% \begin{table}[p]
+% \begin{landscapetable*}
+% \caption{}
+% \begin{tabular*}{\textheight}{@{\extracolsep{\fill}}lccrrrcrrr}
+% ....
+% \end{tabular*}
+% \begin{tablenotes}
+% ...
+% \end{tablenotes}
+% \end{landscapetable*}
+% \end{table}
+%
+%\end{document}
