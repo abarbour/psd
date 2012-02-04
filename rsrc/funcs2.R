@@ -61,7 +61,7 @@ plot.psd <- function(psd.df, niter=NULL){
   # plot the spectrum in dB, colored by ntapers
   p1 <- ggplot(pltdf, aes(x=f, y=20*log10(psd)))+
     geom_step(size=1, aes(colour=log10(ntaper)))+
-    scale_colour_gradient("Tapers applied",low = "black", high = "red")+
+    scale_colour_gradient("Tapers applied\n(log10)",low = "black", high = "red")+
   #,breaks=(1:3), labels=10**(1:3))+
     scale_x_log10("Frequency, log10 1/N/dT", minor_breaks=NA)+
     scale_y_continuous("PSD, dB rel. units**2 * N * dT", minor_breaks=NA)+
