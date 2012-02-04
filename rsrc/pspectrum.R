@@ -12,7 +12,7 @@ pspectrum <- function(x,
   # Dec 2011
   #
   # porting: 10 Jan 2012
-  #   [ ] adaptive estimation limited to decimation==1 at the moment
+  #   [fixed 3-Feb-12] adaptive estimation limited to decimation==1 at the moment
   # testing:
   ###
   #
@@ -35,6 +35,7 @@ pspectrum <- function(x,
   ## Returns:	
   ##
   ## TODO(abarbour):	
+  ##    [ ] fix frequency vector when decimation is > 1 (only a plotting issue really)
   ##
   Cap <- abs(tapcap)
   if (Cap == 0 || Cap > 1000){ Cap <- 1000 }
@@ -70,10 +71,14 @@ pspectrum <- function(x,
   }
   for ( iterate in  1:Niter ) {
     cat(sprintf("\t\t>>>> taper optimization round\t%02i\n",iterate))
+    #print(c(nf,length(ntaper),length(psd)))
     kopt <- riedsid(psd, ntaper)
+    # print(c(nf,length(ntaper),length(psd)))
     # riedsid resets nf
     ntaper <- t(as.matrix(apply(rbind(matrix(1,1,nf)*Cap, kopt),2,min)))
+    #print(c(nf,length(ntaper),length(psd)))
     psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, plotpsd=plotpsd, plotcolor=pal[iterate])
+    #print(c(nf,length(ntaper),length(psd)))
   }
   #  Scale to physical units and provide frequency vector
   psd <- psd/fsamp

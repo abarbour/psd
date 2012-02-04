@@ -35,10 +35,16 @@ run.demo <- function(){
   signal<-.001*(1:n) + triang(n)+3*sin(pi*1:n/180+pi/4)+3*sin(2*pi*1:n/180+pi/4)
   x<-signal+noise
   x<-signal
-  #
+  ##
+  ## Begin Adaptive estimation and plotting
+  ##
+  psd.x <<- pspectrum(x)
+  plot.psd(psd.x)
+  ##
+  ## now some real data...
   ##  mag.dir <- "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/data"
   ##  mag <- cbind(
-  ##	  read.table(paste(mag.dir,"mag.raw",sep="/"),
+  ##    read.table(paste(mag.dir,"mag.raw",sep="/"),
   ##		  colClasses="numeric", col.names="raw"),
   ##	  read.table(paste(mag.dir,"mag.clean",sep="/"), 
   ##		  colClasses="numeric", col.names="clean"))
@@ -47,13 +53,6 @@ run.demo <- function(){
   text(200, 40, "raw series")
   lines(mag$clean-50, type="s", col="red")
   text(350, -100, "cleaned series (-50)", col="red")
-  ##
-  ## Begin Adaptive estimation and plotting
-  ##
-  psd.x <<- pspectrum(x)
-  plot.psd(psd.x)
-  ##
-  ## now some real data...
   ##  raw: magnetometer data with outliers
   ##  clean: the same magnetometer data, but cleaned of outliers
   ##
