@@ -14,12 +14,12 @@ run.demo <- function(){
   ##
   ## ported source
   ##
-  source("funcs2.R")
-  source("psdcore.R")
-  source("pspectrum.R")
-  source("qualcon.R")
-  source("riedsid.R")
-  source("whiten.R")
+  source("rsrc/funcs2.R")
+  source("rsrc/psdcore.R")
+  source("rsrc/pspectrum.R")
+  source("rsrc/qualcon.R")
+  source("rsrc/riedsid.R")
+  source("rsrc/whiten.R")
   ##
   ## packages
   ##
@@ -42,7 +42,7 @@ run.demo <- function(){
   ##		  colClasses="numeric", col.names="raw"),
   ##	  read.table(paste(mag.dir,"mag.clean",sep="/"), 
   ##		  colClasses="numeric", col.names="clean"))
-  load("../data/mag.rda")
+  load("data/mag.rda")
   ##
   ## adaptive estimation and plotting
   ##

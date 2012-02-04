@@ -1,4 +1,5 @@
-setwd("/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/data")
+owd<-getwd()
+setwd("data")
 mag.dir <- "."
 mag <- cbind(
 	read.table(paste(mag.dir,"mag.raw",sep="/"),
@@ -12,4 +13,6 @@ lines(mag$clean-50, type="s", col="red")
 text(350, -100, "cleaned series (-50)", col="red")
 save(mag, file = "mag.rda")
 ###
+setwd(owd)
+getwd()
 ###
