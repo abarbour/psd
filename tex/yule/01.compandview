@@ -1,0 +1,14 @@
+#!/bin/sh
+case $1 in
+	bib|rebib)
+	$0 r
+	bibtex compiled
+	$0 r
+	;;
+	r|refresh)
+	pdflatex compiled
+	;;
+	*)
+	;;
+esac
+complatex compiled 2 pv
