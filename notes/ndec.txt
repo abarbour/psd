@@ -3,9 +3,7 @@ Jan 31 (3 days ago)
 
 Hi Andy
 
-UCSD is still trying to solve my VPN problem ...
-
-However, today Beth decided to go to a ski class, and she dropped me off in Littleton at the public library where VPN works.  So I've finally looked at your question.
+...
 
 pspectrum works without crashing when Ndecimate > 1.  I think your problem is in believing that the length of psd is different on exit from psdcore from the length going in.  The statements at the bottom of psdcore (lines 69-71 in my code) interpolate the spectrum from the unevenly spaced psd back onto uniformly spaced frequencies, and with the same number, 1+n/2, as before, even when the actual number computed is 10 times smaller.  The function interp1 is a simple linear interpolator, a standard matlab function.
 
