@@ -1,10 +1,33 @@
 % yule
-% Fri Jan 27 12:53:41 PST 2012
+% Sat Feb  4 15:52:49 PST 2012
 % /Users/abarbour/nute.processing/development/rlpSpec/tex/yule
 %
 %\newcommand{\new}[#in]{code}
 %\renewcommand{\new}[#in]{code}
+\section{Introduction}
+
+\section{Using innovation to pre-whiten series}
+We assume the data record
+$X_n$
+may be modeled as 
+the sum as a zero-mean auto-regressive (AR) process of
+arbitrary order, and
+a Gaussian noise:
+\begin{equation}
+X_n = \sum^{K}_{k=1} a_k X_{n-k} + \eta_n
+\end{equation}
+where $\eta_n$ is the noise.
+This model predicts that the AR component of the record 
+will be serially correlated 
+up to delay $K$ relative to record $n$.
+We estimate 
+the coefficients $a_k$ 
+by solving
+the Yule-Walker equations.
+
+\section{Examples}
+\label{}
 
 %biblio
 \bibliography{yule_link.bib}
-\bibliographystyle{/Users/abarbour/texsty/agu/agu}
+\bibliographystyle{/Users/abarbour/texsty/elsevier/elsevier}

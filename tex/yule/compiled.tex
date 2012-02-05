@@ -1,89 +1,31 @@
-\documentclass[draft,jgrga]{agutex}
-%\usepackage{lineno}
-%\linenumbers*[1]
-\usepackage[dvips]{graphicx}
-\authorrunninghead{BARBOUR ET AL.}
-\titlerunninghead{SHORT TITLE}
-\authoraddr{A. J. Barbour,
-9500 Gilman Dr. , La Jolla, Ca 92093-0208, USA.
-(abarbour@ucsd.edu)}
+\documentclass[preprint,authoryear,12pt]{elsarticle}
+\usepackage{amssymb}
+\journal{Computers and Geosciences}
 \begin{document}
-\title{\input{title}}
-\authors{Andrew J. Barbour, \altaffilmark{1}}
-\altaffiltext{1}{Institute of Geophysics and Planetary Physics,
-Scripps Insitution of Oceanography,
-La Jolla, California, USA.}
+\begin{frontmatter}
+\title{Reducing the potential for spectral bias in 
+rlpSpec}
+\author{Andrew J Barbour, Robert L Parker}
+\address{}
 \begin{abstract}
-\input{abstract}
+Bias in power spectral density estimates 
+of geophysical datasets 
+may be significantly reduced by removing
+outliers from the dataset under consideration.  
+In many such datasets,
+outliers with relatively large amplitudes
+may be easily identified, but datasets can often have
+numerous outliers which are too small to be identified visually.
+We show that by modeling the statistical behavior of such
+data as an auto-regressive (AR)
+process, small outliers may easily be identified and removed; 
+consequently, the estimated spectrum more accurately reflects
+the true frequency content of the signal analyzed.
+This is demonstrated using a few sample datasets traditionally used in the
+geophysics community.
 \end{abstract}
-\begin{article}
+\begin{keyword}
+\end{keyword}
+\end{frontmatter}
 \input{yule}
-\section{Introduction}
-(Article text here)
-cite \cite{2008o}
-\begin{thebibliography}{}
-\bibitem[{\textit{Brenguier et~al.}(2008)\textit{Brenguier, Campillo,
-  Hadziioannou, Shapiro, Nadeau, and Larose}}]{2008o}
-Brenguier, F., M.~Campillo, C.~Hadziioannou, N.~M. Shapiro, R.~M. Nadeau, and
-  E.~Larose (2008), Postseismic relaxation along the san andreas fault at
-  parkfield from continuous seismological observations, \textit{Science},
-  \textit{321}, 1478.
-\end{thebibliography}
-\end{article}
 \end{document}
-More Information and Advice:
- ---------------
- Level 1 head
- Use the \section{} command to identify level 1 heads;
- type the appropriate head wording between the curly
- brackets, as shown below.
- Capitalize the first letter of each word (expect for
- prepositions, conjunctions, and articles that are
- three or fewer letters).
- Do not hyphenate level 1 heads. To break lines,
- type \protect\\ where you want the break to occur.
- AGU prefers the inverted triangle, breaking before
- prepositions, conjunctions, and articles, if possible.
-An example:
-\section{Level 1 Head: Introduction}
- ---------------
- Level 2 head
- Use the \subsection{} command to identify level 2 heads.
- Capitalize the first letter of each word (expect for
- prepositions, conjunctions, and articles that are
- three or fewer letters).
- Do not hyphenate level 1 heads. To break lines,
- type \protect\\ where you want the break to occur.
- AGU prefers the inverted triangle, breaking before
- prepositions, conjunctions, and articles, if possible.
-\subsection{Level 2 Head} An example.
- ---------------
- Level 3 head
- Use the \subsubsection{} command to identify level 3 heads
- Capitalize only the first letter of the first word, acronyms,
- first letter of proper nouns, and first letter of first word
- after a colon.
- Hyphenation is permitted in level 3 heads, if needed.
-\subsubsection{Level 3 Head} An example.
-\subsubsubsection{Level 4 Head} An example.
- \begin{enumerate}
- \item
- \item
- \item
- \end{enumerate}
- Math coded inside display math mode \[ ...\]
- will not be numbered e.g.:
- \[ x^2=y^2 + z^2\]
- Math coded inside \begin{equation} and \end{equation} will
- be automatically numbered e.g.:
- \begin{equation}
- x^2=y^2 + z^2
- \end{equation}
-\begin{eqnarray}
-  x_{1} & = & (x - x_{0}) \cos \Theta \nonumber \\
-        && + (y - y_{0}) \sin \Theta  \nonumber \\
-  y_{1} & = & -(x - x_{0}) \sin \Theta \nonumber \\
-        && + (y - y_{0}) \cos \Theta.
-\end{eqnarray}
-If you don't want an equation number, use the star form:
-\begin{eqnarray*}...\end{eqnarray*}
