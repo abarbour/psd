@@ -40,6 +40,8 @@ pspectrum.default <- function(x,
   ##
   ## TODO(abarbour):	
   ##    [ ] fix frequency vector when decimation is > 1 (only a plotting issue really)
+  ##    [ ] structured return
+  ##    [ ] type <- match.arg(type)
   ##
   Cap <- abs(tapcap)
   if (Cap == 0 || Cap > 1000){ Cap <- 1000 }
@@ -110,6 +112,19 @@ pspectrum.default <- function(x,
   cat("\t>>>> Results summary:\n")
   print(summary(psd.df))
   return(invisible(psd.df))
+  # return a structure.  From acf():
+  #acf.out <- structure(.Data = list(acf = acf, type = type, n.used = sampleT, lag = lag, series = series, snames = colnames(x)), class = "acf")
+  # from spec.pgram:
+  #  spg.out <- list(freq = freq, spec = spec, coh = coh, phase = phase,
+  #    kernel = kernel, df = df, bandwidth = bandwidth, n.used = N, 
+  #    orig.n = N0, series = series, snames = colnames(x), 
+  #    method = ifelse(!is.null(kernel), "Smoothed Periodogram", 
+  #    "Raw Periodogram"), taper = taper, pad = pad, detrend = detrend, 
+  #    demean = demean)
+  #  class(spg.out) <- "spec"
+  #
+  #  any like this?
+  #  .NotYetImplemented()
 } 
 # end pspectrum.default
 ###
