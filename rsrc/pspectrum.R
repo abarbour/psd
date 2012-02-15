@@ -1,4 +1,8 @@
-pspectrum <- function(x, 
+###
+###  Default method for pspectrum, the main function used for
+###  adaptive estimation
+###
+pspectrum.default <- function(x, 
                       fsamp=1, 
                       tapcap=1e3, 
                       ntapinit=10, 
@@ -99,8 +103,13 @@ pspectrum <- function(x,
   }
   # psd class? [ ]
   psd.df <- data.frame(f=f, psd=psd, ntaper=t(ntaper))
+  # for method print to show call
+  #est$call <- match.call()
+  # move to psd method [ ]
+  est$call <- match.call()
   cat("\t>>>> Results summary:\n")
   print(summary(psd.df))
   return(invisible(psd.df))
 } 
-# end pspectrum
+# end pspectrum.default
+###

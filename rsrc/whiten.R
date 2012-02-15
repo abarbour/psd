@@ -1,4 +1,4 @@
-whiten <- function(x) {
+whiten.default <- function(x) {
   ###
   # PORT of RLP's riedsid.m
   # abarbour
@@ -52,4 +52,4 @@ whiten <- function(x) {
   ##
   return(invisible(whitex))
 }
-# end whiten
+# end whiten.default

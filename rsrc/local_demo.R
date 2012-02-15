@@ -12,9 +12,14 @@ run.demo <- function(){
   #setwd("~/kook.processing/R/dev/packages/rlpSpec/rsrc")
   # orig port loc: matlab.port/psd/test.rfiles")
   ##
+  ## methods
+  ##
+  source("rsrc/S3.R")
+  source("rsrc/usemethods.R")
+  ##
   ## ported source
   ##
-  source("rsrc/funcs2.R")
+  source("rsrc/suppfuncs.R")
   source("rsrc/psdcore.R")
   source("rsrc/pspectrum.R")
   source("rsrc/qualcon.R")

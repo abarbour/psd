@@ -1,4 +1,9 @@
-psdcore <-function(x,  ntaper=1, ndecimate=1, plotpsd=TRUE, plotcolor="#000000") {
+##
+##  Default method for psdcore, which does the grunt work
+##
+psdcore.default <-function(x,  
+                           ntaper=1, ndecimate=1, 
+                           plotpsd=TRUE, plotcolor="#000000") {
   ###
   # PORT of RLP's psdcore.m
   # abarbour
@@ -127,3 +132,4 @@ psdcore <-function(x,  ntaper=1, ndecimate=1, plotpsd=TRUE, plotcolor="#000000")
   return(invisible(psd))
 } 
 # end psdcore
+###

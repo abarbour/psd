@@ -1,4 +1,7 @@
-riedsid <- function(psd, ntaper) {
+##
+##  Default method for riedsid, the Riedel & Sidorenko taper optimization
+##
+riedsid.default <- function(psd, ntaper) {
   ###
   # PORT of RLP's riedsid.m
   # abarbour
@@ -36,7 +39,8 @@ riedsid <- function(psd, ntaper) {
   }
   # print(dim(ones))
   # print(dim(ntap))
-  nspan <- t(t(round(apply(rbind(0.5*nf*ones, 1.4*ntap),2,min))))
+  ## colMeans or rowMeans [ ]
+  nspan <- t( t( round( apply(rbind(0.5*nf*ones, 1.4*ntap), 2, min) ) ) )
   
   #  Create log psd, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
@@ -104,9 +108,11 @@ riedsid <- function(psd, ntaper) {
        }
     }
   }
-  #  Never average over more than the psd length!
-  kopt <- t(apply(rbind(t(kopt), ones*round(nf/2)),2,min))
+  ##  Never average over more than the psd length!
+  ## colMeans or rowMeans [ ]
+  kopt <- t( apply( rbind(t(kopt), ones*round(nf/2)), 2, min) )
   ##
   return(invisible(kopt))
 } 
-# end riedsid
+# end riedsid.default
+###
