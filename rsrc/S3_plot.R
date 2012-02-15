@@ -1,66 +1,16 @@
 ###
-###  S3 (or S4) methods for printing, plotting, etc
+###  S3 (or S4) methods for PLOTTING
 ###
-##
-## summaries
-##
-summary.qual <- function(object, ...){
-  ###
-  res <- list(call=object$call)
-  class(res) <- "summary.qual"
-  res
-}
-summary.psd <- function(object, ...) {
-  # from doc example
-  #   se <- sqrt(diag(object$vcov)) 
-  #   tval <- coef(object) / se
-  #   TAB <- cbind(Estimate = coef(object), StdErr = se,
-  #                t.value = tval, p.value = 2*pt(-abs(tval), df=object$df))
-  #   res <- list(call=object$call, coefficients=TAB)
-  res <- list(call=object$call)
-  class(res) <- "summary.psd" 
-  res
-}
-##
-## printing
-##
-print.summary.qual <- function(x, ...){
-  ## develop
-  cat("Call:\n") 
-  print(x$call) 
-  cat("\n")
-}
-print.summary.psd <- function(x, ...) {
-  ## develop
-  cat("Call:\n") 
-  print(x$call) 
-  cat("\n")
-  #   printCoefmat(x$coefficients, P.value=TRUE, has.Pvalue=TRUE)
-}
-print.psd <- function(psd, ...){
-  ##
-  ## Args:  
-  ##
-  ## Returns:	
-  ##
-  ## TODO(abarbour):
-  ##
-  cat("Call:\n") 
-  print(x$call)
-  cat("\n%%%%% PSD SUMMARY %%%%%\n")
-  summary(psd)
-}
-##
-## plotting
-##
 plot.psd <- function(psd.df, niter=NULL, ...){
+  ##
   ## Plot the results of the PSD estimation
   ##
   ## Args:  
   ##
-  ## Returns:	
+  ## Returns:  
   ##
-  ## TODO(abarbour): convert this to a method [ ]
+  ## TODO(abarbour): 
+  ## [ ] convert this to a method for class 'psd'
   ##
   require(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
   require(gridExtra, quietly=TRUE, warn.conflicts=FALSE)

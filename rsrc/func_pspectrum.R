@@ -52,9 +52,7 @@ pspectrum.default <- function(x,
   #   the rest are filled in with interpolation.  Sampling in
   #   frequency is variable to accommodate spectral shape
   lx <- length(x)
-  if (lx < 10000){
-    ndec <- 1
-  }
+  if (lx < 10000) ndec <- 1
   # --- env
   #   psdenv <- new.env(parent=baseenv())
   #
@@ -113,7 +111,9 @@ pspectrum.default <- function(x,
   print(summary(psd.df))
   return(invisible(psd.df))
   # return a structure.  From acf():
-  #acf.out <- structure(.Data = list(acf = acf, type = type, n.used = sampleT, lag = lag, series = series, snames = colnames(x)), class = "acf")
+  #acf.out <- structure(.Data = list(acf = acf, type = type, 
+  #                     n.used = sampleT, lag = lag, series = series, 
+  #                     snames = colnames(x)), class = "acf")
   # from spec.pgram:
   #  spg.out <- list(freq = freq, spec = spec, coh = coh, phase = phase,
   #    kernel = kernel, df = df, bandwidth = bandwidth, n.used = N, 

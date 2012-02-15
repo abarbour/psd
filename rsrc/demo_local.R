@@ -14,17 +14,19 @@ run.demo <- function(){
   ##
   ## methods
   ##
-  source("rsrc/S3.R")
   source("rsrc/usemethods.R")
+  source("rsrc/S3_summary.R")
+  source("rsrc/S3_print.R")
+  source("rsrc/S3_plot.R")
   ##
   ## ported source
   ##
-  source("rsrc/suppfuncs.R")
-  source("rsrc/psdcore.R")
-  source("rsrc/pspectrum.R")
-  source("rsrc/qualcon.R")
-  source("rsrc/riedsid.R")
-  source("rsrc/whiten.R")
+  source("rsrc/func_psdcore.R")
+  source("rsrc/func_pspectrum.R")
+  source("rsrc/func_qualcon.R")
+  source("rsrc/func_riedsid.R")
+  source("rsrc/func_supps.R")
+  source("rsrc/func_whiten.R")
   ##
   ## packages
   ##
