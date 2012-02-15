@@ -37,6 +37,9 @@ print.psd <- function(psd, ...){
   # if psd is a structure the
   # a structure has attributes, whereas a list has names of data, which may
   # have attributes: so the final psd should be a list of data with attributes
+  #
+  #d <- list(psd=c(1,3,4,5,2), freq=c(0,2,4,5,1), ntap=c(3,4,5,5,6), call="pspectrum"); class(d)<-"psd"
+  #
   res <- cbind(psd$freq, psd$psd, psd$ntap)
   print(head(res))
 }
