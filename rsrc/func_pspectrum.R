@@ -106,7 +106,6 @@ pspectrum.default <- function(x,
   # for method print to show call
   #est$call <- match.call()
   # move to psd method [ ]
-  est$call <- match.call()
   cat("\t>>>> Results summary:\n")
   print(summary(psd.df))
   return(invisible(psd.df))

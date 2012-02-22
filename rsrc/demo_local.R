@@ -30,7 +30,7 @@ run.demo <- function(){
   ##
   ## packages
   ##
-  library(signal)
+  library(signal, quietly=TRUE)
   # for triang
   ##
   ##  the meat and potatoes
