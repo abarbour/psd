@@ -3,7 +3,8 @@
 ##
 psdcore.default <-function(x,  
                            ntaper=1, ndecimate=1, 
-                           plotpsd=TRUE, plotcolor="#000000") {
+                           plotpsd=TRUE, plotcolor="#000000",
+                           xlims=c(0,0.5)) {
   ###
   # PORT of RLP's psdcore.m
   # abarbour
@@ -112,8 +113,8 @@ psdcore.default <-function(x,
   }
   ## Normalize by variance
   area <- (sum(psd) - psd[1]/2 - psd[length(psd)]/2)/nhalf  # 2*Trapezoid
-  psd <- as.matrix((2*varx/area)*psd)
-  psdtoplot <- 20*log10(psd[2:(nfreq-1)])
+  psd <- as.matrix((1*varx/area)*psd) #there was an apparently incorrect factor of 2 here
+  psdtoplot <- 10*log10(psd[2:(nfreq-1)]) ## R uses 10* to scale to dB (why?)
   frq <- seq(0, 0.5, length.out=nfreq)
   ftoplot <- frq[2:(nfreq-1)]
   ## Plot if desired
@@ -122,7 +123,7 @@ psdcore.default <-function(x,
       # initial plot (black)
       plot(ftoplot, psdtoplot, type="s",
            main="Adaptive Sine-multitaper PSD Estimation",
-           xlab="Nyquist frequency",
+           xlab="Nyquist frequency", xlim=xlims,
            ylab="PSD, dB rel. Nyquist")
     } else {
       # so adaptive estimation may be visualized

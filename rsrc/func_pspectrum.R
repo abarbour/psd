@@ -9,7 +9,8 @@ pspectrum.default <- function(x,
                       niter=5, 
                       ndec=1,
                       units=c("time","signal"),
-                      plotpsd=TRUE, ylims=c(.07,3e4)) {
+                      plotpsd=TRUE, 
+                      ylims=c(.07,3e4), xlims=c(0,0.5)) {
   ###
   # PORT of RLP's pspectrum.m
   # abarbour
@@ -47,7 +48,8 @@ pspectrum.default <- function(x,
   if (Cap == 0 || Cap > 1000){ Cap <- 1000 }
   #  Niter<-number of refinement iterations usually <= 5
   Niter <<- abs(niter)
-  if (Niter == 0){ Niter <<- 1 }
+  #   if (Niter <= 0){Niter <- 0}
+  #   if (Niter == 0){ Niter <<- 1 }
   #   ndec: number of actual psd calculations is n/ndec
   #   the rest are filled in with interpolation.  Sampling in
   #   frequency is variable to accommodate spectral shape
@@ -58,31 +60,38 @@ pspectrum.default <- function(x,
   #
   #            -----------------
   #  Get pilot estimate of psd with fixed number of tapers and no decimation
-  psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd)
+  msg <- sprintf("\t>>>> Pilot estimation with\t%i\ttapers\n",ntapinit)
+  cat(msg)
+  psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
   nf <<- length(psd)
   ones <- matrix(1,1,nf)  # row vec
   #  Iterative refinement of spectrum 
   ntaper <- ntapinit * ones
-  cat("\t>>>> Adaptive estimation:\n")
+  
   # create a grayscale palette that begins slightly off black 
   # (so plot is appended instead of recreated)
   # optimal for visualization?
   #   pal <- gray(1:Niter / Niter)
-  if (plotpsd){
-    pal <- terrain.colors(Niter)
-    require(RColorBrewer,quietly=TRUE, warn.conflicts=FALSE)
-    pal <- brewer.pal(Niter, "Paired")
+  if ( plotpsd && Niter > 0 ){
+    #     if (Niter < 3){Ncolors<-3} else {Ncolors<-Niter}
+    #     pal <- terrain.colors(Ncolors)
+    require(RColorBrewer, quietly=TRUE, warn.conflicts=FALSE)
+    pal <- brewer.pal(8, "Paired")
   }
-  for ( iterate in  1:Niter ) {
-    cat(sprintf("\t\t>>>> taper optimization round\t%02i\n",iterate))
-    #print(c(nf,length(ntaper),length(psd)))
-    kopt <- riedsid(psd, ntaper)
-    # print(c(nf,length(ntaper),length(psd)))
-    # riedsid resets nf
-    ntaper <- t(as.matrix(apply(rbind(matrix(1,1,nf)*Cap, kopt),2,min)))
-    #print(c(nf,length(ntaper),length(psd)))
-    psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, plotpsd=plotpsd, plotcolor=pal[iterate])
-    #print(c(nf,length(ntaper),length(psd)))
+  if ( Niter > 0){
+    cat("\t\t>>>> Adaptive spectrum refinement:\n")
+    for ( iterate in  1:Niter ) {
+      cat(sprintf("\t\t\t>>>> taper optimization round\t%02i\n",iterate))
+      #print(c(nf,length(ntaper),length(psd)))
+      kopt <- riedsid(psd, ntaper)
+      # print(c(nf,length(ntaper),length(psd)))
+      # riedsid resets nf
+      ntaper <- t(as.matrix(apply(rbind(matrix(1,1,nf)*Cap, kopt),2,min)))
+      #print(c(nf,length(ntaper),length(psd)))
+      psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, 
+                     plotpsd=plotpsd, plotcolor=pal[iterate])
+      #print(c(nf,length(ntaper),length(psd)))
+    }
   }
   #  Scale to physical units and provide frequency vector
   psd <- psd/fsamp
@@ -103,11 +112,11 @@ pspectrum.default <- function(x,
   }
   # psd class? [ ]
   psd.df <- data.frame(f=f, psd=psd, ntaper=t(ntaper))
+  #psd.df <- list(freq=f, psd=psd, ntap=t(ntaper), call=match.call())
   # for method print to show call
-  #est$call <- match.call()
   # move to psd method [ ]
-  cat("\t>>>> Results summary:\n")
-  print(summary(psd.df))
+#   cat("\t>>>> Results summary:\n")
+#   print(summary(psd.df))
   return(invisible(psd.df))
   # return a structure.  From acf():
   #acf.out <- structure(.Data = list(acf = acf, type = type, 

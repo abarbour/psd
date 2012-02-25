@@ -41,7 +41,7 @@ run.demo <- function(){
   noise<-rnorm(n,sd=0.2)
   signal<-.001*(1:n) + triang(n)+3*sin(pi*1:n/180+pi/4)+3*sin(2*pi*1:n/180+pi/4)
   x<-signal+noise
-  x<-signal
+  x<<-signal
   ##
   ## Begin Adaptive estimation and plotting
   ##
@@ -55,7 +55,7 @@ run.demo <- function(){
   ##		  colClasses="numeric", col.names="raw"),
   ##	  read.table(paste(mag.dir,"mag.clean",sep="/"), 
   ##		  colClasses="numeric", col.names="clean"))
-  load("data/mag.rda")
+  load("data/mag/mag.rda")
   plot(mag$raw, type="s", main="Magnetometer data")
   text(200, 40, "raw series")
   lines(mag$clean-50, type="s", col="red")
