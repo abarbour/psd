@@ -1,5 +1,5 @@
 ##
-##  Builtin only has until 2003
+##  Builtin only has until 1997, this is through 2003
 ##
 library(zoo)
 # read in url of (latest?) co2 data
