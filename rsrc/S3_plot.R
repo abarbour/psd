@@ -116,4 +116,5 @@ show.whiten <- function(wcrit, k1k2, x, x.w, limsc=2.5, pltlabs=TRUE) {
   }
 } 
 # end show.whiten
-###
+#
+#
