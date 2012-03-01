@@ -7,11 +7,13 @@
 source('/Users/abarbour/kook.processing/R/dev/timetasks/merge/funcs.R')
 ##
 dtStrp <- function(x){
-  #"POSIXct" no good for colClasses, so manually strptime
+  # "POSIXct" no good for colClasses, so manually strptime
+  # (ensures fractional seconds are accounted for
   strptime(x, format="%Y-%m-%dT%H:%M:%OS", tz="UTC")
 }
 ##
 readBSM <- function(fi, nalevel=1e4){
+  # read in a ascii table (gethf_20sps.csh, bottle_merge.py, bottle.py)
   toret <- read.table(fi, h=TRUE, 
                       colClasses=c("character", rep("numeric",4)), 
                       na.strings="99999", 
@@ -26,7 +28,10 @@ readBSM <- function(fi, nalevel=1e4){
 }
 ##
 procBSM <- function(dat){
+  # first convert the timestamp, making sure fractional seconds
+  # are accounted for
   dat$dt <- dtStrp(dat$dt)
+  # (from funcs.R) deal with regions filled with NAs (interp, impute, etc.)
   dat$CH0 <- naOP(dat$CH0, quiet=FALSE)
   dat$CH1 <- naOP(dat$CH1, quiet=FALSE)
   dat$CH2 <- naOP(dat$CH2, quiet=FALSE)
@@ -34,8 +39,6 @@ procBSM <- function(dat){
   return(invisible(dat))
 }
 ##
-library(RColorBrewer)
-pal <- brewer.pal(n=4,name="Paired")
 ##
 ########
 ########
@@ -48,16 +51,4 @@ bsm <- list(varian="data/bsm/B073.ALL_20.l.txt.gz",
 bsm$varian_dat <- procBSM(readBSM(bsm$varian))
 bsm$pinyon_dat <- procBSM(readBSM(bsm$pinyon))
 save(bsm, file="bsm.rda")
-
-# plot(dat$dt, dat$CH0,type="s", ylim=15*c(-1,0), col=pal[1])
-# lines(dat$dt, dat$CH1,type="s", col=pal[2])
-# lines(dat$dt, dat$CH2,type="s", col=pal[3])
-# lines(dat$dt, dat$CH3,type="s", col=pal[4])
-# 
-# psbsm<-pspectrum(dat$CH0, niter=2)
-# rpsbsm<-spectrum(dat$CH0, pad=1, taper=0.2, spans=c(50,50), log="dB")
-# 
-# plot(log10(20*rpsbsm$freq),10*log10(rpsbsm$spec),type="s",ylim=40*c(-1,1),xlim=c(-3,1))
-# lines(log10(20*psbsm$f),10*log10(psbsm$psd),type="s",col="red")                                                          
-
 
