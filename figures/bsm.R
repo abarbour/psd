@@ -1,7 +1,7 @@
 ##
 ##  Creates figure(s) in text for CO2 data
 ##
-setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
+# setwd("~/kook.processing/developmen/rlpSpec/figures")
 source('funcload.R')
 load("../data/bsm/bsm.rda")
 
@@ -10,9 +10,11 @@ library(RColorBrewer)
 library(ggplot2)
 
 bsmnm <- as.data.frame(na.approx(read.table('../data/bsm/barbour_bsmnoise_2011.txt', h=T)))
-psdf <- data.frame(f=bsmnm$freq, psd=10^bsmnm$P50, src="", niter=0, sta="PBO", cha="")
-psdf <- rbind(psdf, data.frame(f=bsmnm$freq, psd=bsmnm$P50, src="", niter=2, sta="PBO", cha="")
-psdf <- rbind(psdf, data.frame(f=bsmnm$freq, psd=bsmnm$P50, src="", niter=2, sta="PBO", cha="")
+spec <- 10^((bsmnm$P50-5)/10)
+psdf <- data.frame(f=bsmnm$freq, psd=spec, src="rlpSpec", niter=0, sta="PBO", cha="")
+psdf <- rbind(psdf, data.frame(f=bsmnm$freq, psd=spec, src="rlpSpec", niter=1, sta="PBO", cha=""))
+psdf <- rbind(psdf, data.frame(f=bsmnm$freq, psd=spec, src="rlpSpec", niter=2, sta="PBO", cha=""))
+psdf <- rbind(psdf, data.frame(f=bsmnm$freq, psd=spec, src="spec.pgram", niter=0, sta="PBO", cha=""))
 
 doBSMspec <- function(dat, sps=20, stacha="", span=NULL, niter=0, doRspec=TRUE){
   ## return a data frame with spectral estimates
@@ -55,10 +57,11 @@ detach(bsm)
 ## Now start plotting                                                      
 pal <- brewer.pal(n=8,"Paired")
 g <- ggplot(psdf, aes(x=f, y=10*log10(psd), colour=factor(sta)))
-(p <- g+geom_path(alpha=0.8)+facet_grid(niter~src)+
+(p <- g+geom_path(alpha=0.8)+facet_grid(factor(niter)~src)+
   scale_x_log10(limits=c(0.01,10),expand=c(0,0))+
-  scale_y_continuous(limits=c(-240, -160))+
-  scale_size_manual(values=c(0.5, 0.5), legend=F)+
+#   coord_trans(x = "log10", y="identity")+
+  scale_y_continuous(limits=c(-230, -160))+
+  scale_size_manual(values=c(0.5, 0.5))+
   scale_color_discrete()
  )
 # ggsave("./co2.pdf", height=3.2, width=7)
