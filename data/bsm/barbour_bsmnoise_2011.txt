@@ -1,4 +1,4 @@
-# Barbour and Agnew 2011, BSM Seismic Noise, BSSA, 101, 5, 2453
+# Barbour and Agnew 2011, BSM Seismic Noise, BSSA, 101, 5, 2453 (SUPPLEMENTAL)
 #
 # Summary noise levels of PBO borehole strainmeters in southern California
 #
