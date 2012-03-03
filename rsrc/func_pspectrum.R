@@ -45,7 +45,7 @@ pspectrum.default <- function(x,
   ##    [ ] type <- match.arg(type)
   ##
   Cap <- abs(tapcap)
-  if (Cap == 0 || Cap > 1000){ Cap <- 1000 }
+  if (Cap == 0 || Cap > 1e5){ Cap <- 1e3 }
   #  Niter<-number of refinement iterations usually <= 5
   Niter <<- abs(niter)
   #   if (Niter <= 0){Niter <- 0}

@@ -32,10 +32,10 @@ for (n in 0:nit){
 # psdf.a <- rbind(psdf.a, data.frame(f=bsmnm$freq, psd=spec, src="spec.pgram", niter=0, sta="PBO", cha=""))
 
 # wrapper for spectum estimators
-doBSMspec <- function(dat, sps=20, stacha="", span=NULL, niter=0, doRspec=TRUE){
+doBSMspec <- function(dat, sps=20, stacha="", span=NULL, niter=0, doRspec=TRUE, tapcap=1e3){
   ## return a data frame with spectral estimates
   # multitaper spectra
-  rlpps <- pspectrum(dat, niter=niter, fsamp=sps, ndec=1, plotpsd=F)
+  rlpps <- pspectrum(dat, niter=niter, fsamp=sps, ndec=1, plotpsd=F, tapcap=tapcap)
   dfspec <- data.frame(f=rlpps$f, psd=rlpps$psd, ntap=rlpps$ntaper,
                        src="rlpSpec", niter=niter, sta=stacha[1], cha=stacha[2], polyf=factor(0))
   # r built-in (optional)
@@ -76,6 +76,13 @@ dbGain <- function(gap=0.0001, db=TRUE){
   return(toret)
 }
 
+qf <- function(x, probs=c(0.025, 0.25, 0.5, 0.75, 0.975)) {
+  #http://stackoverflow.com/questions/4765482/changing-whisker-definition-in-geom-boxplot
+  toret <- quantile(x, probs = probs)
+  names(toret) <- c("ymin", "lower", "middle", "upper", "ymax")
+  toret
+}
+
 ## do something with them raw BSM data
 gap <- 0.0001
 sc <- 1e-9
@@ -95,11 +102,13 @@ detach(bsm)
 
 ## assemble spectrum dataframes
 psdf.b <- doBSMspec(dat.b, doRspec=FALSE, stacha=stacha.b)
+tapcap <- 1e3
 for (n in 1:nit){
-  psdf.b <- rbind(psdf.b, doBSMspec(dat.b, niter=n, doRspec=FALSE, stacha=stacha.b))
+  if (n>=5){tapcap <- 3e3}
+  psdf.b <- rbind(psdf.b, doBSMspec(dat.b, niter=n, doRspec=FALSE, stacha=stacha.b, tapcap=tapcap))
 }
 # for Pinyon, just do last for plotting comparison (clutter reduction)
-psdf.c <- doBSMspec(dat.c, niter=5, doRspec=FALSE, stacha=stacha.c)
+psdf.c <- doBSMspec(dat.c, niter=5, doRspec=FALSE, stacha=stacha.c, tapcap=1e4)
 # for (n in 1:nit){
 #   psdf.c <- rbind(psdf.c, doBSMspec(dat.c, niter=n, doRspec=FALSE, stacha=stacha.c))
 # }
@@ -107,8 +116,8 @@ psdf.c <- doBSMspec(dat.c, niter=5, doRspec=FALSE, stacha=stacha.c)
 ## bind all the data frames
 gain <- dbGain(gap=gap)
 psdf.a$psdc <- psdf.a$psd
-psdf.b$psdc <- 10*log10(psdf.b$psd) + gain
-psdf.c$psdc <- 10*log10(psdf.c$psd) + gain
+psdf.b$psdc <- 10*log10(psdf.b$psd) + gain - 5
+psdf.c$psdc <- 10*log10(psdf.c$psd) + gain - 5
 psdf <- rbind(psdf.c,
               psdf.b,
               psdf.a)
@@ -130,15 +139,47 @@ g <- ggplot(psdf, aes(x=log10(f), y=psdc, colour=factor(sta)))
 ## save it
 ggsave("./bsm.png")#, height=4.2, width=7)
 ##
-psdf <- psdf.b[psdf.b$f>0,c(1,3,5)]
-g <- ggplot(psdf, aes(x=log10(f), y=1/sqrt(ntap), colour=factor(niter)))
-p <- g + geom_line(size=0.2)+
-  scale_x_continuous("Frequency, log Hz", limits=c(-2.5, 1), breaks=-2:1, labels=-2:1, expand=c(0,0))+
-  opts(title="BSM Spectra, Variance Reduction by Iteration")
+psdf <- psdf.b[psdf.b$f>=0.01,c(1,3,5)]
+inittap <- median(psdf$ntap[psdf$niter==0])
+psdf$ntaprel <- psdf$ntap/inittap
+psdf <- psdf[psdf$niter>=0,]
 
-g <- ggplot(psdf, aes(x=niter, y=1/sqrt(ntap), colour=log10(f), group=niter))
-p <- g + geom_jitter(size=0.2)+
-  scale_x_discrete("Iteration")+
-  opts(title="BSM Spectra, Variance Reduction by Frequency")
+pal <- brewer.pal(9, "Blues")
+my.cols <- pal[4:9]
+# black: "#000000"
+
+g <- ggplot(psdf, aes(x=log10(f), y=100*(1/sqrt(ntap)), colour=factor(niter),  group=niter))
+(p <- g + geom_line(size=0.4)+
+#   geom_smooth(n=100)+
+  scale_color_manual("Iteration", values=my.cols, breaks=0:5, labels=c("Pilot spec.\n(fixed K)",1:5))+
+  scale_y_continuous("Spectral uncertainty, %", limits=c(0, 35), expand=c(0,0))+
+  scale_x_continuous("Frequency, log10 Hz", limits=c(-2, 1), breaks=-2:1, labels=-2:1, expand=c(0,0))+
+  theme_bw()+
+  opts(title="BSM Spectra, Uncertainty Reduction by Frequency")
+ )
+ggsave("./bsmVarFrq.png")#, height=4.2, width=7)
+
+g <- ggplot(psdf, aes(x=niter, y=100*(1/sqrt(ntap)), group=niter))
+tapcaps <- 10^c(1,2,3)
+textx <- rep(0.5, length(tapcaps))
+txtdf <- data.frame(x=textx, y=tapcaps, lab=as.character(tapcaps))
+N <- length(psdf$ntap)
+txtdf <- rbind(txtdf, data.frame(x=c(0.9,2.5), 
+                                 y=c(10,25), 
+                                 lab=c("tapers applied", 
+                                       sprintf("Boxplots: median, IQR, and\n95%s dist. (%i frequencies)",'%',N))))
+(p <- g+
+  geom_hline(linetype="dashed", y=100*(1/sqrt(tapcaps)))+
+  stat_summary(fun.data = qf, geom="boxplot")+
+  geom_text(data=txtdf, aes(x=x, y=100*(1/sqrt(y))+1.4, label=lab, group=NA, hjust=0))+
+  scale_x_continuous("Iteration number", breaks=0:5, labels=c("Pilot spec.\n(fixed tapers)",1:5))+
+  scale_y_continuous("Spectral uncertainty, %", limits=c(0, 35), expand=c(0,0))+
+#   scale_y_continuous("Uncertainty factor,  log( 1 / sqrt( K ) )", 
+#                      limits=c(-4, -0.75), 
+#                      breaks=c(-4:-1), labels=c(-4:-1), expand=c(0,0))+
+  theme_bw()+
+  opts(title="BSM Spectra, Uncertainty Reduction by Iteration"))
+
+ggsave("./bsmVarIt.png")#, height=4.2, width=7)
 ##
 
