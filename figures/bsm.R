@@ -1,12 +1,14 @@
 ##
 ##  Creates figure(s) in text for CO2 data
 ##
-setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
+# setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
+setwd("~/nute.processing/development/rlpSpec/figures")
 source('funcload.R')
 load("../data/bsm/bsm.rda")
 
 library(zoo)
 library(RColorBrewer)
+library(plyr)
 library(ggplot2)
 
 rm(bsmnm, psdf, psdf.a, psdf.b)
