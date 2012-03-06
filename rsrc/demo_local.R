@@ -21,6 +21,7 @@ run.demo <- function(){
   ##
   ## ported source
   ##
+  source("rsrc/func_boundslope.R")
   source("rsrc/func_psdcore.R")
   source("rsrc/func_pspectrum.R")
   source("rsrc/func_qualcon.R")
