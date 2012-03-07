@@ -1,7 +1,7 @@
 ###
 ###  S3 (or S4) methods for PLOTTING
 ###
-plot.psd <- function(psd.df, niter=NULL, ...){
+plot.psd <- function(psd.df, niter=NULL, showplot=TRUE,...){
   ##
   ## Plot the results of the PSD estimation
   ##
@@ -11,58 +11,47 @@ plot.psd <- function(psd.df, niter=NULL, ...){
   ##
   ## TODO(abarbour): 
   ## [ ] convert this to a method for class 'psd'
+  ## [ ] MOD: http://learnr.wordpress.com/2009/05/26/ggplot2-two-or-more-plots-sharing-the-same-legend/
   ##
-  require(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
-  require(gridExtra, quietly=TRUE, warn.conflicts=FALSE)
+  require(sfsmisc, quietly=TRUE, warn.conflicts=FALSE)  # for nice labels
+  require(ggplot2, quietly=TRUE, warn.conflicts=FALSE)  # for plot engine
   
   dims <- dim.data.frame(psd.df)
   nrow <- dims[1]
   nvar <- dims[2]
   pltdf <- psd.df[2:(nrow-1),]
-  
-  optset <- function(title="", legendpos="none"){
-    #https://kohske.wordpress.com/2010/12/25/drawing-on-full-region-in-ggplot2/
-    opts.full <- opts( 
-      title=title,
-      plot.title = theme_text(size=14, lineheight=.1, face="italic", hjust=0),
-      legend.background = theme_rect(colour="gray"),
-      legend.position = legendpos,
-      panel.background = theme_blank(),
-      #     panel.grid.major = theme_blank(),
-      panel.grid.minor = theme_blank(),
-      panel.margin = unit(0,"null"),
-      plot.margin = rep(unit(0,"null"),4),
-      axis.ticks = theme_blank(),
-      axis.text.x = theme_blank(),
-      axis.text.y = theme_blank(),
-      #     axis.title.x = theme_blank(),
-      #     axis.title.y = theme_blank(),
-      axis.ticks.length = unit(0,"null"),
-      axis.ticks.margin = unit(0,"null")
-      )
-  }
   if (is.null(niter) && exists("Niter")){niter <- Niter}
-  # plot the spectrum in dB, colored by ntapers
-  p1 <- ggplot(pltdf, aes(x=f, y=20*log10(psd)))+
-    geom_step(size=1, aes(colour=log10(ntaper)))+
-    scale_colour_gradient("Tapers applied\n(log10)",low = "black", high = "red")+
-    #,breaks=(1:3), labels=10**(1:3))+
-    scale_x_log10("Frequency, log10 1/N/dT", minor_breaks=NA)+
-    scale_y_continuous("PSD, dB rel. units**2 * N * dT", minor_breaks=NA)+
-    optset("A: Tapered spectrum", c(0.18,0.50))
-  # the number of tapers, colored by spectral levels
-  p2 <- ggplot(pltdf, aes(x=f, y=ntaper))+
-    geom_step(size=1, aes(colour=20*log10(psd)))+
-    scale_colour_gradient("PSD, dB",low = "black", high = "red")+
-    scale_y_log10("Tapers, log10", breaks=10**(0:3), labels=10**(0:3))+
-    scale_x_log10("Frequency, log10 1/N/dT", minor_breaks=NA)+
-    optset("B: Number of tapers applied", c(0.15,0.60))
   
-  #   print(p1)
-  plts <- grid.arrange(p1, p2, 
-                       main=sprintf("Adaptive Sine-multitaper PSD Estimation\n%i iterations",niter))
+  # percent spectral uncertainty from  number of tapers
+  # sigma^2 ~ 6 S^2 / 5 K
+  pltdf$sigma2 <- (pltdf$psd**2)*1.2/pltdf$ntaper
+  
+  # plot setup and label breaks
+  g <- ggplot(pltdf, aes(x=log10(f), y=psd))
+  atY <- 10^seq(-4,10,by=2)
+  atYL <- sfsmisc::axTexpr(2, at=atY, drop.1=TRUE)
+  # plot grobs
+  p <- g +
+    # std err
+    geom_ribbon(size=0.25, colour="black", aes(ymax=200*(1+sqrt(sigma2)/psd), ymin=200*(1-sqrt(sigma2)/psd), fill="sig")) +
+    # tapers
+    geom_ribbon(size=0.25, colour="black", aes(ymax=ntaper, ymin=10, fill="tap")) +
+    # psd
+    geom_path(size=0.5)+
+    scale_x_continuous("Frequency, log10 1/N/dT")+
+    scale_y_log10("PSD, log10 units**2 * N * dT", breaks=atY, labels=atYL)+
+    scale_fill_discrete("",
+                        breaks=c("sig","tap"), 
+                        labels=c("Uncertainty: +- Sigma", "Optim. tapers: Rel. pilot spec."))+
+    theme_bw()+
+    opts(title=sprintf("Adaptive Sine-multitaper PSD Estimation\n%i iterations",niter),
+         legend.position=c(0.25, 0.18))
+  if (showplot){print(p)}
+  return(invisible(p))
 }
 # end plot.psd
+##
+##
 ##
 # plot.qualcon or plot.whiten from show.whiten in suppfuncs [ ]
 show.whiten <- function(wcrit, k1k2, x, x.w, limsc=2.5, pltlabs=TRUE) {
