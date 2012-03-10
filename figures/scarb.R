@@ -185,5 +185,37 @@ filled.contour(y=(frqs), x=(iter-1)*slen/sps/60, log10(t(dfmat)), nlevels=8,
                            text(25,24,"PSD\nlog10 counts^2 / Hz", adj=c(1,1))
                            mtext(sprintf("%.1f minute sections",slen/sps/60))})
 dev.off()
+#
+#
+library(ellipse)
+corcolors <- c("#A50F15","#DE2D26","#FB6A4A","#FCAE91","#FEE5D9",
+               "white",
+               "#EFF3FF","#BDD7E7","#6BAED6","#3182BD","#08519C")
+fInd<-dfc$f>4 & dfc$f<=17
+frqs <- dfc$f[fInd]
+dfc.med <- data.frame(f=dfc.quants$f, med=dfc.quants$X50.)
+meds <- dfc.med$med[fInd]
+iter <- 1:nsxn
+dfmat <- as.matrix(dfc[fInd,(iter+1)])
+dfmat.cor <- cor((dfmat))#, method="spearman")
+dfmat.ord <- order(dfmat.cor[1,])
+dfmat.xc <- dfmat.cor[dfmat.ord,dfmat.ord]
+# plotcorr(dfmat.cor, col=corcolors[5*dfmat.xc + 6])
+## at 25 samples, this is the minimum correlation to be significant
+dfmat.cor[dfmat.cor<0.4] <- NA
+image(x=frqs, y=frqs, z=(dfmat.cor), asp=1)#col=corcolors[7:11], asp=1)
+contour(x=frqs, y=frqs, (dfmat.cor), nlevels=5, add = TRUE, drawlabels = FALSE)
+#
+# ## Correlation Matrix of Multivariate sample:
+# (Cl <- cor(dfmat))
+# ## Graphical Correlation Matrix:
+# symnum(Cl) # highly correlated
+# 
+# ## Spearman's rho  and  Kendall's tau
+# symnum(clS <- cor(dfmat, method = "spearman"))
+# symnum(clK <- cor(dfmat, method = "kendall"))
+# ## How much do they differ?
+# i <- lower.tri(Cl)
+# image(cor(cbind(P = Cl[i], S = clS[i], K = clK[i])))
 ##
 ##
