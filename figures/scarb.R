@@ -6,6 +6,8 @@ setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
 source('funcload.R')
 load("../data/scarb/scarb.rda")
 
+library(psych)
+library(fields)
 library(ggplot2)
 library(plyr)
 library(reshape)
@@ -186,36 +188,39 @@ filled.contour(y=(frqs), x=(iter-1)*slen/sps/60, log10(t(dfmat)), nlevels=8,
                            mtext(sprintf("%.1f minute sections",slen/sps/60))})
 dev.off()
 #
+## Find significant covariant correlations
 #
-library(ellipse)
-corcolors <- c("#A50F15","#DE2D26","#FB6A4A","#FCAE91","#FEE5D9",
-               "white",
-               "#EFF3FF","#BDD7E7","#6BAED6","#3182BD","#08519C")
-fInd<-dfc$f>4 & dfc$f<=17
+lims <- c(0,25)
+fInd<-dfc$f>lims[1] & dfc$f<=lims[2]
 frqs <- dfc$f[fInd]
+length(frqs)
 dfc.med <- data.frame(f=dfc.quants$f, med=dfc.quants$X50.)
 meds <- dfc.med$med[fInd]
 iter <- 1:nsxn
 dfmat <- as.matrix(dfc[fInd,(iter+1)])
-dfmat.cor <- cor((dfmat))#, method="spearman")
-dfmat.ord <- order(dfmat.cor[1,])
-dfmat.xc <- dfmat.cor[dfmat.ord,dfmat.ord]
-# plotcorr(dfmat.cor, col=corcolors[5*dfmat.xc + 6])
-## at 25 samples, this is the minimum correlation to be significant
-dfmat.cor[dfmat.cor<0.4] <- NA
-image(x=frqs, y=frqs, z=(dfmat.cor), asp=1)#col=corcolors[7:11], asp=1)
-contour(x=frqs, y=frqs, (dfmat.cor), nlevels=5, add = TRUE, drawlabels = FALSE)
-#
-# ## Correlation Matrix of Multivariate sample:
-# (Cl <- cor(dfmat))
-# ## Graphical Correlation Matrix:
-# symnum(Cl) # highly correlated
-# 
-# ## Spearman's rho  and  Kendall's tau
-# symnum(clS <- cor(dfmat, method = "spearman"))
-# symnum(clK <- cor(dfmat, method = "kendall"))
-# ## How much do they differ?
-# i <- lower.tri(Cl)
-# image(cor(cbind(P = Cl[i], S = clS[i], K = clK[i])))
-##
+
+## Pearson correlation of frequencies, for iter combinations
+dfmat.cor <- cor(t(dfmat)) #, method="spearman")
+## at N samples, correct correl. for significance (t-dist) and Bonferroni corr.
+ctp <- psych::corr.p(dfmat.cor, nsxn, adjust="bonferroni")
+# decide what's significant: students t, 95% signif for 25-2=23 dof
+dof <- nsxn-2
+sig <- rev(qt(.95, dof))[1]
+sigt <- ctp$t > sig  
+sigr <- ctp$r
+# mask out insignificant correlations
+sigcor <- ifelse(sigt, sigr, NA)
+# Plot it
+# pdf("./scarbSpecgram2Cor.pdf")
+png("./scarbSpecgram2Cor.png", res=156, height=720, width=800)
+col <- RColorBrewer::brewer.pal("Spectral",n=10)
+fields::image.plot(x=frqs, y=frqs, z=sigcor, add=F, 
+#                    asp=1,
+                   graphics.reset=T,
+                   main="Scarborough Ez spectrum correlations",
+                   xlab="Frequency, Hz",
+                   ylab="Frequency, Hz",
+                   ylim=lims, xlim=lims, zlim=c(0,1), col=rev(col))
+
+dev.off()
 ##
