@@ -202,25 +202,33 @@ dfmat <- as.matrix(dfc[fInd,(iter+1)])
 ## Pearson correlation of frequencies, for iter combinations
 dfmat.cor <- cor(t(dfmat)) #, method="spearman")
 ## at N samples, correct correl. for significance (t-dist) and Bonferroni corr.
-ctp <- psych::corr.p(dfmat.cor, nsxn, adjust="bonferroni")
+ctp <- psych::corr.p(dfmat.cor, nsxn, adjust="holm")
 # decide what's significant: students t, 95% signif for 25-2=23 dof
 dof <- nsxn-2
-sig <- rev(qt(.95, dof))[1]
+prc <- .99
+sig <- rev(qt(prc, dof))[1]
 sigt <- ctp$t > sig  
 sigr <- ctp$r
 # mask out insignificant correlations
 sigcor <- ifelse(sigt, sigr, NA)
 # Plot it
 # pdf("./scarbSpecgram2Cor.pdf")
-png("./scarbSpecgram2Cor.png", res=156, height=720, width=800)
-col <- RColorBrewer::brewer.pal("Spectral",n=10)
-fields::image.plot(x=frqs, y=frqs, z=sigcor, add=F, 
-#                    asp=1,
-                   graphics.reset=T,
-                   main="Scarborough Ez spectrum correlations",
-                   xlab="Frequency, Hz",
-                   ylab="Frequency, Hz",
-                   ylim=lims, xlim=lims, zlim=c(0,1), col=rev(col))
-
+png("./scarbSpecgram2Cor.png", res=156, height=780, width=900)
+col <- RColorBrewer::brewer.pal("Spectral",n=11)
+filled.contour(x=(frqs), y=(frqs), z=(sigcor), col=rev(col), 
+               zlim=c(0.45,1), nlevels=11, asp=1,
+               main="Scarborough Ez spectrum correlations",
+               xlab="Frequency, Hz", ylab="Frequency, Hz",
+               plot.axes={ axis(1); axis(2);
+                           mtext(sprintf("Holm-Bonferroni %.0f%s Sig. at %i DoF",100*prc,'%',dof))
+                           })
 dev.off()
+# fields::image.plot(x=frqs, y=frqs, z=(sigcor), add=F, 
+# #                    asp=1,
+#                    col=rev(col),
+#                    graphics.reset=T,
+#                    main="Scarborough Ez spectrum correlations",
+#                    xlab="Frequency, Hz",
+#                    ylab="Frequency, Hz",
+#                    ylim=lims, xlim=lims)#, zlim=c(0.3,1), )
 ##
