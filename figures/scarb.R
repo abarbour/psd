@@ -1,8 +1,8 @@
 ##
 ##  Creates figure(s) in text for Scarborough data
 ##
-# setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
-setwd("~/nute.processing/development/rlpSpec/figures")
+setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
+# setwd("~/nute.processing/development/rlpSpec/figures")
 source('funcload.R')
 load("../data/scarb/scarb.rda")
 

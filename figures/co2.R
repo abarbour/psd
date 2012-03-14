@@ -9,8 +9,8 @@ library(zoo)
 # Adaptive multitaper estimation: rlpSpec::pspectrum
 frq<-12
 deseas <- na.approx(co2tsd$x) - na.approx(co2tsd$seasonal)
-psc <-pspectrum(na.approx(co2tsd$x), fsamp=frq, plotpsd=F)
-pscs<-pspectrum(deseas, fsamp=frq, plotpsd=F)
+psc <-pspectrum(na.approx(co2tsd$x), fsamp=frq, plotpsd=F, niter=4)
+pscs<-pspectrum(deseas, fsamp=frq, plotpsd=F, niter=4)
 
 # R built-in spectrum estimation: spec.pgram
 pad<-1
@@ -38,22 +38,38 @@ library(ggplot2)
 library(RColorBrewer)
 pal <- brewer.pal(n=8,"Paired")
 
-g <- ggplot(df, aes(x=f, y=20*log10(psd), colour=src, size=src))
+g <- ggplot(df, aes(x=f, y=10*log10(psd), colour=src, size=src))
 p <- g+geom_line()+facet_grid(.~decomp)
 (p + 
   scale_x_continuous("Frequency, Cycles per Year", limits=c(0,5.5), expand=c(0,0))+
-  scale_y_continuous("Power, dB (ppm^2 * year)", 
-                     breaks=seq(-120,30,by=30),limits=c(-100,44), expand=c(0,0))+
+  scale_y_continuous("Power, dB (ppm^2 * year)",
+                     breaks=seq(-50,22,by=10), limits=c(-50,22), expand=c(0,0))+
    scale_colour_manual("Spectrum\nestimator", values=c(pal[1:2],"black"), 
                        breaks=c("spec.pgram","rlpSpec",""),
                        labels=c("spec.pgram\n","rlpSpec\n","Thoning et al\n(1976-1985)"))+
-   scale_size_manual(values=c(0.9,1.0,0.5), legend=F)+
+   scale_size_manual(values=c(0.9,1.0,0.5), guide="none")+
    #+ scale_linetype_manual(values=factor(c(0,0,1)), legend=F)
-   opts(title="Mauna Loa CO2 concentration: Power spectra, 1959 - 2012")
-  #+ theme_bw()
+   opts(title="Mauna Loa CO2 concentration: Power spectra, 1959 - 2012") + theme_bw()
  )
-##
 ##
 ggsave("./co2.pdf", height=3.2, width=7)
 ##
+g <- ggplot(df, aes(x=log2(f), y=10*log10(psd), colour=src, size=src))
+p <- g+geom_line()+facet_grid(.~decomp)
+(p + 
+  scale_x_continuous("Frequency, Cycles-per-Year", 
+                     limits=log2(c(.3,5.5)), 
+                     breaks=-1:2, labels=c("1/2",1,2,4),
+                     expand=c(0,0))+
+  scale_y_continuous("Power, dB (ppm^2 * year)",
+                     breaks=seq(-50,22,by=10), limits=c(-50,22), expand=c(0,0))+
+  scale_colour_manual("Spectrum\nestimator", values=c(pal[1:2],"black"), 
+                      breaks=c("spec.pgram","rlpSpec",""),
+                      labels=c("spec.pgram\n","rlpSpec\n","Thoning et al\n(1976-1985)"))+
+  scale_size_manual(values=c(0.9,1.0,0.5), guide="none")+
+ #+ scale_linetype_manual(values=factor(c(0,0,1)), legend=F)
+ opts(title="Mauna Loa monthly CO2: Power spectra, 1959 - 2012") + theme_bw()
+ )
+##
+ggsave("./co2log.pdf", height=3.2, width=7)
 ##
