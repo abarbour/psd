@@ -44,13 +44,13 @@ for (nit in 0:(nsxn-1)){
   }
 }
 # Reshape (melt -> cast) to isolate by iteration
-dfm <- melt.data.frame(dfscarb1, id.vars=c("nit","f"), measure.vars=c("psd"))
-dfc <- cast(dfm, f~nit)
+dfm <- reshape::melt.data.frame(dfscarb1, id.vars=c("nit","f"), measure.vars=c("psd"))
+dfc <- reshape::cast(dfm, f~nit)
 # f it1  it2  ...
 # 0 p0/1 p0/2 ...
 # ...
 # cast using quantiles [ it_N replaced with CDF contours ]
-dfc.quants <- cast(dfm, f~., quantile, probs = seq(0, 1, 0.10))
+dfc.quants <- reshape::cast(dfm, f~., quantile, probs = seq(0, 1, 0.10))
 
 ##
 ## Setup for plotting
@@ -58,14 +58,15 @@ dfc.quants <- cast(dfm, f~., quantile, probs = seq(0, 1, 0.10))
 frqs<-log10(dfc.quants$f)
 f.p <- c(frqs,rev(frqs))
 f.pmed <- 10^(frqs) #,rev(frqs))
+q.frqs <- f.pmed
+q.frqsp <- c(q.frqs,rev(q.frqs))
 q.pmed <- log10(c(dfc.quants$X50.)) #, rev(dfc.quants$X0.)))
-q.relmed <- log10(c(dfc.quants$X10., rev(dfc.quants$X90.))) - 
-  c(q.pmed, rev(q.pmed))
+q.relmed <- log10(c(dfc.quants$X10., rev(dfc.quants$X90.))) - c(q.pmed, rev(q.pmed))
 
 ##
 ##  Figure 1: Show spectra and distribution contours
 ##
-pal <- brewer.pal(n=10,"Paired")
+pal <- RColorBrewer::brewer.pal(n=10,"Paired")
 pdf("./scarb.pdf", height=5)
 plot(10^c(-2,2,2,-2),c(-2,-2,11,11), 
      ylim=c(0,10), xlim=10^log10(c(.1,31.25)), type="l", yaxs="i", xaxs="i",
@@ -77,11 +78,11 @@ lines(c(4,25),0.3*c(1,1),lty=3, lwd=2)
 text(c(0.3,10),0.5*c(1,1),c("spectrogram (A)","spectrogram (B)"),cex=0.7,adj=c(0.5,0))
 text(5, 8.5, sprintf("PSD estimation:\n5 adaptive iterations\n%i x %.1f minute sections\n%s Hz sampling",nsxn,slen/sps/60,sps), cex=0.9, adj=c(0,0.5))
 text(10^-0.5, 7, "Median PSD levels")
-text(10^-0.9, 3.3, "Variation relative to median",col=pal[2], adj=c(0,0.5))
+text(10^-0.9, 3.4, sprintf("80%s variation relative to median","%"),col=pal[2], adj=c(0,0.5))
 mtext(sprintf("%s through %s", scarbl$tsst, scarbl$tsst+nt/sps))
 # CDF contours relative to median
 polygon(10^f.p, (q.relmed)+2, col=pal[1], border=pal[2], lwd=0.4)
-lines(10^frqs,log10(dfc.quants$X50.), lwd=0.8)
+lines(f.pmed, log10(dfc.quants$X50.), lwd=0.8)
 dev.off()
 
 ##
@@ -98,7 +99,7 @@ iter <- 1:nsxn
 dfmat <- as.matrix(dfc[fInd,(iter+1)])
 #
 pdf("./scarbSpecgram.pdf", height=5)
-pal <- brewer.pal(n=8,"RdGy")
+pal <- RColorBrewer::brewer.pal(n=8,"RdGy")
 pal <- c(pal[5:8],pal[4:1])
 filled.contour(y=(frqs), x=(iter-1)*slen/sps/60, log10(t(dfmat)), nlevels=5, 
                col=pal,
@@ -129,9 +130,9 @@ for (nit in 0:(nsxn-1)){
   }
 }
 ## Again, reshape and quantile
-dfm <- melt.data.frame(dfscarb2, id.vars=c("nit","f"), measure.vars=c("psd"))
-dfc <- cast(dfm, f~nit)
-dfc.quants <- cast(dfm, f~., quantile, probs = seq(0, 1, 0.10))
+dfm <- reshape::melt.data.frame(dfscarb2, id.vars=c("nit","f"), measure.vars=c("psd"))
+dfc <- reshape::cast(dfm, f~nit)
+dfc.quants <- reshape::cast(dfm, f~., quantile, probs = seq(0, 1, 0.10))
 #
 lims <- c(4,25)
 fInd <- dfc$f>lims[1] & dfc$f<=lims[2]
@@ -158,7 +159,7 @@ dev.off()
 ## Figure 3: Significant covariant correlations
 ##
 
-lims <- c(0,28)
+lims <- c(0,25)
 fInd<-dfc$f>lims[1] & dfc$f<=lims[2]
 frqs <- dfc$f[fInd]
 # length(frqs)
@@ -166,6 +167,12 @@ dfc.med <- data.frame(f=dfc.quants$f, med=dfc.quants$X50.)
 meds <- dfc.med$med[fInd]
 iter <- 1:nsxn
 dfmat <- as.matrix(dfc[fInd,(iter+1)])
+
+f.pmed <- dfc.quants$f
+q.frqs <- f.pmed
+q.frqsp <- c(q.frqs,rev(q.frqs))
+q.pmed <- log10(c(dfc.quants$X50.)) #, rev(dfc.quants$X0.)))
+q.relmed <- log10(c(dfc.quants$X10., rev(dfc.quants$X90.))) - c(q.pmed, rev(q.pmed))
 
 ## Pearson correlation (default) of frequencies, for iter combinations
 dfmat.cor <- cor(t(dfmat)) # change method here if desired
@@ -181,18 +188,33 @@ sigr <- ctp$r
 # mask out insignificant correlations
 sigcor <- ifelse(sigt, sigr, NA)
 # Plot it
-asp <- 1.1
-pxht <- 1080
-png("./scarbSpecgram2Cor.png", res=200, height=pxht, width=pxht*asp)
+#
 col <- RColorBrewer::brewer.pal("Spectral",n=11)
+ylims <- lims; ylims[1] <- -10
+labs <- seq(0, lims[2], by=2)
+ylabs <- labs
+ylabs[mod(labs,4)>0] <- ""
+#
+asp <- 1.1
+pxht <- 1280
+#
+png("./scarbCorrel.png", res=200, height=asp*pxht, width=pxht)
+#
 filled.contour(x=(frqs), y=(frqs), z=(sigcor), col=rev(col), 
-               xlim=lims, ylim=lims, 
-               #asp=1,
+               xlim=lims, ylim=ylims, 
+#                asp=1,
                zlim=c(0.45,1), nlevels=11, 
                main="Scarborough Ez spectrum correlations",
                xlab="Frequency, Hz", ylab="Frequency, Hz",
-               plot.axes={ axis(1); axis(2);
-                           mtext(sprintf("Holm-Bonferroni %.0f%s Sig. at %i DoF",100*prc,'%',dof))})
+               plot.axes={ axis(1, at = labs, labels=ylabs)
+                           axis(2, at = labs, labels=ylabs)
+                           mtext(sprintf("Holm-Bonferroni %.0f%s Sig. at %i DoF",100*prc,'%',dof))
+                           abline(h=0)
+                           text(c(4.1,16),c(-3,-8),c("PSD","Variation"))
+                           polygon(q.frqsp, 2*(q.relmed)-6.5, col="gray", border="black", lwd=0.4)
+                           lines(q.frqs, log10(dfc.quants$X50.)-9, lwd=1)
+                           })
+#
 dev.off()
 ##
 ##

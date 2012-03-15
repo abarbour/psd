@@ -131,7 +131,7 @@ g <- ggplot(psdf, aes(x=log10(f), y=psdc, colour=factor(sta)))
   #aes(fill=polyf)
 #   scale_x_log10(limits=c(0.01,10),expand=c(0,0))+
   scale_x_continuous("Frequency, log Hz", limits=c(-2.5, 1), breaks=-2:1, labels=-2:1, expand=c(0,0))+
-  scale_y_continuous("Power, dB (strain^2 * sec)", limits=c(-230, -140), expand=c(0,0))+
+  scale_y_continuous("Power, dB (strain^2 * sec)", limits=c(-230, -160), expand=c(0,0))+
 #   scale_size_manual(values=c(0.5, 0.5))+
 #   scale_color_discrete("Station")+
 #   scale_fill_manual(breaks=c(0,1,2), values=c(NA,"gray","gray"), labels=c("","LSM","BSM"), legend=F)+
@@ -139,7 +139,7 @@ g <- ggplot(psdf, aes(x=log10(f), y=psdc, colour=factor(sta)))
   opts(title="BSM Spectra by Iteration")
  )
 ## save it
-ggsave("./bsm.png")#, height=4.2, width=7)
+ggsave("./bsm.png")#, height=8, width=7)
 ##
 psdf <- psdf.b[psdf.b$f>=0.01,c(1,3,5)]
 inittap <- median(psdf$ntap[psdf$niter==0])
@@ -161,27 +161,27 @@ g <- ggplot(psdf, aes(x=log10(f), y=100*(1/sqrt(ntap)), colour=factor(niter),  g
  )
 ggsave("./bsmVarFrq.png")#, height=4.2, width=7)
 
-g <- ggplot(psdf, aes(x=niter, y=100*(1/sqrt(ntap)), group=niter))
+g <- ggplot(psdf, aes(x=niter, y=100*(1.09/sqrt(ntap)), group=niter))
 tapcaps <- 10^c(1,2,3)
 textx <- rep(0.5, length(tapcaps))
-txtdf <- data.frame(x=textx, y=tapcaps, lab=as.character(tapcaps))
+
 N <- length(psdf$ntap)
-txtdf <- rbind(txtdf, data.frame(x=c(0.9,2.5), 
-                                 y=c(10,25), 
-                                 lab=c("tapers applied", 
-                                       sprintf("Boxplots: median, IQR, and\n95%s dist. (%i frequencies)",'%',N))))
+txtdf <- rbind(data.frame(x=textx, y=tapcaps, lab=as.character(tapcaps)), 
+               data.frame(x=c(0.9,2.05), y=c(10,18), 
+                          lab=c("tapers applied", 
+                                sprintf("Boxplots: median, IQR, and\n95%s dist. (%i frequencies)",'%',N))))
 (p <- g+
-  geom_hline(linetype="dashed", y=100*(1/sqrt(tapcaps)))+
+  geom_hline(linetype="dashed", y=100*(1.09/sqrt(tapcaps)))+
   stat_summary(fun.data = qf, geom="boxplot")+
-  geom_text(data=txtdf, aes(x=x, y=100*(1/sqrt(y))+1.4, label=lab, group=NA, hjust=0))+
+  geom_text(data=txtdf, aes(x=x, y=100*(1.09/sqrt(y))+1.4, label=lab, group=NA, hjust=0))+
   scale_x_continuous("Iteration number", breaks=0:5, labels=c("Pilot spec.\n(fixed tapers)",1:5))+
-  scale_y_continuous("Spectral uncertainty, %", limits=c(0, 35), expand=c(0,0))+
+  scale_y_continuous("Spectral uncertainty, %", limits=c(0, 38), breaks=seq(0,35,5), expand=c(0,0))+
 #   scale_y_continuous("Uncertainty factor,  log( 1 / sqrt( K ) )", 
 #                      limits=c(-4, -0.75), 
 #                      breaks=c(-4:-1), labels=c(-4:-1), expand=c(0,0))+
   theme_bw()+
   opts(title="BSM Spectra, Uncertainty Reduction by Iteration"))
 
-ggsave("./bsmVarIt.png")#, height=4.2, width=7)
+ggsave("./bsmVarIt.pdf", height=7, width=6)
 ##
 
