@@ -44,72 +44,54 @@ pspectrum.default <- function(x,
   ##    [ ] structured return
   ##    [ ] type <- match.arg(type)
   ##
+  # --- setup the environment ---
+  initEnv(refresh=TRUE)
+  
+  # Cap the number of tapers to prevent runaway
   Cap <- abs(tapcap)
   if (Cap == 0 || Cap > 1e5){ Cap <- 1e3 }
-  #  Niter<-number of refinement iterations usually <= 5
-  Niter <<- abs(niter)
-  #   if (Niter <= 0){Niter <- 0}
-  #   if (Niter == 0){ Niter <<- 1 }
+
+  #  Number of refinement iterations usually <= 5
+  envAssign("num_iter", abs(niter))
+  Niter <- envGet("num_iter")
+  
   #   ndec: number of actual psd calculations is n/ndec
   #   the rest are filled in with interpolation.  Sampling in
   #   frequency is variable to accommodate spectral shape
   lx <- length(x)
   if (lx < 10000) ndec <- 1
-  # --- env
-  #   psdenv <- new.env(parent=baseenv())
   #
   #            -----------------
   #  Get pilot estimate of psd with fixed number of tapers and no decimation
   msg <- sprintf("\t>>>> Pilot estimation with\t%i\ttapers\n",ntapinit)
   cat(msg)
   psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
-  nf <<- length(psd)
-  ones <- matrix(1,1,nf)  # row vec
-  #  Iterative refinement of spectrum 
-  ntaper <- ntapinit * ones
+  envAssign("num_freqs", length(psd))
+  nf <- envGet("num_freqs")
+  Ones <- ones(1, nf)  # row vec
+  ntaper <- ntapinit * Ones
   
-  # create a grayscale palette that begins slightly off black 
-  # (so plot is appended instead of recreated)
-  # optimal for visualization?
-  #   pal <- gray(1:Niter / Niter)
   if ( plotpsd && Niter > 0 ){
-    #     if (Niter < 3){Ncolors<-3} else {Ncolors<-Niter}
-    #     pal <- terrain.colors(Ncolors)
     require(RColorBrewer, quietly=TRUE, warn.conflicts=FALSE)
     pal <- brewer.pal(8, "Paired")
   }
+  
   if ( Niter > 0){
     cat("\t\t>>>> Adaptive spectrum refinement:\n")
     for ( iterate in  1:Niter ) {
       cat(sprintf("\t\t\t>>>> taper optimization round\t%02i\n",iterate))
-      #print(c(nf,length(ntaper),length(psd)))
-      kopt <- riedsid(psd, ntaper)
-      # print(c(nf,length(ntaper),length(psd)))
-      # riedsid resets nf
-      ntaper <- t(as.matrix(apply(rbind(matrix(1,1,nf)*Cap, kopt),2,min)))
-      #print(c(nf,length(ntaper),length(psd)))
+      kopt <- riedsid(psd, ntaper) # riedsid resets nf
+      # choose the minimum between Cap and koopt
+      ntaper <- t(as.matrix(apply(rbind(ones(1,nf)*Cap, kopt),2,min)))
       psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, 
                      plotpsd=plotpsd, plotcolor=pal[iterate])
-      #print(c(nf,length(ntaper),length(psd)))
     }
   }
   #  Scale to physical units and provide frequency vector
   psd <- psd/fsamp
-  nf <<- length(psd)
-  f <- t(t(seq(0, fsamp/2, length.out=nf)))
-  if (plotpsd==TRUE) {
-    lims <- ylims
-    par(las=1)
-#     plot(f[2:nf], psd[2:nf], 
-#          main="Adaptive Sine-multitaper PSD Estimation",
-#          sub=sprintf("%i iterations",Niter),
-#          log="y",
-#          ylab=sprintf("PSD rel. 1 %s**2 * N * dT",units[2]),
-#          ylim=lims, 
-#          xlab=sprintf("Freq. in 1/N/dT (dT in %s)",units[1]), 
-#          xlim=c(0,fsamp/2), xaxs="i",
-#          type="s")
-  }
+  nf <- envGet("num_freqs")
+  f <- t(t( seq.int(0, fsamp/2, length.out=nf) ))
+
   # psd class? [ ]
   psd.df <- data.frame(f=f, psd=psd, ntaper=t(ntaper))
   #psd.df <- list(freq=f, psd=psd, ntap=t(ntaper), call=match.call())

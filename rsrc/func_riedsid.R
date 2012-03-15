@@ -26,21 +26,21 @@ riedsid.default <- function(psd, ntaper) {
   #  Initialize with ntaper=scalar
   eps <- 1e-78  #  A small number to protect against zeros
   
-  # allow access to number of freqs global env
-  nf <<- length(psd)
+  envAssign("num_freqs", length(psd))
+  nf <- envGet("num_freqs")
   
-  ones <- matrix(1,1,nf)
-  zeros <- matrix(0,1,nf)
+  Ones <- ones(1,nf)
+  Zeros <- zeros(1,nf)
   
   if (length(ntaper)==1) { 
-    ntap <- ntaper*ones
+    ntap <- ntaper*Ones
   } else {
     ntap <- ntaper
   }
   # print(dim(ones))
   # print(dim(ntap))
   ## colMeans or rowMeans [ ]
-  nspan <- t( t( round( apply(rbind(0.5*nf*ones, 1.4*ntap), 2, min) ) ) )
+  nspan <- t( t( round( apply(rbind(0.5*nf*Ones, 1.4*ntap), 2, min) ) ) )
   
   #  Create log psd, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
@@ -48,7 +48,7 @@ riedsid.default <- function(psd, ntaper) {
   Y <- log(eps + c(psd[nadd:2], psd, psd[(nf-1):(nf-nadd)]))
   #  R <- psd"/psd <- Y" + (Y')^2  2nd form preferred for consistent smoothing
   #  
-  d2Y <- t(zeros)
+  d2Y <- t(Zeros)
   dY <- d2Y
   for (  j  in  1:nf ) {
     j1 <- j-nspan[j]+nadd-1 
@@ -110,7 +110,7 @@ riedsid.default <- function(psd, ntaper) {
   }
   ##  Never average over more than the psd length!
   ## colMeans or rowMeans [ ]
-  kopt <- t( apply( rbind(t(kopt), ones*round(nf/2)), 2, min) )
+  kopt <- t( apply( rbind(t(kopt), Ones*round(nf/2)), 2, min) )
   ##
   return(invisible(kopt))
 } 

@@ -36,6 +36,7 @@ psdcore.default <-function(x,
   ##
   ## TODO(abarbour):	
   ##
+
   require(signal, quietly=TRUE, warn.conflicts=FALSE)
   # for interp1
   #   require(clim.pact, quietly=T)
@@ -47,39 +48,54 @@ psdcore.default <-function(x,
   ###  When ntaper is a scalar, initialize
   lt <- length(ntaper)
   if (lt == 1){
-    n.o <- length(x)
-    n <<- n.o - n.o%%2    # Force series to be even in length (modulo division)
-    #     n <- nextn(n.o)
-    nhalf <<- n/2
-    varx <<- var(x[1:n]) 
-    ntap <- matrix(1, nhalf+1, 1)*ntaper  # Make a vector from scalar value
-    #  Remove mean & pad with zeros
-    z <- rbind( matrix(x[1:n],byrow=T) - mean(x[1:n]), matrix(0,n,1))
-    #  Take double-length fft
-    fftz <<- Re(fft(z))
+    # original series
+    envAssign("len_orig", length(x))
+    n.o <- envGet("len_orig")
+    # Force series to be even in length (modulo division)
+    envAssign("len_even", n.o - n.o%%2)
+    n.e <- envGet("len_even", psdenv)
+    x_even <- x[1:n.e]
+    # half length of even series
+    envAssign("len_even_half", n.e/2)
+    nhalf <- envGet("len_even_half")
+    # variance of even series
+    envAssign("ser_even_var", var(x_even))
+    varx <- envGet("ser_even_var")
+    # create uniform tapers
+    ntap <- ones(nhalf+1)*ntaper
+    ##  Remove mean & pad with zeros
+    # convert to sweep [ ]
+    z <- rbind( matrix(x_even, byrow=T) - mean(x_even), zeros(n.e) )
+    ##  Take double-length fft
+    envAssign("fft_even_demeaned_padded", Re(fft(z)))
+    fftz <- envGet("fft_even_demeaned_padded")
   } else {
     ntap <- ntaper
+    n.e <- envGet("len_even")
+    nhalf <- envGet("len_even_half")
+    varx <- envGet("ser_even_var")
+    fftz <- envGet("fft_even_demeaned_padded")
   }
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
     # interp1 requires strict monotonicity (for solution stability)
     nsum <- cumsum(1/ntap)
-    ns1<-nsum[1]
+    ns1 <- nsum[1]
     tmp.x <- nhalf * (nsum - ns1) / (nsum[length(nsum)] - ns1)
-    tmp.y <- seq(0, nhalf, by=1)
-    tmp.xi <- seq(0, nhalf, by=ndecimate)
+    tmp.y <- seq.int(0, nhalf, by=1)
+    tmp.xi <- seq.int(0, nhalf, by=ndecimate)
     # linear interplate (x,y) to (xi,yi) where xi is decimated sequence
-    tmp.yi <- interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
+    tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
     f <- c(round(tmp.yi), nhalf)
     iuniq <- 1 + which(diff(f) > 0)
     f <- c(0, f[iuniq])   #  Remove repeat frequencies in the list
   } else {
-    f <- seq(0, nhalf, by=1)
+    f <- seq.int(0, nhalf, by=1)
   }
   ###  Calculate the psd by averaging over tapered estimates
   nfreq <- length(f)
   #print(nfreq)
-  psd <- matrix(0, nfreq, 1)
+  psd <- zeros(nfreq)
   ###  Loop over frequency
   for ( j in 1:nfreq ) {
      m <- f[j]
@@ -88,15 +104,15 @@ psdcore.default <-function(x,
      if (tapers <= 0){
          k <- 1
        } else {
-         k <- seq(1, tapers, by=1)
+         k <- seq.int(1, tapers, by=1)
        }
      w <- rbind((tapers^2 - (k-1)^2) * (1.5/(tapers*(tapers-0.25)*(tapers+1))))
      # this is a distinction with order of operations and %% (2.14.0)
      # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
      # (but correct in matlab's function call) 
-     # So: enclose in parens or use mod in funcs2.R
-     j1 <- mod((2*m + 2*n - k), 2*n)
-     j2 <- mod((2*m + k), 2*n)
+     # So: enclose in parens or use rlpSpec::mod.default
+     j1 <- mod((2*m + 2*n.e - k), 2*n.e)
+     j2 <- mod((2*m + k), 2*n.e)
      f1 <- fftz[j1+1]
      f2 <- fftz[j2+1]
      psdv <- w %*% abs( f1 - f2 )^2
@@ -108,14 +124,14 @@ psdcore.default <-function(x,
     tmp.x <- f
     tmp.xi <- tmp.y
     tmp.y <- psd
-    tmp.yi <- interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
+    tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
     psd <- tmp.yi
   }
   ## Normalize by variance
   area <- (sum(psd) - psd[1]/2 - psd[length(psd)]/2)/nhalf  # 2*Trapezoid
   psd <- as.matrix((1*varx/area)*psd) #there was an apparently incorrect factor of 2 here
   psdtoplot <- 10*log10(psd[2:(nfreq-1)]) ## R uses 10* to scale to dB (why?)
-  frq <- seq(0, 0.5, length.out=nfreq)
+  frq <- seq.int(0, 0.5, length.out=nfreq)
   ftoplot <- frq[2:(nfreq-1)]
   ## Plot if desired
   if (plotpsd) {

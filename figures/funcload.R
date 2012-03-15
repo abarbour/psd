@@ -1,3 +1,4 @@
+# setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
 source("../rsrc/S3_plot.R")
 source("../rsrc/S3_print.R")
 source("../rsrc/S3_summary.R")
