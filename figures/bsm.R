@@ -184,4 +184,3 @@ txtdf <- rbind(data.frame(x=textx, y=tapcaps, lab=as.character(tapcaps)),
 
 ggsave("./bsmVarIt.pdf", height=7, width=6)
 ##
-
