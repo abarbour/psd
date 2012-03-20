@@ -55,6 +55,9 @@ pspectrum.default <- function(x,
   envAssign("num_iter", abs(niter))
   Niter <- envGet("num_iter")
   
+  envAssign("init_tap", abs(ntapinit))
+  ntapinit <- envGet("init_tap")
+  
   #   ndec: number of actual psd calculations is n/ndec
   #   the rest are filled in with interpolation.  Sampling in
   #   frequency is variable to accommodate spectral shape
