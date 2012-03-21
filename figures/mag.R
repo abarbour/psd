@@ -39,6 +39,8 @@ library(ggplot2)
 library(plyr)
 library(reshape)
 library(RColorBrewer)
+library(Hmisc)
+library(xtable)
 
 ###
 #
@@ -139,9 +141,22 @@ doMagOpt <- function(magpsd, LikFunc, src,
 # A and B optimization
 MagSpecOpt <- as.data.frame(rbind(doMagOpt(psmag.c, mag.lik, "clean"), doMagOpt(psmag.r, mag.lik, "raw")))
 rownames(MagSpecOpt) <- NULL
-MLE <- MagSpecOpt[MagSpecOpt$spec == "clean" & MagSpecOpt$convergence==0 & as.numeric(MagSpecOpt$lik_calls) < 10e3, c(3,4,6,7)]
-doMed <- function(vals){return(median(as.numeric(vals)))}
+MLEconv <- MagSpecOpt[MagSpecOpt$spec == "clean" & MagSpecOpt$convergence==0 & as.numeric(MagSpecOpt$lik_calls) < 10e3, 
+                      # method, lik_calls, grad_calls, A, sigA, B, sigB
+                      c(8,10,11,3,4,6,7)]
+rownames(MLEconv) <- NULL
+# culling
+MLE <- MLEconv[c(4:7)]
+doMed <- function(vals){return(mean(as.numeric(vals)))}
+# calc residuals (lapply??)
 MLE.res <- data.frame(A=doMed(MLE$A), sigA=doMed(MLE$sigA), B=doMed(MLE$B), sigB=doMed(MLE$sigB))
+# temp df for latex output
+meddf <- as.data.frame(c(c("","","means"), MLE.res))
+names(meddf) <- attr(MLEconv,'names')
+MLEtolatex <- rbind(MLEconv, meddf)
+# out to latex
+xtable::print.xtable(xtable::xtable(MLEtolatex), file="../tex/MLE.tex")
+# add some more info for plotting
 MLE.res$AU <- MLE.res$A + MLE.res$sigA
 MLE.res$AL <- MLE.res$A - MLE.res$sigA
 MLE.res$BU <- MLE.res$B + MLE.res$sigB
