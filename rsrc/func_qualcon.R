@@ -33,7 +33,7 @@ qualcon.default <-function(x, critvar=10) {
   x.w <- whiten(x)
   wcrit <- critvar * sqrt(var(x.w))
   par(ask=TRUE)
-  toret <- show.white(wcrit, 1:lx, x, x.w, pltlabs=FALSE)
+  toret <- show.whiten(wcrit, 1:lx, x, x.w, pltlabs=FALSE)
   Icrit <- which(abs(x.w) > wcrit)
   lIc <- length(Icrit)
   if (lIc > 0){
