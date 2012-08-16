@@ -2,7 +2,7 @@
 ###  Default method for pspectrum, the main function used for
 ###  adaptive estimation
 ###
-pspectrum.default <- function(x, 
+.pspectrum.default <- function(x, 
                       fsamp=1, 
                       tapcap=1e3, 
                       ntapinit=10, 
@@ -68,7 +68,7 @@ pspectrum.default <- function(x,
   #            -----------------
   #  Get pilot estimate of psd with fixed number of tapers and no decimation
   msg <- sprintf("\t>>>> Pilot estimation with\t%i\ttapers\n",ntapinit)
-  cat(msg)
+  message(msg)
   psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
   envAssign("num_freqs", length(psd))
   nf <- envGet("num_freqs")

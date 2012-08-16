@@ -2,11 +2,18 @@
 ##
 ##  Default method for psdcore, which does the grunt work
 ##
-.dev_psdcore.default <-function(X,  
-                           ntaper=1, ndecimate=1, 
-                           plotpsd=TRUE, plotcolor="#000000",
-                           xlims=c(0,0.5)) {
-  stopifnot(is.vector(X))
+..dev_psdcore.default <-function(X, 
+                                 X.frq=1, 
+                                 ntaper=1, 
+                                 ndecimate=1,
+                                 demean=TRUE, 
+                                 detrend=TRUE,
+                                 na.action = na.fail,
+                                 plotpsd=TRUE, 
+                                 #plotcolor="#000000", xlims=c(0,0.5),
+                                 as.spec=FALSE,
+                                 ...
+                                 ) {
   ###
   # PORT of RLP's psdcore.m
   # abarbour
@@ -50,26 +57,42 @@
   ###  When ntaper is a scalar, initialize
   lt <- length(ntaper)
   if (lt == 1){
+    #
+    stopifnot(is.vector(X))
+    series <- deparse(substitute(X))
+    X <- na.action(ts(X, frequency=X.frq))
+    Nyq <- frequency(X)/2
+    X <- as.matrix(X) # column mat
+    # 
     # original series
     n.o <- envAssignGet("len_orig", length(X))
+    #
+    if (detrend){
+      message("detrending (and demeaning)")
+      X <- as.matrix(residuals(lm(1 + 1:n.o ~ X)))
+    } else if (demean) {
+      message("demeaning")
+      X <- as.matrix(X - colMeans(X))
+    } else {
+      warning("no demean or detrend: result may be bogus")
+    }
+    #
     # Force series to be even in length (modulo division)
     n.e <<- envAssignGet("len_even", n.o - n.o%%2 )
-    x_even <<- X[1:n.e]
+    x_even <<- as.matrix(X[1:n.e])
     envAssign("ser_orig", X)
     envAssign("ser_orig_even", x_even)
     # half length of even series
     nhalf <- envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <<- envAssignGet("ser_even_var", stats::var(x_even))
+    varx <<- envAssignGet("ser_even_var", drop(stats::var(x_even)))
     # create uniform tapers
     ntap <<- colvec(nrow=nhalf+1, val=ntaper)
     ##  Remove mean & pad with zeros
-    # convert to sweep [ ]
-    ##z <<- rbind( matrix(x_even, byrow=T) - mean(x_even), zeros(n.e) )
-    z <<- matrix(c(x_even - base::mean(x_even), zeros(n.e)),ncol=1)
+    X.dem <<- matrix(c(x_even, zeros(n.e)),ncol=1)
     ##  Take double-length fft
-    # mvfft takes multicol matrix
-    fftz <<- envAssignGet("fft_even_demeaned_padded", Re(stats::fft(z)))
+    # mvfft takes matrix (allos multicolumn)
+    fftz <<- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
   } else {
     ntap <- ntaper
     n.e <- envGet("len_even")
@@ -89,8 +112,8 @@
     # linear interplate (x,y) to (xi,yi) where xi is decimated sequence
     tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
     f <- c(round(tmp.yi), nhalf)
-    iuniq <- 1 + which(diff(f) > 0)
-    f <- c(0, f[iuniq])   #  Remove repeat frequencies in the list
+    #iuniq <- 1 + which(diff(f) > 0)
+    f <- unique(c(0, f))   #  Remove repeat frequencies in the list
   } else {
     f <- seq.int(0, nhalf, by=1)
   }
@@ -100,36 +123,41 @@
   psd <- zeros(nfreq)
   ###  Loop over frequency
   ## change to apply []
-  for ( j in 1:nfreq ) {
-    fj <<- f[j]
-    tot.tapers <<- ntap[fj+1]
-    if (tot.tapers <= 0){
-      k. <<- 1
-    } else {
-      k. <<- seq.int(1, tot.tapers, by=1)
+  if (ntaper > 0){
+    xfft <- Re(fftz)
+    for ( j in 1:nfreq ) {
+      fj <<- f[j]
+      fj.tapers <<- ntap[fj+1]
+      #ft.tapers<=0
+      k. <<- ifelse(fj.tapers<=0, 1, seq.int(1, fj.tapers, by=1))
+      #  Sum over taper indexes weighting tapers parabolically
+      W. <<- matrix(
+        (fj.tapers*fj.tapers - (k.-1)*(k.-1))*3/2/fj.tapers/(fj.tapers-0.25)/(fj.tapers+1), 
+        nrow=1)
+      # this is a distinction with order of operations and %% (2.14.0)
+      # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
+      # (but correct in matlab's function call) 
+      # So: enclose in parens or use rlpSpec::mod.default
+      m1. <<- 2*fj + 2*n.e - k.
+      m2. <<- 2*n.e
+      j1 <<- m1. %% m2.
+      m1. <- 2*fj + k.
+      j2 <<- m1. %% m2.
+      f1 <<- xfft[j1+1]
+      f2 <<- xfft[j2+1]
+      af12. <<- abs( f1 - f2 )
+      af122. <<- af12. * af12.
+      psdv <<- W. %*% af122.
+      psd[fj] <- drop(psdv)
+      
     }
-    #  Sum over taper indexes weighting tapers parabolically
-    W. <<- matrix(
-      (tot.tapers*tot.tapers - (k.-1)*(k.-1))*3/2/tot.tapers/(tot.tapers-0.25)/(tot.tapers+1), 
-      nrow=1)
-    # this is a distinction with order of operations and %% (2.14.0)
-    # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
-    # (but correct in matlab's function call) 
-    # So: enclose in parens or use rlpSpec::mod.default
-    m1. <<- 2*fj + 2*n.e - k.
-    m2. <<- 2*n.e
-    j1 <<- m1. %% m2.
-    m1. <- 2*fj + k.
-    j2 <<- m1. %% m2.
-    f1 <<- fftz[j1+1]
-    f2 <<- fftz[j2+1]
-    af12. <<- abs( f1 - f2 )
-    af122. <<- af12. * af12.
-    psdv <<- W. %*% af122.
-    psd[fj] <- drop(psdv)
-    
+  } else {
+    message("zero taper result == raw periodogram")
+    xfft <- envGet("fft_even_demeaned_padded")
+    ff <- xfft[1:nfreq]
+    N0 <- envGet("len_orig")
+    psd <- ff * Conj(ff) / N0
   }
-  psd_F <<- psd
   ##  Interpolate if necessary to uniform freq sampling
   if (length(ntaper) > 1 && ndecimate > 1){
     ## check [ ]
@@ -142,15 +170,39 @@
     psd <- tmp.yi
     #psd_F <<- psd
   }
+  ##
+  psd <- as.matrix(drop(Re(psd)))
   ## Normalize by variance
   #message("psd norm")
-  trap.area <- (2*sum(psd) - psd[1] - psd[length(psd)])/2 # Trapezoidal rule
+  trap.area <- (2*sum(psd) - psd[1] - psd[nrow(psd)])/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
-  psd.norm <- trap.area / varx * bandwidth
-  psd <- as.matrix(psd / psd.norm)
+  psd.norm <- drop(trap.area / varx * bandwidth)
+  #plot(psd,type="s")
+  psd.n <- drop(psd / psd.norm)
   frq <- seq.int(0, 0.5, length.out=nfreq)
+  # there seems to be an issue with f==0, so just extrapolate from the prev point
+  psd.n <- as.matrix(
+    exp(as.numeric(signal::interp1(frq[2:(nfreq-2)], 
+                        log(psd.n[2:(nfreq-2)]), 
+                        frq, 
+                        method='linear', extrap=TRUE))))
+  frq <- as.matrix(frq)
+  
+  pltpsd <- function(...){
+    Xpg<-spec.pgram(X, log="no", pad=1, taper=0, detrend=F, demean=F, plot=F)
+    opar <- par(no.readonly = TRUE)
+    par(mar=rep(2,4), oma=rep(0,4))
+    layout(matrix(c(1,2),ncol=1),c(1,2))
+    plot(log(Xpg$freq), log10(Re(Xpg$spec)), col="red", type="l", main="spectra") #,ylim=5*c(-.5,1.5))
+    lines(as.vector(log(frq)), as.vector(log10(psd.n)), type="l")
+    legend("topright",c("spec.pgram","rlpSpec"),col=c("red","black"),lty=1)
+    plot(X,type="l", main="spec series")
+    par(opar)
+  }
+  if (plotpsd) pltpsd(...)
+  #plot(10*log10(psd),type="s")
   # 
-  spg.out <- list(freq = frq, spec = psd, 
+  psd.out <- list(freq = frq, spec = psd.n, 
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NA, 
@@ -158,26 +210,30 @@
                   bandwidth = bandwidth, 
                   n.used = envGet("len_even"), 
                   orig.n = envGet("len_orig"), 
-                  series = NA, 
+                  series = series, 
                   snames = colnames(X), 
                   method = "Adaptive Sine Multitaper (rlpSpec)", 
-                  taper = taper, 
+                  taper = ntaper, 
                   pad = TRUE, 
                   detrend = NA, 
                   demean = TRUE)
   ## Plot if desired
-  if (plotpsd) {
-    if (plotcolor=="#000000" || plotcolor==0){
-      # initial plot (black)
-      #plot(ftoplot, psdtoplot, type="s",
-      plot(frq, 10*log10(psd), type="s",
-           main="Adaptive Sine-multitaper PSD Estimation",
-           xlab="Nyquist frequency", xlim=xlims,
-           ylab="PSD, dB rel. Nyquist")
-    } else {
-      # so adaptive estimation may be visualized
-      lines(frq, 10*log10(psd), type="s", col=plotcolor)
-    }
-  }
-  return(invisible(psd))
+  #   if (plotpsd) {
+  #     if (plotcolor=="#000000" || plotcolor==0){
+  #       # initial plot (black)
+  #       #plot(ftoplot, psdtoplot, type="s",
+  #       #       print(summary(psd.n))
+  # #             print(head(psd.n),2)
+  # #             print(tail(psd.n),2)
+  #       plot((frq), 10*log10(psd.n), type="s",
+  #            main="Adaptive Sine-multitaper PSD Estimation",
+  #            xlab="Nyquist frequency", #xlim=xlims,
+  #            ylab="PSD, dB rel. Nyquist")
+  #     } else {
+  #       # so adaptive estimation may be visualized
+  #       lines(log10(frq), 10*log10(psd.n), type="s", col=plotcolor)
+  #     }
+  #   }
+  if (as.spec){class(psd.out) <- "spec"}
+  return(invisible(psd.out))
 }

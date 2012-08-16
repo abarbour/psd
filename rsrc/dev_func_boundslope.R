@@ -2,7 +2,7 @@
 ##  Default method to forward and backwards constrain the slope of
 ##  the second derivative of the spectrum
 ##
-boundslope.default <- function(kopt){
+.boundslope.default <- function(kopt){
   ##
   ## Args:  
   ##

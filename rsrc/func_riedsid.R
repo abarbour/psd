@@ -1,7 +1,7 @@
 ##
 ##  Default method for riedsid, the Riedel & Sidorenko taper optimization
 ##
-riedsid.default <- function(psd, ntaper) {
+.riedsid.default <- function(psd, ntaper) {
   ###
   # PORT of RLP's riedsid.m
   # abarbour

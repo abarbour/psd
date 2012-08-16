@@ -1,7 +1,7 @@
 ##
 ##  Default method for psdcore, which does the grunt work
 ##
-psdcore.default <-function(x,  
+.psdcore.default <-function(x,  
                            ntaper=1, ndecimate=1, 
                            plotpsd=TRUE, plotcolor="#000000",
                            xlims=c(0,0.5)) {

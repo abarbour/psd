@@ -4,7 +4,7 @@
 ###
 # TODO(abarbour):
 ##
-initEnv.default <- function(refresh=FALSE, verbose=TRUE, ...){
+.rlp_initEnv.default <- function(refresh=FALSE, verbose=TRUE, ...){
   # initialize the psd environment
   env <- "psdenv"
   if(!exists(env) | refresh){
@@ -14,34 +14,34 @@ initEnv.default <- function(refresh=FALSE, verbose=TRUE, ...){
     if (verbose) message(sprintf("\t>>>> The ** %s ** environment is already initialized.\n",env))
   }
 }
-envList.default <- function(envir=psdenv){
+.rlp_envList.default <- function(envir=psdenv){
   ## return listing of envir::variable
   ls(envir=envir)
 }
-envGet.default <- function(variable, envir=psdenv){
+.rlp_envGet.default <- function(variable, envir=psdenv){
   ## return contents on envir::variable
   get(variable, envir=envir)
 }
-envAssign.default <- function(variable, value, envir=psdenv){
+.rlp_envAssign.default <- function(variable, value, envir=psdenv){
   ## set contents of envir::variable to value
   assign(variable, value, envir=envir)
 }
-envAssignGet.default <- function(variable, value, envir=psdenv){
+.rlp_envAssignGet.default <- function(variable, value, envir=psdenv){
   ## set contents of envir::variable to value
   envAssign(variable, value, envir=envir)
   envGet(variable, envir=envir)
 }
 ##
-nas.default <- function(nrow, ncol=1){matrix(NA, nrow, ncol)}
+.nas.default <- function(nrow, ncol=1){matrix(NA, nrow, ncol)}
 ##
-colvec.default <- function(nrow, val){matrix(val, nrow=nrow, ncol=1)}
-rowvec.default <- function(ncol, val){matrix(val, nrow=1, ncol=ncol)}
+.colvec.default <- function(nrow, val){matrix(val, nrow=nrow, ncol=1)}
+.rowvec.default <- function(ncol, val){matrix(val, nrow=1, ncol=ncol)}
 ##
-zeros.default <- function(nrow){colvec(nrow, 0)}
+.zeros.default <- function(nrow){colvec(nrow, 0)}
 ##
-ones.default <- function(nrow){colvec(nrow, 1)}
+.ones.default <- function(nrow){colvec(nrow, 1)}
 ##
-mod.default <- function(x,y){
+.mod.default <- function(x,y){
   ## modulo division
   ## R %/% requires strict consideration of order of operations whereas this is
   ## function internal and thus less prone to error, but perhaps less efficient?

@@ -1,4 +1,4 @@
-whiten.default <- function(x) {
+.whiten.default <- function(x) {
   ###
   # PORT of RLP's riedsid.m
   # abarbour

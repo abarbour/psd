@@ -1,7 +1,7 @@
 ###
 ###  Default method for qualcon, the quality control (whitening) system
 ###
-qualcon.default <-function(x, critvar=10) {
+.qualcon.default <-function(x, critvar=10) {
   ###
   # PORT of RLP's qualcon.m
   # with mods by abarbour
