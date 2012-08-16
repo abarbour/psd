@@ -10,7 +10,8 @@ pspectrum.default <- function(x,
                       ndec=1,
                       units=c("time","signal"),
                       plotpsd=TRUE, 
-                      ylims=c(.07,3e4), xlims=c(0,0.5)) {
+                      ylims=c(.07,3e4), xlims=c(0,0.5),
+                      devmode=FALSE) {
   ###
   # PORT of RLP's pspectrum.m
   # abarbour
@@ -71,7 +72,7 @@ pspectrum.default <- function(x,
   psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
   envAssign("num_freqs", length(psd))
   nf <- envGet("num_freqs")
-  Ones <- ones(1, nf)  # row vec
+  Ones <- rowvec(nf, 1)  # row vec of ones
   ntaper <- ntapinit * Ones
   
   if ( plotpsd && Niter > 0 ){
@@ -85,8 +86,11 @@ pspectrum.default <- function(x,
       cat(sprintf("\t\t\t>>>> taper optimization round\t%02i\n",iterate))
       kopt <- riedsid(psd, ntaper) # riedsid resets nf
       # choose the minimum between Cap and koopt
-      ntaper <- t(as.matrix(apply(rbind(ones(1,nf)*Cap, kopt),2,min)))
-      psd <- psdcore(x, ntaper=ntaper, ndecimate=ndec, 
+      Caps <- rowvec(nf, 1) * Cap
+      ntaper <- t(as.matrix(apply(rbind(Caps, kopt),2,min)))
+      PSDFUN <- psdcore
+      if (devmode) PSDFUN <- .devpsdcore
+      psd <- PSDFUN(x, ntaper=ntaper, ndecimate=ndec, 
                      plotpsd=plotpsd, plotcolor=pal[iterate])
     }
   }

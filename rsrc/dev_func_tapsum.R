@@ -60,8 +60,7 @@
     # half length of even series
     nhalf <- envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    envAssign("ser_even_var", stats::var(x_even))
-    varx <- envGet("ser_even_var")
+    varx <<- envAssignGet("ser_even_var", stats::var(x_even))
     # create uniform tapers
     ntap <<- colvec(nrow=nhalf+1, val=ntaper)
     ##  Remove mean & pad with zeros
@@ -80,6 +79,7 @@
   }
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
+    message("decim stage 1")
     # interp1 requires strict monotonicity (for solution stability)
     nsum <- base::cumsum(1/ntap)
     ns1 <- nsum[1]
@@ -99,6 +99,7 @@
   #print(nfreq)
   psd <- zeros(nfreq)
   ###  Loop over frequency
+  ## change to apply []
   for ( j in 1:nfreq ) {
     fj <<- f[j]
     tot.tapers <<- ntap[fj+1]
@@ -125,27 +126,45 @@
     af12. <<- abs( f1 - f2 )
     af122. <<- af12. * af12.
     psdv <<- W. %*% af122.
-    psd[j,1] <- psdv
+    psd[fj] <- drop(psdv)
     
   }
   psd_F <<- psd
   ##  Interpolate if necessary to uniform freq sampling
   if (length(ntaper) > 1 && ndecimate > 1){
     ## check [ ]
+    message("decim stage 2")
     tmp.x <- f
     tmp.xi <- tmp.y
     tmp.y <- psd
     #psd_I <<- psd
-    tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method="cubic") #, method='linear', extrap=TRUE)
+    tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
     psd <- tmp.yi
     #psd_F <<- psd
   }
   ## Normalize by variance
-  area <- (sum(psd) - psd[1]/2 - psd[length(psd)]/2)/nhalf  # 2*Trapezoid
-  psd <- as.matrix((1*varx/area)*psd) #there was an apparently incorrect factor of 2 here
-  psdtoplot <- 10*log10(psd[2:(nfreq-1)]) ## R uses 10* to scale to dB (why?)
+  #message("psd norm")
+  trap.area <- (2*sum(psd) - psd[1] - psd[length(psd)])/2 # Trapezoidal rule
+  bandwidth <- 1 / nhalf
+  psd.norm <- trap.area / varx * bandwidth
+  psd <- as.matrix(psd / psd.norm)
   frq <- seq.int(0, 0.5, length.out=nfreq)
-  ftoplot <- frq[2:(nfreq-1)]
+  # 
+  spg.out <- list(freq = frq, spec = psd, 
+                  coh = NULL, 
+                  phase = NULL, 
+                  kernel = NA, 
+                  df = NA, 
+                  bandwidth = bandwidth, 
+                  n.used = envGet("len_even"), 
+                  orig.n = envGet("len_orig"), 
+                  series = NA, 
+                  snames = colnames(X), 
+                  method = "Adaptive Sine Multitaper (rlpSpec)", 
+                  taper = taper, 
+                  pad = TRUE, 
+                  detrend = NA, 
+                  demean = TRUE)
   ## Plot if desired
   if (plotpsd) {
     if (plotcolor=="#000000" || plotcolor==0){
@@ -157,7 +176,7 @@
            ylab="PSD, dB rel. Nyquist")
     } else {
       # so adaptive estimation may be visualized
-      ##lines(ftoplot, psdtoplot, type="s", col=plotcolor)
+      lines(frq, 10*log10(psd), type="s", col=plotcolor)
     }
   }
   return(invisible(psd))

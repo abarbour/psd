@@ -29,8 +29,8 @@ riedsid.default <- function(psd, ntaper) {
   envAssign("num_freqs", length(psd))
   nf <- envGet("num_freqs")
   
-  Ones <- ones(1,nf)
-  Zeros <- zeros(1,nf)
+  Ones <- rowvec(nf, 1)
+  Zeros <- rowvec(nf, 0)
   
   if (length(ntaper)==1) { 
     ntap <- ntaper*Ones

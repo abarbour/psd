@@ -35,6 +35,7 @@ envAssignGet.default <- function(variable, value, envir=psdenv){
 nas.default <- function(nrow, ncol=1){matrix(NA, nrow, ncol)}
 ##
 colvec.default <- function(nrow, val){matrix(val, nrow=nrow, ncol=1)}
+rowvec.default <- function(ncol, val){matrix(val, nrow=1, ncol=ncol)}
 ##
 zeros.default <- function(nrow){colvec(nrow, 0)}
 ##
