@@ -1,16 +1,20 @@
 ### Define default methods for functions
 pspectrum <- function(x, ...) UseMethod("pspectrum")
 psdcore <- function(x, ...) UseMethod("psdcore")
+.devpsdcore <- function(x, ...) UseMethod(".dev_psdcore")
 riedsid <- function(x, ...) UseMethod("riedsid")
 whiten <- function(x, ...) UseMethod("whiten")
 qualcon <- function(x, ...) UseMethod("qualcon")
 boundslope <- function(x, ...) UseMethod("boundslope")
 # in suppfuncs
 initEnv <- function(x, ...) UseMethod("initEnv")
+envList <- function(x, ...) UseMethod("envList")
 envAssign <- function(x, ...) UseMethod("envAssign")
 envGet <- function(x, ...) UseMethod("envGet")
+envAssignGet <- function(x, ...) UseMethod("envAssignGet")
 nas <- function(x, ...) UseMethod("nas")
 mod <- function(x, ...) UseMethod("mod")
+colvec <- function(x, ...) UseMethod("colvec")
 ones <- function(x, ...) UseMethod("ones")
 zeros <- function(x, ...) UseMethod("zeros")
 ###

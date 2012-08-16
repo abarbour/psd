@@ -4,17 +4,21 @@
 ###
 # TODO(abarbour):
 ##
-initEnv.default <- function(refresh=FALSE, ...){
+initEnv.default <- function(refresh=FALSE, verbose=TRUE, ...){
   # initialize the psd environment
   env <- "psdenv"
   if(!exists(env) | refresh){
     psdenv <<- new.env(parent=baseenv(), ...)
-    cat(sprintf("\t>>>> ** %s ** environment initialized\n",env))
+    if (verbose) message(sprintf("\t>>>> ** %s ** environment initialized\n",env))
   } else if (!refresh) {
-    cat(sprintf("\t>>>> The ** %s ** environment is already initialized.\n",env))
+    if (verbose) message(sprintf("\t>>>> The ** %s ** environment is already initialized.\n",env))
   }
 }
-envGet.default <- function(variable, value, envir=psdenv){
+envList.default <- function(envir=psdenv){
+  ## return listing of envir::variable
+  ls(envir=envir)
+}
+envGet.default <- function(variable, envir=psdenv){
   ## return contents on envir::variable
   get(variable, envir=envir)
 }
@@ -22,12 +26,19 @@ envAssign.default <- function(variable, value, envir=psdenv){
   ## set contents of envir::variable to value
   assign(variable, value, envir=envir)
 }
+envAssignGet.default <- function(variable, value, envir=psdenv){
+  ## set contents of envir::variable to value
+  envAssign(variable, value, envir=envir)
+  envGet(variable, envir=envir)
+}
 ##
 nas.default <- function(nrow, ncol=1){matrix(NA, nrow, ncol)}
 ##
-zeros.default <- function(nrow, ncol=1){matrix(0, nrow, ncol)}
+colvec.default <- function(nrow, val){matrix(val, nrow=nrow, ncol=1)}
 ##
-ones.default <- function(nrow, ncol=1){matrix(1, nrow, ncol)}
+zeros.default <- function(nrow){colvec(nrow, 0)}
+##
+ones.default <- function(nrow){colvec(nrow, 1)}
 ##
 mod.default <- function(x,y){
   ## modulo division
