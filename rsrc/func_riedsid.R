@@ -1,7 +1,7 @@
 ##
 ##  Default method for riedsid, the Riedel & Sidorenko taper optimization
 ##
-.riedsid.default <- function(psd, ntaper) {
+.riedsid.default <- function(spec, ntaper) {
   ###
   # PORT of RLP's riedsid.m
   # abarbour
@@ -12,7 +12,7 @@
   ###
   #
   #  Estimates optimal number of tapers at each frequency of
-  #  given psd, based on Riedel-Sidorenko MSE recipe and other
+  #  given spec, based on Riedel-Sidorenko MSE recipe and other
   #  tweaks due to RLP.  
   #  ntaper is the vector of taper lengths in the previous iteration.
   #
@@ -23,30 +23,33 @@
   ##
   ## TODO(abarbour):
   ##
-  #  Initialize with ntaper=scalar
+
+  message("\t\ttaper optimization")
   eps <- 1e-78  #  A small number to protect against zeros
   
-  envAssign("num_freqs", length(psd))
-  nf <- envGet("num_freqs")
+  spec <- as.vector(spec)
   
-  Ones <- rowvec(nf, 1)
-  Zeros <- rowvec(nf, 0)
+  nf <- envAssignGet("num_freqs", length(spec))
+  
+  Ones <- ones(nf) # was rowvec
+  Zeros <- zeros(nf) # was rowvec
   
   if (length(ntaper)==1) { 
     ntap <- ntaper*Ones
   } else {
     ntap <- ntaper
   }
-  # print(dim(ones))
-  # print(dim(ntap))
-  ## colMeans or rowMeans [ ]
-  nspan <- t( t( round( apply(rbind(0.5*nf*Ones, 1.4*ntap), 2, min) ) ) )
+  # find the minimum by column for nf/2, 
+  nspan <<- as.matrix(apply(cbind(nf*Ones/2, 7*ntap/5),1,min))
   
-  #  Create log psd, and pad to handle begnning and end values
+  # rowvec:
+  #nspan <- t( t( round( apply(rbind(0.5*nf*Ones, 1.4*ntap), 2, min) ) ) )
+  
+  #  Create log spec, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
-  # [psd(nadd:-1:2); psd; psd(nf-1:-1:nf-nadd)]
-  Y <- log(eps + c(psd[nadd:2], psd, psd[(nf-1):(nf-nadd)]))
-  #  R <- psd"/psd <- Y" + (Y')^2  2nd form preferred for consistent smoothing
+  # [spec(nadd:-1:2); spec; spec(nf-1:-1:nf-nadd)]
+  Y <- log(eps + c(spec[nadd:2], spec, spec[(nf-1):(nf-nadd)]))
+  #  R <- spec"/spec <- Y" + (Y')^2  2nd form preferred for consistent smoothing
   #  
   d2Y <- t(Zeros)
   dY <- d2Y
@@ -67,12 +70,12 @@
     d2Y[j,1] <- (u2 - uzero) %*% Y[jr] * (360/(L*(L2 - 1)*(L2 - 4)))
   }
   #
-  #  Riedel-Sidorenko recipe (eq 13): kopt <- (12*abs(psd ./ d2psd)).^0.4 but
-  #  parabolic weighting in psdcore requires: (480)^0.2*abs(psd./d2psd)^0.4
+  #  Riedel-Sidorenko recipe (eq 13): kopt <- (12*abs(spec ./ d2spec)).^0.4 but
+  #  parabolic weighting in psdcore requires: (480)^0.2*abs(spec./d2spec)^0.4
   #
-  #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
+  #  Original form:  kopt <- 3.428*abs(spec ./ d2spec).^0.4
   kopt <- round( 3.428 / abs(eps + d2Y + dY^2)^0.4 )
-  #  Curb run-away growth of kopt due to zeros of psd'' limits
+  #  Curb run-away growth of kopt due to zeros of spec'' limits
   #  slopes to be < 1 in magnitude, preventing greedy averaging:
   #  Scan forward and create new series where slopes <= 1
   state<-0
@@ -108,7 +111,7 @@
        }
     }
   }
-  ##  Never average over more than the psd length!
+  ##  Never average over more than the spec length!
   ## colMeans or rowMeans [ ]
   kopt <- t( apply( rbind(t(kopt), Ones*round(nf/2)), 2, min) )
   ##

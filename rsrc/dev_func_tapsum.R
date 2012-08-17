@@ -9,7 +9,7 @@
                                  demean=TRUE, 
                                  detrend=TRUE,
                                  na.action = na.fail,
-                                 plotpsd=TRUE, 
+                                 plotpsd=FALSE, 
                                  #plotcolor="#000000", xlims=c(0,0.5),
                                  as.spec=FALSE,
                                  ...
@@ -78,21 +78,21 @@
     }
     #
     # Force series to be even in length (modulo division)
-    n.e <<- envAssignGet("len_even", n.o - n.o%%2 )
-    x_even <<- as.matrix(X[1:n.e])
+    n.e <- envAssignGet("len_even", n.o - n.o%%2 )
+    x_even <- as.matrix(X[1:n.e])
     envAssign("ser_orig", X)
     envAssign("ser_orig_even", x_even)
     # half length of even series
     nhalf <- envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <<- envAssignGet("ser_even_var", drop(stats::var(x_even)))
+    varx <- envAssignGet("ser_even_var", drop(stats::var(x_even)))
     # create uniform tapers
-    ntap <<- colvec(nrow=nhalf+1, val=ntaper)
+    ntap <- colvec(nrow=nhalf+1, val=ntaper)
     ##  Remove mean & pad with zeros
-    X.dem <<- matrix(c(x_even, zeros(n.e)),ncol=1)
+    X.dem <- matrix(c(x_even, zeros(n.e)),ncol=1)
     ##  Take double-length fft
     # mvfft takes matrix (allos multicolumn)
-    fftz <<- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
+    fftz <- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
   } else {
     ntap <- ntaper
     n.e <- envGet("len_even")
@@ -126,28 +126,28 @@
   if (ntaper > 0){
     xfft <- Re(fftz)
     for ( j in 1:nfreq ) {
-      fj <<- f[j]
-      fj.tapers <<- ntap[fj+1]
+      fj <- f[j]
+      fj.tapers <- ntap[fj+1]
       #ft.tapers<=0
-      k. <<- ifelse(fj.tapers<=0, 1, seq.int(1, fj.tapers, by=1))
+      k. <- ifelse(fj.tapers<=0, 1, seq.int(1, fj.tapers, by=1))
       #  Sum over taper indexes weighting tapers parabolically
-      W. <<- matrix(
+      W. <- matrix(
         (fj.tapers*fj.tapers - (k.-1)*(k.-1))*3/2/fj.tapers/(fj.tapers-0.25)/(fj.tapers+1), 
         nrow=1)
       # this is a distinction with order of operations and %% (2.14.0)
       # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
       # (but correct in matlab's function call) 
       # So: enclose in parens or use rlpSpec::mod.default
-      m1. <<- 2*fj + 2*n.e - k.
-      m2. <<- 2*n.e
-      j1 <<- m1. %% m2.
+      m1. <- 2*fj + 2*n.e - k.
+      m2. <- 2*n.e
+      j1 <- m1. %% m2.
       m1. <- 2*fj + k.
-      j2 <<- m1. %% m2.
-      f1 <<- xfft[j1+1]
-      f2 <<- xfft[j2+1]
-      af12. <<- abs( f1 - f2 )
-      af122. <<- af12. * af12.
-      psdv <<- W. %*% af122.
+      j2 <- m1. %% m2.
+      f1 <- xfft[j1+1]
+      f2 <- xfft[j2+1]
+      af12. <- abs( f1 - f2 )
+      af122. <- af12. * af12.
+      psdv <- W. %*% af122.
       psd[fj] <- drop(psdv)
       
     }
@@ -165,10 +165,8 @@
     tmp.x <- f
     tmp.xi <- tmp.y
     tmp.y <- psd
-    #psd_I <<- psd
     tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
     psd <- tmp.yi
-    #psd_F <<- psd
   }
   ##
   psd <- as.matrix(drop(Re(psd)))
@@ -202,11 +200,13 @@
   if (plotpsd) pltpsd(...)
   #plot(10*log10(psd),type="s")
   # 
-  psd.out <- list(freq = frq, spec = psd.n, 
+  psd.out <- list(freq = frq, 
+                  spec = psd.n, 
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NA, 
                   df = NA, 
+                  numfreq = nfreq,
                   bandwidth = bandwidth, 
                   n.used = envGet("len_even"), 
                   orig.n = envGet("len_orig"), 

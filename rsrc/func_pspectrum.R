@@ -50,14 +50,12 @@
   
   # Cap the number of tapers to prevent runaway
   Cap <- abs(tapcap)
-  if (Cap == 0 || Cap > 1e5){ Cap <- 1e3 }
+  if (Cap == 0 | Cap > 1e5){ Cap <- 1e3 }
 
   #  Number of refinement iterations usually <= 5
-  envAssign("num_iter", abs(niter))
-  Niter <- envGet("num_iter")
+  Niter <- envAssignGet("num_iter", abs(niter))
   
-  envAssign("init_tap", abs(ntapinit))
-  ntapinit <- envGet("init_tap")
+  ntapinit <- envAssignGet("init_tap", abs(ntapinit))
   
   #   ndec: number of actual psd calculations is n/ndec
   #   the rest are filled in with interpolation.  Sampling in
@@ -65,15 +63,21 @@
   lx <- length(x)
   if (lx < 10000) ndec <- 1
   #
+  PSDFUN <- psdcore
+  if (devmode) {
+    warning("operating in development mode")
+    PSDFUN <- .devpsdcore
+  }
   #            -----------------
   #  Get pilot estimate of psd with fixed number of tapers and no decimation
-  msg <- sprintf("\t>>>> Pilot estimation with\t%i\ttapers\n",ntapinit)
-  message(msg)
-  psd <- psdcore(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
-  envAssign("num_freqs", length(psd))
-  nf <- envGet("num_freqs")
-  Ones <- rowvec(nf, 1)  # row vec of ones
-  ntaper <- ntapinit * Ones
+  message(sprintf("\t>>>> Pilot estimation with\t%i\ttapers",ntapinit))
+  psd <- PSDFUN(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
+  ## add this to psdcore return?
+  nf <- nrow(psd$freq)
+  ##nf <- length(psd)
+  envAssign("num_freqs", nf)
+  Ones <<- ones(nf)  # row vec of ones
+  ntaper <<- ntapinit * Ones
   
   if ( plotpsd && Niter > 0 ){
     require(RColorBrewer, quietly=TRUE, warn.conflicts=FALSE)
@@ -81,15 +85,16 @@
   }
   
   if ( Niter > 0){
-    cat("\t\t>>>> Adaptive spectrum refinement:\n")
+    message("\t\t>>>> Adaptive spectrum refinement:")
     for ( iterate in  1:Niter ) {
-      cat(sprintf("\t\t\t>>>> taper optimization round\t%02i\n",iterate))
-      kopt <- riedsid(psd, ntaper) # riedsid resets nf
-      # choose the minimum between Cap and koopt
-      Caps <- rowvec(nf, 1) * Cap
-      ntaper <- t(as.matrix(apply(rbind(Caps, kopt),2,min)))
-      PSDFUN <- psdcore
-      if (devmode) PSDFUN <- .devpsdcore
+      message(sprintf("\t\t\t>>>> taper optimization round\t%02i",iterate))
+      kopt <<- riedsid(psd$spec, ntaper) # riedsid resets nf
+      stopifnot(exists('kopt'))
+      # choose the minimum between Cap and kopt
+      #Caps <<- rowvec(nf, 1) * Cap
+      #ntaper <- t(as.matrix(apply(rbind(Caps, kopt),2,min)))
+      ntaper <- kopt
+      ntaper[ntaper>Cap] <- Cap
       psd <- PSDFUN(x, ntaper=ntaper, ndecimate=ndec, 
                      plotpsd=plotpsd, plotcolor=pal[iterate])
     }
@@ -104,7 +109,7 @@
   #psd.df <- list(freq=f, psd=psd, ntap=t(ntaper), call=match.call())
   # for method print to show call
   # move to psd method [ ]
-#   cat("\t>>>> Results summary:\n")
+#   message("\t>>>> Results summary:")
 #   print(summary(psd.df))
   return(invisible(psd.df))
   # return a structure.  From acf():
