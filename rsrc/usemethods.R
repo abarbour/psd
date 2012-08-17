@@ -18,4 +18,6 @@ colvec <- function(x, ...) UseMethod(".colvec")
 rowvec <- function(x, ...) UseMethod(".rowvec")
 ones <- function(x, ...) UseMethod(".ones")
 zeros <- function(x, ...) UseMethod(".zeros")
+#
+splineGrad <- function(x, ...) UseMethod(".splineGrad")
 ###

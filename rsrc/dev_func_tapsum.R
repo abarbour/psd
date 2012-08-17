@@ -2,7 +2,7 @@
 ##
 ##  Default method for psdcore, which does the grunt work
 ##
-..dev_psdcore.default <-function(X, 
+..dev_psdcore.default <-function(X.d, 
                                  X.frq=1, 
                                  ntaper=1, 
                                  ndecimate=1,
@@ -58,22 +58,23 @@
   lt <- length(ntaper)
   if (lt == 1){
     #
-    stopifnot(is.vector(X))
-    series <- deparse(substitute(X))
-    X <- na.action(ts(X, frequency=X.frq))
-    Nyq <- frequency(X)/2
-    X <- as.matrix(X) # column mat
+    stopifnot(is.vector(X.d))
+    series <- deparse(substitute(X.d))
+    X.d <- na.action(ts(X.d, frequency=X.frq))
+    Nyq <- frequency(X.d)/2
+    X.d <- as.matrix(X.d) # column mat
     # 
     # original series
-    n.o <- envAssignGet("len_orig", length(X))
+    n.o <- envAssignGet("len_orig", length(X.d))
     #
     if (detrend){
       message("detrending (and demeaning)")
-      X <- as.matrix(residuals(lm(1 + 1:n.o ~ X)))
+      X <- as.matrix(residuals( lm(y ~ x, data.frame(x=1:n.o+1, y=X.d)) ))
     } else if (demean) {
       message("demeaning")
-      X <- as.matrix(X - colMeans(X))
+      X <- as.matrix(X.d - colMeans(X.d))
     } else {
+      X <- X.d
       warning("no demean or detrend: result may be bogus")
     }
     #
@@ -194,7 +195,7 @@
     plot(log(Xpg$freq), log10(Re(Xpg$spec)), col="red", type="l", main="spectra") #,ylim=5*c(-.5,1.5))
     lines(as.vector(log(frq)), as.vector(log10(psd.n)), type="l")
     legend("topright",c("spec.pgram","rlpSpec"),col=c("red","black"),lty=1)
-    plot(X,type="l", main="spec series")
+    plot(X,type="l", main="spec series (de-trend/-mean if applied)")
     par(opar)
   }
   if (plotpsd) pltpsd(...)
