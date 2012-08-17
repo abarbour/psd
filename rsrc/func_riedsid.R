@@ -28,7 +28,8 @@
   ## TODO(abarbour):
   ##
 
-  message("\t\ttaper optimization")
+  ##message("\t\ttaper optimization")
+  ##
   eps <- 1e-78  #  A small number to protect against zeros
   
   spec <- as.vector(spec)
@@ -44,7 +45,10 @@
     ntap <- ntaper
   }
   # find the minimum by column for 1/2 nf, 7/5 ntap
-  nspan <- as.matrix(apply(cbind(nf*Ones/2, 7*ntap/5), MARGIN=1, FUN=base::min))
+  # ones is colvec, ntap is colvec
+  minmat <- cbind(nf*Ones/2, 7*ntap/5)
+  # margin==1 produces a colvec of rowwise minimums
+  nspan <- as.matrix(apply(minmat, MARGIN=1, FUN=base::min))
   # when it was rowvec:
   #nspan <- t( t( round( apply(rbind(0.5*nf*Ones, 1.4*ntap), 2, min) ) ) )
   
@@ -83,7 +87,7 @@
   restrict.deriv <- match.arg(restrict.deriv)
   do.restrict <- ifelse(restrict.deriv=="none",FALSE,TRUE)
   if (do.restrict){
-    message(restrict.deriv)
+    ##message(restrict.deriv)
     kseq <- 1:nf
     #  Curb run-away growth of kopt due to zeros of spec'' limits
     if (restrict.deriv=="slope"){
@@ -125,12 +129,16 @@
         }
       }
     } else if (restrict.deriv=="loess"){
+      # Loess regression smoothing
       kopt <- as.matrix(predict(
         stats::loess(y ~ x, data.frame(x=kseq,y=kopt), span=.08, degree=0)),
                         data.frame(x=kseq))
     } else if (restrict.deriv=="friedman.super"){
+      # Friedman's super smoother.
+      # Meh.
       kopt <- as.matrix(stats::supsmu(kseq,kopt,, span=.3, bass=2)$y)
     } else{
+      # nothing
       do.restrict <- FALSE
     }
   }
@@ -139,9 +147,11 @@
   }
   ##  Never average over more than the spec length!
   ## kopt is colvec, Ones is colvec
-  kopt.bound <- as.matrix( apply( cbind(kopt, Ones*round(nf/2)), MARGIN=2, FUN=min) )
+  minmat2 <- cbind(kopt, Ones*round(nf/2))
+  # margin==1 priduce colvec of rowwise minimums
+  kopt.bound <- as.matrix( apply(minmat2, MARGIN=1, FUN=base::min) )
   ##
-  return(invisible(kopt))
+  return(invisible(kopt.bound))
 } 
 # end riedsid.default
 ###

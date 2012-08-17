@@ -54,24 +54,26 @@
   # persistent [ ]
   #persistent fftz n nhalf varx
   #
+  stopifnot(is.vector(X.d))
+  series <- deparse(substitute(X.d))
+  X.d <- na.action(ts(X.d, frequency=X.frq))
+  Nyq <- frequency(X.d)/2
+  X.d <- as.matrix(X.d) # column mat
+  ##
   ###  When ntaper is a scalar, initialize
-  lt <- length(ntaper)
+  ##
+  lt <- length(drop(ntaper))
   if (lt == 1){
     #
-    stopifnot(is.vector(X.d))
-    series <- deparse(substitute(X.d))
-    X.d <- na.action(ts(X.d, frequency=X.frq))
-    Nyq <- frequency(X.d)/2
-    X.d <- as.matrix(X.d) # column mat
     # 
     # original series
     n.o <- envAssignGet("len_orig", length(X.d))
     #
     if (detrend){
-      message("detrending (and demeaning)")
+      # message("detrending (and demeaning)")
       X <- as.matrix(residuals( lm(y ~ x, data.frame(x=1:n.o+1, y=X.d)) ))
     } else if (demean) {
-      message("demeaning")
+      # message("demeaning")
       X <- as.matrix(X.d - colMeans(X.d))
     } else {
       X <- X.d
@@ -118,13 +120,16 @@
   } else {
     f <- seq.int(0, nhalf, by=1)
   }
+  ##
+  lt2 <- length(drop(ntaper))
+  ##
   ###  Calculate the psd by averaging over tapered estimates
   nfreq <- length(f)
-  #print(nfreq)
   psd <- zeros(nfreq)
+  ##
   ###  Loop over frequency
-  ## change to apply []
-  if (ntaper > 0){
+  ## change to lapply? []
+  if (sum(ntaper) > 0) {
     xfft <- Re(fftz)
     for ( j in 1:nfreq ) {
       fj <- f[j]
@@ -160,7 +165,7 @@
     psd <- ff * Conj(ff) / N0
   }
   ##  Interpolate if necessary to uniform freq sampling
-  if (length(ntaper) > 1 && ndecimate > 1){
+  if (lt > 1 && ndecimate > 1){
     ## check [ ]
     message("decim stage 2")
     tmp.x <- f
@@ -214,10 +219,10 @@
                   series = series, 
                   snames = colnames(X), 
                   method = "Adaptive Sine Multitaper (rlpSpec)", 
-                  taper = ntaper, 
+                  taper = ntap, 
                   pad = TRUE, 
-                  detrend = NA, 
-                  demean = TRUE)
+                  detrend = detrend, 
+                  demean = demean)
   ## Plot if desired
   #   if (plotpsd) {
   #     if (plotcolor=="#000000" || plotcolor==0){

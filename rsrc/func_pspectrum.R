@@ -6,12 +6,12 @@
                       fsamp=1, 
                       tapcap=1e3, 
                       ntapinit=10, 
-                      niter=2, 
+                      niter=3, 
                       ndec=1,
                       units=c("time","signal"),
                       plotpsd=TRUE, 
                       ylims=c(.07,3e4), xlims=c(0,0.5),
-                      devmode=FALSE) {
+                      devmode=TRUE) {
   ###
   # PORT of RLP's pspectrum.m
   # abarbour
@@ -71,7 +71,10 @@
   #            -----------------
   #  Get pilot estimate of psd with fixed number of tapers and no decimation
   message(sprintf("\t>>>> Pilot estimation with\t%i\ttapers",ntapinit))
-  psd <- PSDFUN(x, ntaper=ntapinit, ndecimate=1, plotpsd=plotpsd, xlims=xlims)
+  psd <- PSDFUN(x, ntaper=ntapinit, 
+                ndecimate=1, 
+                plotpsd=FALSE, xlims=xlims, as.spec=TRUE)
+  plot(psd)
   ## add this to psdcore return?
   nf <- nrow(psd$freq)
   ##nf <- length(psd)
@@ -88,45 +91,24 @@
     message("\t\t>>>> Adaptive spectrum refinement:")
     for ( iterate in  1:Niter ) {
       message(sprintf("\t\t\t>>>> taper optimization round\t%02i",iterate))
-      kopt <<- riedsid(psd$spec, ntaper) # riedsid resets nf
+      ## calculate optimal tapers
+      kopt <- riedsid(psd$spec, ntaper)
       stopifnot(exists('kopt'))
-      # choose the minimum between Cap and kopt
-      #Caps <<- rowvec(nf, 1) * Cap
-      #ntaper <- t(as.matrix(apply(rbind(Caps, kopt),2,min)))
+      ## contrain the total number of tapers
       ntaper <- kopt
       ntaper[ntaper>Cap] <- Cap
       psd <- PSDFUN(x, ntaper=ntaper, ndecimate=ndec, 
-                     plotpsd=plotpsd, plotcolor=pal[iterate])
+                     plotpsd=FALSE, plotcolor=pal[iterate], as.spec=TRUE)
+      plot(psd, col=pal[iterate], add=T)
     }
   }
-  #  Scale to physical units and provide frequency vector
-  psd <- psd/fsamp
-  nf <- envGet("num_freqs")
-  f <- t(t( seq.int(0, fsamp/2, length.out=nf) ))
-
-  # psd class? [ ]
-  psd.df <- data.frame(f=f, psd=psd, ntaper=t(ntaper))
-  #psd.df <- list(freq=f, psd=psd, ntap=t(ntaper), call=match.call())
-  # for method print to show call
-  # move to psd method [ ]
-#   message("\t>>>> Results summary:")
-#   print(summary(psd.df))
-  return(invisible(psd.df))
-  # return a structure.  From acf():
-  #acf.out <- structure(.Data = list(acf = acf, type = type, 
-  #                     n.used = sampleT, lag = lag, series = series, 
-  #                     snames = colnames(x)), class = "acf")
-  # from spec.pgram:
-  #  spg.out <- list(freq = freq, spec = spec, coh = coh, phase = phase,
-  #    kernel = kernel, df = df, bandwidth = bandwidth, n.used = N, 
-  #    orig.n = N0, series = series, snames = colnames(x), 
-  #    method = ifelse(!is.null(kernel), "Smoothed Periodogram", 
-  #    "Raw Periodogram"), taper = taper, pad = pad, detrend = detrend, 
-  #    demean = demean)
-  #  class(spg.out) <- "spec"
-  #
-  #  any like this?
-  #  .NotYetImplemented()
+  ##  Scale to physical units and provide frequency vector
+  ## [ ] ?
+  psd$spec <- psd$spec/fsamp
+  psd$freq <- psd$freq*fsamp
+  psd$sample.rate <- fsamp
+  ##
+  return(invisible(psd))
 } 
 # end pspectrum.default
 ###

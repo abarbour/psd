@@ -1,9 +1,11 @@
 ##
 ##  Creates figure(s) in text for CO2 data
 ##
-setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
-# setwd("~/nute.processing/development/rlpSpec/figures")
-source('funcload.R')
+rm(list=ls())
+setwd("~/nute.processing/development/rlpSpec/figures")
+#setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
+source('../rsrc/.sourceloads.R')
+
 load("../data/bsm/bsm.rda")
 
 library(zoo)
@@ -37,12 +39,12 @@ for (n in 0:nit){
 doBSMspec <- function(dat, sps=20, stacha="", span=NULL, niter=0, doRspec=TRUE, tapcap=1e3){
   ## return a data frame with spectral estimates
   # multitaper spectra
-  rlpps <- pspectrum(dat, niter=niter, fsamp=sps, ndec=1, plotpsd=F, tapcap=tapcap)
-  dfspec <- data.frame(f=rlpps$f, psd=rlpps$psd, ntap=rlpps$ntaper,
+  rlpps <<- pspectrum(dat, niter=niter, fsamp=sps, ndec=1, plotpsd=F, tapcap=tapcap)
+  dfspec <- data.frame(f=rlpps$freq, psd=rlpps$spec, ntap=rlpps$taper,
                        src="rlpSpec", niter=niter, sta=stacha[1], cha=stacha[2], polyf=factor(0))
   # r built-in (optional)
   if (doRspec){
-    cat("\t>>>> Doing spec.pgram\n")
+    message("\t>>>> Doing spec.pgram")
     pad<-1
     tap<-0.2
     datts <- ts(dat, frequency=sps)

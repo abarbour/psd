@@ -9,9 +9,9 @@
   env <- "psdenv"
   if(!exists(env) | refresh){
     psdenv <<- new.env(parent=baseenv(), ...)
-    if (verbose) message(sprintf("\t>>>> ** %s ** environment initialized\n",env))
+    if (verbose) message(sprintf("\t>>>> ** %s ** environment initialized",env))
   } else if (!refresh) {
-    if (verbose) message(sprintf("\t>>>> The ** %s ** environment is already initialized.\n",env))
+    if (verbose) message(sprintf("\t>>>> The ** %s ** environment is already initialized",env))
   }
 }
 .rlp_envList.default <- function(envir=psdenv){
