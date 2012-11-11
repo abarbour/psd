@@ -15,6 +15,7 @@ doit1 <- function(){
   psd0 <- .devpsdcore(X, ntaper=10, plotpsd=T)
   Xseq <- psd0$freq
   #   summary(psd0)
+  #
   kopt.slope <- riedsid(psd0$spec, ntaper=10, restrict.deriv="slope")
   kopt.loess <- riedsid(psd0$spec, ntaper=10, restrict.deriv="loess")
   kopt.super <- riedsid(psd0$spec, ntaper=10, restrict.deriv="friedman.super")
