@@ -2,20 +2,20 @@
 ##  Creates figure(s) in text for CO2 data
 ##
 setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
-source('funcload.R')
+source('../rsrc/.sourceloads.R')
 load("../data/co2/co2tsd.rda")
 library(zoo)
 
 # Adaptive multitaper estimation: rlpSpec::pspectrum
 frq<-12
-deseas <- na.approx(co2tsd$x) - na.approx(co2tsd$seasonal)
-psc <-pspectrum(na.approx(co2tsd$x), fsamp=frq, plotpsd=F, niter=4)
+deseas <- as.vector(na.approx(co2tsd$x) - na.approx(co2tsd$seasonal))
+psc <-pspectrum(as.vector(na.approx(co2tsd$x)), fsamp=frq, plotpsd=F, niter=4)
 pscs<-pspectrum(deseas, fsamp=frq, plotpsd=F, niter=4)
 
 # R built-in spectrum estimation: spec.pgram
 pad<-1
 tap<-0.2
-rpsc <-spectrum(na.approx(co2tsd$x), pad=pad, taper=tap, plot=F)
+rpsc <-spectrum(as.vector(na.approxco2tsd$x), pad=pad, taper=tap, plot=F)
 rpscs<-spectrum(deseas, pad=pad, taper=tap, plot=F)
 
 # Previously publish spectra (Thoning et al 1989)
@@ -26,8 +26,8 @@ thonig <- read.table("../data/co2/thoning_spec_1989.txt",h=T)
 df <- data.frame(f=rpsc$freq, psd=rpsc$spec, src="spec.pgram", decomp="Full")
 df <- rbind(df, data.frame(f=rpscs$freq, psd=rpscs$spec, src="spec.pgram", decomp="Seasonally Adjusted"))
 # multitaper spectra
-df <- rbind(df, data.frame(f=psc$f, psd=psc$psd, src="rlpSpec", decomp="Full"))
-df <- rbind(df, data.frame(f=pscs$f, psd=pscs$psd, src="rlpSpec", decomp="Seasonally Adjusted"))
+df <- rbind(df, data.frame(f=psc$freq, psd=psc$spec, src="rlpSpec", decomp="Full"))
+df <- rbind(df, data.frame(f=pscs$freq, psd=pscs$spec, src="rlpSpec", decomp="Seasonally Adjusted"))
 # and Thonig spectra for reference 
 df <- rbind(df, data.frame(f=thonig$freq_cpy, psd=thonig$spec_ppmco2, src="", decomp="Full"))
 df <- rbind(df, data.frame(f=thonig$freq_cpy, psd=thonig$spec_ppmco2, src="", decomp="Seasonally Adjusted"))

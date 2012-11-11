@@ -3,7 +3,8 @@
 ##
 setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
 # setwd("~/nute.processing/development/rlpSpec/figures")
-source('funcload.R')
+#source('funcload.R')
+source('../rsrc/.sourceloads.R')
 load("../data/scarb/scarb.rda")
 
 library(psych)
@@ -23,7 +24,7 @@ doSCARBspec <- function(sdat, nit=0, tst=NULL, sps=1, cha=NULL, niter=5, tapcap=
   secst <- (tst-1)/sps
   sxnlen <- length(sdat)/sps
   rlpps <- pspectrum(sdat, niter=niter, fsamp=sps, plotpsd=F, tapcap=tapcap)
-  dfspec <- data.frame(f=rlpps$f, psd=rlpps$psd, ntap=rlpps$ntaper, 
+  dfspec <- data.frame(f=rlpps$freq, psd=rlpps$spec, ntap=rlpps$ntaper, 
                        secst=secst, sxnlen=sxnlen, nit=factor(nit),
                        niter=niter, tapcap=tapcap)
   return(invisible(list(psd=rlpps, df=dfspec)))

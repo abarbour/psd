@@ -47,7 +47,7 @@
   ## function internal and thus less prone to error, but perhaps less efficient?
   ##
   ## Args:	x	val 1
-  ##		y	val 2
+  ##		    y	val 2
   ##
   ## Returns:	modulo division of x vs y
   ##

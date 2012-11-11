@@ -31,7 +31,8 @@
 ##
 setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
 # setwd("~/nute.processing/development/rlpSpec/figures")
-source('funcload.R')
+#source('funcload.R')
+source('../rsrc/.sourceloads.R')
 load("../data/mag/mag.rda")
 
 library(psych)
