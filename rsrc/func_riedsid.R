@@ -30,7 +30,7 @@
 
   ##message("\t\ttaper optimization")
   ##
-  eps <- 1e-78  #  A small number to protect against zeros
+  eps <- .Machine$double.eps # was: 1e-78  #  A small number to protect against zeros
   
   spec <- as.vector(spec)
   
@@ -74,7 +74,7 @@
     uzero <- (L2 - 1)/12  # constant
     # first deriv
     dY[j] <- u %*% Y[jr] * 12 / LL2L
-    # second deriv
+    # second deriv (?)
     d2Y[j] <- (u2 - uzero) %*% Y[jr] * 360/LL2L/(L2-4)
   }
   #
