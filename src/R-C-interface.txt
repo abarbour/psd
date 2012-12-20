@@ -1,0 +1,382 @@
+Calling C code from R, an introduction
+Sigal Blay
+Statistical Genetics Working Group 
+Department of Statistics and Actuarial Science
+Simon Fraser University
+Burnaby BC, CANADA
+October 2004
+
+
+Motivation: 
+Speed 
+Efficient memory management
+Using existing C libraries
+
+The following functions provide a standard interface
+to compiled code that has been linked into R: 
+ .C 
+ .Call
+ .External
+
+
+We will explore using .C and .Call with 7 code examples:
+Using .C
+I.   Calling C with an integer vector
+II.  Calling C with different vector types Using .Call
+(with tips on compiling the C code and creating an R package)
+III. Sending R integer vectors to C
+IV.  Sending R character vectors to C
+V.   Getting an integer vector from C
+VI.  Getting a character vector from C
+VII. Getting a list from C
+
+At the end of this file you will find some useful tips 
+for creating R packages which include .C, .Call or .External.
+
+
+I.
+
+/* useC1.c                                    */
+/* Calling C with an integer vector using .C  */   
+
+void useC(int *i) {
+    i[0] = 11;
+}
+
+The C function should be of type void. 
+The compiled code should not return 
+anything except through its arguments.
+
+
+To compile the c code, type at the command prompt:
+R CMD SHLIB useC1.c
+The compiled code file name is useC1.so (or useC1.dll on Windows)
+
+
+In R: 
+> dyn.load("useC1.so")
+> a <- 1:10            # integer vector
+> a
+ [1]  1  2  3  4  5  6  7  8  9 10
+> out <- .C("useC", b = as.integer(a))
+> a
+ [1]  1  2  3  4  5  6  7  8  9 10
+> out$b
+ [1] 11  2  3  4  5  6  7  8  9 10
+
+
+* You have to allocate memory to the vectors passed 
+to .C in R by creating vectors of the right length.
+* The first argument to .C is a character string of 
+the C function name. 
+* The rest of the arguments are R objects to be 
+passed to the C function.
+* All arguments should be coerced to the correct R storage 
+mode to prevent mismatching of types that can lead to errors.
+* .C returns a list object.
+* The second .C argument is given the name b.
+This name is used for the respective component 
+in the returned list object 
+(but not passed to the compiled code).
+
+
+II.
+
+/* useC2.c                                         */
+/* Calling C with different vector types using .C  */
+
+void useC(int *i, double *d, char **c, int *l) {
+    i[0] = 11;
+    d[0] = 2.333;
+    c[1] = "g";
+    l[0] = 0;
+}
+
+
+To compile the c code, type at the command prompt:
+R CMD SHLIB useC2.c
+to get useC2.so
+
+To compile more than one c file:
+R CMD SHLIB file1.c file2.c file3.c
+to get file1.so
+
+
+In R:
+> dyn.load("useC2.so")
+> i <- 1:10                               # integer vector
+> d <- seq(length=3, from=1, to=2)        # real number vector
+> c <- c("a", "b", "c")                   # string vector
+> l <- c("TRUE", "FALSE")                 # logical vector
+> i
+ [1]  1  2  3  4  5  6  7  8  9 10
+> d
+ [1] 1.0 1.5 2.0
+> c
+ [1] "a" "b" "c"
+> l
+ [1] "TRUE"  "FALSE"
+>
+> out <- .C("useC",
+          i1 = as.integer(a),
+          d1 = as.numeric(d),
+          c1 = as.character(c),
+          l1 = as.logical(l))
+> out
+$i1
+  [1] 11  2  3  4  5  6  7  8  9 10
+
+$d1
+ [1] 2.333 1.500 2.000
+
+$c1
+ [1] "a" "g" "c"
+
+$l1
+ [1] FALSE FALSE
+
+
+Other R objects can be passed to .C but it is better 
+to use one of the other interfaces.
+With .C, the R objects are copied before being passed to the C code, 
+and copied again to an R list object when the compiled code returns. 
+Neither .Call nor .External copy their arguments.
+You should treat arguments you receive through these interfaces as 
+read-only.
+
+
+Advantages to using .Call() instead of .C()
+(Posted by Prof Brian Ripley on R-help, Jun 2004)
+1) A lot less copying. 
+2) The ability to dimension the answer in the C code. 
+3) Access to other types, e.g. expressions, raw type and
+   the ability to easily execute R code (call_R is a pain). 
+4) Access to the attributes of the vectors, for example the names. 
+5) The ability to handle missing values easily. 
+
+
+III.
+
+/* useCall1.c                                 */
+/* Sending R integer vectors to C using .Call */
+#include <R.h>
+#include <Rdefines.h>
+
+// Rdefines.h is somewhat more higher level then Rinternal.h,
+// and is preferred if the code might be shared with S at any stage.
+
+SEXP getInt(SEXP myint, SEXP myintVar) {  // Simple EXPression
+    int Imyint, n;		// declare an integer variable 
+    int *Pmyint;	// declare a pointer to an integer vector
+
+    // myint is of type SEXP, which is a general type, 
+    // hence coercion is needed to the right type:
+    PROTECT(myint = AS_INTEGER(myint));
+    // R objects created in the C code have to be reported using the PROTECT 
+    // macro on a pointer to the object. This tells R that the object is in 
+    // use so it is not destroyed.
+
+    Imyint = INTEGER_POINTER(myint)[0];
+    Pmyint = INTEGER_POINTER(myint);
+    n = INTEGER_VALUE(myintVar);
+    printf("Printed from C:\n");
+    printf("Imyint: %d\n", Imyint);
+    printf("n: %d\n", n);
+    printf("Pmyint[0], Pmyint[1]: %d %d\n", Pmyint[0], Pmyint[1]);
+
+    UNPROTECT(1);
+    // The protection mechanism is stack-based, so UNPROTECT(n) unprotects 
+    // the last n objects which were protected. The calls to PROTECT and 
+    // UNPROTECT must balance when the user's code returns.
+
+    return(R_NilValue);
+}
+// to work with real numbers, replace int with double and INTEGER with NUMERIC
+
+
+In R:
+> dyn.load("useCall1.so")
+> myint<- c(1,2,3)
+> out<- .Call("getInt", myint, 5)
+Printed from C:
+Imyint: 1
+n: 5
+Pmyint[0], Pmyint[1]: 1 2
+> out
+NULL
+
+
+IV.
+
+/* useCall2.c                                       */
+/* Reading an R character vector from C using .Call */  
+#include <R.h>
+#include <Rdefines.h>
+
+SEXP getChar(SEXP mychar) {
+    char *Pmychar[5];  // declare an array of 5 pointers to character strings 
+
+    PROTECT(mychar = AS_CHARACTER(mychar));
+    // allocate memory to Pmychar[0], Pmychar[1]:
+    Pmychar[0] = R_alloc(strlen(CHAR(STRING_ELT(mychar, 0))), sizeof(char));
+    Pmychar[1] = R_alloc(strlen(CHAR(STRING_ELT(mychar, 1))), sizeof(char));
+    // ... and copy mychar to Pmychar:
+    strcpy(Pmychar[0], CHAR(STRING_ELT(mychar, 0)));
+    strcpy(Pmychar[1], CHAR(STRING_ELT(mychar, 1)));
+
+    printf("Printed from C:");
+    printf(" %s %s\n",Pmychar[0], Pmychar[1]);
+    UNPROTECT(1);
+
+    return(R_NilValue);
+}
+
+
+In R:
+> dyn.load("useCall2.so")
+> mychar <- c("do","re","mi", "fa", "so")
+> out <- .Call("getChar", mychar)
+Printed from C: do re
+
+
+V.
+
+/* useCall3.c                                    */
+/* Getting an integer vector from C using .Call  */
+#include <R.h>
+#include <Rdefines.h>
+
+SEXP setInt() {
+   SEXP myint;
+   int *p_myint; 
+   int len = 5;
+   PROTECT(myint = NEW_INTEGER(len));  // Allocating storage space
+   p_myint = INTEGER_POINTER(myint);
+   p_myint[0] = 7;
+   UNPROTECT(1);
+   return myint;
+}
+// to work with real numbers, replace int with double and INTEGER with NUMERIC
+
+
+In R:
+> dyn.load("useCall3.so")
+> out<- .Call("setInt")
+> out
+[1] 7 0 0 0 0
+
+
+VI.
+
+/* useCall4.c                                     */
+/* Getting a character vector from C using .Call  */
+#include <R.h>
+#include <Rdefines.h>
+
+SEXP setChar() {
+   SEXP mychar;           
+   PROTECT(mychar=allocVector(STRSXP,5));
+   SET_STRING_ELT(mychar, 0, mkChar("A"));
+   UNPROTECT(1);
+   return mychar;
+}
+
+
+In R:
+> dyn.load("useCall4.so")
+> out <- .Call("setChar")
+> out
+[1] "A" ""  ""  ""  ""
+
+
+VII.
+
+/* useCall5.c                         */ 
+/* Getting a list from C using .Call  */
+#include <R.h>
+#include <Rdefines.h>
+
+SEXP setList() {
+   int *p_myint, i;                       // variable declarations
+   double *p_double;
+   SEXP mydouble, myint, list, list_names;
+   char *names[2] = {"integer", "numeric"};
+
+   PROTECT(myint = NEW_INTEGER(5));       // creating an integer vector
+   p_myint = INTEGER_POINTER(myint);
+   PROTECT(mydouble = NEW_NUMERIC(5));    // ... and a vector of real numbers
+   p_double = NUMERIC_POINTER(mydouble);
+   for(i = 0; i < 5; i++) {
+     p_double[i] = 1/(double)(i + 1);
+     p_myint[i] = i + 1;
+   }
+
+   // a character string vector of the "names" attribute of the objects in our list
+   PROTECT(list_names = allocVector(STRSXP, 2));
+   for(i = 0; i < 2; i++)
+      SET_STRING_ELT(list_names, i,  mkChar(names[i]));
+ 
+   PROTECT(list = allocVector(VECSXP, 2)); // Creating a list with 2 vector elements
+   SET_VECTOR_ELT(list, 0, myint);         // attaching myint vector to list
+   SET_VECTOR_ELT(list, 1, mydouble);      // attaching mydouble vector to list
+   setAttrib(list, R_NamesSymbol, list_names); //and attaching the vector names
+   UNPROTECT(4);
+   return list;
+}
+
+
+In R:
+> dyn.load("useCall5.so")
+> out <- .Call("setList")
+> out
+$integer
+[1] 1 2 3 4 5
+
+$numeric
+[1] 1.0000000 0.5000000 0.3333333 0.2500000 0.2000000
+
+
+
+---------- Notes on creating an R package ----------
+
+wheather you are using .C, .Call or .External,
+you'll need to apply the following points:
+
+copy myfile.c to myPackage/src/
+
+The user of the package will not have to 
+manually load the compiled c code with dyn.load(), so:
+
+add zzz.R file to myPackage/R
+zzz.R should contain the following code:
+  .First.lib <-function (lib, pkg)   {
+     library.dynam("myPackage", pkg, lib)
+  }
+
+modify the .C / .Call / .External call:
+After the argument list to the C function, add PACKAGE="compiled_file".
+For example, if your compiled C code file name is useC1.so, type:
+.C("useC", b = as.integer(a), PACKAGE="useC1")
+
+If you are using a Makefile, look at the output from R CMD SHLIB myfile.c
+for flags that you may need to incorporate in the Makefile.
+
+As for R 2.0.1, to have the package pass 'R CMD check' on Windows,
+it must include a single compiled code object file named with the package 
+name (i.e. a single MyPkg.so / MyPkg.dll).
+
+Even if your R package perfectly passes an 'R CMD check':
+* Try to compile your C code with 'gcc -pedantic -Wall' 
+  (you should get only warnings that you have reasons not to eliminate)
+* check the R code with 'R CMD check --use-gct'
+  It uses 'gctorture(TRUE)' when running examples/tests, and it's slow.
+(if you won't, CRAN will do that for you and will send you back 
+  to the drawing board)
+---------------------------------------------------------------------
+
+
+Author: Sigal Blay
+
+This work has been made possible by the Statistical Genetics
+Working Group at the Department of Statistics and Actuarial
+Science, SFU. 
