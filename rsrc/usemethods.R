@@ -2,7 +2,7 @@
 pspectrum <- function(x, ...) UseMethod(".pspectrum")
 psdcore <- function(x, ...) UseMethod(".psdcore")
 .devpsdcore <- function(x, ...) UseMethod("..dev_psdcore")
-riedsid <- function(x, ...) UseMethod(".riedsid")
+
 whiten <- function(x, ...) UseMethod(".whiten")
 qualcon <- function(x, ...) UseMethod(".qualcon")
 boundslope <- function(x, ...) UseMethod(".boundslope")
