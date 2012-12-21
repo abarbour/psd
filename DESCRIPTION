@@ -1,0 +1,21 @@
+Package: rlpSpec
+Type: Package
+Title: Adaptive multitaper spectrum estimation.
+Version: 0.1-0
+Date: 2012-12-20
+Author: Andrew J Barbour
+Maintainer: Andrew J Barbour <andy.barbour@gmail.com>
+Description: Uses X to do Y
+License: GPL (>= 2)
+URL: http://abarbour.github.com/rlpSpec/
+Depends:
+    R (>= 2.10.1),
+    matrixStats (>= 0.6.2),
+    signal (>= 0.7-2)
+Suggests:
+    Peaks (>= 0.2),
+    ggplot2 (>= 0.9.3),
+    sfsmisc (>= 1.0-23)
+Collate:
+    'func_riedsid.R'
+    'rlpSpec-package.R'
