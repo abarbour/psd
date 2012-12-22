@@ -10,6 +10,7 @@ License: GPL (>= 2)
 URL: http://abarbour.github.com/rlpSpec/
 Depends:
     R (>= 2.10.1),
+    RColorBrewer (>= 1.0-5),
     matrixStats (>= 0.6.2),
     signal (>= 0.7-2)
 Suggests:
@@ -19,3 +20,5 @@ Suggests:
 Collate:
     'func_riedsid.R'
     'rlpSpec-package.R'
+    'func_tapers.R'
+    'zzz.R'

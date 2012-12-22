@@ -17,14 +17,12 @@
 # @example
 # riedsid(rnorm(10), 10)
 # riedsid(rnorm(10), c(1:5,5:1))
-riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod(".riedsid")
+riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("riedsid")
 
-#' @return \code{NULL}
 #' @rdname riedsid
-#' @docType methods
-#' @method riedsid default
 #' @S3method riedsid default
-.riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
+#' @return \code{NULL}
+riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
   require(matrixStats)
   ## spectral values
   spec <- as.vector(spec)
@@ -98,7 +96,7 @@ riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod(".r
 #' @title constrain_tapers
 #' @aliases constrain_tapers
 #' @export
-#' @seealso \code{\link{riedsid}}
+#' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple}}
 #' @param tapvec vector; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param constraint.method method to use for constraints on tapers numbers
@@ -115,6 +113,7 @@ constrain_tapers <- function(tapvec,
                              min.tapers=1,
                              verbose=TRUE, 
                              ...){
+  stopifnot(is.taper(tapvec))
   stopifnot(min.tapers>=0)
   # choose the appropriate method to apply taper constraints
   cmeth <- match.arg(constraint.method) 
@@ -123,14 +122,12 @@ constrain_tapers <- function(tapvec,
     tapvec.adj <- tapvec
   } else {
     if (verbose) message(sprintf("Constraining tapers with ** %s ** method",cmeth))
-    ctapmeth <- paste(".ctap", switch(cmeth, 
-                                      simple.slope="simple",
-                                      "markov.chain"="markov",
-                                      "loess.smooth"="loess",
-                                      "friedman.smooth"="friedman"), sep="_")
-    # execute alias method-function
-    TAPFUN <- function(tapvec, tapseq, ...) UseMethod(ctapmeth)
-    tapvec.adj <- TAPFUN(tapvec, tapseq, ...)
+    CTAPFUN <- switch(cmeth,
+                      simple.slope=ctap_simple,
+                      "markov.chain"=ctap_markov,
+                      "loess.smooth"=ctap_loess,
+                      "friedman.smooth"=ctap_friedman)
+    tapvec.adj <- CTAPFUN(tapvec, tapseq, ...)
   }
   # MAX/MIN bounds
   # set the maximim tapers: Never average over more than the length of the spectrum!
@@ -145,126 +142,3 @@ constrain_tapers <- function(tapvec,
   tapvec.adj[tapvec.adj > maxtap] <- maxtap
   return(tapvec.adj)
 }
-
-
-###
-###  Constraint methods
-###
-
-
-#' @details \strong{\code{'simple.slope'}}: Constrain tapers with slopes from first differencing
-#' 
-#' @description \strong{\code{'simple.slope'}} constrains the first-difference between 
-#' neighboring spectra.
-#' 
-# @return \code{NULL}
-#' @rdname constrain_tapers
-#' @docType methods
-#' @method 'simple.slope' constrain_tapers
-#' @S3method 'simple.slope' constrain_tapers
-#' @param maxslope (\code{'simple.slope'}) integer; constrain based on this maximum first difference
-.ctap_simple.default <- function(tapvec, 
-                                 tapseq=NULL, 
-                                 maxslope=1L){
-  # tapseq not needed
-  tapvec <- as.numeric(tapvec)
-  maxslope <- as.numeric(maxslope) #max(1L, ceiling(maxslope)))
-  # c-code used for speed up of forward+backward operations
-  # until it's packaged, need to dynamic load:
-  owd <- getwd()
-  src <- "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/src"
-  setwd(src)
-  system("rm riedsid.*o")
-  system("R CMD SHLIB riedsid.c")
-  dyn.load("riedsid.so")
-  setwd(owd)
-  tapvec.adj <- as.matrix(.Call("rlp_constrain_tapers", tapvec, maxslope))
-  #as.matrix(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
-  return(tapvec.adj)
-}
-
-#' @details \strong{\code{'markov.chain'}}: Constrain tapers with a Markov Chain, based on quantum-well probability
-#' 
-#' @description \strong{\code{'markov.chain'}} uses a Morkov Chain based on the theory of 
-#' quantum-well probability in gamma-ray spectroscopy.
-#' 
-# @return \code{NULL}
-#' @rdname constrain_tapers
-#' @docType methods
-#' @method 'markov.chain' constrain_tapers
-#' @S3method 'markov.chain' constrain_tapers
-#' @param chain.width  (\code{'markov.chain'}) scalar; the width the MC should consider for the change probability
-.ctap_markov.default <- function(tapvec, 
-                                 tapseq=NULL, 
-                                 chain.width=3*length(tapvec)){
-  #stopifnot(("Peaks" %in% rownames(installed.packages())))
-  require("Peaks")
-  # tapseq not needed
-  MC.win <- max(1, round(chain.width))
-  tapvec.adj <- as.matrix(Peaks::SpectrumSmoothMarkov(tapvec, MC.win))
-  return(tapvec.adj)
-}
-
-#' @details \strong{\code{'loess.smooth'}}: Constrain tapers with the Loess smoother (slow)
-#' 
-#' @description \strong{\code{'loess.smooth'}} uses \code{stats::loess} for the smoothing.
-#' 
-#' @return \code{NULL}
-#' @rdname constrain_tapers
-#' @docType methods
-#' @method 'loess.smooth' constrain_tapers
-#' @S3method 'loess.smooth' constrain_tapers
-#' @param loess.span  (\code{'loess.smooth'}) scalar; the span used in \code{loess}
-#' @param loess.degree  (\code{'loess.smooth'}) scalar; the polynomial degree
-#' @seealso \code{\link{loess}}
-.ctap_loess.default <- function(tapvec, 
-                                tapseq, 
-                                loess.span=.3, 
-                                loess.degree=1){
-  # having an x-sequence is absolutely critical to obtaining useful results
-  if (is.null(tapseq)){
-    tapseq <- 1:length(tapvec)
-    warning("Generated a position sequence; results may be bogus.")
-  }
-  require(stats)
-  warning("Loess-method has quadratic memory scaling (1e3 pt -> 10 Mb)...")
-  trc <- ifelse(length(tapvec)>=1000, "approximate", "exact")
-  loe <- stats::loess(y ~ x, 
-                      data.frame(x=tapseq, y=tapvec), 
-                      span=loess.span, degree=loess.degree,
-                      control = loess.control(trace.hat = trc))
-  tapvec.adj <- as.matrix(stats::predict(loe))
-  return(tapvec.adj)
-}
-
-#' @details \strong{\code{'friedman.smooth'}}: Constrain tapers with the Friedman 'super-smoother'
-#' 
-#' @description \strong{\code{'friedman.smooth'}} uses builtin Fiedman super-smoother.
-#' 
-#' @note The results obtained by \strong{\code{'friedman.smooth'}} are generally poor; 
-#' hence, the method may be removed in future releases.
-#' 
-# @return \code{NULL}
-#' @rdname constrain_tapers
-#' @docType methods
-#' @method 'friedman.smooth' constrain_tapers
-#' @S3method 'friedman.smooth' constrain_tapers
-#' @param smoo.span  (\code{'friedman.smooth'}) scalar; fraction of the observations in the span of the running lines smoother
-#' @param smoo.bass  (\code{'friedman.smooth'}) scalar; controls the smoothness of the fitted curve 
-#' @seealso \code{\link{supsmu}}
-.ctap_friedman.default <- function(tapvec, 
-                                   tapseq, 
-                                   smoo.span=.3, 
-                                   smoo.bass=2){
-  # having an x-sequence is absolutely critical to obtaining useful results
-  if (is.null(tapseq)){
-    tapseq <- 1:length(tapvec)
-    warning("Generated a position sequence; results may be bogus.")
-  }
-  require(stats)
-  # Friedman's super smoother.
-  # Meh.
-  tapvec.adj <- as.matrix(stats::supsmu(tapseq, tapvec, span=smoo.span, bass=smoo.bass)$y)
-  return(tapvec.adj)
-}
-###

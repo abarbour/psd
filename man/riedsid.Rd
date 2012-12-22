@@ -1,13 +1,12 @@
-\docType{methods}
 \name{riedsid}
-\alias{.riedsid.default}
 \alias{riedsid}
+\alias{riedsid.default}
 \title{riedsid}
 \usage{
   riedsid(spec, ntaper, tapseq = NULL, c.method = NULL,
     ...)
 
-  \method{riedsid}{default} (spec, ntaper, tapseq = NULL,
+  riedsid.default(spec, ntaper, tapseq = NULL,
     c.method = NULL, ...)
 }
 \arguments{

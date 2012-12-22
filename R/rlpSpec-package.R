@@ -25,8 +25,9 @@
 #' 
 #' @author Andrew Barbour <andy.barbour@@gmail.com> 
 #' 
-#' @import signal
 #' @import matrixStats
+#' @import RColorBrewer
+#' @import signal
 #' 
 #' @references Riedel, K. S., & Sidorenko, A. (1995), 
 #' Minimum bias multiple taper spectral estimation,
@@ -41,7 +42,3 @@
 #' @seealso \code{\link{some_function}}, \code{\link{some_other_func}}
 #'  
 NULL
-#
-.First.lib <- function(lib, pkg) {
-	       library.dynam("rlpSpec", pkg, lib)
-}

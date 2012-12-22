@@ -2,6 +2,10 @@
 ### Various utility functions
 ###
 ##
+#' Reports whether x is a 'spec' object
+#' @param x An object to test
+#' @export
+is.spec <- function(x) inherits(x, "spec")
 #
 .splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   #
