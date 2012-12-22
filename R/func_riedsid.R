@@ -123,7 +123,7 @@ constrain_tapers <- function(tapvec,
   } else {
     if (verbose) message(sprintf("Constraining tapers with ** %s ** method",cmeth))
     CTAPFUN <- switch(cmeth,
-                      simple.slope=ctap_simple,
+                      "simple.slope"=ctap_simple,
                       "markov.chain"=ctap_markov,
                       "loess.smooth"=ctap_loess,
                       "friedman.smooth"=ctap_friedman)
