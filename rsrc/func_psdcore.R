@@ -100,28 +100,25 @@
   psd <- zeros(nfreq)
   ###  Loop over frequency
   for ( j in 1:nfreq ) {
-     m <- f[j]
-     tapers <- ntap[m+1]
-     #  Sum over taper indexes weighting tapers parabolically
-     if (tapers <= 0){
-         k <- 1
-       } else {
-         k <- seq.int(1, tapers, by=1)
-       }
-     w <- rbind((tapers^2 - (k-1)^2) * (1.5/(tapers*(tapers-0.25)*(tapers+1))))
-     # this is a distinction with order of operations and %% (2.14.0)
-     # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
-     # (but correct in matlab's function call) 
-     # So: enclose in parens or use rlpSpec::mod.default
-     j1 <- mod((2*m + 2*n.e - k), 2*n.e)
-     j2 <- mod((2*m + k), 2*n.e)
-     f1 <- fftz[j1+1]
-     f2 <- fftz[j2+1]
-     psdv <- w %*% abs( f1 - f2 )^2
-     psd[j,1] <- psdv
+    #Sum over taper indexes weighting tapers parabolically
+    m <- f[j]
+    m2 <- m*2
+    # parabolic weights, index m+1, column
+    kW. <- parabolic_weights(tapers, tap.index=(m+1), vec.out="horizontal")
+    # there is a distinction with order of operations and %% (2.14.0)
+    # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
+    # (but correct in matlab's function call) 
+    # So: enclose in parens or use rlpSpec::mod.default
+    n2.e <- 2*n.e
+    j1 <- mod((m2 + n.e2 - kW.), n2.e)
+    j2 <- mod((m2 + kW.), n2.e)
+    f1 <- fftz[j1+1]
+    f2 <- fftz[j2+1]
+    psdv <- kW. %*% abs( f1 - f2 )^2
+    psd[j,1] <- psdv
   }
   ##  Interpolate if necessary to uniform freq sampling
-  if (length(ntaper) > 1 && ndecimate > 1){
+  if (lt > 1 && ndecimate > 1){
     ## check [ ]
     tmp.x <- f
     tmp.xi <- tmp.y
@@ -134,7 +131,7 @@
   psd <- as.matrix((1*varx/area)*psd) #there was an apparently incorrect factor of 2 here
   psdtoplot <- 10*log10(psd[2:(nfreq-1)]) ## R uses 10* to scale to dB (why?)
   frq <- seq.int(0, 0.5, length.out=nfreq)
-  ftoplot <- frq[2:(nfreq-1)]
+  ftoplot <- frq[2:(nfreq-1)] # should fix this [ ]
   ## Plot if desired
   if (plotpsd) {
     if (plotcolor=="#000000" || plotcolor==0){

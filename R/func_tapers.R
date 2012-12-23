@@ -159,6 +159,32 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
 }
 
+#' @description Calculate parabolic weighting factors
+#' @title parabolic_weights
+#' @export
+#' @seealso \code{\link{psdcore}}
+#' @param tapvec 'taper' object; the number of tapers at each frequency
+#' @param tap.index integer; the index of \code{tapvec} from which to find weights
+#' @param vec.out character; should the vector returned have long dimension as rows or columns
+#' @return an object with class 'matrix' with dimensions dependet on \code{vec.out}
+parabolic_weights <- function(tapvec, tap.index=1, vec.out=c("col","row")) UseMethod("parabolic_weights")
+#' @rdname parabolic_weights
+#' @S3method parabolic_weights taper
+parabolic_weights.taper <- function(tapvec, tap.index=1, vec.out=c("vertical","horizontal")){
+  stopifnot(is.taper(tapvec))
+  stopifnot((tap.index > 0) & (tap.index <= length(tapvec)))
+  vec.out <- match.arg(vec.out)
+  ntap <- tapvec[as.integer(tap.index)]
+  kseq <- base::sequence(ntap) - 1
+  nrow <- switch(vec.out, "horizontal"=1, "vertical"=length(kseq))
+  K2 <- kseq * kseq # vector
+  T2 <- ntap * ntap # scalar
+  T3 <- T2 * ntap # scalar
+  #  (tapers^2 - (k-1)^2) * (1.5/(tapers*(tapers-0.25)*(tapers+1)))
+  kWeights <- (T2 - K2) * 3/2/(T3 + T2*3/4 - ntap/4)
+  return(matrix(kWeights, nrow=nrow))
+}
+
 ###
 ###  Constraint methods
 ###
