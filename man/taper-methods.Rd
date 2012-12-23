@@ -1,3 +1,4 @@
+\docType{methods}
 \name{taper-methods}
 \alias{plot}
 \alias{print}

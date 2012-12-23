@@ -1,3 +1,33 @@
+#' The 'taper' S4 class.
+#'
+#' In this class the value of each position will be a non-zero, positive
+#' integer, since it represents the number of tapered sections to average.
+#'
+# \section{Slots}{
+#   \describe{
+#     \item{\code{tapers}:}{Object of class \code{"integer"}, containing 
+#     a vector of tapers.}
+#   }
+# }
+#'
+#' @note  The prototypical S4 class has tapers==1, and length==1.
+#' Currently there are no \code{@@slots}; this may change in the future.
+#'
+#' @name taper
+#' @rdname taper
+#' @aliases taper-class
+#' @exportClass taper
+#' @author Andrew Barbour
+#' @examples
+#' taper()
+#' new("taper") # equivalent to taper()
+#' print(ntap <- taper(1:10))
+#' plot(ntap)
+taper <- setClass("taper",
+                  # if slots, add 'taper="integer",...
+                  representation=representation("integer"),
+                  prototype = 1L)
+         
 ###
 ###  Check/conversion methods
 ###
@@ -72,6 +102,11 @@ print.taper <- function(x){
   xt <- paste(as.character(tail(x)), collapse=" ")
   cat(sprintf("taper object:\n\thead:  %s\n\t\t...\n\ttail:  %s\n",xh,xt))
 }
+#' @rdname taper-methods
+#' @name print
+#' @export
+#' @docType methods
+setMethod("print", signature("taper"), print.taper)
 
 #' @rdname taper-methods
 #' @name summary
@@ -97,6 +132,7 @@ print.summary.taper <- function(x){
 #' @S3method plot taper
 plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
   stopifnot(is.taper(x))
+  #if isS4(x) x <- x@tapers
   require(graphics, grDevices, RColorBrewer)
   nt <- length(x)
   xi <- 1:nt

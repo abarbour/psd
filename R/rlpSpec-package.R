@@ -28,6 +28,7 @@
 #' @import matrixStats
 #' @import RColorBrewer
 #' @import signal
+#' @useDynLib rlpSpec
 #' 
 #' @references Riedel, K. S., & Sidorenko, A. (1995), 
 #' Minimum bias multiple taper spectral estimation,
