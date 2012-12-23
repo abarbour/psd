@@ -23,7 +23,6 @@ riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("ri
 #' @S3method riedsid default
 #' @return \code{NULL}
 riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
-  require(matrixStats)
   ## spectral values
   spec <- as.vector(spec)
   # num freqs
@@ -38,18 +37,24 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
   } else {
     ntap <- ntaper
   }
+  if (!is.taper(ntap)) ntap <- as.taper(ntap)
+  #plot(ntap)
   # find the minimum by column for 1/2 nf, 7/5 ntap
   # rowMins produces a rowvec of rowwise minimums; convert to colvec
-  nspan <- matrix(matrixStats::rowMins(cbind(Ones*nf/2, 7*ntap/5)), ncol=1)
+  nspan <- minspan(ntap, nf)
   # The spectral gradients should be in log-space, so
   # create a log spec, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
-  # [spec(nadd:-1:2); spec; spec(nf-1:-1:nf-nadd)]
-  Y <- log(eps + c(spec[nadd:2], spec, spec[(nf-1):(nf-nadd)]))
+  Y <- c(spec[nadd:2], spec, spec[(nf-1):(nf-nadd)])
+  Y[Y <= 0] <- eps
+  lY <- log(Y)
   dY <- d2Y <- Zeros
   #
   if (is.null(tapseq) | (length(tapseq) != length(spec))){
-    kseq <- seq.int(1, nf, by=1)
+    #kseq <- seq.int(from=1, to=nf, by=1)
+    xfreq <- frequency(spec) #1 # frequency(x) <==> sps, Hz
+    Nspec <- floor(nf/2)
+    kseq <- seq.int(from = xfreq/nf, by = xfreq/nf, length.out = Nspec)
   } else {
     kseq <- tapseq # sort?
   }
@@ -70,21 +75,24 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
     LL2L <- LL2 - L       # constant
     uzero <- (L2 - 1)/12  # constant
     # first deriv
-    dY[j] <- u %*% Y[jr] * 12 / LL2L
+    dY[j] <- u %*% lY[jr] * 12 / LL2L
     # second deriv (?)
-    d2Y[j] <- (u2 - uzero) %*% Y[jr] * 360 / LL2L / (L2-4)
+    d2Y[j] <- (u2 - uzero) %*% lY[jr] * 360 / LL2L / (L2-4)
   }
   #
   #  R <- spec"/spec <- Y" + (Y')^2  2nd form preferred for consistent smoothing
   #
-  #  Riedel-Sidorenko recipe (eq 13): kopt <- (12*abs(spec ./ d2spec)).^0.4 but
-  #  parabolic weighting in psdcore requires: (480)^0.2*abs(spec./d2spec)^0.4
-  #
+  #  Riedel-Sidorenko recipe (eq 13): 
+  #       kopt <- (12*abs(spec ./ d2spec)).^0.4 
+  #  but parabolic weighting in psdcore requires: 
+  #               (480)^0.2*abs(spec ./ d2spec).^0.4
   #  Original form:  kopt <- 3.428*abs(spec ./ d2spec).^0.4
-  kopt <- round( 3.428 / abs(eps + d2Y + dY*dY) ^ 0.4 )
+  #
+  # the optimal number of tapers (in an MSE sense):
+  kopt <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 )
   kopt.bound <- constrain_tapers(kopt, kseq, c.method, ...)
   ##
-  return(invisible(kopt.bound))
+  return(kopt.bound)
 } 
 # end riedsid.default
 

@@ -115,10 +115,10 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
                type="h",
                col=cols[x],
                ...)
-  lines(xi,x,col="black",lwd=0.8)
+  lines(xi,x,col="black",lwd=0.9)
   # plot log2 multiples as horiz lines
   hl <- 2**(1:round(log2(mx)))
-  graphics::abline(h=hl,lty=1,lwd=1.7,col="grey")
+  graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
   vl <- c(1, nt)
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
 }
@@ -126,6 +126,43 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
 ###
 ###  Constraint methods
 ###
+
+#' @description Find the max span of taper object
+#'
+#' @details minimize the number of tapers: min(nf/2, 7*tapvec/5)
+#'
+#' @note The value of \code{nf} should represent the total number of
+#' tapers from the original spectrum; the default assumes the taper
+#' object represents that size.
+#'
+#' @title minspan
+#' @export
+#' @seealso \code{\link{constrain_tapers}}
+#' @param tapvec 'taper' object; the number of tapers at each frequency
+#' @param nf scalar; number of positions or frequencies
+#' @param ... (unused) optional argments
+#' @return an object with class 'taper', with a constrained taper numbers
+#' @examples
+#' \dontrun{
+#' ntap <- as.taper(1:10)
+#' par(mfrow=c(2,1))
+#' plot(ntap)
+#' plot(minspan(ntap))
+#' par(mfrow=c(1,1))
+#' }
+minspan <- function(tapvec, 
+                    nf=length(tapvec), 
+                    ...) UseMethod("minspan")
+
+#' @rdname minspan
+#' @S3method minspan taper
+minspan.taper <- function(tapvec, nf=length(tapvec), ...){
+  stopifnot(is.taper(tapvec))
+  require(matrixStats)
+  Ones <- ones(nf)
+  nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
+  return(nspan)
+}
 
 #' @description Constrain tapers with first differencing.
 #' 
