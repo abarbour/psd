@@ -1,3 +1,5 @@
+#[ ] deprecate
+
 ##
 ##  Default method for psdcore, which does the grunt work
 ##
