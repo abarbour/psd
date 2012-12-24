@@ -48,29 +48,25 @@
   ###  When ntaper is a scalar, initialize
   lt <- length(ntaper)
   if (lt == 1){
-    # original series
-    envAssign("len_orig", length(x))
-    n.o <- envGet("len_orig")
-    # Force series to be even in length (modulo division)
-    envAssign("len_even", n.o - n.o%%2 )
-    n.e <- envGet("len_even", psdenv)
-    x_even <- x[1:n.e]
+    # original series and length
     envAssign("ser_orig", x)
-    envAssign("ser_orig_even", x_even)
+    n.o <- envAssignGet("len_orig", length(x))
+    # Force series to be even in length (modulo division)
+    n.e <- envAssignGet("len_even", n.o - n.o%%2)
+    # even-length series
+    x_even <- envAssignGet("ser_orig_even", x[1:n.e])
     # half length of even series
-    envAssign("len_even_half", n.e/2)
-    nhalf <- envGet("len_even_half")
+    nhalf <- envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    envAssign("ser_even_var", var(x_even))
-    varx <- envGet("ser_even_var")
+    varx <- envAssignGet("ser_even_var", var(x_even))
     # create uniform tapers
     ntap <- ones(nhalf+1)*ntaper
     ##  Remove mean & pad with zeros
-    # convert to sweep [ ]
-    z <- rbind( matrix(x_even, byrow=T) - mean(x_even), zeros(n.e) )
+    tmpx <- matrix(x_even, byrow=T)
+    z <- rbind(sweep(tmpx, MARGIN=2, STATS=colMeans(tmpx), FUN="-", check.margin = FALSE), zeros(n.e))
+    rm(tmpx)
     ##  Take double-length fft
-    envAssign("fft_even_demeaned_padded", Re(fft(z)))
-    fftz <- envGet("fft_even_demeaned_padded")
+    fftz <- envAssignGet("fft_even_demeaned_padded", Re(fft(z)))
   } else {
     ntap <- ntaper
     n.e <- envGet("len_even")
@@ -78,6 +74,7 @@
     varx <- envGet("ser_even_var")
     fftz <- envGet("fft_even_demeaned_padded")
   }
+  if (!(is.taper(ntap))) ntap <- as.taper(ntap)
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
     # interp1 requires strict monotonicity (for solution stability)
@@ -104,14 +101,15 @@
     m <- f[j]
     m2 <- m*2
     # parabolic weights, index m+1, column
-    kW. <- parabolic_weights(tapers, tap.index=(m+1), vec.out="horizontal")
+    kW. <- parabolic_weights(ntap, tap.index=(m+1), vec.out="horizontal")
+    k. <- seq.int(1,ntap(m+1),by=1)
     # there is a distinction with order of operations and %% (2.14.0)
     # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
     # (but correct in matlab's function call) 
     # So: enclose in parens or use rlpSpec::mod.default
     n2.e <- 2*n.e
-    j1 <- mod((m2 + n.e2 - kW.), n2.e)
-    j2 <- mod((m2 + kW.), n2.e)
+    j1 <- mod((m2 + n2.e - k.), n2.e)
+    j2 <- mod((m2 + k.), n2.e)
     f1 <- fftz[j1+1]
     f2 <- fftz[j2+1]
     psdv <- kW. %*% abs( f1 - f2 )^2
@@ -128,8 +126,13 @@
   }
   ## Normalize by variance
   area <- (sum(psd) - psd[1]/2 - psd[length(psd)]/2)/nhalf  # 2*Trapezoid
-  psd <- as.matrix((1*varx/area)*psd) #there was an apparently incorrect factor of 2 here
-  psdtoplot <- 10*log10(psd[2:(nfreq-1)]) ## R uses 10* to scale to dB (why?)
+  psd <- as.matrix((2*varx/area)*psd) 
+  #there was an apparently incorrect factor of 2 here <-- probably not
+  # see notes/normalization.txt
+  # dB_power = 10*log10(P1/P2)
+  # 1 == 0 dB
+  # 2 == 3 dB
+  psdtoplot <- 10*log10(psd[2:(nfreq-1)]) ## R uses 10* to scale to power-dB
   frq <- seq.int(0, 0.5, length.out=nfreq)
   ftoplot <- frq[2:(nfreq-1)] # should fix this [ ]
   ## Plot if desired

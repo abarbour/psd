@@ -1,14 +1,14 @@
-
+## CHANGES WERE MADE TO FUNC_PSDCORE: reconcile changes here
 ##
 ##  Default method for psdcore, which does the grunt work
 ##
 ..dev_psdcore.default <-function(X.d, 
                                  X.frq=1, 
                                  ntaper=1, 
-                                 ndecimate=1,
+                                 ndecimate=1L,
                                  demean=TRUE, 
                                  detrend=TRUE,
-                                 na.action = na.fail,
+                                 na.action = stats::na.fail,
                                  plotpsd=FALSE, 
                                  #plotcolor="#000000", xlims=c(0,0.5),
                                  as.spec=FALSE,
@@ -56,29 +56,34 @@
   #
   stopifnot(is.vector(X.d))
   series <- deparse(substitute(X.d))
-  X.d <- na.action(ts(X.d, frequency=X.frq))
-  Nyq <- frequency(X.d)/2
+  X.d <- na.action(stats::ts(X.d, frequency=X.frq))
+  Nyq <- stats::frequency(X.d)/2
   X.d <- as.matrix(X.d) # column mat
   ##
   ###  When ntaper is a scalar, initialize
   ##
-  lt <- length(drop(ntaper))
+  lt <- length(ntaper)
   if (lt == 1){
     #
     # 
     # original series
     n.o <- envAssignGet("len_orig", length(X.d))
     #
+    # xr <- remove trend and mean
+    # xc <- remove mean only
+    fit.df <- data.frame(xr=1:n.o, xc=ones(n.o), y=X.d)
     if (detrend){
       # message("detrending (and demeaning)")
-      X <- as.matrix(residuals( lm(y ~ x, data.frame(x=1:n.o+1, y=X.d)) ))
+      X <- as.matrix(stats::residuals( stats::lm(y ~ xr, fit.df)))
     } else if (demean) {
       # message("demeaning")
-      X <- as.matrix(X.d - colMeans(X.d))
+      X <- as.matrix(stats::residuals( stats::lm(y ~ xc, fit.df)))
     } else {
       X <- X.d
-      warning("no demean or detrend: result may be bogus")
+      warning("NO demeaning or detrending: spectrum will likely be bogus")
     }
+    rm(fit.df)
+    rm(X.d)
     #
     # Force series to be even in length (modulo division)
     n.e <- envAssignGet("len_even", n.o - n.o%%2 )
@@ -90,9 +95,9 @@
     # variance of even series
     varx <- envAssignGet("ser_even_var", drop(stats::var(x_even)))
     # create uniform tapers
-    ntap <- colvec(nrow=nhalf+1, val=ntaper)
+    ntap <- ntaper*ones(nhalf+1)
     ##  Remove mean & pad with zeros
-    X.dem <- matrix(c(x_even, zeros(n.e)),ncol=1)
+    X.dem <- matrix(c(x_even, zeros(n.e)), ncol=1)
     ##  Take double-length fft
     # mvfft takes matrix (allos multicolumn)
     fftz <- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
@@ -103,8 +108,12 @@
     varx <- envGet("ser_even_var")
     fftz <- envGet("fft_even_demeaned_padded")
   }
+  ##
+  if (!(is.taper(ntap))) ntap <- as.taper(ntap)
+  ##
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
+    stopifnot(!is.integer(ndecimate))
     message("decim stage 1")
     # interp1 requires strict monotonicity (for solution stability)
     nsum <- base::cumsum(1/ntap)
@@ -125,35 +134,34 @@
   ##
   ###  Calculate the psd by averaging over tapered estimates
   nfreq <- length(f)
-  psd <- zeros(nfreq)
   ##
   ###  Loop over frequency
   ## change to lapply? []
   if (sum(ntaper) > 0) {
+    psd <- zeros(nfreq)
     xfft <- Re(fftz)
     for ( j in 1:nfreq ) {
-      fj <- f[j]
-      fj.tapers <- ntap[fj+1]
-      #ft.tapers<=0
-      k. <- ifelse(fj.tapers<=0, 1, seq.int(1, fj.tapers, by=1))
       #  Sum over taper indexes weighting tapers parabolically
-      W. <- matrix(
-        (fj.tapers*fj.tapers - (k.-1)*(k.-1))*3/2/fj.tapers/(fj.tapers-0.25)/(fj.tapers+1), 
-        nrow=1)
+      fj <- f[j]
+      fj2 <- fj*2
+      n2.e <- 2*n.e
+      # parabolic weights, index m+1, column vec out
+      KPW <<- parabolic_weights(ntap, tap.index=(fj+1), vec.out="horizontal")
       # this is a distinction with order of operations and %% (2.14.0)
       # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
       # (but correct in matlab's function call) 
       # So: enclose in parens or use rlpSpec::mod.default
-      m1. <- 2*fj + 2*n.e - k.
-      m2. <- 2*n.e
-      j1 <- m1. %% m2.
-      m1. <- 2*fj + k.
-      j2 <- m1. %% m2.
+      m1. <- fj2 + n2.e - KPW$taper_seq
+      j1 <- m1. %% n2.e
+      m1. <- fj2 + KPW$taper_seq
+      j2 <- m1. %% n2.e
       f1 <- xfft[j1+1]
       f2 <- xfft[j2+1]
-      af12. <- abs( f1 - f2 )
+      af12. <<- abs( f1 - f2 )
       af122. <- af12. * af12.
-      psdv <- W. %*% af122.
+      #[ ] Error in KPW$taper_weights %*% af122. : 
+      #requires numeric/complex matrix/vector arguments
+      psdv <- KPW$taper_weights %*% as.colvec(af122.)
       psd[fj] <- drop(psdv)
       
     }
@@ -180,7 +188,12 @@
   #message("psd norm")
   trap.area <- (2*sum(psd) - psd[1] - psd[nrow(psd)])/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
-  psd.norm <- drop(trap.area / varx * bandwidth)
+  psd.norm <- drop(2 * trap.area / varx * bandwidth) #2*
+  #there was an apparently incorrect factor of 2 here <-- probably not
+  # see notes/normalization.tx
+  # dB_power = 10*log10(P1/P2)
+  # 1 == 0 dB
+  # 2 == 3 dB
   #plot(psd,type="s")
   psd.n <- drop(psd / psd.norm)
   frq <- seq.int(0, 0.5, length.out=nfreq)
@@ -223,23 +236,6 @@
                   pad = TRUE, 
                   detrend = detrend, 
                   demean = demean)
-  ## Plot if desired
-  #   if (plotpsd) {
-  #     if (plotcolor=="#000000" || plotcolor==0){
-  #       # initial plot (black)
-  #       #plot(ftoplot, psdtoplot, type="s",
-  #       #       print(summary(psd.n))
-  # #             print(head(psd.n),2)
-  # #             print(tail(psd.n),2)
-  #       plot((frq), 10*log10(psd.n), type="s",
-  #            main="Adaptive Sine-multitaper PSD Estimation",
-  #            xlab="Nyquist frequency", #xlim=xlims,
-  #            ylab="PSD, dB rel. Nyquist")
-  #     } else {
-  #       # so adaptive estimation may be visualized
-  #       lines(log10(frq), 10*log10(psd.n), type="s", col=plotcolor)
-  #     }
-  #   }
   if (as.spec){class(psd.out) <- "spec"}
   return(invisible(psd.out))
 }

@@ -1,3 +1,5 @@
+## DEPRECATE [24 Dec 12]
+
 ##
 ##  Default method to forward and backwards constrain the slope of
 ##  the second derivative of the spectrum

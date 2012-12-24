@@ -9,6 +9,7 @@
                       niter=3, 
                       ndec=1,
                       units=c("time","signal"),
+		      prewhiten=TRUE,
                       plotpsd=TRUE, 
                       ylims=c(.07,3e4), xlims=c(0,0.5),
                       devmode=TRUE) {

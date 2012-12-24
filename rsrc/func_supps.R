@@ -4,14 +4,24 @@
 ###
 # TODO(abarbour):
 ##
+.rlp_envStatus.default <- function(env="psdenv"){
+  env <- as.character(env)
+  return(list(env=env, exists=exists(env), listing=envList()))
+}
 .rlp_initEnv.default <- function(refresh=FALSE, verbose=TRUE, ...){
+  envstat <- envStatus()
+  is.init <- envstat$exists
+  env <- envstat$env
   # initialize the psd environment
-  env <- "psdenv"
-  if(!exists(env) | refresh){
+  if( !is.init | refresh ){
     psdenv <<- new.env(parent=baseenv(), ...)
-    if (verbose) message(sprintf("\t>>>> ** %s ** environment initialized",env))
+    if (verbose) {
+      msg <- "initialized"
+      if (refresh){ msg <- "refreshed"}
+      message(sprintf("\tenvironment  ** %s **  %s", env, msg))
+    }
   } else if (!refresh) {
-    if (verbose) message(sprintf("\t>>>> The ** %s ** environment is already initialized",env))
+    if (verbose) message(sprintf("\t** %s ** is already initialized: try 'refresh=TRUE' to clear", env))
   }
 }
 .rlp_envList.default <- function(envir=psdenv){
@@ -32,14 +42,18 @@
   envGet(variable, envir=envir)
 }
 ##
+.reshape_vector.default <- function(x, vec.shape=c("horizontal","vertical")){
+  x <- as.vector(x)
+  vec.shape <- match.arg(vec.shape)
+  nrow <- switch(vec.shape, "horizontal"=1, "vertical"=length(x))
+  return(matrix(x, nrow=nrow))
+}
+##
 .nas.default <- function(nrow, ncol=1){matrix(NA, nrow, ncol)}
 ##
-.colvec.default <- function(nrow, val){matrix(val, nrow=nrow, ncol=1)}
-.rowvec.default <- function(ncol, val){matrix(val, nrow=1, ncol=ncol)}
+.zeros.default <- function(nrow){as.colvec(rep.int(0, nrow))}
 ##
-.zeros.default <- function(nrow){colvec(nrow, 0)}
-##
-.ones.default <- function(nrow){colvec(nrow, 1)}
+.ones.default <- function(nrow){as.colvec(rep.int(1, nrow))}
 ##
 .mod.default <- function(x,y){
   ## modulo division

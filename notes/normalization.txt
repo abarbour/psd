@@ -1,0 +1,96 @@
+Andy:
+
+        I think I have resolved my concerns about the spectral levels for
+the seismometer data. There is one non-problem, and one small problem.
+
+        The non-problem is that I forgot that the calibration gives the
+seismometer response to velocity, so when I corrected the spectra I was
+getting dB relative to 1 (m/s)**2/Hz; I am so used to looking at spectra
+in terms of acceleration that I just assumed that this was what I had
+gotten, and of course it didn't look right. Scaling the spectral numbers
+by the calibration and then by omega**2 gives a result quite consistent
+with other estimates.
+
+        The small problem comes from the difference in the normalization
+assumed by psd (and psdstripd) and logsmoo2. The latter assumes that the
+spectrum has the normalization used in  power -- which is that the Nyquist
+is assumed to be 1,0, always (power doesn't ask for a sample interval).
+But psd assumes that the interval is 1 (unless you specify otherwise)
+so that the Nyquist is 0.5. So say you have a white noise with variance
+1: power will return a flat spectrum with level 0 db (=1) but psd will
+return a level of 2 (=3 db), both so that the level times the Nyquist will be 1.
+But logsmoo, told that the interval is 1, will multiply the spectrum by
+2 to covert from lc**2/Nyquist to lc**2/Hz: giving 3 dB for the spectrum from
+power, but 6 dB (=4) for the spectrum from psd.
+
+        Of course, the problem gets worse if you use the sample interval
+in both psd and logsmoo, and this interval is not 1: then the correction
+gets applied twice, and is even larger.
+
+        Comparing the smoo files for PFO.II.SZ on 2009:166 with my own
+analysis, it looks like for the 1-Hz data that you used an interval of
+one for both psd and logsmoo (for psd perhaps by default?): all the estimates
+are 3 dB too high.
+
+        The fix is to always specify the interval in psd as 0.5, no matter what
+the actual interval is, and then use the actual interval in logsmoo. I don't
+see any reason to recompute what is already done: it is easy enough to apply a
+shift of -3.01 dB to the results. In fact, it is probably best to leave
+everything as it is going forward, and just apply this shift when it comes time
+to present results.
+
+        Hope this all makes sense.
+
+Thanks
+Duncan
+
+==========================================================================================
+
+http://www.animations.physics.unsw.edu.au/jw/dB.htm
+
+Definition and examples
+
+The decibel ( dB) is used to measure sound level, but it is also widely used in
+electronics, signals and communication. The dB is a logarithmic unit used to describe a
+ratio. The ratio may be power, sound pressure, voltage or intensity or several other
+things these examples. Later on we relate dB to the phon and the sone (units related to
+loudness). But first, to get a taste for logarithmic units, let's look at some numbers.
+(If you have forgotten, go to What is a logarithm?) For instance, suppose we have two
+loudspeakers, the first playing a sound with power P1, and another playing a louder
+version of the same sound with power P2, but everything else (how far away, frequency)
+kept the same.
+
+The difference in decibels between the two is defined to be
+
+10 log (P2/P1) dB        where the log is to base 10.
+
+If the second produces twice as much power than the first, the difference in dB is 
+10 log(P2/P1) = 10 log 2 = 3 dB.
+
+as is shown on the graph, which plots 10  log (P2/P1) against P2/P1. To continue the
+example, if the second had 10 times the power of the first, the difference in dB would be
+10 log (P2/P1) = 10 log 10 = 10 dB.
+
+If the second had a million times the power of the first, the difference in dB would be 
+10 log (P2/P1) = 10 log 1,000,000 = 60 dB.
+
+This example shows one feature of decibel scales that is useful in discussing sound: they
+can describe very big ratios using numbers of modest size. But note that the decibel
+describes a ratio: so far we have not said what power either of the speakers radiates,
+only the ratio of powers. (Note also the factor 10 in the definition, which puts the
+'deci' in decibel).
+
+Sound pressure, sound level and dB. Sound is usually measured with microphones and they
+respond (approximately) proportionally to the sound pressure, p. Now the power in a sound
+wave, all else equal, goes as the square of the pressure. (Similarly, electrical power in
+a resistor goes as the square of the voltage.) The log of the square of x is just 2  log 
+x, so this introduces a factor of 2 when we convert to decibels for pressures. The
+difference in sound pressure level between two sounds with p1 and p2 is therefore: 
+20 log(p2/p1) dB   =  10 log (p22/p12) dB   = 10 log (P2/P1) dB       
+where again the log is to base 10.
+
+What happens when you halve the sound power? The log of 2 is 0.3, so the log of 1/2 is
+-0.3. So, if you halve the power, you reduce the power and the sound level by 3 dB. Halve
+it again (down to 1/4 of the original power) and you reduce the level by another 3 dB. If
+you keep on halving the power, you have these ratios.
+
