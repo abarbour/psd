@@ -58,7 +58,7 @@
   series <- deparse(substitute(X.d))
   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
   Nyq <- stats::frequency(X.d)/2
-  X.d <- as.matrix(X.d) # column mat
+  #X.d <- as.matrix(X.d) # column mat
   ##
   ###  When ntaper is a scalar, initialize
   ##
@@ -69,21 +69,12 @@
     # original series
     n.o <- envAssignGet("len_orig", length(X.d))
     #
-    # xr <- remove trend and mean
-    # xc <- remove mean only
-    fit.df <- data.frame(xr=1:n.o, xc=ones(n.o), y=X.d)
-    if (detrend){
-      # message("detrending (and demeaning)")
-      X <- as.matrix(stats::residuals( stats::lm(y ~ xr, fit.df)))
-    } else if (demean) {
-      # message("demeaning")
-      X <- as.matrix(stats::residuals( stats::lm(y ~ xc, fit.df)))
-    } else {
-      X <- X.d
-      warning("NO demeaning or detrending: spectrum will likely be bogus")
-    }
-    rm(fit.df)
-    rm(X.d)
+    X <- prewhiten(X.d, 
+                   AR.fit=FALSE, 
+                   detrend=detrend, 
+                   demean=demean,
+                   plot=FALSE,
+                   verbose=FALSE)
     #
     # Force series to be even in length (modulo division)
     n.e <- envAssignGet("len_even", n.o - n.o%%2 )
@@ -102,12 +93,14 @@
     # mvfft takes matrix (allos multicolumn)
     fftz <- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
   } else {
+    #X <- X.d
     ntap <- ntaper
     n.e <- envGet("len_even")
     nhalf <- envGet("len_even_half")
     varx <- envGet("ser_even_var")
     fftz <- envGet("fft_even_demeaned_padded")
   }
+  # if ntaper is a vector, this doesn't work [ ]
   ##
   if (!(is.taper(ntap))) ntap <- as.taper(ntap)
   ##

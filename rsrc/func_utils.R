@@ -2,6 +2,65 @@
 ### Various utility functions
 ###
 ##
+#' prewhiten a timeseries object
+#' 
+#' de-mean, de-trend (which also de-means), and (soon) fit an AR
+#' model to the series
+#'
+#' @note the \code{AR.fit} option is not used (yet)
+#'
+#' @param tser  \code{ts} object
+#' @param AR.fit boolean; FALSE
+#' @param detrend  boolean; TRUE
+#' @param demean  boolean; TRUE
+#' @param plot  boolean; TRUE
+#' @param verbose  boolean; TRUE
+#'
+#' @extends ts
+prewhiten <- function(tser,
+                      AR.fit=FALSE,
+                      detrend=TRUE,
+                      demean=TRUE,
+                      plot=TRUE,
+                      verbose=TRUE) UseMethod("prewhiten")
+prewhiten.ts <- function(tser,
+                         AR.fit=FALSE,
+                         detrend=TRUE,
+                         demean=TRUE,
+                         plot=TRUE,
+                         verbose=TRUE){
+  # prelims
+  stopifnot(is.ts(tser))
+  # soon: will add support for solving Yule-Walker equations
+  # e.g. fitting an AR model to the data (and removing it?)
+  if (AR.fit) .NotYetUsed("Auto-regressive fitting", error = FALSE)
+  # some other info... needed?
+  sps <- frequency(tser)
+  tstart <- start(tser)
+  n.o <- length(tser)
+  ttime <- sps*n.o
+  # data.frame with fit params
+  fit.df <- data.frame(xr=seq.int(from=1, to=n.o, by=1), 
+                       xc=rep.int(1, n.o), 
+                       y=tser)
+  if (detrend){
+    if (verbose) message("detrending (and demeaning)")
+    X <- as.matrix(stats::residuals( stats::lm(y ~ xr, fit.df)))
+  } else if (demean) {
+    if (verbose) message("demeaning")
+    X <- as.matrix(stats::residuals( stats::lm(y ~ xc, fit.df)))
+  } else {
+    X <- tser
+    if (verbose) warning("nothing was done to the timeseries object")
+  }
+  tser.dem <- stats::ts(X, frequency=sps, start=tstart)
+  if (plot) plot(ts.union(tser, tser.dem), 
+                 yaxs="i", xaxs="i",
+                 yax.flip=TRUE)
+  return(invisible(tser.dem))
+}
+
+
 #' Reports whether x is a 'spec' object
 #' @param x An object to test
 #' @export
