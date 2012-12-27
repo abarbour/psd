@@ -9,6 +9,7 @@
                                  detrend=TRUE,
                                  na.action = stats::na.fail,
                                  first.last=TRUE,
+                                 Nyquist.normalize=TRUE,
                                  plotpsd=FALSE, 
                                  #plotcolor="#000000", xlims=c(0,0.5),
                                  as.spec=TRUE,
@@ -138,7 +139,8 @@
   if (sum(ntaper) > 0) {
     psd <- zeros(nfreq)
     n2e <- 2*n.e
-    PSDFUN <- function(fj, fj2=2*fj, n2.e=n2e, ntaps=ntap, Xfft=Re(fftz)){
+    Rfftz <- Re(fftz)
+    PSDFUN <- function(fj, n2.e=n2e, ntaps=ntap, Xfft=Rfftz){
       # parabolic weights, index m+1, column vec out
       #print(c(fj,fj2,n2.e))
       KPW <- parabolic_weights(ntaps, tap.index=(fj+1), vec.out="horizontal")
@@ -146,6 +148,7 @@
       # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
       # (but correct in matlab's function call) 
       # So: enclose in parens or use rlpSpec::mod.default
+      fj2 <- 2*fj
       m1. <- fj2 + n2.e - KPW$taper_seq
       j1 <- m1. %% n2.e
       m1. <- fj2 + KPW$taper_seq
@@ -157,7 +160,9 @@
       psdv <- drop(KPW$taper_weights %*% as.colvec(af122.))
       return(psdv)
     }
-    psd <- unlist(lapply(X=f[1:nfreq], FUN=PSDFUN))
+    require(compiler)
+    PSDFUNc <- compiler::cmpfun(PSDFUN)
+    psd <- unlist(lapply(X=f[1:nfreq], FUN=PSDFUNc))
   } else {
     message("zero taper result == raw periodogram")
     Xfft <- envGet("fft_even_demeaned_padded")
@@ -172,22 +177,26 @@
     tmp.x <- f
     tmp.xi <- tmp.y
     tmp.y <- psd
+    # x y x_interp --> y_interp
     tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
     psd <- tmp.yi
   }
   ##
-  psd <- as.matrix(drop(Re(psd)))
-  #psd <- as.numeric(psd)
-  ## Normalize by variance
-  #message("psd norm")
+  stopifnot(!is.complex(psd))
+  psd <- as.rowvec(psd)
+  ## Normalize by variance, 
   trap.area <- sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
-  psd.n <- psd / (2 * varx / trap.area * bandwidth)
+  timebp <- as.numeric(ntap/2)
+  psd.n <- psd * (2 * varx / (trap.area * bandwidth))
+  #and (optionally) the Nyquist frequency so units will be in (units**2/Hz)
+  if (Nyquist.normalize) psd.n <- Nyq * psd.n
   # thought there was an apparently incorrect factor of 2 here but
   # see notes/normalization.tx
   # dB_power = 10*log10(P1/P2)
   # 1 == 0 dB
   # 2 == 3 dB
+  # But that assumes the PSD has been multiplied by the Nyquist
   frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
   # there seems to be an issue with f==0, 
   # so just extrapolate from the prev point
@@ -211,8 +220,7 @@
     par(opar)
   }
   if (plotpsd) pltpsd(...)
-  #plot(10*log10(psd),type="s")
-  # 
+  funcall<-paste(as.character(match.call()[]),collapse=" ") 
   psd.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(psd.n), 
                   coh = NULL, 
@@ -221,11 +229,12 @@
                   df = NA, 
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
+                  timebp=timebp,
                   n.used = envGet("len_even"), 
                   orig.n = envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
-                  method = "Adaptive Sine Multitaper (rlpSpec)", 
+                  method = sprintf("Adaptive Sine Multitaper (rlpSpec)\n%s",funcall), 
                   taper = ntap, 
                   pad = TRUE, 
                   detrend = detrend, 
