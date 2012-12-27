@@ -1,17 +1,18 @@
-## CHANGES WERE MADE TO FUNC_PSDCORE: reconcile changes here
 ##
 ##  Default method for psdcore, which does the grunt work
 ##
 ..dev_psdcore.default <-function(X.d, 
                                  X.frq=1, 
-                                 ntaper=1, 
+                                 ntaper=as.taper(1), 
                                  ndecimate=1L,
                                  demean=TRUE, 
                                  detrend=TRUE,
                                  na.action = stats::na.fail,
+                                 first.last=TRUE,
                                  plotpsd=FALSE, 
                                  #plotcolor="#000000", xlims=c(0,0.5),
-                                 as.spec=FALSE,
+                                 as.spec=TRUE,
+                                 force_calc=FALSE,
                                  ...
                                  ) {
   ###
@@ -45,7 +46,6 @@
   ##
   ## TODO(abarbour):	
   ##
-  
   require(signal, quietly=TRUE, warn.conflicts=FALSE)
   # for interp1
   #   require(clim.pact, quietly=T)
@@ -54,7 +54,7 @@
   # persistent [ ]
   #persistent fftz n nhalf varx
   #
-  stopifnot(is.vector(X.d))
+  #stopifnot(is.vector(X.d))
   series <- deparse(substitute(X.d))
   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
   Nyq <- stats::frequency(X.d)/2
@@ -63,14 +63,14 @@
   ###  When ntaper is a scalar, initialize
   ##
   lt <- length(ntaper)
-  if (lt == 1){
+  if ((lt == 1) | (force_calc)){
     #
     # 
     # original series
     n.o <- envAssignGet("len_orig", length(X.d))
     #
     X <- prewhiten(X.d, 
-                   AR.fit=FALSE, 
+                   AR.max=0L, 
                    detrend=detrend, 
                    demean=demean,
                    plot=FALSE,
@@ -78,22 +78,27 @@
     #
     # Force series to be even in length (modulo division)
     n.e <- envAssignGet("len_even", n.o - n.o%%2 )
-    x_even <- as.matrix(X[1:n.e])
+    X.even <- as.matrix(X[1:n.e])
     envAssign("ser_orig", X)
-    envAssign("ser_orig_even", x_even)
+    envAssign("ser_orig_even", X.even)
     # half length of even series
     nhalf <- envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <- envAssignGet("ser_even_var", drop(stats::var(x_even)))
+    varx <- envAssignGet("ser_even_var", drop(stats::var(X.even)))
     # create uniform tapers
-    ntap <- ntaper*ones(nhalf+1)
+    nt <- nhalf + 1
+    if (lt < nt) {
+      ntap <- ntaper*ones(nt) 
+    } else {
+      ntap <- ntaper[1:nt]
+    }
     ##  Remove mean & pad with zeros
-    X.dem <- matrix(c(x_even, zeros(n.e)), ncol=1)
+    X.dem <- matrix(c(X.even, zeros(n.e)), ncol=1)
     ##  Take double-length fft
     # mvfft takes matrix (allos multicolumn)
     fftz <- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
   } else {
-    #X <- X.d
+    X <- X.d
     ntap <- ntaper
     n.e <- envGet("len_even")
     nhalf <- envGet("len_even_half")
@@ -132,14 +137,11 @@
   ## change to lapply? []
   if (sum(ntaper) > 0) {
     psd <- zeros(nfreq)
-    xfft <- Re(fftz)
-    for ( j in 1:nfreq ) {
-      #  Sum over taper indexes weighting tapers parabolically
-      fj <- f[j]
-      fj2 <- fj*2
-      n2.e <- 2*n.e
+    n2e <- 2*n.e
+    PSDFUN <- function(fj, fj2=2*fj, n2.e=n2e, ntaps=ntap, Xfft=Re(fftz)){
       # parabolic weights, index m+1, column vec out
-      KPW <<- parabolic_weights(ntap, tap.index=(fj+1), vec.out="horizontal")
+      #print(c(fj,fj2,n2.e))
+      KPW <- parabolic_weights(ntaps, tap.index=(fj+1), vec.out="horizontal")
       # this is a distinction with order of operations and %% (2.14.0)
       # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
       # (but correct in matlab's function call) 
@@ -148,20 +150,18 @@
       j1 <- m1. %% n2.e
       m1. <- fj2 + KPW$taper_seq
       j2 <- m1. %% n2.e
-      f1 <- xfft[j1+1]
-      f2 <- xfft[j2+1]
-      af12. <<- abs( f1 - f2 )
+      f1 <- Xfft[j1+1]
+      f2 <- Xfft[j2+1]
+      af12. <- f1 - f2
       af122. <- af12. * af12.
-      #[ ] Error in KPW$taper_weights %*% af122. : 
-      #requires numeric/complex matrix/vector arguments
-      psdv <- KPW$taper_weights %*% as.colvec(af122.)
-      psd[fj] <- drop(psdv)
-      
+      psdv <- drop(KPW$taper_weights %*% as.colvec(af122.))
+      return(psdv)
     }
+    psd <- unlist(lapply(X=f[1:nfreq], FUN=PSDFUN))
   } else {
     message("zero taper result == raw periodogram")
-    xfft <- envGet("fft_even_demeaned_padded")
-    ff <- xfft[1:nfreq]
+    Xfft <- envGet("fft_even_demeaned_padded")
+    ff <- Xfft[1:nfreq]
     N0 <- envGet("len_orig")
     psd <- ff * Conj(ff) / N0
   }
@@ -177,43 +177,44 @@
   }
   ##
   psd <- as.matrix(drop(Re(psd)))
+  #psd <- as.numeric(psd)
   ## Normalize by variance
   #message("psd norm")
-  trap.area <- (2*sum(psd) - psd[1] - psd[nrow(psd)])/2 # Trapezoidal rule
+  trap.area <- sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
-  psd.norm <- drop(2 * trap.area / varx * bandwidth) #2*
-  #there was an apparently incorrect factor of 2 here <-- probably not
+  psd.n <- psd / (2 * varx / trap.area * bandwidth)
+  # thought there was an apparently incorrect factor of 2 here but
   # see notes/normalization.tx
   # dB_power = 10*log10(P1/P2)
   # 1 == 0 dB
   # 2 == 3 dB
-  #plot(psd,type="s")
-  psd.n <- drop(psd / psd.norm)
-  frq <- seq.int(0, 0.5, length.out=nfreq)
-  # there seems to be an issue with f==0, so just extrapolate from the prev point
-  psd.n <- as.matrix(
-    exp(as.numeric(signal::interp1(frq[2:(nfreq-2)], 
-                        log(psd.n[2:(nfreq-2)]), 
-                        frq, 
-                        method='linear', extrap=TRUE))))
-  frq <- as.matrix(frq)
+  frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
+  # there seems to be an issue with f==0, 
+  # so just extrapolate from the prev point
+  if (first.last) psd.n <- as.matrix(exp(signal::interp1(frq[2:(nfreq-1)], log(psd.n[2:(nfreq-1)]), frq, method='linear', extrap=TRUE)))
   
   pltpsd <- function(...){
-    Xpg<-spec.pgram(X, log="no", pad=1, taper=0, detrend=F, demean=F, plot=F)
+    Xpg <- spec.pgram(X, log="no", pad=1, taper=0, detrend=F, demean=F, plot=F)
     opar <- par(no.readonly = TRUE)
     par(mar=rep(2,4), oma=rep(0,4))
     layout(matrix(c(1,2),ncol=1),c(1,2))
-    plot(log(Xpg$freq), log10(Re(Xpg$spec)), col="red", type="l", main="spectra") #,ylim=5*c(-.5,1.5))
-    lines(as.vector(log(frq)), as.vector(log10(psd.n)), type="l")
-    legend("topright",c("spec.pgram","rlpSpec"),col=c("red","black"),lty=1)
-    plot(X,type="l", main="spec series (de-trend/-mean if applied)")
+    lpsd <- 10*log10(psd.n)
+    lpgram <- 10*log10(Xpg$spec)
+    r1 <- range(lpsd)
+    r2 <- range(lpgram)
+    plot(log10(Xpg$freq), lpgram, 
+         col="red", type="l", main="spectra",
+         ,ylim=c(min(r1,r2), max(r1,r2)))
+    lines(log10(frq), lpsd, type="l")
+    legend("bottomleft",c("spec.pgram","rlpSpec"),col=c("red","black"),lty=1)
+    plot(X,type="l", main=sprintf("spec series ( dt:%s | dm:%s | f.l:%s )", demean, detrend, first.last))
     par(opar)
   }
   if (plotpsd) pltpsd(...)
   #plot(10*log10(psd),type="s")
   # 
-  psd.out <- list(freq = frq, 
-                  spec = psd.n, 
+  psd.out <- list(freq = as.numeric(frq), 
+                  spec = as.numeric(psd.n), 
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NA, 

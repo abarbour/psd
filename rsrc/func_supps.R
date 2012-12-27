@@ -4,17 +4,13 @@
 ###
 # TODO(abarbour):
 ##
-.rlp_envStatus.default <- function(env="psdenv"){
-  env <- as.character(env)
-  return(list(env=env, exists=exists(env), listing=envList()))
+.rlp_envStatus.default <- function(){
+  initEnv(refresh=FALSE, verbose=FALSE)
 }
-.rlp_initEnv.default <- function(refresh=FALSE, verbose=TRUE, ...){
-  envstat <- envStatus()
-  is.init <- envstat$exists
-  env <- envstat$env
+.rlp_initEnv.default <- function(env="psdenv", refresh=FALSE, verbose=TRUE, ...){
   # initialize the psd environment
-  if( !is.init | refresh ){
-    psdenv <<- new.env(parent=baseenv(), ...)
+  if( !exists(env) | refresh ){
+    assign(x=env, value=new.env(parent=baseenv(), ...), envir=.GlobalEnv)
     if (verbose) {
       msg <- "initialized"
       if (refresh){ msg <- "refreshed"}
@@ -23,6 +19,10 @@
   } else if (!refresh) {
     if (verbose) message(sprintf("\t** %s ** is already initialized: try 'refresh=TRUE' to clear", env))
   }
+  return(list(env.name=env, 
+              obvious.exists=exists(env), 
+              listing=envList(),
+              init.stamp=Sys.time()))
 }
 .rlp_envList.default <- function(envir=psdenv){
   ## return listing of envir::variable

@@ -38,7 +38,7 @@
   }
   ##
   #  Calculate psd with multitapers (fixed num tapers)
-  spec <- psdcore(x, ntap, plotpsd=FALSE)
+  spec <- ..dev_psdcore.default(x, ntap, plotpsd=FALSE, as.spec=FALSE)$spec
   nf <- length(spec)        
   #  Fourier transform the psd to get the autocovariance function
   autoc <- Re(fft( c(spec[1]/2, spec[2:nf-1], matrix(0,nf-1,1)) ))
