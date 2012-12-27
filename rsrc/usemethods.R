@@ -1,9 +1,6 @@
 ### Define default methods for functions
 pspectrum <- function(x, ...) UseMethod(".pspectrum")
-psdcore <- function(x, ...) UseMethod(".psdcore")
-.devpsdcore <- function(x, ...) UseMethod("..dev_psdcore")
 
-whiten <- function(x, ...) UseMethod(".whiten")
 qualcon <- function(x, ...) UseMethod(".qualcon")
 boundslope <- function(x, ...) UseMethod(".boundslope")
 # in suppfuncs
@@ -21,6 +18,4 @@ as.colvec <- function(x) reshape_vector(x, "vertical")
 as.rowvec <- function(x) reshape_vector(x, "horizontal")
 ones <- function(x, ...) UseMethod(".ones")
 zeros <- function(x, ...) UseMethod(".zeros")
-#
-splineGrad <- function(x, ...) UseMethod(".splineGrad")
 ###

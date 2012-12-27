@@ -2,83 +2,13 @@
 ### Various utility functions
 ###
 ##
-#' prewhiten a timeseries object
-#' 
-#' de-mean, de-trend (which also de-means), and (soon) fit an AR
-#' model to the series
-#'
-#' @note the \code{AR.fit} option is not used (yet)
-#'
-#' @param tser  \code{ts} object
-#' @param AR.fit boolean; FALSE
-#' @param detrend  boolean; TRUE
-#' @param demean  boolean; TRUE
-#' @param plot  boolean; TRUE
-#' @param verbose  boolean; TRUE
-#'
-#' @extends ts
-prewhiten <- function(tser,
-                      AR.max=0L,
-                      detrend=TRUE,
-                      demean=TRUE,
-                      plot=TRUE,
-                      verbose=TRUE) UseMethod("prewhiten")
-prewhiten.ts <- function(tser,
-                         AR.max=0L,
-                         detrend=TRUE,
-                         demean=TRUE,
-                         plot=TRUE,
-                         verbose=TRUE){
-  # prelims
-  stopifnot(is.ts(tser))
-  require(zoo)
-  # some other info... needed?
-  sps <- frequency(tser)
-  tstart <- start(tser)
-  n.o <- length(tser)
-  ttime <- sps*n.o
-  if (AR.max > 0) {
-    AR.max <- as.integer(max(1,AR.max))
-    if (verbose) message("autoregressive model fit (returning innovations)")
-    # solves Yule-Walker equations
-    #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
-    arfit <<- stats::ar.yw(tser, 
-                       aic=TRUE, 
-                       order.max=AR.max, 
-                       demean=demean)
-    if (verbose) print(arfit)
-    # ar returns a TS object
-    tser.prew <- as.ts(zoo::na.locf(arfit$resid))
-  }
-  # data.frame with fit params
-  if (AR.max < 1){
-    fit.df <- data.frame(xr=seq.int(from=1, to=n.o, by=1), 
-                         xc=rep.int(1, n.o), 
-                         y=tser)
-    if (detrend){
-      if (verbose) message("detrending (and demeaning)")
-      X <- as.matrix(stats::residuals( stats::lm(y ~ xr, fit.df)))
-    } else if (demean) {
-      if (verbose) message("demeaning")
-      X <- as.matrix(stats::residuals( stats::lm(y ~ xc, fit.df)))
-    } else {
-      X <- tser
-      if (verbose) warning("nothing was done to the timeseries object")
-    }
-    tser.prew <- stats::ts(X, frequency=sps, start=tstart)
-  }
-  if (plot) plot(ts.union(tser, tser.prew), 
-                 yaxs="i", xaxs="i",
-                 yax.flip=TRUE)
-  return(invisible(tser.prew))
-}
-
 
 #' Reports whether x is a 'spec' object
 #' @param x An object to test
 #' @export
 is.spec <- function(x) inherits(x, "spec")
-#
+
+splineGrad <- function(x, ...) UseMethod(".splineGrad")
 .splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   #
   # Use spline interpolation to help find an emprirical gradient
