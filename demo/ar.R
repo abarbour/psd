@@ -19,3 +19,11 @@ print(benchmark(PSD(X.d, ntaper=nt, plot=FALSE, force_calc=TRUE),
                 PSD(X.d, ntaper=ntaps, plot=FALSE, force_calc=TRUE),
                 multitaper::spec.mtm(X.d,k=nt,plot=FALSE),
                 replications=5))
+
+# Profiling
+Rprof()
+for (i in 1:100)
+  mypsd <- PSD(X.d, ntaper=nt, plot=FALSE, force_calc=TRUE)
+Rprof(NULL)
+(prof <- summaryRprof())
+

@@ -154,12 +154,14 @@ psdcore <- function(...) UseMethod(".psdcore")
       f2 <- Xfft[j2+1]
       af12. <- f1 - f2
       af122. <- af12. * af12.
-      psdv <- drop(KPW$taper_weights %*% as.colvec(af122.))
+      psdv <- KPW$taper_weights %*% as.colvec(af122.)
       return(psdv)
     }
-    require(compiler)
-    PSDFUNc <- compiler::cmpfun(PSDFUN)
-    psd <- unlist(lapply(X=f[1:nfreq], FUN=PSDFUNc))
+    #  easier to follow, but foreach solution is actually slower :(
+    #require(foreach)
+    #psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
+    #
+    psd <- as.numeric(lapply(X=f[1:nfreq], FUN=PSDFUN))
   } else {
     message("zero taper result == raw periodogram")
     Xfft <- envGet("fft_even_demeaned_padded")

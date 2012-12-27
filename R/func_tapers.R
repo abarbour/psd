@@ -171,11 +171,9 @@ parabolic_weights <- function(tapvec, tap.index=1, vec.out=c("vertical","horizon
 #' @rdname parabolic_weights
 #' @S3method parabolic_weights taper
 parabolic_weights.taper <- function(tapvec, tap.index=1, vec.out=c("vertical","horizontal")){
-  stopifnot(is.taper(tapvec))
-  stopifnot((tap.index > 0) & (tap.index <= length(tapvec)))
+  stopifnot(is.taper(tapvec) | ((tap.index > 0) & (tap.index <= length(tapvec))))
   vec.out <- match.arg(vec.out)
-  ntap <- tapvec[as.integer(tap.index)]
-  stopifnot(ntap>0)
+  ntap <- max(1,tapvec[as.integer(tap.index)])
   kseq <- seq.int(1, ntap, by=1) - 1 #base::sequence(ntap) - 1
   nrow <- switch(vec.out, "horizontal"=1, "vertical"=length(kseq))
   K2 <- kseq * kseq # vector
