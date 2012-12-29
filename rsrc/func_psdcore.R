@@ -131,8 +131,6 @@ psdcore <- function(...) UseMethod(".psdcore")
   ###  Calculate the psd by averaging over tapered estimates
   nfreq <- length(f)
   ##
-  ###  Loop over frequency
-  ## change to lapply? []
   if (sum(ntaper) > 0) {
     psd <- zeros(nfreq)
     n2e <- 2*n.e
@@ -140,7 +138,9 @@ psdcore <- function(...) UseMethod(".psdcore")
     PSDFUN <- function(fj, n2.e=n2e, ntaps=ntap, Xfft=Rfftz){
       # parabolic weights, index m+1, column vec out
       #print(c(fj,fj2,n2.e))
-      KPW <- parabolic_weights(ntaps, tap.index=(fj+1), vec.out="horizontal")
+      NT <- ntaps[fj+1]
+      #KPW <- parabolic_weights(ntaps, tap.index=(fj+1), vec.out="horizontal")
+      KPW <- parabolic_weights_fast(NT)
       # this is a distinction with order of operations and %% (2.14.0)
       # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
       # (but correct in matlab's function call) 
@@ -154,14 +154,14 @@ psdcore <- function(...) UseMethod(".psdcore")
       f2 <- Xfft[j2+1]
       af12. <- f1 - f2
       af122. <- af12. * af12.
-      psdv <- KPW$taper_weights %*% as.colvec(af122.)
+      psdv <- KPW$taper_weights %*% matrix(af122., ncol=1)
       return(psdv)
     }
     #  easier to follow, but foreach solution is actually slower :(
     #require(foreach)
     #psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
-    #
-    psd <- as.numeric(lapply(X=f[1:nfreq], FUN=PSDFUN))
+    # vapply is much faster than even lapply
+    psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=1.0)
   } else {
     message("zero taper result == raw periodogram")
     Xfft <- envGet("fft_even_demeaned_padded")
@@ -182,7 +182,7 @@ psdcore <- function(...) UseMethod(".psdcore")
   }
   ##
   stopifnot(!is.complex(psd))
-  psd <- as.rowvec(psd)
+  #psd <- as.rowvec(psd)
   ## Normalize by variance, 
   trap.area <- sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
@@ -196,7 +196,7 @@ psdcore <- function(...) UseMethod(".psdcore")
   }
   # BUG: there seems to be an issue with f==0, & f[length(psd)]
   # so just extrapolate from the prev point
-  if (first.last) psd.n <- as.rowvec(exp( signal::interp1(frq[2:(nfreq-1)], 
+  if (first.last) psd.n <- (exp( signal::interp1(frq[2:(nfreq-1)], 
                                                           log(psd.n[2:(nfreq-1)]), 
                                                           frq, 
                                                           method='linear', 

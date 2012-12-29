@@ -51,9 +51,9 @@
 ##
 .nas.default <- function(nrow, ncol=1){matrix(NA, nrow, ncol)}
 ##
-.zeros.default <- function(nrow){as.colvec(rep.int(0, nrow))}
+.zeros.default <- function(nrow){matrix(rep.int(0, nrow),nrow=nrow)}
 ##
-.ones.default <- function(nrow){as.colvec(rep.int(1, nrow))}
+.ones.default <- function(nrow){matrix(rep.int(1, nrow),nrow=nrow)}
 ##
 .mod.default <- function(x,y){
   ## modulo division

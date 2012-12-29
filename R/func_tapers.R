@@ -70,8 +70,7 @@ as.taper <- function(x, min.taper=1){
   # taper should be non-zero integer, since it represents the
   # number of tapered sections to average; hence, ceiling
   # then integerize
-  stopifnot(!(is.character(x)))
-  stopifnot(min.taper>0)
+  stopifnot(!(is.character(x)) | (min.taper>0))
   x <- unlist(x)
   x[x < min.taper] <- min.taper
   #   > as.integer(as.matrix(data.frame(x=1:10,y=10:19)))
@@ -184,6 +183,16 @@ parabolic_weights.taper <- function(tapvec, tap.index=1, vec.out=c("vertical","h
   return(list(taper_seq=kseq+1, taper_weights=matrix(kWeights, nrow=nrow)))
 }
 
+parabolic_weights_fast <- function(ntap){
+  ntap <- max(1, as.integer(ntap))
+  kseq <- seq.int(from=0, to=ntap-1, by=1)
+  lk <- length(kseq)
+  K2 <- kseq * kseq # vector
+  NT2 <- ntap * ntap # scalar
+  NT3 <- NT2 * ntap # scalar
+  TW <- matrix((NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2), ncol=lk)
+  return(list(taper_seq=kseq+1, taper_weights=TW))
+}
 ###
 ###  Constraint methods
 ###
