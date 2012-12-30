@@ -1,8 +1,11 @@
-\docType{rlpSpec}
+\docType{package}
 \name{rlpSpec}
 \alias{rlpSpec}
-\alias{spec.rlp}
-\title{what this does}
+\alias{rlpSpec-package}
+\alias{rlpSpec-package,}
+\alias{rlpspec-package}
+\alias{spec.rlp,}
+\title{Adaptively estimate power spectral densities of an optimally tapered series.}
 \description{
   This package provides tools to
 }
@@ -34,9 +37,5 @@
   1794-1800.
 
   \url{http://igppweb.ucsd.edu/%7Eparker/Software/#PSD}
-}
-\seealso{
-  \code{\link{some_function}},
-  \code{\link{some_other_func}}
 }
 

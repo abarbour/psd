@@ -51,6 +51,9 @@ ntap <- as.taper(1:10)
 ctap_loess(ntap)
 }
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com>
+}
 \seealso{
   \code{\link{constrain_tapers}}, \code{\link{loess}}
 }

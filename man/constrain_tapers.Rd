@@ -31,6 +31,10 @@
   Refines the number of tapers; the method which it does
   this may be chosen by the user.
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com> ported original
+  by R.L.Parker to R and C.
+}
 \seealso{
   \code{\link{riedsid}}, \code{\link{ctap_simple}}
 }

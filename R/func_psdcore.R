@@ -1,58 +1,89 @@
-##
-##  Default method for psdcore, which does the grunt work
-##
-###
-# PORT of RLP's psdcore.m
-# abarbour
-# Dec 2011
-#
-# porting:  Jan 3, 2012 (partial)
-# testing:
-#           Jan 3, 2012: 
-#               have not checked decimation or interpolation interp1
-#               and persistent variables seem not to be an issue
-###
-#
-#  Compute a spectral estimate of the power spectral density
-#  (psd) for the time series x using sine multitapers.
-#  Normalised to sampling interavl of 1.
-#  
-#  ntaper gives the number of tapers to be used at each frequency:
-#  if ntaper is a scalar, use same value at all freqs if a
-#  vector, use ntaper(j) sine tapers at frequency j. 
-#  If series length is n, psd is found at 1 + n/2 evenly spaced freqs
-#  if n is odd, x is truncted by 1.
-#  ndecimate: number of psds actually computed <- (1+n/2)/ndecimate
-#  these values are linearly interpolated into psd.
-#
-##
-## Args:  
-##
-## Returns:  
-##
-## TODO(abarbour):	
-##
-psdcore <- function(...) UseMethod(".psdcore")
-#.devpsdcore <- function(x, ...) UseMethod("..dev_psdcore")
-.psdcore.default <-function(X.d, 
-                           X.frq=1, 
-                           ntaper=as.taper(1), 
-                           ndecimate=1L,
-                           demean=TRUE, 
-                           detrend=TRUE,
-                           na.action = stats::na.fail,
-                           first.last=TRUE,
-                           Nyquist.normalize=TRUE,
-                           plotpsd=FALSE,
-                           as.spec=TRUE,
-                           force_calc=FALSE,
-                           ...
+#' Compute multitaper power spectral density of a series
+#'
+#' Compute a spectral estimate of the power spectral density
+#' (PSD) for the input series using sine multitapers.
+#'  
+#' ntaper gives the number of tapers to be used at each frequency:
+#' if ntaper is a scalar, use same value at all freqs if a
+#' vector, use ntaper(j) sine tapers at frequency j. 
+#' If series length is n, psd is found at 1 + n/2 evenly spaced freqs
+#' if n is odd, x is truncted by 1.
+#' ndecimate: number of psds actually computed <- (1+n/2)/ndecimate
+#' these values are linearly interpolated into psd.
+#'
+#' @note Decimation is not well tested as of this point (December 2012).
+#'
+#' @param X.d  the series to estimate a spectrum for 
+#' @param X.frq  scalar; the sampling frequency (e.g. Hz)
+#' @param ntaper  scalar, or vector; the number of tapers
+#' @param ndecimate  scalar; decimation factor
+#' @param demean  logical; should \code{X.d} be centered about the mean
+#' @param detrend  logical; should \code{X.d} have a linear trend removed
+#' @param na.action  function dealing with \code{NA} values
+#' @param first.last  the extrapolates to give the zeroth and Nyquist frequency estimates
+#' @param Nyquist.normalize  logical; should the units be returned in Hz, rather than Nyquist?
+#' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
+#' @param as.spec  logical; should the object returned be of class 'spec'
+#' @param force_calc  logical; force spectrum (used for development purposes)
+#' @param ...  (unused); parameters passed to [ NULL ]
+#'
+#' @import signal
+#' @name psdcore
+#' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
+#' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
+#'
+#' @examples
+#' X.d <- rnorm(1e3)
+#' plot(psdcore(X.d, ntaper=10), log="dB", ylim=10*c(-1,1))
+#' psd.n <- psdcore(X.d, ntaper=10, Nyquist.normalize=FALSE)
+#' lines(psd.n$freq, 10*log10(psd.n$spec), col="red") # note normalization
+#' abline(h=c(0, 3), col=c("black","red"), lwd=2)
+#'
+#' # 10Hz sampling
+#' plot(psdcore(X.d, X.frq=10, ntaper=10), log="dB", ylim=10*c(-0.3,1.7))
+#' psd.n <- psdcore(X.d, X.frq=10, ntaper=10, Nyquist.normalize=FALSE)
+#' lines(10*psd.n$freq, 10*log10(psd.n$spec), col="red") # note normalization
+#' abline(h=c(10, 3), col=c("black","red"), lwd=2)
+#' 
+#' # if ntaper is a vector:
+#' psdcore(X.d, ntaper=rep(10,length(X.d))
+psdcore <- function(X.d, 
+                    X.frq=1, 
+                    ntaper=as.taper(1), 
+                    ndecimate=1L,
+                    demean=TRUE, 
+                    detrend=TRUE,
+                    na.action = stats::na.fail,
+                    first.last=TRUE,
+                    Nyquist.normalize=TRUE,
+                    plotpsd=FALSE,
+                    as.spec=TRUE,
+                    force_calc=FALSE,
+                    ...) UseMethod("psdcore")
+
+#' @rdname psdcore
+#' @S3method psdcore rlpspec
+psdcore.rlpspec <- function(...){.NotYetImplemented()}
+
+#' @rdname psdcore
+#' @S3method psdcore default
+psdcore.default <- function(X.d, 
+                              X.frq=1, 
+                              ntaper=as.taper(1), 
+                              ndecimate=1L,
+                              demean=TRUE, 
+                              detrend=TRUE,
+                              na.action = stats::na.fail,
+                              first.last=TRUE,
+                              Nyquist.normalize=TRUE,
+                              plotpsd=FALSE,
+                              as.spec=TRUE,
+                              force_calc=FALSE,
+                              ...
                            ) {
   #
   require(signal, quietly=TRUE, warn.conflicts=FALSE)
-  # for interp1
-  #   require(clim.pact, quietly=T)
-  #   for mod (just snaked and put in funcs.R)
   #
   series <- deparse(substitute(X.d))
   X.d <- na.action(stats::ts(X.d, frequency=X.frq))

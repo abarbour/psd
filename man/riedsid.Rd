@@ -1,10 +1,16 @@
 \name{riedsid}
 \alias{riedsid}
 \alias{riedsid.default}
+\alias{riedsid.rlpspec}
+\alias{riedsid.spec}
 \title{riedsid}
 \usage{
   riedsid(spec, ntaper, tapseq = NULL, c.method = NULL,
     ...)
+
+  riedsid.rlpspec(...)
+
+  riedsid.spec(...)
 
   riedsid.default(spec, ntaper, tapseq = NULL,
     c.method = NULL, ...)
@@ -24,9 +30,6 @@
   \item{...}{optional argments passed to
   \code{constrain_tapers}}
 }
-\value{
-  \code{NULL}
-}
 \description{
   Riedel & Sidorenko taper optimization
 }
@@ -34,6 +37,14 @@
   Estimates optimal number of tapers at each frequency of
   given spec, based on Riedel-Sidorenko MSE recipe, and
   other tweaks by RLP.
+}
+\examples{
+riedsid(rnorm(10), 10)
+riedsid(rnorm(10), c(1:5,5:1))
+}
+\author{
+  Andrew Barbour <andy.barbour@gmail.com> ported original
+  by R.L.Parker.
 }
 \seealso{
   \code{\link{psdcore}}, \code{\link{constrain_tapers}}

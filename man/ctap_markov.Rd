@@ -58,6 +58,10 @@ ntap <- as.taper(1:10)
 ctap_markov(ntap)
 }
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com> adapted algorithm
+  from Morhac (2008).
+}
 \references{
   Morhac, M. (2008), Peaks: Peaks, \emph{R package},
   \strong{version 0.2}

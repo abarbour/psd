@@ -1,0 +1,95 @@
+\name{psdcore}
+\alias{psdcore}
+\alias{psdcore.default}
+\alias{psdcore.rlpspec}
+\title{Compute multitaper power spectral density of a series}
+\usage{
+  psdcore(X.d, X.frq = 1, ntaper = as.taper(1),
+    ndecimate = 1L, demean = TRUE, detrend = TRUE,
+    na.action = stats::na.fail, first.last = TRUE,
+    Nyquist.normalize = TRUE, plotpsd = FALSE,
+    as.spec = TRUE, force_calc = FALSE, ...)
+
+  psdcore.rlpspec(...)
+
+  psdcore.default(X.d, X.frq = 1, ntaper = as.taper(1),
+    ndecimate = 1L, demean = TRUE, detrend = TRUE,
+    na.action = stats::na.fail, first.last = TRUE,
+    Nyquist.normalize = TRUE, plotpsd = FALSE,
+    as.spec = TRUE, force_calc = FALSE, ...)
+}
+\arguments{
+  \item{X.d}{the series to estimate a spectrum for}
+
+  \item{X.frq}{scalar; the sampling frequency (e.g. Hz)}
+
+  \item{ntaper}{scalar, or vector; the number of tapers}
+
+  \item{ndecimate}{scalar; decimation factor}
+
+  \item{demean}{logical; should \code{X.d} be centered
+  about the mean}
+
+  \item{detrend}{logical; should \code{X.d} have a linear
+  trend removed}
+
+  \item{na.action}{function dealing with \code{NA} values}
+
+  \item{first.last}{the extrapolates to give the zeroth and
+  Nyquist frequency estimates}
+
+  \item{Nyquist.normalize}{logical; should the units be
+  returned in Hz, rather than Nyquist?}
+
+  \item{plotpsd}{logical; should the estimate be shown
+  compared to the \code{spec.pgram} estimate}
+
+  \item{as.spec}{logical; should the object returned be of
+  class 'spec'}
+
+  \item{force_calc}{logical; force spectrum (used for
+  development purposes)}
+
+  \item{...}{(unused); parameters passed to [ NULL ]}
+}
+\description{
+  Compute a spectral estimate of the power spectral density
+  (PSD) for the input series using sine multitapers.
+}
+\details{
+  ntaper gives the number of tapers to be used at each
+  frequency: if ntaper is a scalar, use same value at all
+  freqs if a vector, use ntaper(j) sine tapers at frequency
+  j. If series length is n, psd is found at 1 + n/2 evenly
+  spaced freqs if n is odd, x is truncted by 1. ndecimate:
+  number of psds actually computed <- (1+n/2)/ndecimate
+  these values are linearly interpolated into psd.
+}
+\note{
+  Decimation is not well tested as of this point (December
+  2012).
+}
+\examples{
+X.d <- rnorm(1e3)
+plot(psdcore(X.d, ntaper=10), log="dB", ylim=10*c(-1,1))
+psd.n <- psdcore(X.d, ntaper=10, Nyquist.normalize=FALSE)
+lines(psd.n$freq, 10*log10(psd.n$spec), col="red") # note normalization
+abline(h=c(0, 3), col=c("black","red"), lwd=2)
+
+# 10Hz sampling
+plot(psdcore(X.d, X.frq=10, ntaper=10), log="dB", ylim=10*c(-0.3,1.7))
+psd.n <- psdcore(X.d, X.frq=10, ntaper=10, Nyquist.normalize=FALSE)
+lines(10*psd.n$freq, 10*log10(psd.n$spec), col="red") # note normalization
+abline(h=c(10, 3), col=c("black","red"), lwd=2)
+
+# if ntaper is a vector:
+psdcore(X.d, ntaper=rep(10,length(X.d))
+}
+\author{
+  Andrew Barbour <andy.barbour@gmail.com> ported original
+  by R.L.Parker.
+}
+\seealso{
+  \code{\link{pspectrum}}, \code{\link{riedsid}}
+}
+

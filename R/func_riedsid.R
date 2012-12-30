@@ -6,6 +6,7 @@
 #' 
 #' @title riedsid
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
 #' 
 #' @param spec vector; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
@@ -14,14 +15,21 @@
 #' @param ... optional argments passed to \code{constrain_tapers}
 #' 
 #' @seealso \code{\link{psdcore}}, \code{\link{constrain_tapers}}
-# @example
-# riedsid(rnorm(10), 10)
-# riedsid(rnorm(10), c(1:5,5:1))
+#' @examples
+#' riedsid(rnorm(10), 10)
+#' riedsid(rnorm(10), c(1:5,5:1))
 riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
+#' @S3method riedsid rlpspec
+riedsid.rlpspec <- function(...){.NotYetImplemented()}
+
+#' @rdname riedsid
+#' @S3method riedsid spec
+riedsid.spec <- function(...){.NotYetImplemented()}
+
+#' @rdname riedsid
 #' @S3method riedsid default
-#' @return \code{NULL}
 riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
   ## spectral values
   spec <- as.vector(spec)
@@ -104,7 +112,9 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
 #' @title constrain_tapers
 #' @aliases constrain_tapers
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
 #' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple}}
+#'
 #' @param tapvec vector; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param constraint.method method to use for constraints on tapers numbers

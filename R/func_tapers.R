@@ -161,12 +161,16 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
 #' @description Calculate parabolic weighting factors
 #' @title parabolic_weights
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker,
+#' and authored the optimized version.
 #' @seealso \code{\link{psdcore}}
+#'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to find weights
 #' @param vec.out character; should the vector returned have long dimension as rows or columns
 #' @return an object with class 'matrix' with dimensions dependet on \code{vec.out}
 parabolic_weights <- function(tapvec, tap.index=1, vec.out=c("vertical","horizontal")) UseMethod("parabolic_weights")
+
 #' @rdname parabolic_weights
 #' @S3method parabolic_weights taper
 parabolic_weights.taper <- function(tapvec, tap.index=1, vec.out=c("vertical","horizontal")){
@@ -183,6 +187,9 @@ parabolic_weights.taper <- function(tapvec, tap.index=1, vec.out=c("vertical","h
   return(list(taper_seq=kseq+1, taper_weights=matrix(kWeights, nrow=nrow)))
 }
 
+#' @param ntap integer; the number of tapers to provide a weighting vector
+#' @rdname parabolic_weights
+#' @export
 parabolic_weights_fast <- function(ntap){
   ntap <- max(1, as.integer(ntap))
   kseq <- seq.int(from=0, to=ntap-1, by=1)
@@ -193,6 +200,7 @@ parabolic_weights_fast <- function(ntap){
   TW <- matrix((NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2), ncol=lk)
   return(list(taper_seq=kseq+1, taper_weights=TW))
 }
+
 ###
 ###  Constraint methods
 ###
@@ -208,6 +216,8 @@ parabolic_weights_fast <- function(ntap){
 #' @title minspan
 #' @export
 #' @seealso \code{\link{constrain_tapers}}
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
+#'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param nf scalar; number of positions or frequencies
 #' @param ... (unused) optional argments
@@ -256,6 +266,8 @@ minspan.taper <- function(tapvec, nf=length(tapvec), ...){
 #' @title ctap_simple
 #' @aliases constrain_taper_simple_slope
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
+#'
 #' @seealso \code{\link{constrain_tapers}}
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq (unused) vector; positions or frequencies -- necessary for smoother methods
@@ -315,6 +327,8 @@ ctap_simple.taper <- function(tapvec,
 #' of the a priori distribution.  As a rule of thumb: the smaller the parameter is, the shorter
 #' the tails become.
 #'
+#' @author Andrew Barbour <andy.barbour@@gmail.com> adapted algorithm from Morhac (2008).
+#'
 #' @references Morhac, M. (2008), Peaks: Peaks, \emph{R package}, \strong{version 0.2}
 #' @references Silagadze, Z.K. (1996), A new algorithm for automatic photopeak searches,
 #' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451.
@@ -367,6 +381,8 @@ ctap_markov.taper <- function(tapvec,
 #' @aliases constrain_taper_loess_smooth
 #' @export
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{loess}}
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param loess.span  (\code{'loess.smooth'}) scalar; the span used in \code{loess}
@@ -422,6 +438,8 @@ ctap_loess.taper <- function(tapvec,
 #' @aliases constrain_taper_friedman_smooth
 #' @export
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{supsmu}}
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param smoo.span  (\code{'friedman.smooth'}) scalar; fraction of the observations in the span of the running lines smoother

@@ -55,6 +55,10 @@ ntap <- as.taper(1:10)
 ctap_simple(ntap)
 }
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com> ported original
+  by R.L.Parker to R and C.
+}
 \seealso{
   \code{\link{constrain_tapers}}
 }

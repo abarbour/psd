@@ -39,6 +39,10 @@ plot(minspan(ntap))
 par(mfrow=c(1,1))
 }
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com> ported original
+  by R.L.Parker.
+}
 \seealso{
   \code{\link{constrain_tapers}}
 }

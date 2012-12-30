@@ -18,10 +18,10 @@
 #' 
 #' And more.
 #'
-#' @docType rlpSpec
+#' @docType package
 #' @name rlpSpec
-#' @aliases spec.rlp
-#' @title what this does
+#' @aliases spec.rlp, rlpSpec-package, rlpspec-package
+#' @title Adaptively estimate power spectral densities of an optimally tapered series.
 #' 
 #' @author Andrew Barbour <andy.barbour@@gmail.com> 
 #' 
@@ -40,6 +40,6 @@
 #
 #' @references \url{http://igppweb.ucsd.edu/%7Eparker/Software/#PSD}
 #'
-#' @seealso \code{\link{some_function}}, \code{\link{some_other_func}}
+# @seealso \code{\link{pspectrum}}, \code{\link{psdcore}}
 #'  
 NULL
