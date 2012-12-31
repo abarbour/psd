@@ -14,6 +14,9 @@
 is.taper(1:10)
 is.taper(as.taper(1:10))
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com>
+}
 \seealso{
   \code{\link{as.taper}}, \code{\link{taper}}
 }

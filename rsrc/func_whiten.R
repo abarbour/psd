@@ -6,11 +6,11 @@
 #' @note the \code{AR.fit} option is not used (yet)
 #'
 #' @param tser  \code{ts} object
-#' @param AR.fit boolean; FALSE
-#' @param detrend  boolean; TRUE
-#' @param demean  boolean; TRUE
-#' @param plot  boolean; TRUE
-#' @param verbose  boolean; TRUE
+#' @param AR.fit logical; FALSE
+#' @param detrend  logical; TRUE
+#' @param demean  logical; TRUE
+#' @param plot  logical; TRUE
+#' @param verbose  logical; TRUE
 #'
 #' @extends ts
 prewhiten <- function(tser,

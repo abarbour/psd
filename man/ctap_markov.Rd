@@ -17,8 +17,8 @@
   \item{tapseq}{(unused) vector; positions or frequencies
   -- necessary for smoother methods}
 
-  \item{chain.width}{(\code{'markov.chain'}) scalar; the
-  width the MC should consider for the change probability}
+  \item{chain.width}{scalar; the width the MC should
+  consider for the change probability}
 
   \item{...}{(unused) optional argments}
 }
@@ -43,14 +43,14 @@
   (2008) and Silagadze (1996).
 }
 \note{
-  The results obtained by \strong{\code{'markov.chain'}}
-  can produce unstable results if successively executed on
-  taper vectors with even modest sized serially-correlated
-  peaks; the method should be used with caution, unless the
-  intention is to enhance peaks.  The \code{'chain.width'}
-  parameter constrols the broadness of the a priori
-  distribution.  As a rule of thumb: the smaller the
-  parameter is, the shorter the tails become.
+  This algorithm can produce ``unstable" results in the
+  sense that for successive application on taper vectors,
+  even modest sized serially-correlated peaks tends to
+  sharpen; hence, this method should be used with care,
+  unless the intention is to specifically enhance peaks.
+  The \code{'chain.width'} parameter controls the broadness
+  of the a priori distribution.  As a rule of thumb: the
+  smaller the parameter is, the shorter the tails become.
 }
 \examples{
 \dontrun{
@@ -59,8 +59,8 @@ ctap_markov(ntap)
 }
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com> adapted algorithm
-  from Morhac (2008).
+  Andrew Barbour <andy.barbour@gmail.com> adapted the
+  algorithm from Morhac (2008) for use here.
 }
 \references{
   Morhac, M. (2008), Peaks: Peaks, \emph{R package},

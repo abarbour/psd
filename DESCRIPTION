@@ -2,10 +2,16 @@ Package: rlpSpec
 Type: Package
 Title: Adaptive multitaper spectrum estimation.
 Version: 0.1-0
-Date: 2012-12-20
-Author: Andrew J Barbour
+Date: 2012-12-31
+Author: Robert L Parker and Andrew J Barbour
 Maintainer: Andrew J Barbour <andy.barbour@gmail.com>
-Description: Uses X to do Y
+Description: Power spectral density estimates
+    are produced through an adaptive method that iteratively
+    refines the optimal number of sine-tapers applied at each
+    frequency.  The taper optimization is based on the
+    method of Riedel and Sidorenko (1995), which applies
+    smoothing that varies with frequency to minimize the sum
+    of variance and bias at each point.
 License: GPL (>= 2)
 URL: http://abarbour.github.com/rlpSpec/
 Depends:
@@ -16,7 +22,8 @@ Depends:
 Suggests:
     Peaks (>= 0.2),
     ggplot2 (>= 0.9.3),
-    sfsmisc (>= 1.0-23)
+    sfsmisc (>= 1.0-23),
+    multitaper (>= 1.0-2)
 Collate:
     'func_riedsid.R'
     'rlpSpec-package.R'

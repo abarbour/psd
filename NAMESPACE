@@ -1,3 +1,4 @@
+S3method(constrain_tapers,taper)
 S3method(ctap_friedman,taper)
 S3method(ctap_loess,taper)
 S3method(ctap_markov,taper)

@@ -17,13 +17,11 @@
   \item{tapseq}{vector; positions or frequencies --
   necessary for smoother methods}
 
-  \item{loess.span}{(\code{'loess.smooth'}) scalar; the
-  span used in \code{loess}}
+  \item{loess.span}{scalar; the span used in \code{loess}}
 
-  \item{loess.degree}{(\code{'loess.smooth'}) scalar; the
-  polynomial degree}
+  \item{loess.degree}{scalar; the polynomial degree}
 
-  \item{verbose}{boolean; should warnings and messages be
+  \item{verbose}{logical; should warnings and messages be
   given?}
 
   \item{...}{optional argments; unused}
@@ -40,10 +38,10 @@
   vector; is can be very slow thanks to quadratic scaling.
 }
 \note{
-  The results obtained by \strong{\code{'loess.smooth'}}
-  are strongly dependent on the loess tuning parameters;
-  hence, some effort should be given to understand their
-  effect, and/or re-tuning the default parameters.
+  The results obtained can be strongly dependent on the
+  \code{loess} tuning parameters; hence, some effort should
+  be given to understand their effect, and/or re-tuning the
+  default parameters.
 }
 \examples{
 \dontrun{

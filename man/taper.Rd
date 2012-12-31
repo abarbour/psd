@@ -22,6 +22,6 @@ print(ntap <- taper(1:10))
 plot(ntap)
 }
 \author{
-  Andrew Barbour
+  Andrew Barbour <andy.barbour@gmail.com>
 }
 

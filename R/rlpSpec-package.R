@@ -4,9 +4,9 @@
 #' is \code{\link{some_func}}
 #' 
 #' There are also two helper functions included: 
-#' \describe{
-#' \item{\code{\link{some_other_func}}}{ to do something.}
-#' }
+# \describe{
+# \item{\code{\link{some_other_func}}}{ to do something.}
+# }
 #'
 #' @section Scientific background:
 #'
@@ -19,8 +19,8 @@
 #' And more.
 #'
 #' @docType package
-#' @name rlpSpec
-#' @aliases spec.rlp, rlpSpec-package, rlpspec-package
+#' @name rlpSpec-package
+#' @aliases rlpSpec, rlpspec-package, spec.rlp
 #' @title Adaptively estimate power spectral densities of an optimally tapered series.
 #' 
 #' @author Andrew Barbour <andy.barbour@@gmail.com> 
@@ -37,8 +37,9 @@
 #' @references Riedel, K. S. (1996),
 #' Adaptive smoothing of the log-spectrum with multiple tapering,
 #' \emph{Signal Processing, IEEE Transactions on}, \strong{44}(7), 1794-1800.
-#
-#' @references \url{http://igppweb.ucsd.edu/%7Eparker/Software/#PSD}
+#'
+# problem with %7E or # at end? (BOTH)
+#' @references \url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}
 #'
 # @seealso \code{\link{pspectrum}}, \code{\link{psdcore}}
 #'  

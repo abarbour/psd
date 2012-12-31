@@ -1,8 +1,13 @@
 \name{constrain_tapers}
 \alias{constrain_tapers}
+\alias{constrain_tapers.taper}
 \title{constrain_tapers}
 \usage{
   constrain_tapers(tapvec, tapseq = NULL,
+    constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
+    min.tapers = 1, verbose = TRUE, ...)
+
+  constrain_tapers.taper(tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
     min.tapers = 1, verbose = TRUE, ...)
 }
@@ -18,17 +23,17 @@
 
   \item{min.tapers}{integer; the minimum number of tapers}
 
-  \item{verbose}{boolean; should warnings and messages be
+  \item{verbose}{logical; should warnings and messages be
   given?}
 
   \item{...}{optional argments passed to the
   constraint.method}
 }
 \description{
-  Constrain the number of tapers applied
+  Apply constraints on the number of tapers
 }
 \details{
-  Refines the number of tapers; the method which it does
+  Refines the number of tapers; the method by which it does
   this may be chosen by the user.
 }
 \author{
@@ -36,6 +41,7 @@
   by R.L.Parker to R and C.
 }
 \seealso{
-  \code{\link{riedsid}}, \code{\link{ctap_simple}}
+  \code{\link{ctap_simple}}, \code{\link{ctap_markov}},
+  \code{\link{riedsid}}
 }
 

@@ -1,15 +1,18 @@
-#' Compute multitaper power spectral density of a series
+#' Multitaper power spectral density of a series
 #'
-#' Compute a spectral estimate of the power spectral density
-#' (PSD) for the input series using sine multitapers.
+#' Compute a power spectral denisty (PSD) estimate 
+#' for the input series using sine multitapers.
 #'  
-#' ntaper gives the number of tapers to be used at each frequency:
-#' if ntaper is a scalar, use same value at all freqs if a
-#' vector, use ntaper(j) sine tapers at frequency j. 
-#' If series length is n, psd is found at 1 + n/2 evenly spaced freqs
-#' if n is odd, x is truncted by 1.
-#' ndecimate: number of psds actually computed <- (1+n/2)/ndecimate
-#' these values are linearly interpolated into psd.
+#' The parameter \code{ntaper} specifies the number of sine tapers to be used 
+#' at each frequency: if it's a scalar, the same number of tapers will be used
+#' at every frequency; otherwise, use ntaper(j) sine tapers at frequency(j).
+#'
+#' The series length N is truncated, if necessary, so that 1+N/2 evenly spaced
+#' frequencies are returned. 
+#'
+#' The parameter \code{ndecimate} specifies the number of psds actually 
+#' computed, defined as \code{(1+n/2)/ndecimate}; other
+#' values are found via linear interpolation.
 #'
 #' @note Decimation is not well tested as of this point (December 2012).
 #'
@@ -166,32 +169,44 @@ psdcore.default <- function(X.d,
     psd <- zeros(nfreq)
     n2e <- 2*n.e
     Rfftz <- Re(fftz)
-    PSDFUN <- function(fj, n2.e=n2e, ntaps=ntap, Xfft=Rfftz){
+    # get a set of all possible weights for the current taper-vector
+    # then the function need only subset the master set
+    # faster? YES
+    KPWM <- parabolic_weights_fast(max(ntap))
+    PSDFUN <- function(fj, n2.e=n2e, KPW=KPWM, ntaps=ntap, Xfft=Rfftz){
       # parabolic weights, index m+1, column vec out
       #print(c(fj,fj2,n2.e))
-      NT <- ntaps[fj+1]
+      ##NT <- ntaps[fj+1]
       #KPW <- parabolic_weights(ntaps, tap.index=(fj+1), vec.out="horizontal")
-      KPW <- parabolic_weights_fast(NT)
-      # this is a distinction with order of operations and %% (2.14.0)
-      # https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771
-      # (but correct in matlab's function call) 
-      # So: enclose in parens or use rlpSpec::mod.default
+      ##KPW <- parabolic_weights_fast(NT)
+      #
+      # num tapers (for subsetting)
+      NT <- ntaps[fj+1]
+      # sequence
+      Kseq <- KPW$taper_seq[1:NT]
+      # weights
+      Kwgt <- KPW$taper_weights[1:NT]
+      #
       fj2 <- 2*fj
-      m1. <- fj2 + n2.e - KPW$taper_seq
+      m1. <- fj2 + n2.e - Kseq #KPW$taper_seq
       j1 <- m1. %% n2.e
-      m1. <- fj2 + KPW$taper_seq
+      m1. <- fj2 + Kseq #KPW$taper_seq
       j2 <- m1. %% n2.e
       f1 <- Xfft[j1+1]
       f2 <- Xfft[j2+1]
       af12. <- f1 - f2
       af122. <- af12. * af12.
-      psdv <- KPW$taper_weights %*% matrix(af122., ncol=1)
+      #psdv <- KPW$taper_weights %*% matrix(af122., ncol=1)
+      psdv <- Kwgt %*% matrix(af122., ncol=1)
       return(psdv)
     }
-    #  easier to follow, but foreach solution is actually slower :(
-    #require(foreach)
-    #psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
-    # vapply is much faster than even lapply
+    # ** compiled code doesn't appear to help speed
+    #     require(compiler)
+    #     PSDFUNc <- cmpfun(PSDFUN)
+    # ** foreach is easier to follow, but foreach solution is actually slower :(
+    #     require(foreach)
+    #     psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
+    # ** vapply is much faster than even lapply
     psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=1.0)
   } else {
     message("zero taper result == raw periodogram")

@@ -4,12 +4,13 @@ library(plyr)
 library(ggplot2)
 library(reshape2)
 # refresh latest core functionality
-source('~/nute.processing/development/rlpSpec/rsrc/func_psdcore.R')
-PSD <- .psdcore.default
+source('~/nute.processing/development/rlpSpec/R/func_psdcore.R')
+PSD <- psdcore.default
 #
 set.seed(1234)
 # differences in processing time reduce with orders of magnitude increases
-run.bench <- function(nd, nt=8, reps=10){
+reps <- 10
+run.bench <- function(nd, nt=8, reps=reps){
   print(nd)
   initEnv(refresh=TRUE)
   X.d <- arima.sim(list(order = c(1,1,0), ar = 0.9),n=nd)
@@ -28,9 +29,9 @@ run.bench <- function(nd, nt=8, reps=10){
   return(psdbench)
 }
 #
-nds <- round(10**seq.int(from=1,to=4.0,by=0.1))
+nds <- round(10**seq.int(from=1,to=4.4,by=0.1))
 allbench <- lapply(X=nds, FUN=function(x) run.bench(nd=x))
-save(allbench, file="~/Google Drive/PUB/GEOKOOK/rlpspec_allbench.Rda")
+save(allbench, file="~/Google Drive/PUB/GEOKOOK/rlpspec_allbench_new.Rda")
 
 allbench.df <- plyr::ldply(allbench)
 allbench.df.drp <- subset(allbench.df, 
@@ -39,15 +40,22 @@ allbench.df.drp <- subset(allbench.df,
 allbench.df.mlt <- melt(allbench.df.drp, id.vars=c("test","num_terms"))
 head(tmpd<-plyr::ddply(allbench.df.mlt,
                        .(variable,num_terms),
-                  summarise, # Note: can get confused with Hmisc::summarize
-                  summary="medians",
-                  value=mean_cl_normal(value)[1,1]))
+                       summarise,
+                       summary="maximums",
+                       value=max(value)))
+                  #value=mean_cl_normal(value)[1,1]))
 tests<-unique(allbench.df$test)
 allmeds <- ldply(lapply(X=tests, FUN=function(x,df=tmpd){df$test <- x; return(df)}))
 
-
-g <- ggplot(data=allbench.df.mlt, aes(x=log10(num_terms), y=log2(value), colour=test, group=test)) + 
-  scale_colour_discrete(guide="none") + geom_point() 
+g <- ggplot(data=allbench.df.mlt, 
+            aes(x=log10(num_terms), 
+                y=log2(value), 
+                # 1/sqrt(n) standard errors [assumes N(0,1)]
+                ymin=log2(value*(1-1/sqrt(reps))),
+                ymax=log2(value*(1+1/sqrt(reps))),
+                colour=test, 
+                group=test)) + 
+  scale_colour_discrete(guide="none") + geom_pointrange() 
 g2 <- g + facet_grid(variable~test, scales="free_y")
 g2 + geom_path(colour="black", data=allmeds, aes(group=test))
 

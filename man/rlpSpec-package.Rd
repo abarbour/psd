@@ -1,10 +1,9 @@
 \docType{package}
-\name{rlpSpec}
-\alias{rlpSpec}
+\name{rlpSpec-package}
+\alias{rlpSpec,}
 \alias{rlpSpec-package}
-\alias{rlpSpec-package,}
-\alias{rlpspec-package}
-\alias{spec.rlp,}
+\alias{rlpspec-package,}
+\alias{spec.rlp}
 \title{Adaptively estimate power spectral densities of an optimally tapered series.}
 \description{
   This package provides tools to
@@ -12,8 +11,7 @@
 \details{
   The main function to be used is \code{\link{some_func}}
 
-  There are also two helper functions included: \describe{
-  \item{\code{\link{some_other_func}}}{ to do something.} }
+  There are also two helper functions included:
 }
 \section{Scientific background}{
   A bunch of stuff, and inline equation \eqn{r}, and a
@@ -36,6 +34,6 @@
   Processing, IEEE Transactions on}, \strong{44}(7),
   1794-1800.
 
-  \url{http://igppweb.ucsd.edu/%7Eparker/Software/#PSD}
+  \url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}
 }
 

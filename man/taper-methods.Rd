@@ -18,6 +18,9 @@
 \description{
   Generic methods for 'taper' objects
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com>
+}
 \seealso{
   \code{\link{is.taper}}, \code{\link{as.taper}}
 }

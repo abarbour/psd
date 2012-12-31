@@ -17,14 +17,13 @@
   \item{tapseq}{vector; positions or frequencies --
   necessary for smoother methods}
 
-  \item{smoo.span}{(\code{'friedman.smooth'}) scalar;
-  fraction of the observations in the span of the running
-  lines smoother}
+  \item{smoo.span}{scalar; fraction of the observations in
+  the span of the running lines smoother}
 
-  \item{smoo.bass}{(\code{'friedman.smooth'}) scalar;
-  controls the smoothness of the fitted curve}
+  \item{smoo.bass}{scalar; controls the smoothness of the
+  fitted curve}
 
-  \item{verbose}{boolean; should warnings and messages be
+  \item{verbose}{logical; should warnings and messages be
   given?}
 
   \item{...}{optional argments; unused}

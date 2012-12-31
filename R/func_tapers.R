@@ -17,7 +17,7 @@
 #' @rdname taper
 #' @aliases taper-class
 #' @exportClass taper
-#' @author Andrew Barbour
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @examples
 #' taper()
 #' new("taper") # equivalent to taper()
@@ -35,6 +35,7 @@ taper <- setClass("taper",
 #' Reports whether x is a 'taper' object
 #' @param x An object to test
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{as.taper}}, \code{\link{taper}}
 #' @examples
 #' is.taper(1:10)
@@ -49,14 +50,18 @@ is.taper <- function(x) inherits(x, "taper")
 #'
 #' Various classes can be coerced into a 'taper' object; those
 #' tested sofar include: scalar, vector, matrix, data.frame, 
-#' and list.  Multiple objects are concatenated into a single
+#' and list.  
+#'
+#' Multiple objects are concatenated into a single
 #' vector dimension.  For example, if the object is 
-#' \code{list(x=c(1,2),y=c(3,4,5))} then the corresponding 'taper'
-#' will be \code{1,2,3,4,5}.
+#' \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding 'taper'
+#' object
+#' will be \code{1,2,3,4,5,1,1}, assuming \code{min.taper==1}.
 #'
 #' @param x An object to set
 #' @param min.taper Set all values less than this to this.
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.taper}}, \code{\link{taper}}
 #' @examples
 #' is.taper(as.taper(1))
@@ -87,6 +92,7 @@ as.taper <- function(x, min.taper=1){
 #' @title Generic methods for 'taper' objects
 #' @keywords methods generic
 #' @name taper-methods
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @aliases taper
 #' @rdname taper-methods
 #' @seealso \code{\link{is.taper}}, \code{\link{as.taper}}
@@ -101,6 +107,7 @@ print.taper <- function(x){
   xt <- paste(as.character(tail(x)), collapse=" ")
   cat(sprintf("taper object:\n\thead:  %s\n\t\t...\n\ttail:  %s\n",xh,xt))
 }
+#S4 from S3
 #' @rdname taper-methods
 #' @name print
 #' @export
@@ -158,39 +165,40 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
 }
 
-#' @description Calculate parabolic weighting factors
+#' Calculate weighting factors for a series of tapers
+#'
+#' Weighting is calculated as follows:
+#'
+#' \deqn{n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T \cdot (n_T - 1/4) \cdot (n_T + 1)}}
+#'
+#' where \eqn{n_T} is the total number of tapers, and 
+#' \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]} 
+#'
+# w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
+#'
 #' @title parabolic_weights
 #' @export
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker,
 #' and authored the optimized version.
-#' @seealso \code{\link{psdcore}}
+#' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
 #'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to find weights
-#' @param vec.out character; should the vector returned have long dimension as rows or columns
-#' @return an object with class 'matrix' with dimensions dependet on \code{vec.out}
-parabolic_weights <- function(tapvec, tap.index=1, vec.out=c("vertical","horizontal")) UseMethod("parabolic_weights")
+#' @return a list with taper indices, and weighting parameters
+parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
 
 #' @rdname parabolic_weights
 #' @S3method parabolic_weights taper
-parabolic_weights.taper <- function(tapvec, tap.index=1, vec.out=c("vertical","horizontal")){
-  stopifnot(is.taper(tapvec) | ((tap.index > 0) & (tap.index <= length(tapvec))))
-  vec.out <- match.arg(vec.out)
-  ntap <- max(1,tapvec[as.integer(tap.index)])
-  kseq <- seq.int(1, ntap, by=1) - 1 #base::sequence(ntap) - 1
-  nrow <- switch(vec.out, "horizontal"=1, "vertical"=length(kseq))
-  K2 <- kseq * kseq # vector
-  T2 <- ntap * ntap # scalar
-  T3 <- T2 * ntap # scalar
-  #  (tapers^2 - (k-1)^2) * (1.5/(tapers*(tapers-0.25)*(tapers+1)))
-  kWeights <- (T2 - K2) * 3/2/(T3 + T2*3/4 - ntap/4)
-  return(list(taper_seq=kseq+1, taper_weights=matrix(kWeights, nrow=nrow)))
+parabolic_weights.taper <- function(tapvec, tap.index=1L){
+  stopifnot(is.taper(tapvec) | ((tap.index > 0L) & (tap.index <= length(tapvec))))
+  kWeights <- parabolic_weights_fast(tapvec[as.integer(tap.index)])
+  return(kWeights)
 }
 
-#' @param ntap integer; the number of tapers to provide a weighting vector
+#' @param ntap integer; the number of tapers to provide weightings for
 #' @rdname parabolic_weights
 #' @export
-parabolic_weights_fast <- function(ntap){
+parabolic_weights_fast <- function(ntap=1L){
   ntap <- max(1, as.integer(ntap))
   kseq <- seq.int(from=0, to=ntap-1, by=1)
   lk <- length(kseq)
@@ -243,6 +251,76 @@ minspan.taper <- function(tapvec, nf=length(tapvec), ...){
   nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
   return(nspan)
 }
+
+#' @description Apply constraints on the number of tapers
+#' 
+#' @details Refines the number of tapers; the method by which it does this
+#' may be chosen by the user.
+#' 
+#' @title constrain_tapers
+#' @aliases constrain_tapers
+#' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
+#' @seealso \code{\link{ctap_simple}}, \code{\link{ctap_markov}}, \code{\link{riedsid}}
+#'
+#' @param tapvec vector; the number of tapers at each frequency
+#' @param tapseq vector; positions or frequencies -- necessary for smoother methods
+#' @param constraint.method method to use for constraints on tapers numbers
+#' @param min.tapers integer; the minimum number of tapers
+#' @param verbose logical; should warnings and messages be given?
+#' @param ... optional argments passed to the constraint.method
+constrain_tapers <- function(tapvec, 
+                             tapseq=NULL,
+                             constraint.method=c("simple.slope",
+                                                 "markov.chain",
+                                                 "loess.smooth",
+                                                 "friedman.smooth",
+                                                 "none"),
+                             min.tapers=1,
+                             verbose=TRUE, 
+                             ...) UseMethod("constrain_tapers")
+
+#' @rdname constrain_tapers
+#' @S3method constrain_tapers taper
+constrain_tapers.taper <- function(tapvec, 
+                                   tapseq=NULL,
+                                   constraint.method=c("simple.slope",
+                                                       "markov.chain",
+                                                       "loess.smooth",
+                                                       "friedman.smooth",
+                                                       "none"),
+                                   min.tapers=1,
+                                   verbose=TRUE, 
+                                   ...){
+  stopifnot(is.taper(tapvec) | (min.tapers>=0))
+  # choose the appropriate method to apply taper constraints
+  cmeth <- match.arg(constraint.method) 
+  if (cmeth=="none"){
+    if (verbose) warning("no taper optimization constraints applied")
+    tapvec.adj <- tapvec
+  } else {
+    if (verbose) message(sprintf("Constraining tapers with ** %s ** method",cmeth))
+    CTAPFUN <- switch(cmeth,
+                      "simple.slope"=ctap_simple,
+                      "markov.chain"=ctap_markov,
+                      "loess.smooth"=ctap_loess,
+                      "friedman.smooth"=ctap_friedman)
+    tapvec.adj <- CTAPFUN(tapvec, tapseq, ...)
+  }
+  # MAX/MIN bounds
+  # set the maximim tapers: Never average over more than the length of the spectrum!
+  maxtap <- round(length(tapvec)/2)
+  # ensure the minimum is below
+  mintap <- min(min.tapers, maxtap)
+  # sort for posterity
+  tapbounds <- sort(c(mintap, maxtap))
+  mintap <- tapbounds[1]
+  maxtap <- tapbounds[2]
+  tapvec.adj[tapvec.adj < mintap] <- mintap
+  tapvec.adj[tapvec.adj > maxtap] <- maxtap
+  return(tapvec.adj)
+}
+
 
 #' @description Constrain tapers with first differencing.
 #' 
@@ -320,14 +398,17 @@ ctap_simple.taper <- function(tapvec,
 #' changed (from it's previous value); it is very fast.  Details of the theory 
 #' behind this algorithm may be found in Morhac (2008) and Silagadze (1996).
 #'
-#' @note The results obtained by \strong{\code{'markov.chain'}} can produce unstable
-#' results if successively executed on taper vectors with even modest sized serially-correlated
-#' peaks; the method should be used with caution, unless the intention is to
-#' enhance peaks.  The \code{'chain.width'} parameter constrols the broadness
-#' of the a priori distribution.  As a rule of thumb: the smaller the parameter is, the shorter
-#' the tails become.
+#' @note This algorithm can produce ``unstable"
+#' results in the sense that for
+#' successive application on taper vectors, even modest sized serially-correlated
+#' peaks tends to sharpen; hence, this method should be used with care, unless the 
+#' intention is to specifically
+#' enhance peaks.  The \code{'chain.width'} parameter controls the broadness
+#' of the a priori distribution.  As a rule of thumb: the smaller the parameter is, 
+#' the shorter the tails become.
 #'
-#' @author Andrew Barbour <andy.barbour@@gmail.com> adapted algorithm from Morhac (2008).
+#' @author Andrew Barbour <andy.barbour@@gmail.com> adapted the algorithm from Morhac (2008)
+#' for use here.
 #'
 #' @references Morhac, M. (2008), Peaks: Peaks, \emph{R package}, \strong{version 0.2}
 #' @references Silagadze, Z.K. (1996), A new algorithm for automatic photopeak searches,
@@ -340,7 +421,7 @@ ctap_simple.taper <- function(tapvec,
 #' @seealso \code{\link{constrain_tapers}}, \code{\link[Peaks]{SpectrumSmoothMarkov}}
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq (unused) vector; positions or frequencies -- necessary for smoother methods
-#' @param chain.width  (\code{'markov.chain'}) scalar; the width the MC should consider for the change probability
+#' @param chain.width  scalar; the width the MC should consider for the change probability
 #' @param ... (unused) optional argments
 #' @return an object with class 'taper', with a constrained taper numbers
 #' @examples
@@ -373,8 +454,8 @@ ctap_markov.taper <- function(tapvec,
 #' @details This method uses \code{stats::loess} to smooth the taper vector; is
 #' can be very slow thanks to quadratic scaling.
 #'
-#' @note The results obtained by \strong{\code{'loess.smooth'}} are strongly dependent on
-#' the loess tuning parameters; hence, some effort should be given to understand
+#' @note The results obtained can be strongly dependent on
+#' the \code{loess} tuning parameters; hence, some effort should be given to understand
 #' their effect, and/or re-tuning the default parameters.
 #'
 #' @title ctap_loess
@@ -385,9 +466,9 @@ ctap_markov.taper <- function(tapvec,
 #'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
-#' @param loess.span  (\code{'loess.smooth'}) scalar; the span used in \code{loess}
-#' @param loess.degree  (\code{'loess.smooth'}) scalar; the polynomial degree
-#' @param verbose boolean; should warnings and messages be given?
+#' @param loess.span  scalar; the span used in \code{loess}
+#' @param loess.degree  scalar; the polynomial degree
+#' @param verbose logical; should warnings and messages be given?
 #' @param ... optional argments; unused
 #' @return an object with class 'taper', with a constrained taper numbers
 #' @examples
@@ -442,9 +523,9 @@ ctap_loess.taper <- function(tapvec,
 #'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
-#' @param smoo.span  (\code{'friedman.smooth'}) scalar; fraction of the observations in the span of the running lines smoother
-#' @param smoo.bass  (\code{'friedman.smooth'}) scalar; controls the smoothness of the fitted curve 
-#' @param verbose boolean; should warnings and messages be given?
+#' @param smoo.span  scalar; fraction of the observations in the span of the running lines smoother
+#' @param smoo.bass  scalar; controls the smoothness of the fitted curve 
+#' @param verbose logical; should warnings and messages be given?
 #' @param ... optional argments; unused
 #' @return an object with class 'taper', with a constrained taper numbers
 #' @examples
