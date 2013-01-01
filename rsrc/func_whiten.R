@@ -126,3 +126,57 @@ prewhiten2 <- function(...) UseMethod(".whiten")
   return(invisible(whitex))
 }
 # end whiten.default
+# plot.qualcon or plot.whiten from show.whiten in suppfuncs [ ]
+show.whiten <- function(wcrit, k1k2, x, x.w, limsc=2.5, pltlabs=TRUE) {
+  ##  Display the series and its filtered version, interactively
+  ##
+  ## Args:  
+  ##
+  ## Returns:  
+  ##
+  ## TODO(abarbour):	
+  ##     a) interative outlier identification or incorporate other package?
+  ##     b) make this a plot method
+  ##
+  t1 <- k1k2[1]
+  te <- k1k2[length(k1k2)]
+  xplt <- x[k1k2]
+  xplt <- xplt - median(xplt)
+  xplt.w <- x.w[k1k2]
+  x.wcriti <- which(abs(xplt.w) > wcrit) + t1 - 1
+  x.wcrit <- x.w[x.wcriti]
+  #
+  plot(k1k2, xplt, type="s", col="gray", 
+       ylim=c(-1*limsc*wcrit, limsc*wcrit),
+       ylab="value",
+       xlab="term",
+       main="Outlier Inspector")
+  
+  abline(h=wcrit*c(1,-1), lty=3, col="black")
+  abline(h=wcrit*c(2,-2), lty=3, col="red")
+  if (pltlabs==TRUE){
+    text(t1+25, -0.35*wcrit, "demeaned F(Xa:Xb)", pos=1, cex=0.8, col="dark gray")
+    text(t1+17, -0.60*wcrit, "AR prew. F(X)", pos=1, cex=0.8, col="blue")
+    text(t1+20, -1*wcrit, sprintf("threshold (%.3f)\ncrossings (+)",wcrit), pos=1, cex=0.8, col="black")
+    text(t1+10, -2*wcrit, "2x thresh", pos=3, cex=0.8, col="red")
+  }
+  if (length(x.wcriti)>0){
+    points(x.wcriti, x.wcrit, col="black", pch=3, cex=0.8)
+  }
+  lines(k1k2, xplt.w, type="s", col="blue")
+  # display some info
+  #   terms
+  cat('Display of terms: ', t1, te, "\n")
+  #   outliers
+  if (length(x.wcriti>0)){
+    cat("Threshold crossing indices:\n")
+    toret <- t(rbind(x.wcriti,x.wcrit))
+    print(toret)
+    return(invisible(toret))
+  } else {
+    cat(sprintf("No critical outliers found for threshold of  %.03f\n",wcrit))
+  }
+} 
+# end show.whiten
+#
+#

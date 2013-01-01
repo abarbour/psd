@@ -3,7 +3,7 @@
 ###
 ##
 
-#' Reports whether x is a 'spec' object
+#' Reports whether x is an object of class 'spec'
 #' @param x An object to test
 #' @export
 is.spec <- function(x) inherits(x, "spec")

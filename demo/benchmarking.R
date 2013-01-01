@@ -10,8 +10,9 @@ PSD <- psdcore.default
 set.seed(1234)
 # differences in processing time reduce with orders of magnitude increases
 reps <- 10
-run.bench <- function(nd, nt=8, reps=reps){
-  print(nd)
+run.bench <- function(nd, nt=8, nreps=reps){
+  set.seed(1234)
+  print(c(nd, nt, nreps))
   initEnv(refresh=TRUE)
   X.d <- arima.sim(list(order = c(1,1,0), ar = 0.9),n=nd)
   X.p <- prewhiten(X.d, 10, plot=FALSE, verbose=FALSE)
@@ -22,14 +23,14 @@ run.bench <- function(nd, nt=8, reps=reps){
   psdbench <- benchmark(PSD(X.d, ntaper=nt, plot=FALSE, force_calc=TRUE),
                         PSD(X.d, ntaper=ntaps, plot=FALSE, force_calc=TRUE),
                         multitaper::spec.mtm(X.d,k=nt,plot=FALSE),
-                        replications=reps)
+                        replications=nreps)
   psdbench$num_terms <- nd
   psdbench$num_taps <- nt
   psdbench$test <- c("rlpSpec::psdcore","rlpSpec::psdcore (vec.)","multitaper::spec.mtm")
   return(psdbench)
 }
 #
-nds <- round(10**seq.int(from=1,to=4.4,by=0.1))
+nds <- round(10**seq.int(from=1,to=5,by=0.15))
 allbench <- lapply(X=nds, FUN=function(x) run.bench(nd=x))
 save(allbench, file="~/Google Drive/PUB/GEOKOOK/rlpspec_allbench_new.Rda")
 
