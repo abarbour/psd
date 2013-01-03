@@ -1,4 +1,4 @@
-psd3 <- spectrum(rnorm(1e3), plot=FALSE)
+psd3 <- spectrum(rnorm(3e3), plot=FALSE)
 summary(psd3)
 # Length Class  Mode     
 # freq      500    -none- numeric  
@@ -78,6 +78,7 @@ nonull.spec <- function(psd){
   psd$phase <- as.numeric(psd$phase)
   psd$kernel <- as.numeric(psd$kernel)
   psd$snames <- as.character(psd$snames)
+  psd$taper <- as.taper(psd$taper)
   return(psd)
 }
 
@@ -116,24 +117,24 @@ as.specS4.specS4 <- function(psd){
 psd4c1 <- as.specS4(psd4)
 psd4c2 <- as.specS4(psd3)
 
-# setClass("Matrix",
-#          representation(Dim = "integer", Dimnames = "list", "VIRTUAL"),
-#          prototype = prototype(Dim = integer(2), Dimnames = list(NULL,NULL)),
-#          validity = function(object) {
-#            Dim <- object@Dim
-#            if (length(Dim) != 2)
-#              return("Dim slot must be of length 2")
-#            if (any(Dim < 0))
-#              return("Dim slot must contain non-negative values")
-#            Dn <- object@Dimnames
-#            if (!is.list(Dn) || length(Dn) != 2)
-#              return("'Dimnames' slot must be list of length 2")
-#            lDn <- sapply(Dn, length)
-#            if (lDn[1] > 0 && lDn[1] != Dim[1])
-#              return("length(Dimnames[[1]])' must match Dim[1]")
-#            if (lDn[2] > 0 && lDn[2] != Dim[2])
-#              return("length(Dimnames[[2]])' must match Dim[2]")
-#            ## 'else'	ok :
-#            TRUE
-#          })
+as.specS4.spec <- function(psd){
+  stopifnot(inherits(psd, 'spec', FALSE))
+  psd <- nonull.spec(psd)
+  S4spec <- newRlpspec() 
+  spec_slots <- slotNames(S4spec)
+  spec_slots <- spec_slots[match(names(psd), spec_slots, nomatch=0)]
+  for (what in spec_slots){
+    message(what)
+    if ((what=="taper")==TRUE){
+      FUN <- as.taper
+    } else {
+      FUN <- as.vector
+    }
+    #message(what)
+    slot(S4spec, what) <- FUN(unlist(psd[what]))
+  }
+  return(S4spec)
+}
 
+psd4c3 <- as.specS4(psd3)
+plot(psd4c3)

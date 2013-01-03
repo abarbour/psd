@@ -271,20 +271,21 @@ psdcore.default <- function(X.d,
                   spec = as.numeric(psd.n), 
                   coh = NULL, 
                   phase = NULL, 
-                  kernel = NA, 
-                  df = NA, 
+                  kernel = NULL, 
+                  df = Inf, 
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
-                  timebp=timebp,
                   n.used = envGet("len_even"), 
                   orig.n = envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
                   method = sprintf("Adaptive Sine Multitaper (rlpSpec)\n%s",funcall), 
                   taper = ntap, 
-                  pad = TRUE, 
+                  pad = 1, 
                   detrend = detrend, 
-                  demean = demean)
+                  demean = demean,
+                  timebp=timebp,
+                  nyquist.normalized=Nyquist.normalize)
   if (as.spec){class(psd.out) <- "spec"}
   return(invisible(psd.out))
 }

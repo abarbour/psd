@@ -75,6 +75,40 @@ newRlpspec <- setClass("rlpspec",
      }
 )
 
+
+nonull <- function(psd) UseMethod("nonull")
+nonull.spec <- function(psd){
+  stopifnot(inherits(psd, 'spec', FALSE))
+  # spec.pgram may return NULL for these:
+  psd$coh <- as.numeric(psd$coh)
+  psd$phase <- as.numeric(psd$phase)
+  psd$kernel <- as.numeric(psd$kernel)
+  psd$snames <- as.character(psd$snames)
+  psd$taper <- as.taper(psd$taper)
+  return(psd)
+}
+
+#' upconvert an S3 class 'spec' to the S4 class 'rlpspec'
+# @S3method as.rlpspec spec
+as.rlpspec.spec <- function(psd){
+  stopifnot(inherits(psd, 'spec', FALSE))
+  psd <- nonull.spec(psd)
+  S4spec <- newRlpspec() # or: S4spec <- new("rlpspec")
+  spec_slots <- slotNames(S4spec)
+  spec_slots <- spec_slots[match(names(psd), spec_slots, nomatch=0)]
+  for (what in spec_slots){
+    #message(what)
+    if ((what=="taper")==TRUE){
+      FUN <- as.taper
+    } else {
+      FUN <- as.vector
+    }
+    #message(what)
+    slot(S4spec, what) <- FUN(unlist(psd[what]))
+  }
+  return(S4spec)
+}
+
 ###
 ###  S3 (or S4) methods for PRINTING
 ###
@@ -226,14 +260,33 @@ setMethod("plot",c("rlpspec","missing"),function(x, y,
                                                  type="b",
                                                  null.line=TRUE,
                                                  xlab="frequency",
-                                                 ylab="Sensitivity",
+                                                 ylab="power spectral density",
+                                                 y.dB=TRUE,
                                                  main=NULL,...){
   par(pty="s")
-  plot(x@freq, x@spec, type=type, xlab=xlab, ylab=ylab, ...)
-  if(null.line)
-    abline(0,1,lty=3)
-  if(is.null(main))
+  frq <- x@freq
+  spc <- x@spec
+  if (y.dB) spc <- 10*log10(spc)
+  if (length(frq)>1e3){message("too many values to see points effectively: type=line"); type <- "l"}
+  if (x@nyquist.normalized){
+    xlabp <- "Hz"
+  } else {
+    xlabp <- "Nyq"
+  }
+  xlab <- sprintf("%s [%s]", xlab, xlabp)
+  ylab <- sprintf("%s [counts^2 / %s]", ylab, xlabp)
+  plot(frq, spc, type=type, xlab=xlab, ylab=ylab, ...)
+  if (null.line){
+    #v<-c(0,0.5)
+    v<-range(frq)
+    abline(v=v, lty=3, col="blue", lwd=1.5)
+    h <- 1
+    if (y.dB) h <- 10*log10(c(1,2,10))
+    abline(h=h, lty=3, col="red", lwd=1.5)
+  }
+  if (is.null(main)){
     main <- x@method
+  }
   title(main=main)
 })
 
