@@ -13,17 +13,17 @@
 #' @note  The prototypical S4 class has tapers==1, and length==1.
 #' Currently there are no \code{@@slots}; this may change in the future.
 #'
-#' @name taper
+#' @name newTaper
 #' @rdname taper
 #' @aliases taper-class
 #' @exportClass taper
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @examples
-#' taper()
-#' new("taper") # equivalent to taper()
-#' print(ntap <- taper(1:10))
+#' newTaper()
+#' new("taper") # equivalent to newTaper()
+#' print(ntap <- newTaper(1:10))
 #' plot(ntap)
-taper <- setClass("taper",
+newTaper <- setClass("taper",
                   # if slots, add 'taper="integer",...
                   representation=representation("integer"),
                   prototype = 1L)
@@ -164,6 +164,10 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
   vl <- c(1, nt)
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
 }
+
+
+
+
 
 #' Calculate weighting factors for a series of tapers
 #'

@@ -1,9 +1,9 @@
-\name{taper}
-\alias{taper}
+\name{newTaper}
+\alias{newTaper}
 \alias{taper-class}
 \title{The 'taper' S4 class.}
 \usage{
-  taper(...)
+  newTaper(...)
 }
 \description{
   In this class the value of each position will be a
@@ -16,9 +16,9 @@
   the future.
 }
 \examples{
-taper()
-new("taper") # equivalent to taper()
-print(ntap <- taper(1:10))
+newTaper()
+new("taper") # equivalent to newTaper()
+print(ntap <- newTaper(1:10))
 plot(ntap)
 }
 \author{
