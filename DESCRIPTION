@@ -31,3 +31,4 @@ Collate:
     'zzz.R'
     'func_psdcore.R'
     'func_rlpspec.R'
+    'func_utils.R'

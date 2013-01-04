@@ -13,7 +13,7 @@ reps <- 10
 run.bench <- function(nd, nt=8, nreps=reps){
   set.seed(1234)
   print(c(nd, nt, nreps))
-  initEnv(refresh=TRUE)
+  rlp_initEnv(refresh=TRUE)
   X.d <- arima.sim(list(order = c(1,1,0), ar = 0.9),n=nd)
   X.p <- prewhiten(X.d, 10, plot=FALSE, verbose=FALSE)
   ntaps <- rep.int(nt,nd)
@@ -62,7 +62,7 @@ g2 + geom_path(colour="black", data=allmeds, aes(group=test))
 
 # Profiling
 do.prof <- function(){
-  #initEnv(refresh=TRUE)
+  #rlp_initEnv(refresh=TRUE)
   nd <- 1e2 # differences in processing time reduce with orders of magnitude increases
   X.d <- arima.sim(list(order = c(1,1,0), ar = 0.9),n=nd)
   nt <- 8

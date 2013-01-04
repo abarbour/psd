@@ -1,8 +1,8 @@
 \docType{package}
 \name{rlpSpec-package}
+\alias{rlpSpec,}
 \alias{rlpSpec-package}
 \alias{rlpspec-package,}
-\alias{rlpSpec,}
 \alias{spec.rlp}
 \title{Adaptively estimate power spectral densities of an optimally tapered series.}
 \description{

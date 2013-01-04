@@ -1,7 +1,7 @@
 \name{parabolic_weights}
 \alias{parabolic_weights}
-\alias{parabolic_weights_fast}
 \alias{parabolic_weights.taper}
+\alias{parabolic_weights_fast}
 \title{parabolic_weights}
 \usage{
   parabolic_weights(tapvec, tap.index = 1L)
