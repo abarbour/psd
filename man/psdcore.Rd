@@ -1,7 +1,6 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.default}
-\alias{psdcore.rlpspec}
 \title{Multitaper power spectral density of a series}
 \usage{
   psdcore(X.d, X.frq = 1, ntaper = as.taper(1),
@@ -9,8 +8,6 @@
     na.action = stats::na.fail, first.last = TRUE,
     Nyquist.normalize = TRUE, plotpsd = FALSE,
     as.spec = TRUE, force_calc = FALSE, ...)
-
-  psdcore.rlpspec(...)
 
   psdcore.default(X.d, X.frq = 1, ntaper = as.taper(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
@@ -98,4 +95,7 @@ psdcore(X.d, ntaper=rep(10,length(X.d))
 \seealso{
   \code{\link{pspectrum}}, \code{\link{riedsid}}
 }
+\keyword{normalization}
+\keyword{prewhiten}
+\keyword{spectrum-estimation}
 

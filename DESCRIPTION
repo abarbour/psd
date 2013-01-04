@@ -30,6 +30,5 @@ Collate:
     'func_tapers.R'
     'zzz.R'
     'func_psdcore.R'
-    'func_rlpspec.R'
     'func_utils.R'
     'func_envir.R'

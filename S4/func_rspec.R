@@ -1,17 +1,17 @@
-#' Reports whether x is an object with class 'rlpspec'
+#' Reports whether x is an object with class 'rspec'
 #' @param x An object to test
 #' @export
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{as.rlpspec}}
+#' @seealso \code{\link{as.rspec}}
 #' @examples
-#' is.rlpspec(1:10)
-#' is.rlpspec(rlp <- newRlpspec())
-#' is(1:10, "rlpspec")
-#' is(rlp, "rlpspec")
-is.rlpspec <- function(x) inherits(x, "rlpspec")
-#is.rlpspec <- function(x) is(x, 'rlpspec')
+#' is.rspec(1:10)
+#' is.rspec(rlp <- newRspec())
+#' is(1:10, "rspec")
+#' is(rlp, "rspec")
+is.rspec <- function(x) inherits(x, "rspec")
+#is.rspec <- function(x) is(x, 'rspec')
 
-#' The 'rlpspec' S4 class.
+#' The 'rspec' S4 class.
 #'
 #' This class very nearly resembles the structure of a 'spec'
 #' object; however, it has slots to store information about tapers,
@@ -26,13 +26,13 @@ is.rlpspec <- function(x) inherits(x, "rlpspec")
 #   }
 # }
 #'
-#' @name newRlpspec
-#' @rdname rlpspec
-#' @aliases rlpspec-class, rlpspec
-#' @exportClass rlpspec
+#' @name newRspec
+#' @rdname rspec
+#' @aliases rspec-class, rspec
+#' @exportClass rspec
 #' @export
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
-newRlpspec <- setClass("rlpspec",
+newRspec <- setClass("rspec",
      representation=representation(freq="numeric",
                                    spec="numeric",
                                    coh="numeric",
@@ -49,7 +49,7 @@ newRlpspec <- setClass("rlpspec",
                                    pad="numeric",
                                    detrend="logical",
                                    demean="logical",
-                                   # more, specific to rlpspec
+                                   # more, specific to rspec
                                    orig.sps="numeric", # integer?
                                    prewhiten="logical",
                                    adapt.stage="integer",
@@ -64,7 +64,7 @@ newRlpspec <- setClass("rlpspec",
                            taper=as.taper(0),
                            detrend=FALSE,
                            demean=FALSE,
-                           # <rlpspec params>
+                           # <rspec params>
                            orig.sps=1,
                            prewhiten=FALSE,
                            adapt.stage=integer(0),
@@ -88,12 +88,12 @@ nonull.spec <- function(psd){
   return(psd)
 }
 
-#' upconvert an S3 class 'spec' to the S4 class 'rlpspec'
-# @S3method as.rlpspec spec
-as.rlpspec.spec <- function(psd){
+#' upconvert an S3 class 'spec' to the S4 class 'rspec'
+# @S3method as.rspec spec
+as.rspec.spec <- function(psd){
   stopifnot(inherits(psd, 'spec', FALSE))
   psd <- nonull.spec(psd)
-  S4spec <- newRlpspec() # or: S4spec <- new("rlpspec")
+  S4spec <- newRspec() # or: S4spec <- new("rspec")
   spec_slots <- slotNames(S4spec)
   spec_slots <- spec_slots[match(names(psd), spec_slots, nomatch=0)]
   for (what in spec_slots){
@@ -113,23 +113,23 @@ as.rlpspec.spec <- function(psd){
 ###  S3 (or S4) methods for PRINTING
 ###
 
-#' @title Generic methods for 'rlpspec' objects
+#' @title Generic methods for 'rspec' objects
 #' @keywords methods generic
-#' @name rlpspec-methods
+#' @name rspec-methods
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
-#' @aliases rlpspec
-#' @rdname rlpspec-methods
-#' @seealso \code{\link{is.rlpspec}}, \code{\link{as.rlpspec}}
+#' @aliases rspec
+#' @rdname rspec-methods
+#' @seealso \code{\link{is.rspec}}, \code{\link{as.rspec}}
 NULL
 
 #
 # PRINT
 #
 
-#' @rdname rlpspec-methods
+#' @rdname rspec-methods
 #' @name print
-#' @S3method print summary.rlpspec
-print.summary.rlpspec <- function(x, ...) {
+#' @S3method print summary.rspec
+print.summary.rspec <- function(x, ...) {
   cat("\n>>>> ADAPTIVE SINE-MULTITAPER PSD SUMMARY <<<<\n")
   # [ ] variance reduction? 
   # [ ] number of iterations
@@ -143,10 +143,10 @@ print.summary.rlpspec <- function(x, ...) {
   print(rbind(freq, freq_spacing, psd, ntap))
   cat("\n")
 }
-#' @rdname rlpspec-methods
+#' @rdname rspec-methods
 #' @name print
-#' @S3method print rlpspec
-print.rlpspec <- function(psd, ...){
+#' @S3method print rspec
+print.rspec <- function(psd, ...){
   # if psd is a structure the
   # a structure has attributes, whereas a list has names of data, which may
   # have attributes: so the final psd should be a list of data with attributes
@@ -157,17 +157,17 @@ print.rlpspec <- function(psd, ...){
   print(head(res))
 }
 
-#' @rdname rlpspec-methods
+#' @rdname rspec-methods
 #' @name print
-#' @exportMethod print rlpspec
+#' @exportMethod print rspec
 #' @docType methods
-setMethod("print", signature("rlpspec"), function(x){str(x)})
+setMethod("print", signature("rspec"), function(x){str(x)})
 
-#' @rdname rlpspec-methods
+#' @rdname rspec-methods
 #' @name summary
-#' @exportMethod summary rlpspec
+#' @exportMethod summary rspec
 #' @docType methods
-setMethod("summary", signature("rlpspec"), function(object){
+setMethod("summary", signature("rspec"), function(object){
   frqs <- object@freq
   psds <- object@spec
   ntap <- object@taper
@@ -185,10 +185,10 @@ setMethod("summary", signature("rlpspec"), function(object){
 # PLOTTING
 #
 
-# # @rdname rlpspec-methods
+# # @rdname rspec-methods
 # # @name plot
-# # @S3method plot rlpspec
-# plot.rlpspec <- function(psd.df, logx=TRUE, xlabel=NULL, ylabel=NULL, niter=NULL, showplot=TRUE,...){
+# # @S3method plot rspec
+# plot.rspec <- function(psd.df, logx=TRUE, xlabel=NULL, ylabel=NULL, niter=NULL, showplot=TRUE,...){
 #   ##
 #   ## Plot the results of the PSD estimation
 #   ##
@@ -245,18 +245,18 @@ setMethod("summary", signature("rlpspec"), function(object){
 #   if (showplot){print(p)}
 #   return(invisible(p))
 # }
-# # end plot.rlpspec
+# # end plot.rspec
 
 # setGeneric("plot", function(x, y, ...) standardGeneric("plot")) 
 # 
-#' @rdname rlpspec-methods
+#' @rdname rspec-methods
 #' @name plot
-#' @exportMethod plot rlpspec
+#' @exportMethod plot rspec
 #' @docType methods
 #thank god:
 #  http://www.soph.uab.edu/Statgenetics/Events/Rshort/060227-8-s4slides.pdf
 setGeneric("plot", function (x, y, ...) standardGeneric("plot"))
-setMethod("plot",c("rlpspec","missing"),function(x, y, 
+setMethod("plot",c("rspec","missing"),function(x, y, 
                                                  type="b",
                                                  null.line=TRUE,
                                                  xlab="frequency",
@@ -290,11 +290,11 @@ setMethod("plot",c("rlpspec","missing"),function(x, y,
   title(main=main)
 })
 
-#' @rdname rlpspec-methods
+#' @rdname rspec-methods
 #' @name lines
-#' @exportMethod lines rlpspec
+#' @exportMethod lines rspec
 #' @docType methods
 setGeneric("lines", function (x, ...) standardGeneric("lines"))
-setMethod("lines", c("rlpspec"), function(x,...){
+setMethod("lines", c("rspec"), function(x,...){
   lines(x@freq, x@spec,...)
 })

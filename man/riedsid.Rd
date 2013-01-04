@@ -1,14 +1,11 @@
 \name{riedsid}
 \alias{riedsid}
 \alias{riedsid.default}
-\alias{riedsid.rlpspec}
 \alias{riedsid.spec}
 \title{riedsid}
 \usage{
   riedsid(spec, ntaper, tapseq = NULL, c.method = NULL,
     ...)
-
-  riedsid.rlpspec(...)
 
   riedsid.spec(...)
 
@@ -49,4 +46,7 @@ riedsid(rnorm(10), c(1:5,5:1))
 \seealso{
   \code{\link{psdcore}}, \code{\link{constrain_tapers}}
 }
+\keyword{riedel-sidorenko}
+\keyword{taper}
+\keyword{taper-constraints}
 

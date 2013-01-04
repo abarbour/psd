@@ -1,4 +1,4 @@
-\docType{utilities}
+\docType{package}
 \name{rlpSpec-utilities}
 \alias{NA_mat}
 \alias{as.colvec}
@@ -7,12 +7,14 @@
 \alias{colvec}
 \alias{envir2char}
 \alias{is.spec}
+\alias{is.taper}
 \alias{mod}
 \alias{modulo}
 \alias{na_mat}
 \alias{nas}
 \alias{ones}
 \alias{rlpSpec-utilities}
+\alias{rlpSpec-utilities-package}
 \alias{rowvec}
 \alias{vector_reshape}
 \alias{zeroes}
@@ -33,7 +35,9 @@
 
   rowvec(x)
 
-  is.spec(x)
+  is.spec(Obj)
+
+  is.taper(Obj)
 
   na_mat(nrow, ncol = 1)
 
@@ -61,7 +65,7 @@
   \item{vec.shape}{choice between horizontally-long or
   vertically-long vector.}
 
-  \item{x}{An object to test inheritance of 'spec' class.}
+  \item{Obj}{An object to test for class inheritance.}
 
   \item{nrow}{integer; the number of rows to create.}
 
@@ -84,8 +88,9 @@
   either one row (if \code{vec.shape=="horizontal"}), or
   one column (\code{"vertical"}).
 
-  \code{is.spec} returns a logical flag whether or not the
-  object does have class 'spec'.
+  \code{is.spec} and \code{is.taper} both return logicals
+  about whether or not the object does have class 'spec' or
+  'taper', respectively
 
   \code{na_mat} returns a matrix of dimensions
   \code{(nrow,ncol)} with \code{NA} values, the
@@ -98,9 +103,7 @@
   is equivalent to \code{(X) \%\% (Y)}.
 }
 \description{
-  The computation of power spectral density estimates
-  requires a bit of bookkeeping and manipulation.  These
-  are tools designed to facilitate easier computation.
+  Various utility functions.
 
   \code{char2envir} converts a character string of an
   environment name to an evaluated name; whereas,
@@ -114,9 +117,13 @@
   vector; whereas \code{rowvec} returns the object as a
   horizontally long vector.
 
-  \code{is.spec} reports whether an object has class
-  'spec', as would one returned by, for example,
+  \code{is.spec} reports whether an object has class S3
+  class 'spec', as would one returned by, for example,
   \code{spectrum}.
+
+  \code{is.taper} reports whether an object has S3 class
+  'taper', as would one returned by, for example,
+  \code{\link{as.taper}}.
 
   \code{na_mat} populates a matrix of specified dimensions
   with \code{NA} values.
@@ -164,12 +171,18 @@ char2envir(some_nonexistent_environment) # error
 ## Check for spec object:
 require(stats)
 # quick power spectral density
-psd <- spectrum(rnorm(1e2), plot=FALSE)
+x <- rnorm(1e2, sd=10)
+psd <- spectrum(x, plot=FALSE)
 # return is class 'spec'
 is.spec(psd) # TRUE
+#
 # but the underlying structure is just a list
 psd <- unclass(psd)
 is.spec(psd) # FALSE
+##
+## check for taper
+is.taper(x)
+is.taper(as.taper(x))
 ##
 ## matrix and vector creation:
 # NA matrix
@@ -197,15 +210,32 @@ all.equal(mc2a, mc2c) # TRUE
 ##
 ##
 }
+\author{
+  Andrew Barbour <andy.barbour@gmail.com>
+}
 \references{
-  \code{mod}: see Peter Dalgaard's explanation of the
-  non-bug I raised (instead I should've asked it on
-  R-help):
-  \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi\?id=14771\#c2}
+  For \code{\link{mod}}: see Peter Dalgaard's explanation
+  of the non-bug (#14771) I raised (instead I should've
+  asked it on R-help):
+  \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
 }
 \seealso{
   \code{\link{eval}}, \code{\link{deparse}}
 
+  \code{\link{as.taper}}
+
   \code{\link{Arith}}
 }
+\keyword{S3methods}
+\keyword{arithmetic-operations}
+\keyword{environment}
+\keyword{inherits}
+\keyword{is}
+\keyword{matrix-creation}
+\keyword{matrix-manipulation}
+\keyword{methods}
+\keyword{modulo-division}
+\keyword{utilities}
+\keyword{vector-creation}
+\keyword{vector-manipulation}
 

@@ -33,6 +33,7 @@
 #' @import signal
 #' @name psdcore
 #' @export
+#' @keywords spectrum-estimation normalization prewhiten
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
@@ -64,10 +65,6 @@ psdcore <- function(X.d,
                     as.spec=TRUE,
                     force_calc=FALSE,
                     ...) UseMethod("psdcore")
-
-#' @rdname psdcore
-#' @S3method psdcore rlpspec
-psdcore.rlpspec <- function(...){.NotYetImplemented()}
 
 #' @rdname psdcore
 #' @S3method psdcore default

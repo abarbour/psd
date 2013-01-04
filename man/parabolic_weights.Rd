@@ -2,6 +2,7 @@
 \alias{parabolic_weights}
 \alias{parabolic_weights.taper}
 \alias{parabolic_weights_fast}
+\alias{parabolic_weights_fast.taper}
 \title{parabolic_weights}
 \usage{
   parabolic_weights(tapvec, tap.index = 1L)
@@ -9,6 +10,8 @@
   parabolic_weights.taper(tapvec, tap.index = 1L)
 
   parabolic_weights_fast(ntap = 1L)
+
+  parabolic_weights_fast.taper(ntap = 1L)
 }
 \arguments{
   \item{tapvec}{'taper' object; the number of tapers at
@@ -19,12 +22,15 @@
 
   \item{ntap}{integer; the number of tapers to provide
   weightings for}
+
+  \item{ntap}{integer; the number of tapers to calculate
+  for}
 }
 \value{
   a list with taper indices, and weighting parameters
 }
 \description{
-  Calculate weighting factors for a series of tapers
+  Calculate weighting factors for 'taper' object.
 }
 \details{
   Weighting is calculated as follows:
@@ -42,4 +48,6 @@
 \seealso{
   \code{\link{psdcore}}, \code{\link{riedsid}}
 }
+\keyword{taper}
+\keyword{taper-weighting}
 

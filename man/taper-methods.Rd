@@ -5,7 +5,7 @@
 \alias{summary}
 \alias{taper}
 \alias{taper-methods}
-\title{Generic methods for 'taper' objects}
+\title{Generic methods for 'taper' objects.}
 \usage{
   print.taper(x)
 
@@ -16,7 +16,7 @@
   plot.taper(x, color.pal = c("Blues", "Spectral"), ...)
 }
 \description{
-  Generic methods for 'taper' objects
+  Generic methods for 'taper' objects.
 }
 \author{
   Andrew Barbour <andy.barbour@gmail.com>
@@ -24,6 +24,7 @@
 \seealso{
   \code{\link{is.taper}}, \code{\link{as.taper}}
 }
-\keyword{generic}
+\keyword{S3methods}
 \keyword{methods}
+\keyword{taper}
 

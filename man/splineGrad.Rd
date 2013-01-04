@@ -27,20 +27,18 @@
 }
 \description{
   \code{splineGrad} computes the numerical derivatives of a
-  spline representation of the input series.
+  spline representation of the input series;
+  differentiation of spline curves is numerically
+  efficient.
 
-  Numerical instability can be reduced with this method,
-  since spline curves are inherently (at least) twice
-  differentiable.
+  With smoothing, the numerical instability for "noisy"
+  data can be drastically reduced, since spline curves are
+  inherently (at least) twice differentiable. See the
+  \strong{Examples} for an illustration of this.
 
   How does the first derivative of the first derivative of
   the original series compare to the second derivative of
   the original series? Apparently, there is no difference.
-  Try something like this: \code{smspl.alt <-
-  stats::smooth.spline(dseq, fsigderiv, ...); SPLFUN.alt <-
-  stats::splinefun(smspl.alt$x, smspl.alt$y);
-  fsigderiv2.alt <- SPLFUN.alt(dseq, deriv=1);
-  print(all.equal(fsigderiv2,fsigderiv2.alt));}
 }
 \examples{
 ##
@@ -62,4 +60,7 @@ splineGrad(x, y, TRUE, spar=1.0)
 \seealso{
   \code{\link{smooth.spline}}
 }
+\keyword{numerical-derivative}
+\keyword{spline-gradient}
+\keyword{utilities}
 

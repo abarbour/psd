@@ -1,12 +1,9 @@
 #' @title Various utility functions.
-#' 
-#' @description The computation of power spectral density estimates requires
-#' a bit of bookkeeping and manipulation.  These are tools designed to facilitate
-#' easier computation.
-#' 
+#' @keywords methods S3methods utilities
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @rdname rlpSpec-utilities
 #' @name rlpSpec-utilities
-#' @docType utilities
+#' @docType package
 NULL
 
 #' @description \code{char2envir} converts a character string of an environment 
@@ -20,6 +17,7 @@ NULL
 #' 
 #' @rdname rlpSpec-utilities
 #' @export
+#' @keywords utilities environment
 #' @param envchar An object with class 'character'.
 #' @param envir An object of class 'environment'.
 #' @return \code{char2envir} returns the result of evaluating the object: an 
@@ -38,6 +36,7 @@ char2envir <- function(envchar){
 }
 #' @rdname rlpSpec-utilities
 #' @export
+#' @keywords utilities environment
 #' @examples
 #' # and environment objects:
 #' print(.GlobalEnv)
@@ -60,6 +59,7 @@ envir2char <- function(envir){
 #' had it's dimensions changes so that it has either one row 
 #' (if \code{vec.shape=="horizontal"}), or one column (\code{"vertical"}).
 #' @export
+#' @keywords utilities vector-manipulation matrix-manipulation
 vector_reshape <- function(x, vec.shape=c("horizontal","vertical")) UseMethod("vector_reshape")
 #' @rdname rlpSpec-utilities
 #' @name vector_reshape
@@ -78,47 +78,72 @@ vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
 #' @rdname rlpSpec-utilities
 #' @aliases as.colvec
 #' @export
+#' @keywords utilities vector-manipulation matrix-manipulation
 colvec <- function(x) vector_shape(x, "vertical")
 #' @rdname rlpSpec-utilities
 #' @aliases as.rowvec
 #' @export
+#' @keywords utilities vector-manipulation matrix-manipulation
 rowvec <- function(x) vector_shape(x, "horizontal")
 
-#' @description \code{is.spec} reports whether an object has class 'spec', as
+#' @description \code{is.spec} reports whether an object has class S3 class 'spec', as
 #' would one returned by, for example, \code{spectrum}.
 #' @rdname rlpSpec-utilities
-#' @param x  An object to test inheritance of 'spec' class.
-#' @return \code{is.spec} returns a logical flag whether or not the object does
-#' have class 'spec'.
+#' @param Obj  An object to test for class inheritance.
+#' @return \code{is.spec} and \code{is.taper} both return
+#' logicals about whether or not the object does have class 'spec' or 'taper', 
+#' respectively
 #' @export
+#' @keywords utilities inherits is
 #' @examples
 #' ## Check for spec object:
 #' require(stats)
 #' # quick power spectral density
-#' psd <- spectrum(rnorm(1e2), plot=FALSE)
+#' x <- rnorm(1e2, sd=10)
+#' psd <- spectrum(x, plot=FALSE)
 #' # return is class 'spec'
 #' is.spec(psd) # TRUE
+#' #
 #' # but the underlying structure is just a list
 #' psd <- unclass(psd)
 #' is.spec(psd) # FALSE
 #' ##
-is.spec <- function(x) inherits(x, "spec")
+is.spec <- function(Obj) inherits(Obj, "spec")
+
+#' @description \code{is.taper} reports whether an object has S3 class 'taper', as
+#' would one returned by, for example, \code{\link{as.taper}}.
+#' @export
+#' @keywords utilities inherits is
+#' @rdname rlpSpec-utilities
+#' @seealso \code{\link{as.taper}}
+#' @examples
+#' ## check for taper
+#' is.taper(x)
+#' is.taper(as.taper(x))
+#' ##
+is.taper <- function(Obj) inherits(Obj, "taper")
 
 #' Numerical derivatives of a series based on a weighted, smooth spline representation.
 #' 
 #' @description \code{splineGrad} computes the numerical derivatives of a spline 
-#' representation of the input series.
+#' representation of the input series; differentiation of spline curves is 
+#' numerically efficient.
 #' 
-#' Numerical instability can be reduced with this method, since spline curves are
-#' inherently (at least) twice differentiable.
+#' With smoothing, the numerical instability for "noisy" data can be drastically
+#' reduced, 
+#' since spline curves are
+#' inherently (at least) twice differentiable. See the \strong{Examples} for
+#' an illustration of this.
 #' 
 #' How does the first derivative of the first derivative of the
 #' original series compare to the second derivative of the original series? 
-#' Apparently, there is no difference.  Try something like this:
-#' \code{smspl.alt <- stats::smooth.spline(dseq, fsigderiv, ...);
-#'  SPLFUN.alt <- stats::splinefun(smspl.alt$x, smspl.alt$y);
-#'  fsigderiv2.alt <- SPLFUN.alt(dseq, deriv=1);
-#'  print(all.equal(fsigderiv2,fsigderiv2.alt));}
+#' Apparently, there is no difference.  
+#'
+# Try something like this:
+# \code{smspl.alt <- stats::smooth.spline(dseq, fsigderiv, ...);
+#  SPLFUN.alt <- stats::splinefun(smspl.alt$x, smspl.alt$y);
+#  fsigderiv2.alt <- SPLFUN.alt(dseq, deriv=1);
+#  print(all.equal(fsigderiv2,fsigderiv2.alt));}
 #' 
 #' @name splineGrad
 #' @aliases spline_gradients
@@ -128,6 +153,7 @@ is.spec <- function(x) inherits(x, "spec")
 #' @param ... additional arguments passed to \code{smooth.spline}.
 #' @return A matrix with columns representing \eqn{x, f(x), f'(x), f''(x)}.
 #' @export
+#' @keywords utilities spline-gradient numerical-derivative
 #' @seealso \code{\link{smooth.spline}}
 #' @examples
 #' ##
@@ -247,6 +273,7 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 #' @return \code{na_mat} returns a matrix of dimensions \code{(nrow,ncol)} with
 #' \code{NA} values, the representation of which is set by \code{NA_real_}
 #' @export
+#' @keywords utilities vector-creation matrix-creation
 #' @aliases nas NA_mat
 #' @examples
 #' ## matrix and vector creation:
@@ -264,6 +291,8 @@ na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 #' \code{ones} populates a column-wise matrix with ones
 #' @rdname rlpSpec-utilities
 #' @aliases zeroes
+#' @export 
+#' @keywords utilities vector-creation matrix-creation
 # params described by na_mat
 #' @return For \code{zeros} or \code{ones} respectively, a matrix vector 
 #' with \code{nrow} zeros or ones.
@@ -278,6 +307,8 @@ zeros <- function(nrow) UseMethod("zeros")
 #' @S3method zeros default
 zeros.default <- function(nrow){matrix(rep.int(0, nrow),nrow=nrow)}
 #' @rdname rlpSpec-utilities
+#' @export
+#' @keywords utilities vector-creation matrix-creation
 #' @examples
 #' # and ones
 #' ones(nd)
@@ -302,15 +333,16 @@ ones.default <- function(nrow){matrix(rep.int(1, nrow),nrow=nrow)}
 #' \code{\%\%} arithmetic method -- it may or may not be slower for large
 #' numeric vectors.
 #' 
-#' @references \code{mod}: see Peter Dalgaard's explanation of 
-#' the non-bug I raised (instead I should've asked it on R-help): 
-#' \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi\?id=14771\#c2}
+#' @references For \code{\link{mod}}: see Peter Dalgaard's explanation of 
+#' the non-bug (#14771) I raised (instead I should've asked it on R-help): 
+#' \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
 #' 
 #' @param X numeric; the "numerator" of the modulo division
 #' @param Y numeric; the "denominator" of the modulo division
 #' @return \code{mod} returns the result of a modulo division, which is 
 #' equivalent to \code{(X) \%\% (Y)}.
 #' @export
+#' @keywords utilities modulo-division arithmetic-operations
 #' @rdname rlpSpec-utilities
 #' @aliases modulo
 #' @seealso \code{\link{Arith}}

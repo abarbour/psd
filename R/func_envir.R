@@ -9,7 +9,7 @@
 #' 
 #' @rdname rlpSpec-environment
 #' @name rlpSpec-environment
-#' @docType environment
+#' @docType methods
 #' @param envir  character string for the environment used.  See section \strong{Defaults}
 #' @section Defaults and Initialization:
 #' By default, these functions all use \code{envir=.rlpenv} to set the enviroment-name

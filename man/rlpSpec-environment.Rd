@@ -1,4 +1,4 @@
-\docType{environment}
+\docType{methods}
 \name{rlpSpec-environment}
 \alias{rlpSpec-environment}
 \alias{rlp_envAssign}

@@ -1,50 +1,7 @@
-#' The 'taper' S4 class.
+#' Coerce an object into a 'taper' object.
 #'
-#' In this class the value of each position will be a non-zero, positive
-#' integer, since it represents the number of tapered sections to average.
-#'
-# \section{Slots}{
-#   \describe{
-#     \item{\code{tapers}:}{Object of class \code{"integer"}, containing 
-#     a vector of tapers.}
-#   }
-# }
-#'
-#' @note  The prototypical S4 class has tapers==1, and length==1.
-#' Currently there are no \code{@@slots}; this may change in the future.
-#'
-#' @name newTaper
-#' @rdname taper
-#' @aliases taper-class
-#' @exportClass taper
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
-#' @examples
-#' newTaper()
-#' new("taper") # equivalent to newTaper()
-#' print(ntap <- newTaper(1:10))
-#' plot(ntap)
-newTaper <- setClass("taper",
-                  # if slots, add 'taper="integer",...
-                  representation=representation("integer"),
-                  prototype = 1L)
-         
-###
-###  Check/conversion methods
-###
-
-#' Reports whether x is a 'taper' object
-#' @param x An object to test
-#' @export
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{as.taper}}, \code{\link{taper}}
-#' @examples
-#' is.taper(1:10)
-#' is.taper(as.taper(1:10))
-is.taper <- function(x) inherits(x, "taper")
-
-#' Coerces an object into a 'taper' object
-#'
-#' An object of class 'taper' is created, with
+#' An object with S3 class 'taper' is created;
+#' this will have
 #' a minimum number of tapers in each position
 #' set by \code{min.taper}.
 #'
@@ -58,11 +15,12 @@ is.taper <- function(x) inherits(x, "taper")
 #' object
 #' will be \code{1,2,3,4,5,1,1}, assuming \code{min.taper==1}.
 #'
+#' @keywords taper
 #' @param x An object to set
 #' @param min.taper Set all values less than this to this.
 #' @export
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{is.taper}}, \code{\link{taper}}
+#' @seealso \code{\link{is.taper}}
 #' @examples
 #' is.taper(as.taper(1))
 #' is.taper(as.taper(1:10))
@@ -89,12 +47,13 @@ as.taper <- function(x, min.taper=1){
 ###  Generic methods
 ###
 
-#' @title Generic methods for 'taper' objects
-#' @keywords methods generic
+#' @title Generic methods for 'taper' objects.
+#' @keywords methods S3methods taper
 #' @name taper-methods
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @aliases taper
 #' @rdname taper-methods
+#" @docType package
 #' @seealso \code{\link{is.taper}}, \code{\link{as.taper}}
 NULL
 
@@ -165,11 +124,11 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
 }
 
+###
+###  Weighting methods
+###
 
-
-
-
-#' Calculate weighting factors for a series of tapers
+#' Calculate weighting factors for 'taper' object.
 #'
 #' Weighting is calculated as follows:
 #'
@@ -182,6 +141,7 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
 #'
 #' @title parabolic_weights
 #' @export
+#' @keywords taper taper-weighting
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker,
 #' and authored the optimized version.
 #' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
@@ -201,8 +161,14 @@ parabolic_weights.taper <- function(tapvec, tap.index=1L){
 
 #' @param ntap integer; the number of tapers to provide weightings for
 #' @rdname parabolic_weights
+#' @param ntap integer; the number of tapers to calculate for
 #' @export
-parabolic_weights_fast <- function(ntap=1L){
+#' @keywords taper taper-weighting
+parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
+
+#' @rdname parabolic_weights
+#' @S3method parabolic_weights_fast taper
+parabolic_weights_fast.taper <- function(ntap=1L){
   ntap <- max(1, as.integer(ntap))
   kseq <- seq.int(from=0, to=ntap-1, by=1)
   lk <- length(kseq)
@@ -217,6 +183,16 @@ parabolic_weights_fast <- function(ntap=1L){
 ###  Constraint methods
 ###
 
+#' @title Taper constraint methods.
+#' @keywords taper taper-constraints
+#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#' @rdname taper-constraints
+#' @name taper-constraints
+#' @docType package
+NULL
+
+# [ ] ADD THESE (BELOW) to taper-constraints
+
 #' @description Find the max span of taper object
 #'
 #' @details minimize the number of tapers: min(nf/2, 7*tapvec/5)
@@ -225,8 +201,10 @@ parabolic_weights_fast <- function(ntap=1L){
 #' tapers from the original spectrum; the default assumes the taper
 #' object represents that size.
 #'
+#' @rdname taper-constraints
 #' @title minspan
 #' @export
+#' @keywords taper taper-constraints
 #' @seealso \code{\link{constrain_tapers}}
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
 #'
@@ -246,7 +224,8 @@ minspan <- function(tapvec,
                     nf=length(tapvec), 
                     ...) UseMethod("minspan")
 
-#' @rdname minspan
+# @rdname minspan
+#' @rdname taper-constraints
 #' @S3method minspan taper
 minspan.taper <- function(tapvec, nf=length(tapvec), ...){
   stopifnot(is.taper(tapvec))
@@ -261,9 +240,11 @@ minspan.taper <- function(tapvec, nf=length(tapvec), ...){
 #' @details Refines the number of tapers; the method by which it does this
 #' may be chosen by the user.
 #' 
+#' @rdname taper-constraints
 #' @title constrain_tapers
 #' @aliases constrain_tapers
 #' @export
+#' @keywords taper taper-constraints
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
 #' @seealso \code{\link{ctap_simple}}, \code{\link{ctap_markov}}, \code{\link{riedsid}}
 #'
@@ -284,7 +265,8 @@ constrain_tapers <- function(tapvec,
                              verbose=TRUE, 
                              ...) UseMethod("constrain_tapers")
 
-#' @rdname constrain_tapers
+# @rdname constrain_tapers
+#' @rdname taper-constraints
 #' @S3method constrain_tapers taper
 constrain_tapers.taper <- function(tapvec, 
                                    tapseq=NULL,
@@ -325,7 +307,6 @@ constrain_tapers.taper <- function(tapvec,
   return(tapvec.adj)
 }
 
-
 #' @description Constrain tapers with first differencing.
 #' 
 #' @details This is the default, and preferred constraint method.
@@ -345,9 +326,11 @@ constrain_tapers.taper <- function(tapvec,
 #' other than on the first execution; the same cannot be said for the other
 #' methods.
 #'
+#' @rdname taper-constraints
 #' @title ctap_simple
 #' @aliases constrain_taper_simple_slope
 #' @export
+#' @keywords taper taper-constraints
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
 #'
 #' @seealso \code{\link{constrain_tapers}}
@@ -366,7 +349,8 @@ ctap_simple <- function(tapvec,
                         maxslope=1,
                         ...) UseMethod("ctap_simple")
 
-#' @rdname ctap_simple
+# @rdname ctap_simple
+#' @rdname taper-constraints
 #' @S3method ctap_simple taper
 ctap_simple.taper <- function(tapvec,
                               tapseq=NA, 
@@ -402,7 +386,7 @@ ctap_simple.taper <- function(tapvec,
 #' changed (from it's previous value); it is very fast.  Details of the theory 
 #' behind this algorithm may be found in Morhac (2008) and Silagadze (1996).
 #'
-#' @note This algorithm can produce ``unstable"
+#' @note This algorithm can produce "unstable"
 #' results in the sense that for
 #' successive application on taper vectors, even modest sized serially-correlated
 #' peaks tends to sharpen; hence, this method should be used with care, unless the 
@@ -419,9 +403,11 @@ ctap_simple.taper <- function(tapvec,
 #' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451.
 #' @references \url{http://arxiv.org/abs/hep-ex/9506013}
 #'
+#' @rdname taper-constraints
 #' @title ctap_markov
 #' @aliases constrain_taper_markov_chain
 #' @export
+#' @keywords taper taper-constraints
 #' @seealso \code{\link{constrain_tapers}}, \code{\link[Peaks]{SpectrumSmoothMarkov}}
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq (unused) vector; positions or frequencies -- necessary for smoother methods
@@ -438,7 +424,8 @@ ctap_markov <- function(tapvec,
                         chain.width=round(5*length(tapvec)),
                         ...) { UseMethod("ctap_markov") }
 
-#' @rdname ctap_markov
+# @rdname ctap_markov
+#' @rdname taper-constraints
 #' @S3method ctap_markov taper
 ctap_markov.taper <- function(tapvec, 
                               tapseq=NA, 
@@ -462,9 +449,11 @@ ctap_markov.taper <- function(tapvec,
 #' the \code{loess} tuning parameters; hence, some effort should be given to understand
 #' their effect, and/or re-tuning the default parameters.
 #'
+#' @rdname taper-constraints
 #' @title ctap_loess
 #' @aliases constrain_taper_loess_smooth
 #' @export
+#' @keywords taper taper-constraints
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{loess}}
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
 #'
@@ -487,7 +476,8 @@ ctap_loess <- function(tapvec,
                        verbose=TRUE,
                        ...){ UseMethod("ctap_loess") }
 
-#' @rdname ctap_loess
+# @rdname ctap_loess
+#' @rdname taper-constraints
 #' @S3method ctap_loess taper
 ctap_loess.taper <- function(tapvec,
                              tapseq=NULL, 
@@ -519,9 +509,11 @@ ctap_loess.taper <- function(tapvec,
 #' @note The results obtained by \strong{\code{'friedman.smooth'}} are generally poor; 
 #' hence, the method may be removed in future releases.
 #' 
+#' @rdname taper-constraints
 #' @title ctap_friedman
 #' @aliases constrain_taper_friedman_smooth
 #' @export
+#' @keywords taper taper-constraints
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{supsmu}}
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
 #'
@@ -544,7 +536,8 @@ ctap_friedman <- function(tapvec,
                           verbose=TRUE,
                           ...){ UseMethod("ctap_friedman") }
 
-#' @rdname ctap_friedman
+# @rdname ctap_friedman
+#' @rdname taper-constraints
 #' @S3method ctap_friedman taper
 ctap_friedman.taper <- function(tapvec, 
                                 tapseq=NULL, 

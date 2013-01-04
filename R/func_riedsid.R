@@ -6,6 +6,7 @@
 #' 
 #' @title riedsid
 #' @export
+#' @keywords taper taper-constraints riedel-sidorenko
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
 #' 
 #' @param spec vector; the spectral values used to optimize taper numbers
@@ -19,10 +20,6 @@
 #' riedsid(rnorm(10), 10)
 #' riedsid(rnorm(10), c(1:5,5:1))
 riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("riedsid")
-
-#' @rdname riedsid
-#' @S3method riedsid rlpspec
-riedsid.rlpspec <- function(...){.NotYetImplemented()}
 
 #' @rdname riedsid
 #' @S3method riedsid spec

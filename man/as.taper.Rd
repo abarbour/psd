@@ -1,6 +1,6 @@
 \name{as.taper}
 \alias{as.taper}
-\title{Coerces an object into a 'taper' object}
+\title{Coerce an object into a 'taper' object.}
 \usage{
   as.taper(x, min.taper = 1)
 }
@@ -10,8 +10,8 @@
   \item{min.taper}{Set all values less than this to this.}
 }
 \description{
-  An object of class 'taper' is created, with a minimum
-  number of tapers in each position set by
+  An object with S3 class 'taper' is created; this will
+  have a minimum number of tapers in each position set by
   \code{min.taper}.
 }
 \details{
@@ -38,6 +38,7 @@ as.taper(c("a","b"))
   Andrew Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{is.taper}}, \code{\link{taper}}
+  \code{\link{is.taper}}
 }
+\keyword{taper}
 
