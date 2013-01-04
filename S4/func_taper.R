@@ -27,3 +27,10 @@ newTaper <- setClass("taper",
                      # if slots, add 'taper="integer",...
                      representation=representation("integer"),
                      prototype = 1L)
+
+#' S4 from S3
+#' @rdname taper-methods
+#' @name print
+#' @export
+#' @docType methods
+setMethod("print", signature("taper"), print.taper)

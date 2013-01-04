@@ -40,5 +40,6 @@ as.taper(c("a","b"))
 \seealso{
   \code{\link{is.taper}}
 }
+\keyword{S3methods}
 \keyword{taper}
 

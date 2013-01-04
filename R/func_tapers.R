@@ -15,7 +15,7 @@
 #' object
 #' will be \code{1,2,3,4,5,1,1}, assuming \code{min.taper==1}.
 #'
-#' @keywords taper
+#' @keywords taper S3methods
 #' @param x An object to set
 #' @param min.taper Set all values less than this to this.
 #' @export
@@ -66,12 +66,6 @@ print.taper <- function(x){
   xt <- paste(as.character(tail(x)), collapse=" ")
   cat(sprintf("taper object:\n\thead:  %s\n\t\t...\n\ttail:  %s\n",xh,xt))
 }
-#S4 from S3
-#' @rdname taper-methods
-#' @name print
-#' @export
-#' @docType methods
-setMethod("print", signature("taper"), print.taper)
 
 #' @rdname taper-methods
 #' @name summary
