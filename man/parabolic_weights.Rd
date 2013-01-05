@@ -2,7 +2,7 @@
 \alias{parabolic_weights}
 \alias{parabolic_weights.taper}
 \alias{parabolic_weights_fast}
-\alias{parabolic_weights_fast.taper}
+\alias{parabolic_weights_fast.default}
 \title{parabolic_weights}
 \usage{
   parabolic_weights(tapvec, tap.index = 1L)
@@ -11,7 +11,7 @@
 
   parabolic_weights_fast(ntap = 1L)
 
-  parabolic_weights_fast.taper(ntap = 1L)
+  parabolic_weights_fast.default(ntap = 1L)
 }
 \arguments{
   \item{tapvec}{'taper' object; the number of tapers at

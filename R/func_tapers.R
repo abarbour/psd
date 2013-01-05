@@ -54,7 +54,16 @@ as.taper <- function(x, min.taper=1){
 #' @aliases taper
 #' @rdname taper-methods
 #" @docType package
-#' @seealso \code{\link{is.taper}}, \code{\link{as.taper}}
+#' @seealso \code{\link{as.taper}}, \code{\link{constrain_tapers}}
+#' @examples
+#' ##
+#' tap <- as.taper(c(1:49,50:0)+rnorm(1e2))
+#' print(tap)
+#' print(summary(tap))
+#' plot(tap)
+#' # no arithmetic methods
+#' tap <- as.taper(tap/2)
+#' lines(tap)
 NULL
 
 #' @rdname taper-methods
@@ -87,9 +96,33 @@ print.summary.taper <- function(x){
 }
 
 #' @rdname taper-methods
+#' @name lines
+#' @S3method lines taper
+lines.taper <- function(x, lwd=1.8, col="red", ...){
+  stopifnot(is.taper(x))
+  require(graphics, grDevices, RColorBrewer)
+  nt <- length(x)
+  xi <- 1:nt
+  #mx <- max(x)
+  graphics::lines(xi, x, lwd=lwd, col=col, ...)
+}
+
+#' @rdname taper-methods
+#' @name points
+#' @S3method points taper
+points.taper <- function(x, pch="_", cex=1, ...){
+  stopifnot(is.taper(x))
+  require(graphics, grDevices, RColorBrewer)
+  nt <- length(x)
+  xi <- 1:nt
+  #mx <- max(x)
+  graphics::points(xi, x, pch=pch, cex=cex, ...)
+}
+
+#' @rdname taper-methods
 #' @name plot
 #' @S3method plot taper
-plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
+plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
   stopifnot(is.taper(x))
   #if isS4(x) x <- x@tapers
   require(graphics, grDevices, RColorBrewer)
@@ -100,17 +133,17 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ...){
   npal <- switch(pal, RdYlBu=11, Spectral=11, Blues=9)
   pal.col <- RColorBrewer::brewer.pal(npal, pal)
   cols <- grDevices::colorRampPalette(pal.col)(mx)
+  if (is.null(ylim)) ylim <- 1.15*c(0.5, mx)
   graphics::plot.default(xi, x,
-               main="",
                ylab="number of tapers",
                xlab="taper index",
-               ylim=1.15*c(0.5, mx), yaxs="i", 
+               ylim=ylim, yaxs="i", 
                xlim=c(-1, nt+2), xaxs="i",
                lwd=1.8,
                type="h",
                col=cols[x],
                ...)
-  lines(xi,x,col="black",lwd=0.9)
+  graphics::lines.default(xi,x,col="black",lwd=0.7)
   # plot log2 multiples as horiz lines
   hl <- 2**(1:round(log2(mx)))
   graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
@@ -161,9 +194,9 @@ parabolic_weights.taper <- function(tapvec, tap.index=1L){
 parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
 
 #' @rdname parabolic_weights
-#' @S3method parabolic_weights_fast taper
-parabolic_weights_fast.taper <- function(ntap=1L){
-  ntap <- max(1, as.integer(ntap))
+#' @S3method parabolic_weights_fast default
+parabolic_weights_fast.default <- function(ntap=1L){
+  ntap <- max(1, as.integer(ntap[1]))
   kseq <- seq.int(from=0, to=ntap-1, by=1)
   lk <- length(kseq)
   K2 <- kseq * kseq # vector
@@ -178,100 +211,169 @@ parabolic_weights_fast.taper <- function(ntap=1L){
 ###
 
 #' @title Taper constraint methods.
-#' @keywords taper taper-constraints
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#'
+#' @description
+#' In the Riedel-Sidorenko recipe, the number of optimal tapers
+#' at each frequency is strongly dependent on the first and
+#' second derivatives of the spectrum. It is crucial to enforce
+#' constraints on the number of actual tapers applied; this is
+#' because the derivatives of "noisy" series can be bogus.
+#'
+#' @keywords taper taper-constraints riedel-sidorenko
 #' @rdname taper-constraints
 #' @name taper-constraints
 #' @docType package
 NULL
 
-# [ ] ADD THESE (BELOW) to taper-constraints
-
-#' @description Find the max span of taper object
-#'
-#' @details minimize the number of tapers: min(nf/2, 7*tapvec/5)
-#'
-#' @note The value of \code{nf} should represent the total number of
-#' tapers from the original spectrum; the default assumes the taper
-#' object represents that size.
+#' @description \code{\link{minspan}} sets the maximum span a taper object
+#' may have. 
+#' @details \code{\link{minspan}} is necessary because it would be nonsense to
+#' have more tapers than the length of the series. The value set is
+#' defined as the minimum of the half-length of the series, and 7/5 times
+#' the tapers.  In code this would be something like: \code{min(length(tapvec)/2, 7*tapvec/5)}
 #'
 #' @rdname taper-constraints
 #' @title minspan
 #' @export
 #' @keywords taper taper-constraints
-#' @seealso \code{\link{constrain_tapers}}
-#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
+#' @seealso \code{\link{splineGrad}}, \code{\link{riedsid}}
 #'
-#' @param tapvec 'taper' object; the number of tapers at each frequency
-#' @param nf scalar; number of positions or frequencies
-#' @param ... (unused) optional argments
-#' @return an object with class 'taper', with a constrained taper numbers
-#' @examples
-#' \dontrun{
-#' ntap <- as.taper(1:10)
-#' par(mfrow=c(2,1))
-#' plot(ntap)
-#' plot(minspan(ntap))
-#' par(mfrow=c(1,1))
-#' }
-minspan <- function(tapvec, 
-                    nf=length(tapvec), 
-                    ...) UseMethod("minspan")
+#' @author Andrew Barbour <andy.barbour@@gmail.com> and R.L.Parker. AJB ported
+#' some of RLP's original code to the R language,
+#' and wrote the main function in \code{\link{ctap_simple}} as C-code.
+#' The main function used by \code{\link{ctap_markov}} is from Morhac (2008).
+#'
+minspan <- function(tapvec, ...) UseMethod("minspan")
 
 # @rdname minspan
 #' @rdname taper-constraints
 #' @S3method minspan taper
-minspan.taper <- function(tapvec, nf=length(tapvec), ...){
+minspan.taper <- function(tapvec, ...){
   stopifnot(is.taper(tapvec))
-  require(matrixStats)
-  Ones <- ones(nf)
-  nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
+  nf <- length(tapvec)
+  nspan <- as.taper(pmin.int(nf/2, 7*tapvec/5))
+  #require(matrixStats)
+  #Ones <- ones(nf)
+  #nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
   return(nspan)
 }
 
-#' @description Apply constraints on the number of tapers
+#' @description \code{\link{constrain_tapers}} refines the number of tapers; 
+#' the method by which it does this is chosen with the \code{constraint.method}
+#' parameter. See \strong{Constraint methods} section for descriptions of each method.
+#' Below is a summary of the function associated with each \code{constraint.method}:
+#' \itemize{
+#'   \item \code{'simple.slope'} uses \code{\link{ctap_simple}}
+#'   \item \code{'markov.chain'} uses \code{\link{ctap_markov}}
+#'   \item \code{'loess.smooth'} uses \code{\link{ctap_loess}}
+#'   \item \code{'friedman.smooth'} uses \code{\link{ctap_friedman}}
+#'   \item \code{'none'} returns unbounded tapers.
+#' }
 #' 
-#' @details Refines the number of tapers; the method by which it does this
-#' may be chosen by the user.
+#' @section Constraint methods:
+#' \subsection{via first differencing (default)}{
+#'  \code{\link{ctap_simple}} is the default, and preferred constraint method.
+#' The algortihm uses first-differencing to modify the number
+#' of tapers in the previous position.  Effectively, the constraint
+#' is based on a causal, 1st-order Finite Impulse-response Filter (FIR) 
+#' which makes the method
+#' sensitive to rapid changes in the number of tapers; naturally,
+#' smoother spectra tend to produce less fluctuation in taper numbers, 
+#' which makes this well suited for adaptive processing. 
+#'
+#' This produces, generally, the most
+#' stable results, meaning repeatedly running the constraint will not change values
+#' other than on the first execution; the same cannot be said for the other
+#' methods.
+#'
+#' In pure-R this algorithm can be very slow; however, here we have
+#' included it as dynamically loaded c-code so it it reasonably fast.
+#' }
+#'
+#' \subsection{via Markov Chain}{
+#' \code{\link{ctap_markov}} uses a Markov Chain, based on the theory of 
+#' quantum-well probability chains, which are
+#' commonly used in gamma-ray spectroscopy.
+#'
+#' The main function behind this method is from Morhac (2008): \code{\link[Peaks]{SpectrumSmoothMarkov}}.
+#' This calculates the probability that the number of tapers would have
+#' changed (from it's previous value); it is very fast.  Details of the theory 
+#' behind this algorithm may be found in Morhac (2008) and Silagadze (1996).
+#' }
 #' 
+#' \subsection{via LOESS smoothing}{
+#' \code{\link{ctap_loess}} uses \code{\link[stats]{loess}} to smooth the taper vector; is
+#' can be very slow thanks to quadratic scaling.
+#' }
+#'
+#' \subsection{via Friedman super-smoothing}{
+#' \code{\link{ctap_friedman}} uses \code{\link[stats]{supsmu}}, the Friedman super-smoother.
+#' }
+#'
+#' @section Warning:
+#' \code{\link{ctap_markov}} can produce "unstable"
+#' results in the sense that for
+#' successive application on taper vectors, even modest sized serially-correlated
+#' peaks tends to sharpen; hence, this method should be used with care, unless the 
+#' intention is to specifically
+#' enhance peaks.  The \code{'chain.width'} parameter controls the broadness
+#' of the a priori distribution.  As a rule of thumb: the smaller the parameter is, 
+#' the shorter the tails become.
+#'
+#' \code{\link{ctap_markov}} results tend to be strongly dependent on
+#' the tuning parameters given to \code{\link{loess}} (for obvious reasons); hence, 
+#' some effort should be given to understand
+#' their effect, and/or re-tuning them if needed.
+#'
+#' \code{\link{ctap_friedman}} results are generally poor in my opinion; 
+#' hence, the method may be removed in future releases.
+#'
 #' @rdname taper-constraints
 #' @title constrain_tapers
 #' @aliases constrain_tapers
 #' @export
 #' @keywords taper taper-constraints
-#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
-#' @seealso \code{\link{ctap_simple}}, \code{\link{ctap_markov}}, \code{\link{riedsid}}
-#'
-#' @param tapvec vector; the number of tapers at each frequency
+#' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
-#' @param constraint.method method to use for constraints on tapers numbers
+#' @param constraint.method  character; method to use for constraints on tapers numbers
 #' @param min.tapers integer; the minimum number of tapers
 #' @param verbose logical; should warnings and messages be given?
-#' @param ... optional argments passed to the constraint.method
-constrain_tapers <- function(tapvec, 
-                             tapseq=NULL,
+#' @param maxslope integer; constrain based on this maximum first difference
+#' @param chain.width  scalar; the width the MC should consider for the change probability
+#' @param normalize logical; should the refined tapers be normalized?
+#' @param loess.span  scalar; the span used in \code{loess}
+#' @param loess.degree  scalar; the polynomial degree
+#' @param smoo.span  scalar; fraction of the observations in the span of the running lines smoother
+#' @param smoo.bass  scalar; controls the smoothness of the fitted curve 
+#' @param ... optional arguments (unused)
+#' @return An object with class 'taper'.
+#'
+#' @references Morhac, M. (2008), Peaks: Peaks, \emph{R package}, \strong{version 0.2}
+#' @references Silagadze, Z.K. (1996), A new algorithm for automatic photopeak searches,
+#' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451.
+#' @references \url{http://arxiv.org/abs/hep-ex/9506013}
+#'
+#' @examples
+#' \dontrun{
+#' ## compare all the methods:
+#' demo("ctap")
+#' }
+constrain_tapers <- function(tapvec, tapseq=NULL,
                              constraint.method=c("simple.slope",
                                                  "markov.chain",
                                                  "loess.smooth",
                                                  "friedman.smooth",
                                                  "none"),
-                             min.tapers=1,
-                             verbose=TRUE, 
-                             ...) UseMethod("constrain_tapers")
-
-# @rdname constrain_tapers
+                             min.tapers=1, verbose=TRUE, ...) UseMethod("constrain_tapers")
 #' @rdname taper-constraints
 #' @S3method constrain_tapers taper
-constrain_tapers.taper <- function(tapvec, 
-                                   tapseq=NULL,
+constrain_tapers.taper <- function(tapvec, tapseq=NULL,
                                    constraint.method=c("simple.slope",
                                                        "markov.chain",
                                                        "loess.smooth",
                                                        "friedman.smooth",
                                                        "none"),
-                                   min.tapers=1,
-                                   verbose=TRUE, 
-                                   ...){
+                                   min.tapers=1, verbose=TRUE, ...){
   stopifnot(is.taper(tapvec) | (min.tapers>=0))
   # choose the appropriate method to apply taper constraints
   cmeth <- match.arg(constraint.method) 
@@ -301,55 +403,14 @@ constrain_tapers.taper <- function(tapvec,
   return(tapvec.adj)
 }
 
-#' @description Constrain tapers with first differencing.
-#' 
-#' @details This is the default, and preferred constraint method.
-#' The algortihm uses first-differencing to modify the number
-#' of tapers in the previous position.  Effectively, the constraint
-#' is based on a causal, 1st-order Finite Impulse-response Filter (FIR) 
-#' which makes the method
-#' sensitive to rapid changes in the number of tapers; naturally,
-#' smoother spectra tend to produce less fluctuation in taper numbers, 
-#' which makes this well suited for adaptive processing. 
-#'
-#' In pure-R this algorithm can be very slow; however, here we have
-#' included it as dynamically loaded c-code so it it reasonably fast.
-#' 
-#' @note The results obtained by \strong{\code{'simple.slope'}} are generally the most
-#' stable, meaning repeatedly running the constraint will not change values
-#' other than on the first execution; the same cannot be said for the other
-#' methods.
-#'
 #' @rdname taper-constraints
-#' @title ctap_simple
 #' @aliases constrain_taper_simple_slope
 #' @export
 #' @keywords taper taper-constraints
-#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker to R and C.
-#'
-#' @seealso \code{\link{constrain_tapers}}
-#' @param tapvec 'taper' object; the number of tapers at each frequency
-#' @param tapseq (unused) vector; positions or frequencies -- necessary for smoother methods
-#' @param maxslope (\code{'simple.slope'}) integer; constrain based on this maximum first difference
-#' @param ... (unused) optional argments
-#' @return an object with class 'taper', with a constrained taper numbers
-#' @examples
-#' \dontrun{
-#' ntap <- as.taper(1:10)
-#' ctap_simple(ntap)
-#' }
-ctap_simple <- function(tapvec,
-                        tapseq=NA, 
-                        maxslope=1,
-                        ...) UseMethod("ctap_simple")
-
-# @rdname ctap_simple
+ctap_simple <- function(tapvec, tapseq=NA, maxslope=1, ...) UseMethod("ctap_simple")
 #' @rdname taper-constraints
 #' @S3method ctap_simple taper
-ctap_simple.taper <- function(tapvec,
-                              tapseq=NA, 
-                              maxslope=1,
-                              ...){
+ctap_simple.taper <- function(tapvec, tapseq=NA, maxslope=1, ...){
   stopifnot(is.taper(tapvec))
   # tapseq not needed
   # 'taper' object gives integer values, but code requires real
@@ -370,115 +431,32 @@ ctap_simple.taper <- function(tapvec,
   return(tapvec.adj)
 }
 
-#' @description Constrain tapers with a Markov Chain, based on quantum-well probability.
-#' 
-#' @details This method uses a Markov Chain, based on the theory of 
-#' quantum-well probability, commonly used in gamma-ray spectroscopy.
-#'
-#' The main function behind this method is \link[Peaks]{SpectrumSmoothMarkov} 
-#' which calculates the probability that the number of tapers would have
-#' changed (from it's previous value); it is very fast.  Details of the theory 
-#' behind this algorithm may be found in Morhac (2008) and Silagadze (1996).
-#'
-#' @note This algorithm can produce "unstable"
-#' results in the sense that for
-#' successive application on taper vectors, even modest sized serially-correlated
-#' peaks tends to sharpen; hence, this method should be used with care, unless the 
-#' intention is to specifically
-#' enhance peaks.  The \code{'chain.width'} parameter controls the broadness
-#' of the a priori distribution.  As a rule of thumb: the smaller the parameter is, 
-#' the shorter the tails become.
-#'
-#' @author Andrew Barbour <andy.barbour@@gmail.com> adapted the algorithm from Morhac (2008)
-#' for use here.
-#'
-#' @references Morhac, M. (2008), Peaks: Peaks, \emph{R package}, \strong{version 0.2}
-#' @references Silagadze, Z.K. (1996), A new algorithm for automatic photopeak searches,
-#' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451.
-#' @references \url{http://arxiv.org/abs/hep-ex/9506013}
-#'
 #' @rdname taper-constraints
-#' @title ctap_markov
 #' @aliases constrain_taper_markov_chain
 #' @export
 #' @keywords taper taper-constraints
-#' @seealso \code{\link{constrain_tapers}}, \code{\link[Peaks]{SpectrumSmoothMarkov}}
-#' @param tapvec 'taper' object; the number of tapers at each frequency
-#' @param tapseq (unused) vector; positions or frequencies -- necessary for smoother methods
-#' @param chain.width  scalar; the width the MC should consider for the change probability
-#' @param ... (unused) optional argments
-#' @return an object with class 'taper', with a constrained taper numbers
-#' @examples
-#' \dontrun{
-#' ntap <- as.taper(1:10)
-#' ctap_markov(ntap)
-#' }
-ctap_markov <- function(tapvec, 
-                        tapseq=NA, 
-                        chain.width=round(5*length(tapvec)),
-                        ...) { UseMethod("ctap_markov") }
-
-# @rdname ctap_markov
+ctap_markov <- function(tapvec, tapseq=NA, chain.width=round(5*length(tapvec)), ...) { UseMethod("ctap_markov") }
 #' @rdname taper-constraints
 #' @S3method ctap_markov taper
-ctap_markov.taper <- function(tapvec, 
-                              tapseq=NA, 
-                              chain.width=round(5*length(tapvec)),
-                              ...){
+ctap_markov.taper <- function(tapvec, tapseq=NA, chain.width=round(5*length(tapvec)), normalize=TRUE, ...){
   stopifnot(is.taper(tapvec))
   require("Peaks")
   # tapseq not needed
   # bound the chain.width
   MC.win <- max(1, round(chain.width))
   tapvec.adj <- as.taper(Peaks::SpectrumSmoothMarkov(as.numeric(tapvec), MC.win))
+  if (normalize) tapvec.adj <- as.taper(tapvec.adj*max(tapvec)/max(tapvec.adj))
   return(tapvec.adj)
 }
 
-#' @description Constrain tapers with the Loess smoother.
-#' 
-#' @details This method uses \code{stats::loess} to smooth the taper vector; is
-#' can be very slow thanks to quadratic scaling.
-#'
-#' @note The results obtained can be strongly dependent on
-#' the \code{loess} tuning parameters; hence, some effort should be given to understand
-#' their effect, and/or re-tuning the default parameters.
-#'
 #' @rdname taper-constraints
-#' @title ctap_loess
 #' @aliases constrain_taper_loess_smooth
 #' @export
 #' @keywords taper taper-constraints
-#' @seealso \code{\link{constrain_tapers}}, \code{\link{loess}}
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
-#'
-#' @param tapvec 'taper' object; the number of tapers at each frequency
-#' @param tapseq vector; positions or frequencies -- necessary for smoother methods
-#' @param loess.span  scalar; the span used in \code{loess}
-#' @param loess.degree  scalar; the polynomial degree
-#' @param verbose logical; should warnings and messages be given?
-#' @param ... optional argments; unused
-#' @return an object with class 'taper', with a constrained taper numbers
-#' @examples
-#' \dontrun{
-#' ntap <- as.taper(1:10)
-#' ctap_loess(ntap)
-#' }
-ctap_loess <- function(tapvec, 
-                       tapseq=NULL, 
-                       loess.span=.3, 
-                       loess.degree=1,
-                       verbose=TRUE,
-                       ...){ UseMethod("ctap_loess") }
-
-# @rdname ctap_loess
+ctap_loess <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){ UseMethod("ctap_loess") }
 #' @rdname taper-constraints
 #' @S3method ctap_loess taper
-ctap_loess.taper <- function(tapvec,
-                             tapseq=NULL, 
-                             loess.span=.3, 
-                             loess.degree=1,
-                             verbose=TRUE,
-                             ...){
+ctap_loess.taper <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
   stopifnot(is.taper(tapvec))
   # having an x-sequence is absolutely critical to obtaining useful results
   if (is.null(tapseq)){
@@ -486,8 +464,9 @@ ctap_loess.taper <- function(tapvec,
     if (verbose) warning("Generated a position sequence; results may be bogus.")
   }
   require(stats)
-  if (verbose) warning("Loess-method has quadratic memory scaling (1e3 pt -> 10 Mb)...")
-  trc <- ifelse(length(tapvec)>=1000, "approximate", "exact")
+  lt <- length(tapvec)
+  if (verbose & lt > 1e4) warning("Loess-method has quadratic memory scaling (1e3 pt -> 10 Mb)...")
+  trc <- ifelse(lt >= 1e3, "approximate", "exact")
   loe <- stats::loess(y ~ x, 
                       data.frame(x=tapseq, y=as.numeric(tapvec)), 
                       span=loess.span, degree=loess.degree,
@@ -496,49 +475,14 @@ ctap_loess.taper <- function(tapvec,
   return(tapvec.adj)
 }
 
-#' @description Constrain tapers with the Friedman 'super-smoother'.
-#' 
-#' @details This method uses the base Fiedman super-smoother.
-#' 
-#' @note The results obtained by \strong{\code{'friedman.smooth'}} are generally poor; 
-#' hence, the method may be removed in future releases.
-#' 
 #' @rdname taper-constraints
-#' @title ctap_friedman
 #' @aliases constrain_taper_friedman_smooth
 #' @export
 #' @keywords taper taper-constraints
-#' @seealso \code{\link{constrain_tapers}}, \code{\link{supsmu}}
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
-#'
-#' @param tapvec 'taper' object; the number of tapers at each frequency
-#' @param tapseq vector; positions or frequencies -- necessary for smoother methods
-#' @param smoo.span  scalar; fraction of the observations in the span of the running lines smoother
-#' @param smoo.bass  scalar; controls the smoothness of the fitted curve 
-#' @param verbose logical; should warnings and messages be given?
-#' @param ... optional argments; unused
-#' @return an object with class 'taper', with a constrained taper numbers
-#' @examples
-#' \dontrun{
-#' ntap <- as.taper(1:10)
-#' ctap_friedman(ntap)
-#' }
-ctap_friedman <- function(tapvec, 
-                          tapseq=NULL, 
-                          smoo.span=.3, 
-                          smoo.bass=2, 
-                          verbose=TRUE,
-                          ...){ UseMethod("ctap_friedman") }
-
-# @rdname ctap_friedman
+ctap_friedman <- function(tapvec, tapseq=NULL, smoo.span=.3, smoo.bass=2, verbose=TRUE, ...){ UseMethod("ctap_friedman") }
 #' @rdname taper-constraints
 #' @S3method ctap_friedman taper
-ctap_friedman.taper <- function(tapvec, 
-                                tapseq=NULL, 
-                                smoo.span=.3, 
-                                smoo.bass=2, 
-                                verbose=TRUE,
-                                ...){
+ctap_friedman.taper <- function(tapvec, tapseq=NULL, smoo.span=.3, smoo.bass=2, verbose=TRUE, ...){
   stopifnot(is.taper(tapvec))
   # having an x-sequence is absolutely critical to obtaining useful results
   if (is.null(tapseq)){
