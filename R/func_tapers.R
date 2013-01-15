@@ -3,7 +3,9 @@
 #' An object with S3 class 'taper' is created;
 #' this will have
 #' a minimum number of tapers in each position
-#' set by \code{min.taper}.
+#' set by \code{min_taper}, and
+#' a maximum number of tapers in each position
+#' set by \code{max_taper}.
 #'
 #' Various classes can be coerced into a 'taper' object; those
 #' tested sofar include: scalar, vector, matrix, data.frame, 
@@ -13,11 +15,16 @@
 #' vector dimension.  For example, if the object is 
 #' \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding 'taper'
 #' object
-#' will be \code{1,2,3,4,5,1,1}, assuming \code{min.taper==1}.
+#' will be \code{1,2,3,4,5,1,1}, assuming \code{min_taper==1}.
+#'
+#' @note No support (yet) for \code{min_taper, max_taper} as vectors, although
+#' this could be desirable.
 #'
 #' @keywords taper S3methods
 #' @param x An object to set
-#' @param min.taper Set all values less than this to this.
+#' @param min_taper Set all values less than this to this.
+#' @param max_taper Set all values greater than this to this.
+#' @param setspan logical; should the returned opject be passed through \code{\link{minspan}}?
 #' @export
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.taper}}
@@ -25,21 +32,22 @@
 #' is.taper(as.taper(1))
 #' is.taper(as.taper(1:10))
 #' is.taper(as.taper(matrix(1:10,ncol=1)))
-#' is.taper(as.taper(list(x=1:10,y=1:30))) # note dimensions
-#' is.taper(as.taper(data.frame(x=1:10,y=10:19)))
+#' as.taper(list(x=1:10,y=1:30)) # note dimensions
+#' as.taper(x<-data.frame(x=1:10,y=10:19))
+#' as.taper(x, min_taper=3, max_taper=10)
 #' # class 'character' is in-coercible; raise error
 #' as.taper(c("a","b"))
-as.taper <- function(x, min.taper=1){
+as.taper <- function(x, min_taper=1, max_taper=max(x), setspan=FALSE){
   # taper should be non-zero integer, since it represents the
-  # number of tapered sections to average; hence, ceiling
-  # then integerize
-  stopifnot(!(is.character(x)) | (min.taper>0))
-  x <- unlist(x)
-  x[x < min.taper] <- min.taper
+  # number of tapered sections to average; hence, floor.
+  # pmin/pmax.int are fast versions of
+  stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper & !(is.character(x)))
+  x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(unlist(x)))))
+  #x[x < min_taper] <- min_taper
   #   > as.integer(as.matrix(data.frame(x=1:10,y=10:19)))
   #   [1]  1  2  3  4  5  6  7  8  9 10 10 11 12 13 14 15 16 17 18 19
-  x <- as.integer(ceiling(x))
   class(x) <- "taper"
+  if (setspan) x <- minspan(x)
   return(x)
 }
 
@@ -250,8 +258,7 @@ minspan <- function(tapvec, ...) UseMethod("minspan")
 #' @S3method minspan taper
 minspan.taper <- function(tapvec, ...){
   stopifnot(is.taper(tapvec))
-  nf <- length(tapvec)
-  nspan <- as.taper(pmin.int(nf/2, 7*tapvec/5))
+  nspan <- as.taper(7*tapvec/5, max_taper=length(tapvec)/2)
   #require(matrixStats)
   #Ones <- ones(nf)
   #nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
@@ -336,7 +343,7 @@ minspan.taper <- function(tapvec, ...){
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param constraint.method  character; method to use for constraints on tapers numbers
-#' @param min.tapers integer; the minimum number of tapers
+## @param min_tapers integer; the minimum number of tapers
 #' @param verbose logical; should warnings and messages be given?
 #' @param maxslope integer; constrain based on this maximum first difference
 #' @param chain.width  scalar; the width the MC should consider for the change probability
@@ -364,7 +371,7 @@ constrain_tapers <- function(tapvec, tapseq=NULL,
                                                  "loess.smooth",
                                                  "friedman.smooth",
                                                  "none"),
-                             min.tapers=1, verbose=TRUE, ...) UseMethod("constrain_tapers")
+                             verbose=TRUE, ...) UseMethod("constrain_tapers")
 #' @rdname taper-constraints
 #' @S3method constrain_tapers taper
 constrain_tapers.taper <- function(tapvec, tapseq=NULL,
@@ -373,8 +380,8 @@ constrain_tapers.taper <- function(tapvec, tapseq=NULL,
                                                        "loess.smooth",
                                                        "friedman.smooth",
                                                        "none"),
-                                   min.tapers=1, verbose=TRUE, ...){
-  stopifnot(is.taper(tapvec) | (min.tapers>=0))
+                                   verbose=TRUE, ...){
+  stopifnot(is.taper(tapvec))
   # choose the appropriate method to apply taper constraints
   cmeth <- match.arg(constraint.method) 
   if (cmeth=="none"){
@@ -391,15 +398,16 @@ constrain_tapers.taper <- function(tapvec, tapseq=NULL,
   }
   # MAX/MIN bounds
   # set the maximim tapers: Never average over more than the length of the spectrum!
-  maxtap <- round(length(tapvec)/2)
-  # ensure the minimum is below
-  mintap <- min(min.tapers, maxtap)
-  # sort for posterity
-  tapbounds <- sort(c(mintap, maxtap))
-  mintap <- tapbounds[1]
-  maxtap <- tapbounds[2]
-  tapvec.adj[tapvec.adj < mintap] <- mintap
-  tapvec.adj[tapvec.adj > maxtap] <- maxtap
+  #   maxtap <- round(length(tapvec)/2)
+  #   # ensure the minimum is below
+  #   mintap <- min(1, maxtap)
+  #   # sort for posterity
+  #   tapbounds <- sort(c(mintap, maxtap))
+  #   mintap <- tapbounds[1]
+  #   maxtap <- tapbounds[2]
+  #   tapvec.adj[tapvec.adj < mintap] <- mintap
+  #   tapvec.adj[tapvec.adj > maxtap] <- maxtap
+  tapvec.adj <- as.taper(tapvec.adj, min_taper=1, max_taper=round(length(tapvec.adj)/2))
   return(tapvec.adj)
 }
 
@@ -419,8 +427,9 @@ ctap_simple.taper <- function(tapvec, tapseq=NA, maxslope=1, ...){
   # c-code used for speed up of forward+backward operations
   # until it's packaged, need to dynamic load:
   owd <- getwd()
-  src <- "/Users/abarbour/nute.processing/development/rlpSpec/src"
+  #src <- "/Users/abarbour/nute.processing/development/rlpSpec/src"
   #src <- "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/src"
+  src <- "/Users/abarbour-l/rojo.processing/R/dev/rlpSpec/src"
   setwd(src)
   system("rm riedsid.*o")
   system("R CMD SHLIB riedsid.c")

@@ -43,8 +43,8 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
     ntap <- ntaper
   }
   if (!is.taper(ntap)) ntap <- as.taper(ntap)
-  #plot(ntap)
-  # find the minimum by column for 1/2 nf, 7/5 ntap
+  
+  # Set the number of tapers to within the range: 1/2 nf, 7/5 ntap
   # rowMins produces a rowvec of rowwise minimums; convert to colvec
   nspan <- minspan(ntap, nf)
   # The spectral gradients should be in log-space, so

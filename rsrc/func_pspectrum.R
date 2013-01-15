@@ -2,17 +2,21 @@
 ###  Default method for pspectrum, the main function used for
 ###  adaptive estimation
 ###
+pilot_spec <- function(...) UseMethod("pilot_spec")
+pilot_spec.default <- function(x, fsamp=1, ntap=10, ...){
+  return(psdcore(x, X.d=x, X.frq=fsamp, ntaper=ntap, as.spec=TRUE, ...))
+}
 .pspectrum.default <- function(x, 
-                      fsamp=1, 
-                      tapcap=1e3, 
-                      ntapinit=10, 
-                      niter=3, 
-                      ndec=1,
-                      units=c("time","signal"),
-		      prewhiten=TRUE,
-                      plotpsd=TRUE, 
-                      ylims=c(.07,3e4), xlims=c(0,0.5),
-                      devmode=TRUE) {
+fsamp=1, 
+tapcap=1e3, 
+ntapinit=10, 
+niter=3, 
+ndec=1,
+units=c("time","signal"),
+prewhiten=TRUE,
+plotpsd=TRUE, 
+ylims=c(.07,3e4), xlims=c(0,0.5),
+devmode=FALSE) {
   ###
   # PORT of RLP's pspectrum.m
   # abarbour
@@ -47,16 +51,16 @@
   ##    [ ] type <- match.arg(type)
   ##
   # --- setup the environment ---
-  initEnv(refresh=TRUE)
+  rlp_initEnv(refresh=TRUE)
   
   # Cap the number of tapers to prevent runaway
   Cap <- abs(tapcap)
   if (Cap == 0 | Cap > 1e5){ Cap <- 1e3 }
 
   #  Number of refinement iterations usually <= 5
-  Niter <- envAssignGet("num_iter", abs(niter))
+  Niter <- rlp_envAssignGet("num_iter", abs(niter))
   
-  ntapinit <- envAssignGet("init_tap", abs(ntapinit))
+  ntapinit <- rlp_envAssignGet("init_tap", abs(ntapinit))
   
   #   ndec: number of actual psd calculations is n/ndec
   #   the rest are filled in with interpolation.  Sampling in
@@ -79,7 +83,7 @@
   ## add this to psdcore return?
   nf <- nrow(psd$freq)
   ##nf <- length(psd)
-  envAssign("num_freqs", nf)
+  rlp_envAssign("num_freqs", nf)
   Ones <<- ones(nf)  # row vec of ones
   ntaper <<- ntapinit * Ones
   

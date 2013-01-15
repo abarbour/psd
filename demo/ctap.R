@@ -1,4 +1,4 @@
-require(rlpSpec, stats, graphics)
+require(rlpSpec)
 nd <- 2e2
 x <- rnorm(nd, sd=10) + c(1:(nd/2),(nd/2 + 1):2)
 ntap <- as.taper(rep(x,3))

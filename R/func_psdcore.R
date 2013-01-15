@@ -96,7 +96,7 @@ psdcore.default <- function(X.d,
     #
     # 
     # original series
-    n.o <- envAssignGet("len_orig", length(X.d))
+    n.o <- rlp_envAssignGet("len_orig", length(X.d))
     #
     X <- prewhiten(X.d, 
                    AR.max=0L, 
@@ -106,14 +106,14 @@ psdcore.default <- function(X.d,
                    verbose=FALSE)
     #
     # Force series to be even in length (modulo division)
-    n.e <- envAssignGet("len_even", n.o - n.o%%2 )
+    n.e <- rlp_envAssignGet("len_even", n.o - n.o%%2 )
     X.even <- as.matrix(X[1:n.e])
-    envAssign("ser_orig", X)
-    envAssign("ser_orig_even", X.even)
+    rlp_envAssign("ser_orig", X)
+    rlp_envAssign("ser_orig_even", X.even)
     # half length of even series
-    nhalf <- envAssignGet("len_even_half", n.e/2)
+    nhalf <- rlp_envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <- envAssignGet("ser_even_var", drop(stats::var(X.even)))
+    varx <- rlp_envAssignGet("ser_even_var", drop(stats::var(X.even)))
     # create uniform tapers
     nt <- nhalf + 1
     if (lt < nt) {
@@ -125,18 +125,18 @@ psdcore.default <- function(X.d,
     X.dem <- matrix(c(X.even, zeros(n.e)), ncol=1)
     ##  Take double-length fft
     # mvfft takes matrix (allos multicolumn)
-    fftz <- envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
+    fftz <- rlp_envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
   } else {
     X <- X.d
     ntap <- ntaper
-    n.e <- envGet("len_even")
-    nhalf <- envGet("len_even_half")
-    varx <- envGet("ser_even_var")
-    fftz <- envGet("fft_even_demeaned_padded")
+    n.e <- rlp_envGet("len_even")
+    nhalf <- rlp_envGet("len_even_half")
+    varx <- rlp_envGet("ser_even_var")
+    fftz <- rlp_envGet("fft_even_demeaned_padded")
   }
   # if ntaper is a vector, this doesn't work [ ]
   ##
-  if (!(is.taper(ntap))) ntap <- as.taper(ntap)
+  if (!(is.taper(ntap))) ntap <- as.taper(ntap, setspan=TRUE)
   ##
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
@@ -207,9 +207,9 @@ psdcore.default <- function(X.d,
     psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=1.0)
   } else {
     message("zero taper result == raw periodogram")
-    Xfft <- envGet("fft_even_demeaned_padded")
+    Xfft <- rlp_envGet("fft_even_demeaned_padded")
     ff <- Xfft[1:nfreq]
-    N0 <- envGet("len_orig")
+    N0 <- rlp_envGet("len_orig")
     psd <- ff * Conj(ff) / N0
   }
   ##  Interpolate if necessary to uniform freq sampling
@@ -237,6 +237,12 @@ psdcore.default <- function(X.d,
     frq <- 2 * Nyq * frq
     psd.n <- Nyq * psd.n
   }
+  # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
+  # half-width W = (K + 1)/{2(N + 1)}
+  # effective bandwidth ~ 2 W (accurate for many spectral windows)
+  mtap <- max(ntap)
+  bandwidth <- bandwidth * (mtap + 1) 
+  #
   # BUG: there seems to be an issue with f==0, & f[length(psd)]
   # so just extrapolate from the prev point
   if (first.last) psd.n <- (exp( signal::interp1(frq[2:(nfreq-1)], 
@@ -269,11 +275,12 @@ psdcore.default <- function(X.d,
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NULL, 
-                  df = Inf, 
+                  df = mtap-1, # must be a scalar for plot.spec to give conf ints:
+                  # Percival and Walden eqn (370b)
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
-                  n.used = envGet("len_even"), 
-                  orig.n = envGet("len_orig"), 
+                  n.used = rlp_envGet("len_even"), 
+                  orig.n = rlp_envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
                   method = sprintf("Adaptive Sine Multitaper (rlpSpec)\n%s",funcall), 

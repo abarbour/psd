@@ -32,11 +32,16 @@
 #' 
 #' @references Riedel, K. S., & Sidorenko, A. (1995), 
 #' Minimum bias multiple taper spectral estimation,
-#' \emph{Signal Processing, IEEE Transactions on}, \strong{43}(1), 188-195.
+#' \emph{Signal Processing, IEEE Transactions on}, \strong{43}(1), 188--195.
 #
 #' @references Riedel, K. S. (1996),
 #' Adaptive smoothing of the log-spectrum with multiple tapering,
-#' \emph{Signal Processing, IEEE Transactions on}, \strong{44}(7), 1794-1800.
+#' \emph{Signal Processing, IEEE Transactions on}, \strong{44}(7), 1794--1800.
+#'
+#' @references Walden, A. T. WALDEN, and  E. J. McCoy, and D. B. Percival (1995),
+#' The effective bandwidth of a multitaper spectral estimator,
+#' \emph{Biometrika}, \strong{82}(1), 201--214,
+#' \url{http://biomet.oxfordjournals.org/content/82/1/201}
 #'
 # problem with %7E or # at end? (BOTH)
 #' @references \url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}

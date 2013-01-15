@@ -144,7 +144,7 @@ rlp_envAssignGet <- function(variable, value, envir=.rlpenv) UseMethod("rlp_envA
 #' @S3method rlp_envAssignGet default
 rlp_envAssignGet.default <- function(variable, value, envir=.rlpenv){
   ## set contents of envir::variable to value
-  envAssign(variable, value, envir=envir)
-  envGet(variable, envir=envir)
+  rlp_envAssign(variable, value, envir=envir)
+  rlp_envGet(variable, envir=envir)
 }
 

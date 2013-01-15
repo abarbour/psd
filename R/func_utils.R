@@ -305,7 +305,7 @@ zeros <- function(nrow) UseMethod("zeros")
 #' @name zeros
 #' @docType methods
 #' @S3method zeros default
-zeros.default <- function(nrow){matrix(rep.int(0, nrow),nrow=nrow)}
+zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
 #' @rdname rlpSpec-utilities
 #' @export
 #' @keywords utilities vector-creation matrix-creation
@@ -319,7 +319,7 @@ ones <- function(nrow) UseMethod("ones")
 #' @name ones
 #' @docType methods
 #' @S3method ones default
-ones.default <- function(nrow){matrix(rep.int(1, nrow),nrow=nrow)}
+ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
 
 #' @description \code{mod} finds the modulo division of X and Y.
 #' 
