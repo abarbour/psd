@@ -1,18 +1,39 @@
+/*
+#   rlpSpec: 
+#
+#   Copyright (C) 2013  Andrew J. Barbour andy.barbour @ gmail.com
+#
+#   Robert L. Parker authored the original algorithm.
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <stdio.h>
-// R libs
-#include <R.h>
+// R specific libs:
+#include <R.h>  
 #include <Rinternals.h>
 #include <Rdefines.h>
 
 /* Sending R integer vectors to C using .Call */
 SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
 {
-	// http://r.789695.n4.nabble.com/protect-unprotect-howto-in-C-code-td911033.html
-	// http://stackoverflow.com/questions/4106174/where-can-i-learn-to-how-to-write-c-code-to-speed-up-slow-r-functions
-	// PROTECTION [ ]
-	//
-	//PROTECT(R_maxslope = AS_INTEGER(R_maxslope));
-	//PROTECT(c_ntaps = AS_NUMERIC(R_ntaps));
+    // http://r.789695.n4.nabble.com/protect-unprotect-howto-in-C-code-td911033.html
+    // http://stackoverflow.com/questions/4106174/where-can-i-learn-to-how-to-write-c-code-to-speed-up-slow-r-functions
+    // PROTECTION [ ]
+    //
+    //PROTECT(R_maxslope = AS_INTEGER(R_maxslope));
+    //PROTECT(c_ntaps = AS_NUMERIC(R_ntaps));
     double * c_ntaps=REAL(R_ntaps);
     int maxslope=REAL(R_maxslope)[0];
     int ssize=LENGTH(R_ntaps);
@@ -34,40 +55,40 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     double working_space[ssize];
     //
     // RLPs algorithm
-	//  #  Scan forward to bound slopes >= 1
-	// state<-0
-	// for ( j  in  2:nf ) {
-	//   slope <- slopes[j]
-	//   if (state == 0) {
-	//     if (slope >= 1 ) {
-	//       state <- 1
-	//       kopt[j] <- kopt[j-1]+1
-	//     }
-	//   } else {
-	//     if (kopt[j] >= kopt[j-1]+1) {
-	//       kopt[j] <- kopt[j-1]+1
-	//     } else {
-	//       state <- 0
-	//     }
-	//   }
-	// }
+    //  #  Scan forward to bound slopes >= 1
+    // state<-0
+    // for ( j  in  2:nf ) {
+    //   slope <- slopes[j]
+    //   if (state == 0) {
+    //     if (slope >= 1 ) {
+    //       state <- 1
+    //       kopt[j] <- kopt[j-1]+1
+    //     }
+    //   } else {
+    //     if (kopt[j] >= kopt[j-1]+1) {
+    //       kopt[j] <- kopt[j-1]+1
+    //     } else {
+    //       state <- 0
+    //     }
+    //   }
+    // }
     //  #  Scan backward to bound slopes >= -1
-	// 	state <- 0
-	// 	for ( j  in  nf:2 ) {
-	//         if (state == 0) {
-	// 			slope <- kopt[j-1]-kopt[j]
-	// 			if (slope >= 1) {
-	// 				state <- 1
-	// 				kopt[j-1] <- kopt[j]+1
-	// 			}
-	//         } else {
-	// 			if (kopt[j-1] >= kopt[j]+1) {
-	// 				kopt[j-1] <- kopt[j]+1
-	// 			} else {
-	// 				state <- 0
-	// 			}
-	//         }
-	// 	}
+    // 	state <- 0
+    // 	for ( j  in  nf:2 ) {
+    //         if (state == 0) {
+    // 			slope <- kopt[j-1]-kopt[j]
+    // 			if (slope >= 1) {
+    // 				state <- 1
+    // 				kopt[j-1] <- kopt[j]+1
+    // 			}
+    //         } else {
+    // 			if (kopt[j-1] >= kopt[j]+1) {
+    // 				kopt[j-1] <- kopt[j]+1
+    // 			} else {
+    // 				state <- 0
+    // 			}
+    //         }
+    // 	}
     // APPLY CONSTRAINTS
     //     FORWARD:
     state = 0;

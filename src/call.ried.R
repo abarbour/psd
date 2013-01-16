@@ -1,8 +1,8 @@
 rm(list=ls())
-system("rm riedsid.*o")
-system("R CMD SHLIB riedsid.c")
-dyn.load("riedsid.so")
-source("../rsrc/func_utils.R")
+system("rm ctap_simple.*o")
+system("R CMD SHLIB ctap_simple.c")
+dyn.load("ctap_simple.so")
+source("../R/func_utils.R")
 sim.ntaps <- function(){
 	slp1 <- seq(1,5,by=1) - 1
 	slp2 <- 2*slp1 - 2

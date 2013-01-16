@@ -1,10 +1,33 @@
-###
-###  Default method for pspectrum, the main function used for
-###  adaptive estimation
-###
+#' Calculate the pilot spectrum.
+#'
+#' The pilot spectrum calculated here is found using a fixed number
+#' of tapers across all frequencies using \code{\link{psdcore}}.  Any
+#' adaptive taper-refinements are based on the spectral derivatives
+#' of this spectrum; hence, changes in the number of tapers can affect
+#' how many adaptive stages may be needed.
+#' 
+#' @note A mean value and linear are removed from the series prior to spectrum
+#' estimation, and no decimation is performed on the taper optimization.  
+#' The taper series of the returned spectrum is constrained using
+#' \code{\link{as.taper(..., minspan=TRUE)}}.
+#'
+#' @name pilot_spec
+#' @aliases pilot_spectrum spec.pilot
+#' @export
+#' @seealso \code{\link{psdcore}}
+#'
+#' @param x vetor; the data series to find a pilot spectrum for
+#' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
+#' @param ntap scalar; the number of tapers to apply during spectum estimation
+#' @param ... additional parameters
+#' @return An object with class 'spec'
+#'
 pilot_spec <- function(...) UseMethod("pilot_spec")
+#' @rdname pilot_spec
+#' @S3method pilot_spec default
 pilot_spec.default <- function(x, x.frequency=1, ntap=10, ...){
   stopifnot(length(ntap)==1)
+  if (is.ts(x)) x.frequency <- stats::frequency(x)
   # initial spectrum:
   Pspec <- psdcore(X.d=x, X.frq=x.frequency, ntaper=ntap, 
                    ndecimate=1L, demean=TRUE, detrend=TRUE, as.spec=TRUE) #, ...)
@@ -20,14 +43,44 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=10, ...){
   return(Pspec)
 }
 
-new_histlist <- function(adapt_stages){
+#' Initialize a nested-list object to store the taper-optimization iterations.
+#'
+#' The top names are
+#' \itemize{
+#' \item stg_kopt.  Sequential taper vectors.
+#' \item stg_psd.  Sequential power spectral density vectors.
+#' \item freq. The frequencies for each set of \code{stg_kopt} and \code{stg_psd}.
+#' }
+#'
+#' @note The object is stored as \code{'histlist'} in the \code{.rlpSpecEnv} environment. 
+#' At any point the list may be accessed with \code{\link{rlp_envGet("histlist")}}.
+#'
+#' @name new_adapt_history
+#' @export
+#'
+#' @param adapt_stages scalar; The number of adaptive iterations to save (excluding pilot spectrum).
+#' @return the empty list
+#' @seealso \code{\link{rlp_envGet}}
+new_adapt_history <- function(adapt_stages){
+  stopifnot(length(adapt_stages)==1)
   histlist <- vector("list", 3) # freq, list-tap, list-psd
   names(histlist) <- c("freq", "stg_kopt", "stg_psd")
   num_pos <- 1 + adapt_stages # pilot + adapts
   histlist[[2]] <- histlist[[3]] <- vector("list", adapt_stages+1)
-  rlp_envAssignGet("histlist",histlist)
+  rlp_envAssignGet("histlist", histlist)
 }
 
+#' Update the adaptive estimation history list.
+#'
+#' @name update_adapt_history
+#' @export
+#'
+#' @param stage x
+#' @param ntap x
+#' @param psd x
+#' @param freq x
+#' @return
+#'
 update_adapt_history <- function(stage, ntap, psd, freq=NULL){
   histlist <- rlp_envGet("histlist")
   # stage==0 <--> index==1
@@ -40,13 +93,32 @@ update_adapt_history <- function(stage, ntap, psd, freq=NULL){
   rlp_envAssignGet("histlist",histlist)
 }
 
+#' Message printing utility for adapt stages
+#' @param stage scalar; the current stage.
+#' @return NULL
 adapt_message <- function(stage){
   stopifnot(stage>=0)
   if (stage==0){stage <- paste(stage,"(pilot)")}
   message(sprintf("Stage  %s  estimation", stage))
 }
 
+#' Adaptive sine multitaper power spectral density estimation.
+#' 
+#' @name pspectrum
+#' @export
+#' @seealso \code{\link{psdcore}}
+#' 
+#' @param x x
+#' @param x.frqsamp x
+#' @param ntap_pilot x
+#' @param niter x
+#' @param verbose x
+#' @param ... x
+#' @return Object with class 'spec'.
+#' 
 pspectrum <- function(x, x.frqsamp, ntap_pilot=10, niter=2, verbose=TRUE, ...) UseMethod("pspectrum")
+#' @rdname pspectrum
+#' @S3method pspectrum default
 pspectrum.default <- function(x, x.frqsamp, ntap_pilot=10, niter=2, verbose=TRUE, ...){
   for (stage in 0:niter){
     if (verbose) adapt_message(stage)
@@ -58,7 +130,7 @@ pspectrum.default <- function(x, x.frqsamp, ntap_pilot=10, niter=2, verbose=TRUE
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (save_hist){
-        new_histlist(niter)
+        new_adapt_history(niter)
         update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
       x <- 0 # to prevent passing orig data back/forth
@@ -73,115 +145,3 @@ pspectrum.default <- function(x, x.frqsamp, ntap_pilot=10, niter=2, verbose=TRUE
   }
   return(Pspec)
 }
-
-..todep.pspectrum.default <- function(x, 
-fsamp=1, 
-tapcap=1e3, 
-ntapinit=10, 
-niter=3, 
-ndec=1,
-units=c("time","signal"),
-prewhiten=TRUE,
-plotpsd=TRUE, 
-ylims=c(.07,3e4), xlims=c(0,0.5),
-devmode=FALSE) {
-  ###
-  # PORT of RLP's pspectrum.m
-  # abarbour
-  # Dec 2011
-  #
-  # porting: 10 Jan 2012
-  #   [fixed 3-Feb-12] adaptive estimation limited to decimation==1 at the moment
-  # testing:
-  ###
-  #
-  #  Adaptive multitaper estimator of power spectral density (psd) of
-  #  the stationary time series x .
-  #
-  #  fsamp is the sampling frequency = 1/(sampling interval).  If fsamp
-  #  is absent, use fsamp=1.
-  #
-  #  psd of length nf gives spectrum at nf evenly spaced frequencies: 
-  #     f<-[ 0, df, 2*df, ... (nf-1)*df]' ('), where nf = 1+ n/2, and n=length(x),
-  #     and df=1/T.  If n is odd, x is truncated by 1.
-  #
-  # -------  Tuning parameters -------------
-  #   tapcap=maximum number of tapers allowed per freq then uncertainty
-  #   of estimates >= psd/sqrt(Cap).
-  ##
-  ## Args:	
-  ##
-  ## Returns:	
-  ##
-  ## TODO(abarbour):	
-  ##    [ ] fix frequency vector when decimation is > 1 (only a plotting issue really)
-  ##    [ ] structured return
-  ##    [ ] type <- match.arg(type)
-  ##
-  # --- setup the environment ---
-  rlp_initEnv(refresh=TRUE)
-  
-  # Cap the number of tapers to prevent runaway
-  Cap <- abs(tapcap)
-  if (Cap == 0 | Cap > 1e5){ Cap <- 1e3 }
-
-  #  Number of refinement iterations usually <= 5
-  Niter <- rlp_envAssignGet("num_iter", abs(niter))
-  
-  ntapinit <- rlp_envAssignGet("init_tap", abs(ntapinit))
-  
-  #   ndec: number of actual psd calculations is n/ndec
-  #   the rest are filled in with interpolation.  Sampling in
-  #   frequency is variable to accommodate spectral shape
-  lx <- length(x)
-  if (lx < 10000) ndec <- 1
-  #
-  PSDFUN <- psdcore
-  if (devmode) {
-    warning("operating in development mode")
-    PSDFUN <- .devpsdcore
-  }
-  #            -----------------
-  #  Get pilot estimate of psd with fixed number of tapers and no decimation
-  message(sprintf("\t>>>> Pilot estimation with\t%i\ttapers",ntapinit))
-  psd <- PSDFUN(x, ntaper=ntapinit, 
-                ndecimate=1, 
-                plotpsd=FALSE, xlims=xlims, as.spec=TRUE)
-  plot(psd)
-  ## add this to psdcore return?
-  nf <- nrow(psd$freq)
-  ##nf <- length(psd)
-  rlp_envAssign("num_freqs", nf)
-  Ones <<- ones(nf)  # row vec of ones
-  ntaper <<- ntapinit * Ones
-  
-  if ( plotpsd && Niter > 0 ){
-    require(RColorBrewer, quietly=TRUE, warn.conflicts=FALSE)
-    pal <- brewer.pal(8, "Paired")
-  }
-  
-  if ( Niter > 0){
-    message("\t\t>>>> Adaptive spectrum refinement:")
-    for ( iterate in  1:Niter ) {
-      message(sprintf("\t\t\t>>>> taper optimization round\t%02i",iterate))
-      ## calculate optimal tapers
-      kopt <- riedsid(psd$spec, ntaper)
-      stopifnot(exists('kopt'))
-      ## contrain the total number of tapers
-      ntaper <- kopt
-      ntaper[ntaper>Cap] <- Cap
-      psd <- PSDFUN(x, ntaper=ntaper, ndecimate=ndec, 
-                     plotpsd=FALSE, plotcolor=pal[iterate], as.spec=TRUE)
-      plot(psd, col=pal[iterate], add=T)
-    }
-  }
-  ##  Scale to physical units and provide frequency vector
-  ## [ ] ?
-  psd$spec <- psd$spec/fsamp
-  psd$freq <- psd$freq*fsamp
-  psd$sample.rate <- fsamp
-  ##
-  return(invisible(psd))
-} 
-# end pspectrum.default
-###

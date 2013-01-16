@@ -259,6 +259,7 @@ minspan <- function(tapvec, ...) UseMethod("minspan")
 minspan.taper <- function(tapvec, ...){
   stopifnot(is.taper(tapvec))
   nspan <- as.taper(7*tapvec/5, max_taper=length(tapvec)/2)
+  # matrixStats (>= 0.6.2),
   #require(matrixStats)
   #Ones <- ones(nf)
   #nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
@@ -431,12 +432,12 @@ ctap_simple.taper <- function(tapvec, tapseq=NA, maxslope=1, ...){
   #src <- "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/src"
   src <- "/Users/abarbour-l/rojo.processing/R/dev/rlpSpec/src"
   setwd(src)
-  system("rm riedsid.*o")
-  system("R CMD SHLIB riedsid.c")
-  dyn.load("riedsid.so")
+  system("rm ctap_simple.*o")
+  system("R CMD SHLIB ctap_simple.c")
+  dyn.load("ctap_simple.so")
   setwd(owd)
   tapvec.adj <- as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope))
-  ##as.matrix(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
+  ##as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
   return(tapvec.adj)
 }
 

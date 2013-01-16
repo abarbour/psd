@@ -52,20 +52,7 @@
 #' 
 #' # if ntaper is a vector:
 #' psdcore(X.d, ntaper=rep(10,length(X.d))
-psdcore <- function(X.d, 
-                    X.frq=1, 
-                    ntaper=as.taper(1), 
-                    ndecimate=1L,
-                    demean=TRUE, 
-                    detrend=TRUE,
-                    na.action = stats::na.fail,
-                    first.last=TRUE,
-                    Nyquist.normalize=TRUE,
-                    plotpsd=FALSE,
-                    as.spec=TRUE,
-                    force_calc=FALSE,
-                    ...) UseMethod("psdcore")
-
+psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, force_calc=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @S3method psdcore default
 psdcore.default <- function(X.d, 

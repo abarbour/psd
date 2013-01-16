@@ -16,19 +16,25 @@ License: GPL (>= 2)
 URL: http://abarbour.github.com/rlpSpec/
 Depends:
     R (>= 2.10.1),
+    stats,
+    utils,
+    graphics,
+    grDevices
+Imports:
     RColorBrewer (>= 1.0-5),
-    matrixStats (>= 0.6.2),
-    signal (>= 0.7-2)
+    signal (>= 0.7-2),
+    zoo (>= 1.7-9)
 Suggests:
-    Peaks (>= 0.2),
     ggplot2 (>= 0.9.3),
+    multitaper (>= 1.0-2),
+    Peaks (>= 0.2),
     sfsmisc (>= 1.0-23),
-    multitaper (>= 1.0-2)
 Collate:
-    'func_riedsid.R'
     'rlpSpec-package.R'
-    'func_tapers.R'
-    'zzz.R'
     'func_psdcore.R'
-    'func_utils.R'
     'func_envir.R'
+    'func_utils.R'
+    'func_tapers.R'
+    'func_riedsid.R'
+    'func_whiten.R'
+    'zzz.R'
