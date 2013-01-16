@@ -23,7 +23,12 @@ riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("ri
 
 #' @rdname riedsid
 #' @S3method riedsid spec
-riedsid.spec <- function(...){.NotYetImplemented()}
+riedsid.spec <- function(Pspec, ...){
+  psd <- Pspec$spec
+  ntap <- Pspec$taper
+  riedsid(psd, ntap, ...)
+  #.NotYetImplemented()
+}
 
 #' @rdname riedsid
 #' @S3method riedsid default
@@ -31,7 +36,7 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
   ## spectral values
   spec <- as.vector(spec)
   # num freqs
-  nf <- envAssignGet("num_freqs", length(spec))
+  nf <- rlp_envAssignGet("num_freqs", length(spec))
   # prelims
   eps <- .Machine$double.eps # was: 1e-78  #  A small number to protect against zeros
   Ones <- ones(nf) # was rowvec, now col 

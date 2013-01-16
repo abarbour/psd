@@ -1,3 +1,15 @@
-riedsid
--------
-* remove loop!
+`riedsid`
+---------
+[ ] remove loop !!!
+[ ] riedsid.spec method
+
+`pspectrum`
+-----------
+[ ] decimation (and in `psdcore`)
+
+
+Miscellany
+----------
+[ ] replace variables names 'spec' with something less obviously-prone to
+collision
+[ ] scripts to plot the `histlist`

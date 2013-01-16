@@ -69,18 +69,18 @@ psdcore <- function(X.d,
 #' @rdname psdcore
 #' @S3method psdcore default
 psdcore.default <- function(X.d, 
-                              X.frq=1, 
-                              ntaper=as.taper(1), 
-                              ndecimate=1L,
-                              demean=TRUE, 
-                              detrend=TRUE,
-                              na.action = stats::na.fail,
-                              first.last=TRUE,
-                              Nyquist.normalize=TRUE,
-                              plotpsd=FALSE,
-                              as.spec=TRUE,
-                              force_calc=FALSE,
-                              ...
+                            X.frq=1, 
+                            ntaper=as.taper(1), 
+                            ndecimate=1L,
+                            demean=TRUE, 
+                            detrend=TRUE,
+                            na.action = stats::na.fail,
+                            first.last=TRUE,
+                            Nyquist.normalize=TRUE,
+                            plotpsd=FALSE,
+                            as.spec=TRUE,
+                            force_calc=FALSE,
+                            ...
                            ) {
   #
   require(signal, quietly=TRUE, warn.conflicts=FALSE)

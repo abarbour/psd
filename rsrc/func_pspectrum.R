@@ -3,10 +3,78 @@
 ###  adaptive estimation
 ###
 pilot_spec <- function(...) UseMethod("pilot_spec")
-pilot_spec.default <- function(x, fsamp=1, ntap=10, ...){
-  return(psdcore(x, X.d=x, X.frq=fsamp, ntaper=ntap, as.spec=TRUE, ...))
+pilot_spec.default <- function(x, x.frequency=1, ntap=10, ...){
+  stopifnot(length(ntap)==1)
+  # initial spectrum:
+  Pspec <- psdcore(X.d=x, X.frq=x.frequency, ntaper=ntap, 
+                   ndecimate=1L, demean=TRUE, detrend=TRUE, as.spec=TRUE) #, ...)
+  num_frq <- length(Pspec$freq)
+  num_tap <- length(Pspec$taper)
+  stopifnot(num_tap <= num_frq)
+  Ptap <- Pspec$taper
+  # generate a series, if necessary
+  if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
+  # return taper object
+  Pspec$taper <- as.taper(Ptap, setspan=TRUE)
+  #
+  return(Pspec)
 }
-.pspectrum.default <- function(x, 
+
+new_histlist <- function(adapt_stages){
+  histlist <- vector("list", 3) # freq, list-tap, list-psd
+  names(histlist) <- c("freq", "stg_kopt", "stg_psd")
+  num_pos <- 1 + adapt_stages # pilot + adapts
+  histlist[[2]] <- histlist[[3]] <- vector("list", adapt_stages+1)
+  rlp_envAssignGet("histlist",histlist)
+}
+
+update_adapt_history <- function(stage, ntap, psd, freq=NULL){
+  histlist <- rlp_envGet("histlist")
+  # stage==0 <--> index==1
+  stg_ind <- stage+1
+  nulfrq <- is.null(freq)
+  if (!nulfrq) histlist$freq <- freq
+  histlist$stg_kopt[[stg_ind]] <- ntap
+  histlist$stg_psd[[stg_ind]] <- psd
+  if (is.null(histlist$freq) & stage>0) warning("freqs absent despite non-pilot stage update")
+  rlp_envAssignGet("histlist",histlist)
+}
+
+adapt_message <- function(stage){
+  stopifnot(stage>=0)
+  if (stage==0){stage <- paste(stage,"(pilot)")}
+  message(sprintf("Stage  %s  estimation", stage))
+}
+
+pspectrum <- function(x, x.frqsamp, ntap_pilot=10, niter=2, verbose=TRUE, ...) UseMethod("pspectrum")
+pspectrum.default <- function(x, x.frqsamp, ntap_pilot=10, niter=2, verbose=TRUE, ...){
+  for (stage in 0:niter){
+    if (verbose) adapt_message(stage)
+    if (stage==0){
+      # --- setup the environment ---
+      rlp_initEnv(refresh=TRUE,verbose=verbose)
+      # --- pilot spec ---
+      Pspec <- pilot_spec(x=x, x.frequency=x.frqsamp, ntap=ntap_pilot)
+      # --- history ---
+      save_hist <- ifelse(niter < 10, TRUE, FALSE)
+      if (save_hist){
+        new_histlist(niter)
+        update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
+      }
+      x <- 0 # to prevent passing orig data back/forth
+    }
+    ## calculate optimal tapers
+    kopt <- riedsid(Pspec$spec, Pspec$taper)
+    stopifnot(exists('kopt'))
+    ## reapply to spectrum
+    Pspec <- psdcore(X.d=x, ntaper=kopt)
+    ## update history
+    if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
+  }
+  return(Pspec)
+}
+
+..todep.pspectrum.default <- function(x, 
 fsamp=1, 
 tapcap=1e3, 
 ntapinit=10, 

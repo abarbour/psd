@@ -7,7 +7,7 @@
   riedsid(spec, ntaper, tapseq = NULL, c.method = NULL,
     ...)
 
-  riedsid.spec(...)
+  riedsid.spec(Pspec, ...)
 
   riedsid.default(spec, ntaper, tapseq = NULL,
     c.method = NULL, ...)

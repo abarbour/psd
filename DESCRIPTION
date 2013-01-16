@@ -2,7 +2,7 @@ Package: rlpSpec
 Type: Package
 Title: Adaptive multitaper spectrum estimation.
 Version: 0.1-0
-Date: 2012-12-31
+Date: 2013-01-15
 Author: Robert L Parker and Andrew J Barbour
 Maintainer: Andrew J Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates

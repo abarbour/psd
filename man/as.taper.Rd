@@ -2,17 +2,25 @@
 \alias{as.taper}
 \title{Coerce an object into a 'taper' object.}
 \usage{
-  as.taper(x, min.taper = 1)
+  as.taper(x, min_taper = 1, max_taper = max(x),
+    setspan = FALSE)
 }
 \arguments{
   \item{x}{An object to set}
 
-  \item{min.taper}{Set all values less than this to this.}
+  \item{min_taper}{Set all values less than this to this.}
+
+  \item{max_taper}{Set all values greater than this to
+  this.}
+
+  \item{setspan}{logical; should the returned opject be
+  passed through \code{\link{minspan}}?}
 }
 \description{
   An object with S3 class 'taper' is created; this will
   have a minimum number of tapers in each position set by
-  \code{min.taper}.
+  \code{min_taper}, and a maximum number of tapers in each
+  position set by \code{max_taper}.
 }
 \details{
   Various classes can be coerced into a 'taper' object;
@@ -23,14 +31,19 @@
   dimension.  For example, if the object is
   \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the
   corresponding 'taper' object will be
-  \code{1,2,3,4,5,1,1}, assuming \code{min.taper==1}.
+  \code{1,2,3,4,5,1,1}, assuming \code{min_taper==1}.
+}
+\note{
+  No support (yet) for \code{min_taper, max_taper} as
+  vectors, although this could be desirable.
 }
 \examples{
 is.taper(as.taper(1))
 is.taper(as.taper(1:10))
 is.taper(as.taper(matrix(1:10,ncol=1)))
-is.taper(as.taper(list(x=1:10,y=1:30))) # note dimensions
-is.taper(as.taper(data.frame(x=1:10,y=10:19)))
+as.taper(list(x=1:10,y=1:30)) # note dimensions
+as.taper(x<-data.frame(x=1:10,y=10:19))
+as.taper(x, min_taper=3, max_taper=10)
 # class 'character' is in-coercible; raise error
 as.taper(c("a","b"))
 }

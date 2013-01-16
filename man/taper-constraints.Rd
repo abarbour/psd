@@ -26,11 +26,11 @@
 
   constrain_tapers(tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
-    min.tapers = 1, verbose = TRUE, ...)
+    verbose = TRUE, ...)
 
   constrain_tapers.taper(tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
-    min.tapers = 1, verbose = TRUE, ...)
+    verbose = TRUE, ...)
 
   ctap_simple(tapvec, tapseq = NA, maxslope = 1, ...)
 
@@ -64,8 +64,6 @@
 
   \item{constraint.method}{character; method to use for
   constraints on tapers numbers}
-
-  \item{min.tapers}{integer; the minimum number of tapers}
 
   \item{verbose}{logical; should warnings and messages be
   given?}
