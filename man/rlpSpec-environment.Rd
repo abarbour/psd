@@ -1,5 +1,6 @@
 \docType{methods}
 \name{rlpSpec-environment}
+\alias{get_adapt_history}
 \alias{new_adapt_history}
 \alias{rlpSpec-environment}
 \alias{rlp_envAssign}
@@ -14,33 +15,21 @@
   rlp_initEnv(envir = .rlpenv, refresh = FALSE,
     verbose = TRUE, ...)
 
-  rlp_initEnv.default(envir = .rlpenv, refresh = FALSE,
-    verbose = TRUE, ...)
-
   rlp_envClear(...)
 
   rlp_envStatus(envir = .rlpenv)
 
-  rlp_envStatus.default(envir = .rlpenv)
-
   rlp_envList(envir = .rlpenv)
-
-  rlp_envList.default(envir = .rlpenv)
 
   rlp_envGet(variable, envir = .rlpenv)
 
-  rlp_envGet.default(variable, envir = .rlpenv)
-
   rlp_envAssign(variable, value, envir = .rlpenv)
-
-  rlp_envAssign.default(variable, value, envir = .rlpenv)
 
   rlp_envAssignGet(variable, value, envir = .rlpenv)
 
-  rlp_envAssignGet.default(variable, value,
-    envir = .rlpenv)
-
   new_adapt_history(adapt_stages)
+
+  get_adapt_history()
 
   update_adapt_history(stage, ntap, psd, freq = NULL)
 }
@@ -79,7 +68,10 @@
 }
 \value{
   \code{rlp_initEnv} returns (invisibly) the result of
-  \code{rlp_envStatus}.
+  \code{rlp_envStatus()}.
+
+  the object represented by \code{variable} in the
+  \code{rlpSpec} environment.
 }
 \description{
   The computation of \emph{adaptive} power spectral density
@@ -88,7 +80,9 @@
   convenience wrappers designed to maintain variable
   separation from the \code{.GlobalEnv} environment so that
   no innocent variable is destroyed in the process of
-  iteratively computing spectra.
+  iteratively computing spectra. \strong{The user should
+  generally not be using the \emph{setters}; hence, only
+  the \emph{getters} exist in the namespace.}
 
   \code{rlp_initEnv} initializes the \code{.rlpenv}
   environment with an option to clear the contents (if the
@@ -149,21 +143,20 @@
   \code{.GlobalEnv} or any other environment.
 }
 
-\section{History}{
-  The list object for historical is stored as
-  \code{'histlist'}; at any point it may be accessed with
-  \code{\link{rlp_envGet("histlist")}}. The top names are
-  \itemize{ \item stg_kopt.  Sequential taper vectors.
-  \item stg_psd.  Sequential power spectral density
-  vectors. \item freq. The frequencies for each set of
-  \code{stg_kopt} and \code{stg_psd}. }
+\section{Adaptive History}{
+  The list object for historical adapt-data may be accessed
+  with \code{\link{get_adapt_history}}. The top names of
+  the returned list are \describe{
+  \item{\code{stg_kopt}}{Sequential taper vectors.}
+  \item{\code{stg_psd}}{Sequential power spectral density
+  vectors.} \item{\code{freq}}{The frequencies for each set
+  of \code{stg_kopt} and \code{stg_psd}.} }
 }
 \seealso{
   \code{\link{rlpSpec-utilities}},
   \code{\link{char2envir}}, \code{\link{pspectrum}}
 
-  \code{\link{new.env}}, \code{\link{baseenv}},
-  \code{\link{rlp_envStatus}}
+  \code{\link{new.env}}, \code{\link{baseenv}}
 
   \code{\link{rlp_initEnv}}
 }

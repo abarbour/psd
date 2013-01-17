@@ -33,10 +33,10 @@
   Calculate weighting factors for 'taper' object.
 }
 \details{
-  Weighting is calculated as follows:
+  Weighting factors are calculated as follows:
 
-  \deqn{W_N = n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T
-  \cdot (n_T - 1/4) \cdot (n_T + 1)}}
+  \deqn{W_N \equiv n_T^2 - \frac{3 K_N^2}{2 n_T (n_T - 1/4)
+  (n_T + 1)}}
 
   where \eqn{n_T} is the total number of tapers, and
   \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]}

@@ -4,7 +4,9 @@
 #' necessary to enforce rules on the number of tapers
 #' that may be applied.  For example, we cannot apply
 #' zero tapers (the result would be a raw periodogram)
-#' or one million tapers (that would be absurd).
+#' or one million tapers (that would be absurd, and
+#' violate orthogonality
+#' conditions for any series less than two million terms long!).
 #'
 #' Formal requirements enforced by this function are:
 #' \itemize{
@@ -30,11 +32,20 @@
 #' Multiple objects are concatenated into a single
 #' vector dimension.  For example, if the object is 
 #' \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding 'taper'
-#' object
-#' will be \code{1,2,3,4,5,1,1}, assuming \code{min_taper==1}.
+#' objects for the following arguments are:
 #'
-#' @note No support (yet) for \code{min_taper, max_taper} as vectors, although
-#' this could be desirable.
+#' \describe{
+#' \item{\emph{defaults}}{\code{[1,2,3,4,5,1,1]}}
+#' \item{\code{setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
+#' \item{\code{max_taper=5}}{\code{[1,2,3,4,5,1,1]}}
+#' \item{\code{max_taper=5,setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
+#' }
+#'
+#' It should be clear that enabling \code{setspan} will only override
+#' \code{max_taper} should it be larger than the half-width of the series.
+#'
+#' @note No support (yet) for use of \code{min_taper,max_taper} as vectors, although
+#' this could be quite desirable.
 #'
 #' @keywords taper S3methods
 #' @param x An object to set
@@ -53,12 +64,14 @@
 #' as.taper(x, min_taper=3, max_taper=10)
 #' # class 'character' is in-coercible; raise error
 #' as.taper(c("a","b"))
-as.taper <- function(x, min_taper=1, max_taper=max(x), setspan=FALSE){
+as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   # taper should be non-zero integer, since it represents the
   # number of tapered sections to average; hence, floor.
   # pmin/pmax.int are fast versions of
+  x <- as.vector(unlist(x))
+  if (is.null(max_taper)) max_taper <- max(x)
   stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper & !(is.character(x)))
-  x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(unlist(x)))))
+  x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(x))))
   #x[x < min_taper] <- min_taper
   #   > as.integer(as.matrix(data.frame(x=1:10,y=10:19)))
   #   [1]  1  2  3  4  5  6  7  8  9 10 10 11 12 13 14 15 16 17 18 19
@@ -173,12 +186,37 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
 }
 
-
-uncertainty <- function(tapvec, Nyquist=1, n.freq=NULL) UseMethod("uncertainty")
-#' @rdname taper-methods
-#' @name uncertainty
-#' @S3method uncertainty taper
-uncertainty.taper <- function(tapvec, f.samp=1, n.freq=NULL){
+#' Calculate spectral properties such as standard error and resolution.
+#'
+#' Various spectral properties may be computed from the vector of tapers, and
+#' if necessary the sampling frequency.
+#'
+#' @section Uncertainty:
+#' @section Resolution:
+#' @section DoF:
+#' @section Bandwidth:
+#' 
+#' @name spectral_properties
+#' @param x object with class taper
+#' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
+#' @param n.freq scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the taper object is assumed to be the number)
+#' @param ... additional arguments (unused)
+#' @return A list with the following properties (and names):
+#' \itemize{
+#' \item{\code{taper}: The original taper vector.}
+#' \item{\code{stderr}: The standard error of the spectrum.  Multiply by PSD for spectral uncertainty.}
+#' \item{\code{resolution}: The effective spectral resolution.}
+#' \item{\code{dof}: The number of degrees of freedom. May be used for jacknifing confidence intervals.}
+#' \item{\code{bw}: The effective bandwidth of the spectrum.}
+#' }
+#' @export
+spectral_properties <- function(x, f.samp=1, n.freq=NULL, ...) UseMethod("spectral_properties")
+#' @rdname spectral_properties
+#' @S3method spectral_properties spec
+spectral_properties.spec <- function(...) .NotYetImplemented()
+#' @rdname spectral_properties
+#' @S3method spectral_properties taper
+spectral_properties.taper <- function(x, f.samp=1, n.freq=NULL, ...){
   stopifnot(is.taper(tapvec))
   K <- unclass(tapvec)
   Nyquist <- f.samp/2
@@ -187,7 +225,7 @@ uncertainty.taper <- function(tapvec, f.samp=1, n.freq=NULL){
   Resolu <- K * Nyquist / n.freq
   ## Uncertainty
   StdErr <- 1 / sqrt(K / 1.2)
-  Var <- 10 / K / 12
+  #Var <- 10 / K / 12
   ## Deg Freedom
   Dof <- 2 * K
   ## Bandwidth
@@ -195,16 +233,8 @@ uncertainty.taper <- function(tapvec, f.samp=1, n.freq=NULL){
   # half-width W = (K + 1)/{2(N + 1)}
   # effective bandwidth ~ 2 W (accurate for many spectral windows)
   BW <- K/n.freq
-  return(list(stderr=StdErr, resolution=Resolu, dof=Dof, bandwidth=BW))
-}
-
-#' @rdname taper-methods
-#' @name resolution
-#' @S3method resolution taper
-resolution.taper <- function(tapvec){
-  stopifnot(is.taper(tapvec))
-  if (is.null(n.freq)) n.freq <- length(tapvec)
-  Uncert <- x * Nyquist / n.freq
+  ##
+  return(data.frame(taper=K, stderr=StdErr, resolution=Resolu, dof=Dof, bw=BW))
 }
 
 ###
@@ -213,14 +243,13 @@ resolution.taper <- function(tapvec){
 
 #' Calculate weighting factors for 'taper' object.
 #'
-#' Weighting is calculated as follows:
+#' Weighting factors are calculated as follows:
 #'
-#' \deqn{W_N = n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T \cdot (n_T - 1/4) \cdot (n_T + 1)}}
+#' \deqn{W_N \equiv n_T^2 - \frac{3  K_N^2}{2 n_T (n_T - 1/4) (n_T + 1)}}
 #'
 #' where \eqn{n_T} is the total number of tapers, and 
 #' \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]} 
 #'
-# w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
 #'
 #' @title parabolic_weights
 #' @export

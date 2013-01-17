@@ -6,6 +6,8 @@
 #' designed to maintain variable separation from the 
 #' \code{.GlobalEnv} environment so that no innocent variable is destroyed in
 #' the process of iteratively computing spectra.
+#' \strong{The user should generally not be using the \emph{setters}; hence, only the
+#' \emph{getters} exist in the namespace.}
 #' 
 #' @rdname rlpSpec-environment
 #' @name rlpSpec-environment
@@ -39,16 +41,12 @@ NULL
 #' @note \code{rlp_initEnv} will not re-initialize the enviroment, unless told to 
 #' do so with \code{refresh=TRUE}.
 #' @rdname rlpSpec-environment
+#' @name rlp_initEnv
 #' @param refresh logical; should the contents of the environment be trashed?
 #' @param verbose logical; should messages be given?
-#' @return \code{rlp_initEnv} returns (invisibly) the result of \code{rlp_envStatus}.
-#' @seealso \code{\link{new.env}}, \code{\link{baseenv}}, \code{\link{rlp_envStatus}}
-rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) UseMethod("rlp_initEnv")
-#' @rdname rlpSpec-environment
-#' @name rlp_initEnv
-#' @docType methods
-#' @S3method rlp_initEnv default
-rlp_initEnv.default <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...){
+#' @return \code{rlp_initEnv} returns (invisibly) the result of \code{rlp_envStatus()}.
+#' @seealso \code{\link{new.env}}, \code{\link{baseenv}}
+rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
   # initialize the psd calculation environment
   if (exists(envir)){ new_env <- FALSE } else {new_env <- TRUE}
   if( new_env | refresh ){
@@ -63,6 +61,7 @@ rlp_initEnv.default <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...)
   } else if (!refresh) {
     if (verbose) message(sprintf("\t** %s ** is already initialized: try 'refresh=TRUE' to clear", envir))
   }
+  rlp_envAssign("init", sprintf("%s at %s", msg, Sys.time()))
   return(invisible(rlp_envStatus(envir)))
 }
 
@@ -76,29 +75,24 @@ rlp_envClear <- function(...) rlp_initEnv(refresh=TRUE, ...)
 #' @description \code{rlp_envStatus} returns a list of some information regarding
 #' the status of the environment.
 #' @rdname rlpSpec-environment
-rlp_envStatus <- function(envir=.rlpenv) UseMethod("rlp_envStatus")
-#' @rdname rlpSpec-environment
 #' @name rlp_envStatus
-#' @docType methods
-#' @S3method rlp_envStatus default
-rlp_envStatus.default <- function(envir=.rlpenv){
+#' @export
+rlp_envStatus <- function(envir=.rlpenv){
   #rlp_initEnv(refresh=FALSE, verbose=FALSE)
   if (is.environment(envir)) envir <- substitute(deparse(envir))
-  return(list(env.name=envir, 
-              obvious.exists=exists(envir), 
+  return(list(env_name=envir, 
+              obviously_exists=exists(envir), 
               listing=rlp_envList(envir),
-              init.stamp=Sys.time()))
+              env_init=rlp_envGet("init"),
+              env_status_stamp=Sys.time() ))
   
 }
 
 #' @description \code{rlp_envList} returns a listing of the assignments.
 #' @rdname rlpSpec-environment
-rlp_envList <- function(envir=.rlpenv) UseMethod("rlp_envList")
-#' @rdname rlpSpec-environment
 #' @name rlp_envList
-#' @docType methods
-#' @S3method rlp_envList default
-rlp_envList.default <- function(envir=.rlpenv){
+#' @export
+rlp_envList <- function(envir=.rlpenv){
   ## return listing of envir::variable
   if (is.character(envir)) envir <- char2envir(envir)
   ls(envir=envir)
@@ -106,13 +100,11 @@ rlp_envList.default <- function(envir=.rlpenv){
 
 #' @description \code{rlp_envGet} returns a the value of \code{variable}.
 #' @rdname rlpSpec-environment
-#' @param variable character; the name of the variable to get or assign
-rlp_envGet <- function(variable, envir=.rlpenv) UseMethod("rlp_envGet")
-#' @rdname rlpSpec-environment
 #' @name rlp_envGet
-#' @docType methods
-#' @S3method rlp_envGet default
-rlp_envGet.default <- function(variable, envir=.rlpenv){
+#' @param variable character; the name of the variable to get or assign
+#' @return the object represented by \code{variable} in the \code{rlpSpec} environment.
+#' @export
+rlp_envGet <- function(variable, envir=.rlpenv){
   ## return contents on envir::variable
   if (is.character(envir)) envir <- char2envir(envir)
   get(variable, envir=envir)
@@ -120,13 +112,9 @@ rlp_envGet.default <- function(variable, envir=.rlpenv){
 
 #' @description \code{rlp_envAssign} assigns \code{value} to \code{variable}, but does not return it.
 #' @rdname rlpSpec-environment
-#' @param value character; the name of the variable to assign
-rlp_envAssign <- function(variable, value, envir=.rlpenv) UseMethod("rlp_envAssign")
-#' @rdname rlpSpec-environment
 #' @name rlp_envAssign
-#' @docType methods
-#' @S3method rlp_envAssign default
-rlp_envAssign.default <- function(variable, value, envir=.rlpenv){
+#' @param value character; the name of the variable to assign
+rlp_envAssign <- function(variable, value, envir=.rlpenv){
   ## set contents of envir::variable to value
   if (is.character(envir)) envir <- char2envir(envir)
   assign(variable, value, envir=envir)
@@ -134,15 +122,11 @@ rlp_envAssign.default <- function(variable, value, envir=.rlpenv){
 
 #' @description \code{rlp_envAssignGet} both assigns and returns a value.
 #' @rdname rlpSpec-environment
-# place these at the end for orderliness.
+#' @name rlp_envAssignGet
+# placing these at the end for orderliness.
 #' @param ... For \code{rlp_envClear}: arguments passed to \code{rlp_initEnv}
 #' @param ... For \code{rlp_initEnv}: arguments passed to \code{new.env}
-rlp_envAssignGet <- function(variable, value, envir=.rlpenv) UseMethod("rlp_envAssignGet")
-#' @rdname rlpSpec-environment
-#' @name rlp_envAssignGet
-#' @docType methods
-#' @S3method rlp_envAssignGet default
-rlp_envAssignGet.default <- function(variable, value, envir=.rlpenv){
+rlp_envAssignGet <- function(variable, value, envir=.rlpenv){
   ## set contents of envir::variable to value
   rlp_envAssign(variable, value, envir=envir)
   rlp_envGet(variable, envir=envir)
@@ -152,14 +136,13 @@ rlp_envAssignGet.default <- function(variable, value, envir=.rlpenv){
 #' data from each iteration.
 #' @rdname rlpSpec-environment
 #'
-#' @section History:
-#'The list object for historical is stored as \code{'histlist'}; at any point 
-#' it may be accessed with \code{\link{rlp_envGet("histlist")}}.
-#' The top names are
-#' \itemize{
-#' \item stg_kopt.  Sequential taper vectors.
-#' \item stg_psd.  Sequential power spectral density vectors.
-#' \item freq. The frequencies for each set of \code{stg_kopt} and \code{stg_psd}.
+#' @section Adaptive History:
+#' The list object for historical adapt-data may be accessed with \code{\link{get_adapt_history}}.
+#' The top names of the returned list are
+#' \describe{
+#' \item{\code{stg_kopt}}{Sequential taper vectors.}
+#' \item{\code{stg_psd}}{Sequential power spectral density vectors.}
+#' \item{\code{freq}}{The frequencies for each set of \code{stg_kopt} and \code{stg_psd}.}
 #' }
 #' @param adapt_stages scalar; The number of adaptive iterations to save (excluding pilot spectrum).
 new_adapt_history <- function(adapt_stages){
@@ -171,6 +154,10 @@ new_adapt_history <- function(adapt_stages){
   rlp_envAssignGet("histlist", histlist)
 }
 
+#' @export
+#' @rdname rlpSpec-environment
+get_adapt_history <- function() rlp_envGet("histlist")
+
 #' @description \code{update_adapt_history} Updates the adaptive estimation history list.
 #' @rdname rlpSpec-environment
 #' @param stage scalar; the current stage of the adaptive estimation procedure
@@ -178,7 +165,7 @@ new_adapt_history <- function(adapt_stages){
 #' @param psd vector; the power spectral densities
 #' @param freq vector; the frequencies
 update_adapt_history <- function(stage, ntap, psd, freq=NULL){
-  histlist <- rlp_envGet("histlist")
+  histlist <- get_adapt_history()
   # stage==0 <--> index==1
   stg_ind <- stage+1
   nulfrq <- is.null(freq)

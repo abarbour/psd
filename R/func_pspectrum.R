@@ -64,10 +64,10 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TR
 #' how many adaptive stages may be needed (though there are no formal convergence
 #' criteria to speak of).
 #' 
-#' @note A mean value and linear are removed from the series prior to spectrum
-#' estimation, and no decimation is performed on the taper optimization.  
+#' @note A mean value and linear trend are removed from the series prior to
+#' estimation, and no decimation is performed  
 #' The taper series of the returned spectrum is constrained using
-#' \code{\link{as.taper(..., minspan=TRUE)}}.
+#' \code{as.taper(..., minspan=TRUE)}.
 #'
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot

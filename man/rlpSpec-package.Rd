@@ -52,16 +52,13 @@
 \section{Resolution and uncertainty}{
   The sine multitaper adaptive process introduces a
   variable resolution and error in the frequency domain.
-  Complete information is contained in the output as the
-  corridor of 1-standard-deviation errors, and in \eqn{K},
-  the number of tapers used at each frequency.
-
   The errors are estimated in the simplest way, from the
-  number of degrees of freedom (two per taper), not by
-  jack-knifing. The frequency resolution is found from
-  \eqn{\frac{K \cdot f_N}{N_f}} where \eqn{f_N} is the
-  Nyquist frequency and \eqn{N_f} is the number of
-  frequencies estimated.
+  number of degrees of freedom (two per taper); a more
+  sophisticated (and complicated) approach would be to
+  estimate via jack-knifing (Prieto et al 2007). The
+  frequency resolution is found from \eqn{\frac{K \cdot
+  f_N}{N_f}} where \eqn{f_N} is the Nyquist frequency and
+  \eqn{N_f} is the number of frequencies estimated.
 }
 \author{
   Andrew Barbour <andy.barbour@gmail.com>

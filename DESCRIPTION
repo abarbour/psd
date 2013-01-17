@@ -3,8 +3,8 @@ Type: Package
 Title: Adaptive sine-multitaper spectrum estimation.
 Version: 0.1-0
 Date: 2013-01-15
-Author: Robert L Parker and Andrew J Barbour
-Maintainer: Andrew J Barbour <andy.barbour@gmail.com>
+Author: Robert L. Parker and Andrew J. Barbour
+Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
     are produced through iterative refinement of the
     optimal number of sine-tapers at each frequency.
