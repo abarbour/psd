@@ -3,3 +3,4 @@
 .RData
 rlpSpec.Rproj
 .*ignore
+.DS_Store

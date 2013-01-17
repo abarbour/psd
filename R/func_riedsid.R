@@ -1,7 +1,7 @@
 #' Riedel & Sidorenko taper optimization
 #' 
 #' Estimates optimal number of tapers at each frequency of
-#' given spec, based on Riedel-Sidorenko MSE recipe, and other
+#' given psd, based on Riedel-Sidorenko MSE recipe, and other
 #' tweaks by RLP.
 #' 
 #' @title riedsid
@@ -9,9 +9,10 @@
 #' @keywords taper taper-constraints riedel-sidorenko
 #' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
 #' 
-#' @param spec vector; the spectral values used to optimize taper numbers
+#' @param psd vector; the spectral values used to optimize taper numbers
+#' @param pspec object with class 'spec'
 #' @param ntaper scalar or vector; number of tapers to apply optimization
-#' @param tapseq vector; representing positions or frequencies (same length as spec)
+#' @param tapseq vector; representing positions or frequencies (same length as psd)
 #' @param c.method string; constraint method to use
 #' @param ... optional argments passed to \code{constrain_tapers}
 #' 
@@ -19,24 +20,24 @@
 #' @examples
 #' riedsid(rnorm(10), 10)
 #' riedsid(rnorm(10), c(1:5,5:1))
-riedsid <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("riedsid")
+riedsid <- function(psd, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
 #' @S3method riedsid spec
-riedsid.spec <- function(Pspec, ...){
-  psd <- Pspec$spec
-  ntap <- Pspec$taper
+riedsid.spec <- function(pspec, ...){
+  psd <- pspec$spec
+  ntap <- pspec$taper
   riedsid(psd, ntap, ...)
   #.NotYetImplemented()
 }
 
 #' @rdname riedsid
 #' @S3method riedsid default
-riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
+riedsid.default <- function(psd, ntaper, tapseq=NULL, c.method=NULL, ...) {
   ## spectral values
-  spec <- as.vector(spec)
+  psd <- as.vector(psd)
   # num freqs
-  nf <- rlp_envAssignGet("num_freqs", length(spec))
+  nf <- rlp_envAssignGet("num_freqs", length(psd))
   # prelims
   eps <- .Machine$double.eps # was: 1e-78  #  A small number to protect against zeros
   Ones <- ones(nf) # was rowvec, now col 
@@ -55,14 +56,14 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
   # The spectral gradients should be in log-space, so
   # create a log spec, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
-  Y <- c(spec[nadd:2], spec, spec[(nf-1):(nf-nadd)])
+  Y <- c(psd[nadd:2], psd, psd[(nf-1):(nf-nadd)])
   Y[Y <= 0] <- eps
   lY <- log(Y)
   dY <- d2Y <- Zeros
   #
-  if (is.null(tapseq) | (length(tapseq) != length(spec))){
+  if (is.null(tapseq) | (length(tapseq) != length(psd))){
     #kseq <- seq.int(from=1, to=nf, by=1)
-    xfreq <- frequency(spec) #1 # frequency(x) <==> sps, Hz
+    xfreq <- frequency(psd) #1 # frequency(x) <==> sps, Hz
     Nspec <- floor(nf/2)
     kseq <- seq.int(from = xfreq/nf, by = xfreq/nf, length.out = Nspec)
   } else {
@@ -90,13 +91,13 @@ riedsid.default <- function(spec, ntaper, tapseq=NULL, c.method=NULL, ...) {
     d2Y[j] <- (u2 - uzero) %*% lY[jr] * 360 / LL2L / (L2-4)
   }
   #
-  #  R <- spec"/spec <- Y" + (Y')^2  2nd form preferred for consistent smoothing
+  #  R <- psd"/psd <- Y" + (Y')^2  2nd form preferred for consistent smoothing
   #
   #  Riedel-Sidorenko recipe (eq 13): 
-  #       kopt <- (12*abs(spec ./ d2spec)).^0.4 
+  #       kopt <- (12*abs(psd ./ d2psd)).^0.4 
   #  but parabolic weighting in psdcore requires: 
-  #               (480)^0.2*abs(spec ./ d2spec).^0.4
-  #  Original form:  kopt <- 3.428*abs(spec ./ d2spec).^0.4
+  #               (480)^0.2*abs(psd ./ d2psd).^0.4
+  #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
   #
   # the optimal number of tapers (in an MSE sense):
   kopt <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 )

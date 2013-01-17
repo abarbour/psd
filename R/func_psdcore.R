@@ -232,12 +232,9 @@ psdcore.default <- function(X.d,
   #
   # BUG: there seems to be an issue with f==0, & f[length(psd)]
   # so just extrapolate from the prev point
-  if (first.last) psd.n <- (exp( signal::interp1(frq[2:(nfreq-1)], 
-                                                          log(psd.n[2:(nfreq-1)]), 
-                                                          frq, 
-                                                          method='linear', 
-                                                          extrap=TRUE) ))
-  
+  indic <- 2:(nfreq-1)
+  if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
+  ##
   pltpsd <- function(...){
     Xpg <- spec.pgram(X, log="no", pad=1, taper=0, detrend=F, demean=F, plot=F)
     opar <- par(no.readonly = TRUE)
@@ -262,7 +259,7 @@ psdcore.default <- function(X.d,
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NULL, 
-                  df = mtap-1, # must be a scalar for plot.spec to give conf ints:
+                  df = 2*mtap, #mtap-1, # must be a scalar for plot.spec to give conf ints:
                   # Percival and Walden eqn (370b)
                   numfreq = nfreq,
                   bandwidth = bandwidth, 

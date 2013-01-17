@@ -13,16 +13,29 @@
   \item{max_taper}{Set all values greater than this to
   this.}
 
-  \item{setspan}{logical; should the returned opject be
-  passed through \code{\link{minspan}}?}
+  \item{setspan}{logical; should the taper object be passed
+  through \code{\link{minspan}} before it is return?}
 }
 \description{
+  In a tapered spectrum estimation algorithm, it is
+  necessary to enforce rules on the number of tapers that
+  may be applied.  For example, we cannot apply zero tapers
+  (the result would be a raw periodogram) or one million
+  tapers (that would be absurd).
+}
+\details{
+  Formal requirements enforced by this function are:
+  \itemize{ \item Non-zero. \item Integer values. \item
+  Fewer than the half-length of the spectrum. }
+
   An object with S3 class 'taper' is created; this will
   have a minimum number of tapers in each position set by
   \code{min_taper}, and a maximum number of tapers in each
-  position set by \code{max_taper}.
-}
-\details{
+  position set by \code{max_taper}. If \code{minspan=TRUE},
+  the bounded taper is fed through \code{\link{minspan}}
+  which will restrict the maximum tapers to less than or
+  equal to the half-length of the spectrum.
+
   Various classes can be coerced into a 'taper' object;
   those tested sofar include: scalar, vector, matrix,
   data.frame, and list.

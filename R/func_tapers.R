@@ -1,11 +1,27 @@
 #' Coerce an object into a 'taper' object.
 #'
+#' In a tapered spectrum estimation algorithm, it is
+#' necessary to enforce rules on the number of tapers
+#' that may be applied.  For example, we cannot apply
+#' zero tapers (the result would be a raw periodogram)
+#' or one million tapers (that would be absurd).
+#'
+#' Formal requirements enforced by this function are:
+#' \itemize{
+#' \item Non-zero.
+#' \item Integer values.
+#' \item Fewer than the half-length of the spectrum.
+#' }
+#' 
 #' An object with S3 class 'taper' is created;
 #' this will have
 #' a minimum number of tapers in each position
 #' set by \code{min_taper}, and
 #' a maximum number of tapers in each position
 #' set by \code{max_taper}.
+#' If \code{minspan=TRUE}, the bounded taper is fed through \code{\link{minspan}}
+#' which will restrict the maximum tapers to less than or equal to
+#' the half-length of the spectrum.
 #'
 #' Various classes can be coerced into a 'taper' object; those
 #' tested sofar include: scalar, vector, matrix, data.frame, 
@@ -24,7 +40,7 @@
 #' @param x An object to set
 #' @param min_taper Set all values less than this to this.
 #' @param max_taper Set all values greater than this to this.
-#' @param setspan logical; should the returned opject be passed through \code{\link{minspan}}?
+#' @param setspan logical; should the taper object be passed through \code{\link{minspan}} before it is return?
 #' @export
 #' @author Andrew Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.taper}}
@@ -155,6 +171,40 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
   graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
   vl <- c(1, nt)
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
+}
+
+
+uncertainty <- function(tapvec, Nyquist=1, n.freq=NULL) UseMethod("uncertainty")
+#' @rdname taper-methods
+#' @name uncertainty
+#' @S3method uncertainty taper
+uncertainty.taper <- function(tapvec, f.samp=1, n.freq=NULL){
+  stopifnot(is.taper(tapvec))
+  K <- unclass(tapvec)
+  Nyquist <- f.samp/2
+  if (is.null(n.freq)) n.freq <- length(tapvec)
+  ## Resolution
+  Resolu <- K * Nyquist / n.freq
+  ## Uncertainty
+  StdErr <- 1 / sqrt(K / 1.2)
+  Var <- 10 / K / 12
+  ## Deg Freedom
+  Dof <- 2 * K
+  ## Bandwidth
+  # Walden et al
+  # half-width W = (K + 1)/{2(N + 1)}
+  # effective bandwidth ~ 2 W (accurate for many spectral windows)
+  BW <- K/n.freq
+  return(list(stderr=StdErr, resolution=Resolu, dof=Dof, bandwidth=BW))
+}
+
+#' @rdname taper-methods
+#' @name resolution
+#' @S3method resolution taper
+resolution.taper <- function(tapvec){
+  stopifnot(is.taper(tapvec))
+  if (is.null(n.freq)) n.freq <- length(tapvec)
+  Uncert <- x * Nyquist / n.freq
 }
 
 ###
@@ -387,7 +437,7 @@ constrain_tapers.taper <- function(tapvec, tapseq=NULL,
     if (verbose) warning("no taper optimization constraints applied")
     tapvec.adj <- tapvec
   } else {
-    if (verbose) message(sprintf("Constraining tapers with ** %s ** method",cmeth))
+    if (verbose) message(sprintf("Constraining tapers with  ...  %s  ...  method",cmeth))
     CTAPFUN <- switch(cmeth,
                       "simple.slope"=ctap_simple,
                       "markov.chain"=ctap_markov,

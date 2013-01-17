@@ -15,7 +15,7 @@
 #' @param ... optional arguments (unused)
 #' @return Object with class 'spec'.
 #' 
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TRUE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @S3method pspectrum default
 pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TRUE, ...){

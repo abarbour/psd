@@ -6,9 +6,9 @@ Date: 2013-01-15
 Author: Robert L Parker and Andrew J Barbour
 Maintainer: Andrew J Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
-    are produced through an adaptive method that iteratively
-    refines the optimal number of sine-tapers applied at each
-    frequency.  The taper optimization is based on the
+    are produced through iterative refinement of the
+    optimal number of sine-tapers at each frequency.
+    The optimization procedure is based on the
     method of Riedel and Sidorenko (1995), which applies
     smoothing that varies with frequency to minimize the sum
     of variance and bias at each point.

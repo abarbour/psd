@@ -4,23 +4,24 @@
 \alias{riedsid.spec}
 \title{riedsid}
 \usage{
-  riedsid(spec, ntaper, tapseq = NULL, c.method = NULL,
-    ...)
+  riedsid(psd, ntaper, tapseq = NULL, c.method = NULL, ...)
 
-  riedsid.spec(Pspec, ...)
+  riedsid.spec(pspec, ...)
 
-  riedsid.default(spec, ntaper, tapseq = NULL,
+  riedsid.default(psd, ntaper, tapseq = NULL,
     c.method = NULL, ...)
 }
 \arguments{
-  \item{spec}{vector; the spectral values used to optimize
+  \item{psd}{vector; the spectral values used to optimize
   taper numbers}
+
+  \item{pspec}{object with class 'spec'}
 
   \item{ntaper}{scalar or vector; number of tapers to apply
   optimization}
 
   \item{tapseq}{vector; representing positions or
-  frequencies (same length as spec)}
+  frequencies (same length as psd)}
 
   \item{c.method}{string; constraint method to use}
 
@@ -32,7 +33,7 @@
 }
 \details{
   Estimates optimal number of tapers at each frequency of
-  given spec, based on Riedel-Sidorenko MSE recipe, and
+  given psd, based on Riedel-Sidorenko MSE recipe, and
   other tweaks by RLP.
 }
 \examples{
