@@ -1,5 +1,6 @@
 \docType{methods}
 \name{rlpSpec-environment}
+\alias{new_adapt_history}
 \alias{rlpSpec-environment}
 \alias{rlp_envAssign}
 \alias{rlp_envAssignGet}
@@ -7,6 +8,7 @@
 \alias{rlp_envList}
 \alias{rlp_envStatus}
 \alias{rlp_initEnv}
+\alias{update_adapt_history}
 \title{Various environment manipulation functions.}
 \usage{
   rlp_initEnv(envir = .rlpenv, refresh = FALSE,
@@ -37,6 +39,10 @@
 
   rlp_envAssignGet.default(variable, value,
     envir = .rlpenv)
+
+  new_adapt_history(adapt_stages)
+
+  update_adapt_history(stage, ntap, psd, freq = NULL)
 }
 \arguments{
   \item{envir}{character string for the environment used.
@@ -58,6 +64,18 @@
 
   \item{...}{For \code{rlp_initEnv}: arguments passed to
   \code{new.env}}
+
+  \item{adapt_stages}{scalar; The number of adaptive
+  iterations to save (excluding pilot spectrum).}
+
+  \item{stage}{scalar; the current stage of the adaptive
+  estimation procedure}
+
+  \item{ntap}{vector; the tapers}
+
+  \item{psd}{vector; the power spectral densities}
+
+  \item{freq}{vector; the frequencies}
 }
 \value{
   \code{rlp_initEnv} returns (invisibly) the result of
@@ -90,6 +108,12 @@
   \code{variable}, but does not return it.
 
   \code{rlp_envAssignGet} both assigns and returns a value.
+
+  \code{new_adapt_history} initializes a nested-list object
+  to store the data from each iteration.
+
+  \code{update_adapt_history} Updates the adaptive
+  estimation history list.
 }
 \note{
   \code{rlp_initEnv} will not re-initialize the enviroment,
@@ -123,6 +147,16 @@
   performed at the same time.  This ensures the assignment
   has succeeded, and the returned value is not from the
   \code{.GlobalEnv} or any other environment.
+}
+
+\section{History}{
+  The list object for historical is stored as
+  \code{'histlist'}; at any point it may be accessed with
+  \code{\link{rlp_envGet("histlist")}}. The top names are
+  \itemize{ \item stg_kopt.  Sequential taper vectors.
+  \item stg_psd.  Sequential power spectral density
+  vectors. \item freq. The frequencies for each set of
+  \code{stg_kopt} and \code{stg_psd}. }
 }
 \seealso{
   \code{\link{rlpSpec-utilities}},

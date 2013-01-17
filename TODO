@@ -6,6 +6,7 @@
 
 `pspectrum`
 -----------
+[ ] add option to change constraint method for riedsid
 [ ] decimation (and in `psdcore`)
 
 

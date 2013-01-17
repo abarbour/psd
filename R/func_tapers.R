@@ -55,7 +55,7 @@ as.taper <- function(x, min_taper=1, max_taper=max(x), setspan=FALSE){
 ###  Generic methods
 ###
 
-#' @title Generic methods for 'taper' objects.
+#' @title Generic methods for objects with class 'taper'.
 #' @keywords methods S3methods taper
 #' @name taper-methods
 #' @author Andrew Barbour <andy.barbour@@gmail.com>

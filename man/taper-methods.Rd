@@ -6,7 +6,7 @@
 \alias{summary}
 \alias{taper}
 \alias{taper-methods}
-\title{Generic methods for 'taper' objects.}
+\title{Generic methods for objects with class 'taper'.}
 \usage{
   print.taper(x)
 
@@ -22,7 +22,7 @@
     ylim = NULL, ...)
 }
 \description{
-  Generic methods for 'taper' objects.
+  Generic methods for objects with class 'taper'.
 }
 \examples{
 ##

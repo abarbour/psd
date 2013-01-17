@@ -148,3 +148,43 @@ rlp_envAssignGet.default <- function(variable, value, envir=.rlpenv){
   rlp_envGet(variable, envir=envir)
 }
 
+#' @description \code{new_adapt_history} initializes a nested-list object to store the 
+#' data from each iteration.
+#' @rdname rlpSpec-environment
+#'
+#' @section History:
+#'The list object for historical is stored as \code{'histlist'}; at any point 
+#' it may be accessed with \code{\link{rlp_envGet("histlist")}}.
+#' The top names are
+#' \itemize{
+#' \item stg_kopt.  Sequential taper vectors.
+#' \item stg_psd.  Sequential power spectral density vectors.
+#' \item freq. The frequencies for each set of \code{stg_kopt} and \code{stg_psd}.
+#' }
+#' @param adapt_stages scalar; The number of adaptive iterations to save (excluding pilot spectrum).
+new_adapt_history <- function(adapt_stages){
+  stopifnot(length(adapt_stages)==1)
+  histlist <- vector("list", 3) # freq, list-tap, list-psd
+  names(histlist) <- c("freq", "stg_kopt", "stg_psd")
+  num_pos <- 1 + adapt_stages # pilot + adapts
+  histlist[[2]] <- histlist[[3]] <- vector("list", adapt_stages+1)
+  rlp_envAssignGet("histlist", histlist)
+}
+
+#' @description \code{update_adapt_history} Updates the adaptive estimation history list.
+#' @rdname rlpSpec-environment
+#' @param stage scalar; the current stage of the adaptive estimation procedure
+#' @param ntap vector; the tapers
+#' @param psd vector; the power spectral densities
+#' @param freq vector; the frequencies
+update_adapt_history <- function(stage, ntap, psd, freq=NULL){
+  histlist <- rlp_envGet("histlist")
+  # stage==0 <--> index==1
+  stg_ind <- stage+1
+  nulfrq <- is.null(freq)
+  if (!nulfrq) histlist$freq <- freq
+  histlist$stg_kopt[[stg_ind]] <- ntap
+  histlist$stg_psd[[stg_ind]] <- psd
+  if (is.null(histlist$freq) & stage>0) warning("freqs absent despite non-pilot stage update")
+  rlp_envAssignGet("histlist",histlist)
+}

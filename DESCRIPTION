@@ -31,10 +31,11 @@ Suggests:
     sfsmisc (>= 1.0-23),
 Collate:
     'rlpSpec-package.R'
+    'func_pspectrum.R'
+    'func_riedsid.R'
     'func_psdcore.R'
+    'func_tapers.R'
+    'func_whiten.R'
     'func_envir.R'
     'func_utils.R'
-    'func_tapers.R'
-    'func_riedsid.R'
-    'func_whiten.R'
     'zzz.R'
