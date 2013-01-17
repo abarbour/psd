@@ -1,5 +1,6 @@
 `riedsid`
 ---------
+[ ] improve documentation
 [ ] remove loop !!!
 [ ] riedsid.spec method
 
@@ -12,4 +13,4 @@ Miscellany
 ----------
 [ ] replace variables names 'spec' with something less obviously-prone to
 collision
-[ ] scripts to plot the `histlist`
+[ ] scripts (or demo/vignette?) to plot the `histlist`

@@ -14,6 +14,7 @@
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot
 #' @export
+#' @author Andrew Barbour <andy.barbour@@gmail.com> based on R.L. Parker's algorithm.
 #' @seealso \code{\link{psdcore}}
 #'
 #' @param x vetor; the data series to find a pilot spectrum for

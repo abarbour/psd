@@ -1,20 +1,21 @@
-#' Multitaper power spectral density of a series
+#' Multitaper power spectral density of a series.
 #'
-#' Compute a power spectral denisty (PSD) estimate 
+#' Compute a power spectral density (PSD) estimate 
 #' for the input series using sine multitapers.
 #'  
 #' The parameter \code{ntaper} specifies the number of sine tapers to be used 
 #' at each frequency: if it's a scalar, the same number of tapers will be used
-#' at every frequency; otherwise, use ntaper(j) sine tapers at frequency(j).
+#' at every frequency; otherwise, use \code{ntaper(j)} sine tapers at \code{frequency(j)}.
 #'
-#' The series length N is truncated, if necessary, so that 1+N/2 evenly spaced
+#' The series length \code{N} is truncated, if necessary, so that \code{1+N/2} evenly spaced
 #' frequencies are returned. 
 #'
-#' The parameter \code{ndecimate} specifies the number of psds actually 
+#' The parameter \code{ndecimate} determines the PSDs actually 
 #' computed, defined as \code{(1+n/2)/ndecimate}; other
 #' values are found via linear interpolation.
 #'
-#' @note Decimation is not well tested as of this point (December 2012).
+#' @section Warning:
+#' Decimation is not well tested as of this point.
 #'
 #' @param X.d  the series to estimate a spectrum for 
 #' @param X.frq  scalar; the sampling frequency (e.g. Hz)
@@ -30,7 +31,6 @@
 #' @param force_calc  logical; force spectrum (used for development purposes)
 #' @param ...  (unused); parameters passed to [ NULL ]
 #'
-#' @import signal
 #' @name psdcore
 #' @export
 #' @keywords spectrum-estimation normalization prewhiten

@@ -1,7 +1,7 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.default}
-\title{Multitaper power spectral density of a series}
+\title{Multitaper power spectral density of a series.}
 \usage{
   psdcore(X.d, X.frq = 1, ntaper = as.taper(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
@@ -50,27 +50,25 @@
   \item{...}{(unused); parameters passed to [ NULL ]}
 }
 \description{
-  Compute a power spectral denisty (PSD) estimate for the
+  Compute a power spectral density (PSD) estimate for the
   input series using sine multitapers.
 }
 \details{
   The parameter \code{ntaper} specifies the number of sine
   tapers to be used at each frequency: if it's a scalar,
   the same number of tapers will be used at every
-  frequency; otherwise, use ntaper(j) sine tapers at
-  frequency(j).
+  frequency; otherwise, use \code{ntaper(j)} sine tapers at
+  \code{frequency(j)}.
 
-  The series length N is truncated, if necessary, so that
-  1+N/2 evenly spaced frequencies are returned.
+  The series length \code{N} is truncated, if necessary, so
+  that \code{1+N/2} evenly spaced frequencies are returned.
 
-  The parameter \code{ndecimate} specifies the number of
-  psds actually computed, defined as
-  \code{(1+n/2)/ndecimate}; other values are found via
-  linear interpolation.
+  The parameter \code{ndecimate} determines the PSDs
+  actually computed, defined as \code{(1+n/2)/ndecimate};
+  other values are found via linear interpolation.
 }
-\note{
-  Decimation is not well tested as of this point (December
-  2012).
+\section{Warning}{
+  Decimation is not well tested as of this point.
 }
 \examples{
 X.d <- rnorm(1e3)

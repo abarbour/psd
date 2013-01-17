@@ -25,9 +25,7 @@
 #' 
 #' @author Andrew Barbour <andy.barbour@@gmail.com> 
 #' 
-#' @import matrixStats
-#' @import RColorBrewer
-#' @import signal
+#' @import Peaks RColorBrewer signal zoo
 #' @useDynLib rlpSpec
 #' 
 #' @references Riedel, K. S., & Sidorenko, A. (1995), 

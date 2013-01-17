@@ -27,7 +27,7 @@
   for}
 }
 \value{
-  a list with taper indices, and weighting parameters
+  a list with taper indices, and the weights \eqn{W_N}.
 }
 \description{
   Calculate weighting factors for 'taper' object.
@@ -35,8 +35,8 @@
 \details{
   Weighting is calculated as follows:
 
-  \deqn{n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T \cdot (n_T
-  - 1/4) \cdot (n_T + 1)}}
+  \deqn{W_N = n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T
+  \cdot (n_T - 1/4) \cdot (n_T + 1)}}
 
   where \eqn{n_T} is the total number of tapers, and
   \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]}

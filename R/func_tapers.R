@@ -108,7 +108,6 @@ print.summary.taper <- function(x){
 #' @S3method lines taper
 lines.taper <- function(x, lwd=1.8, col="red", ...){
   stopifnot(is.taper(x))
-  require(graphics, grDevices, RColorBrewer)
   nt <- length(x)
   xi <- 1:nt
   #mx <- max(x)
@@ -120,7 +119,6 @@ lines.taper <- function(x, lwd=1.8, col="red", ...){
 #' @S3method points taper
 points.taper <- function(x, pch="_", cex=1, ...){
   stopifnot(is.taper(x))
-  require(graphics, grDevices, RColorBrewer)
   nt <- length(x)
   xi <- 1:nt
   #mx <- max(x)
@@ -133,7 +131,7 @@ points.taper <- function(x, pch="_", cex=1, ...){
 plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
   stopifnot(is.taper(x))
   #if isS4(x) x <- x@tapers
-  require(graphics, grDevices, RColorBrewer)
+  require(RColorBrewer)
   nt <- length(x)
   xi <- 1:nt
   mx <- max(x)
@@ -167,7 +165,7 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #'
 #' Weighting is calculated as follows:
 #'
-#' \deqn{n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T \cdot (n_T - 1/4) \cdot (n_T + 1)}}
+#' \deqn{W_N = n_T^2 - \frac{3 \cdot K_N^2}{2 \cdot n_T \cdot (n_T - 1/4) \cdot (n_T + 1)}}
 #'
 #' where \eqn{n_T} is the total number of tapers, and 
 #' \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]} 
@@ -183,7 +181,7 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to find weights
-#' @return a list with taper indices, and weighting parameters
+#' @return a list with taper indices, and the weights \eqn{W_N}.
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
 
 #' @rdname parabolic_weights

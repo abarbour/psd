@@ -1,6 +1,6 @@
 Package: rlpSpec
 Type: Package
-Title: Adaptive multitaper spectrum estimation.
+Title: Adaptive sine-multitaper spectrum estimation.
 Version: 0.1-0
 Date: 2013-01-15
 Author: Robert L Parker and Andrew J Barbour
@@ -21,13 +21,13 @@ Depends:
     graphics,
     grDevices
 Imports:
+    Peaks (>= 0.2),
     RColorBrewer (>= 1.0-5),
     signal (>= 0.7-2),
     zoo (>= 1.7-9)
 Suggests:
     ggplot2 (>= 0.9.3),
     multitaper (>= 1.0-2),
-    Peaks (>= 0.2),
     sfsmisc (>= 1.0-23),
 Collate:
     'rlpSpec-package.R'
