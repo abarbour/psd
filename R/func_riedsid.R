@@ -1,26 +1,30 @@
-#' Riedel & Sidorenko taper optimization
+#' Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.
 #' 
-#' Estimates optimal number of tapers at each frequency of
-#' given psd, based on Riedel-Sidorenko MSE recipe, and other
-#' tweaks by RLP.
+#' Estimates the
+#' optimal number of tapers at each frequency of
+#' given PSD; the optimal value chosen is based on the
+#' Riedel-Sidorenko MSE recipe, and modified by R.L. Parker.
 #' 
-#' @title riedsid
+#' First, weighted derivatives of the input PSD are computed.
+#' Using those derivates the optimal number of tapers is found through the RS-RLP formulation.
+#' The default state returns constrained optimal-tapers using
+#' \code{\link{constrain_tapers}}, but this can be turned off with \code{constrained=FALSE}.
+#'
 #' @export
 #' @keywords taper taper-constraints riedel-sidorenko
-#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
+#' @author A.J. Barbour <andy.barbour@@gmail.com> ported original by R.L. Parker.
 #' 
 #' @param psd vector; the spectral values used to optimize taper numbers
 #' @param pspec object with class 'spec'
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as psd)
-#' @param c.method string; constraint method to use
+#' @param constrained logical; should the taper constraints be applied to the optimum tapers?
+#' @param c.method string; constraint method to use if \code{constrained=TRUE}
 #' @param ... optional argments passed to \code{constrain_tapers}
 #' 
-#' @seealso \code{\link{psdcore}}, \code{\link{constrain_tapers}}
-#' @examples
-#' riedsid(rnorm(10), 10)
-#' riedsid(rnorm(10), c(1:5,5:1))
-riedsid <- function(psd, ntaper, tapseq=NULL, c.method=NULL, ...) UseMethod("riedsid")
+#' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}
+#' @example examp/ried.R
+riedsid <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
 #' @S3method riedsid spec
@@ -33,7 +37,7 @@ riedsid.spec <- function(pspec, ...){
 
 #' @rdname riedsid
 #' @S3method riedsid default
-riedsid.default <- function(psd, ntaper, tapseq=NULL, c.method=NULL, ...) {
+riedsid.default <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) {
   ## spectral values
   psd <- as.vector(psd)
   # num freqs
@@ -72,12 +76,12 @@ riedsid.default <- function(psd, ntaper, tapseq=NULL, c.method=NULL, ...) {
   #
   # Smooth spectral derivatives
   #
-  for (  j  in  1:nf ) {
-    j1 <- j - nspan[j] + nadd - 1
-    j2 <- j + nspan[j] + nadd - 1
-    #  Over an interval proportional to taper length, fit a least
-    #  squares quadratic to Y to estimate smoothed 1st, 2nd derivs
-    jr <- j1:j2           # rowvec
+  DFUN <- function(j, 
+                   j1=j-nspan[j]+nadd-1, 
+                   j2=j+nspan[j]+nadd-1, 
+                   jr=j1:j2, 
+                   logY=lY[jr], 
+                   dEps=eps){
     u <- jr - (j1 + j2)/2 # rowvec 
     u2 <- u*u             # rowvec
     L <- j2-j1+1          # constant
@@ -86,23 +90,55 @@ riedsid.default <- function(psd, ntaper, tapseq=NULL, c.method=NULL, ...) {
     LL2L <- LL2 - L       # constant
     uzero <- (L2 - 1)/12  # constant
     # first deriv
-    dY[j] <- u %*% lY[jr] * 12 / LL2L
-    # second deriv (?)
-    d2Y[j] <- (u2 - uzero) %*% lY[jr] * 360 / LL2L / (L2-4)
+    dY <- u %*% logY * 12 / LL2L
+    # second deriv
+    d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2-4)
+    return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))
   }
+  DX <- 1:nf
+  RStmp <- rlp_envAssignGet("spectral_derivatives", vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1)))
+  #[1,] fdY2
+  #[2,] fd2Y
+  #[3,] fdEps
+  kopt <- as.taper( 3.437544 / abs(colSums(RStmp)) ** 0.4 )
+  rm(RStmp)
+  
   #
-  #  R <- psd"/psd <- Y" + (Y')^2  2nd form preferred for consistent smoothing
-  #
-  #  Riedel-Sidorenko recipe (eq 13): 
-  #       kopt <- (12*abs(psd ./ d2psd)).^0.4 
-  #  but parabolic weighting in psdcore requires: 
-  #               (480)^0.2*abs(psd ./ d2psd).^0.4
-  #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
-  #
-  # the optimal number of tapers (in an MSE sense):
-  kopt <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 )
-  kopt.bound <- constrain_tapers(kopt, kseq, c.method, ...)
+  #   for (  j  in  1:nf ) {
+  #     j1 <- j - nspan[j] + nadd - 1
+  #     j2 <- j + nspan[j] + nadd - 1
+  #     #  Over an interval proportional to taper length, fit a least
+  #     #  squares quadratic to Y to estimate smoothed 1st, 2nd derivs
+  #     jr <- j1:j2           # rowvec
+  #     u <- jr - (j1 + j2)/2 # rowvec 
+  #     u2 <- u*u             # rowvec
+  #     L <- j2-j1+1          # constant
+  #     L2 <- L*L             # constant
+  #     LL2 <- L*L2           # constant
+  #     LL2L <- LL2 - L       # constant
+  #     uzero <- (L2 - 1)/12  # constant
+  #     # first deriv
+  #     dY[j] <- u %*% lY[jr] * 12 / LL2L
+  #     # second deriv (?)
+  #     d2Y[j] <- (u2 - uzero) %*% lY[jr] * 360 / LL2L / (L2-4)
+  #   }
+  #   #
+  #   #  R <- psd"/psd <- Y" + (Y')^2  2nd form preferred for consistent smoothing
+  #   #
+  #   #  Riedel-Sidorenko recipe (eq 13): 
+  #   #       kopt <- (12*abs(psd ./ d2psd)).^0.4 
+  #   #  but parabolic weighting in psdcore requires: 
+  #   #               (480)^0.2*abs(psd ./ d2psd).^0.4
+  #   #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
+  #   #
+  #   # the optimal number of tapers (in an MSE sense):
+  #   kopt_old <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 )
+  #   #
+  #print(all.equal(kopt_old,kopt)) # TRUE!
   ##
-  return(kopt.bound)
+  ## Constrain tapers
+  if (constrained) kopt <- constrain_tapers(kopt, kseq, c.method, ...)
+  ##
+  return(kopt)
 } 
 # end riedsid.default

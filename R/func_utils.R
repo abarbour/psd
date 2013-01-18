@@ -155,22 +155,7 @@ is.taper <- function(Obj) inherits(Obj, "taper")
 #' @export
 #' @keywords utilities spline-gradient numerical-derivative
 #' @seealso \code{\link{smooth.spline}}
-#' @examples
-#' ##
-#' ## Spline gradient
-#' require(stats)
-#' x <- seq(0,5*pi,by=pi/64)
-#' y <- cos(x) #**2
-#' splineGrad(x, y, TRUE)
-#' y <- y + rnorm(length(y), sd=.1)
-#' # unfortunately, the presence of
-#' # noise will affect numerical derivatives
-#' splineGrad(x, y, TRUE)
-#' # so change the smoothing used in smooth.spline
-#' splineGrad(x, y, TRUE, spar=0.2)
-#' splineGrad(x, y, TRUE, spar=0.6)
-#' splineGrad(x, y, TRUE, spar=1.0)
-#' ##
+#' @example examp/splinegrad.R
 splineGrad <- function(dseq, dsig, plot.derivs=FALSE, ...) UseMethod("splineGrad")
 #' @rdname splineGrad
 #' @name splineGrad
@@ -346,20 +331,7 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow
 #' @rdname rlpSpec-utilities
 #' @aliases modulo
 #' @seealso \code{\link{Arith}}
-#' @examples
-#' ##
-#' ## modulo division
-#' x<-1:10
-#' mc1a <- mod(1,2)
-#' mc2a <- mod(1+x,2)
-#' mc1b <- 1 %% 2
-#' mc2b <- 1 + x %% 2
-#' mc2c <- (1 + x) %% 2
-#' all.equal(mc1a, mc1b) # TRUE
-#' all.equal(mc2a, mc2b) # "Mean absolute difference: 2"
-#' all.equal(mc2a, mc2c) # TRUE
-#' ##
-#' ##
+#' @example examp/mod.R
 mod <- function(X, Y) UseMethod("mod")
 #' @rdname rlpSpec-utilities
 #' @name mod

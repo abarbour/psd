@@ -32,8 +32,8 @@ Suggests:
 Collate:
     'rlpSpec-package.R'
     'func_pspectrum.R'
-    'func_riedsid.R'
     'func_psdcore.R'
+    'func_riedsid.R'
     'func_tapers.R'
     'func_whiten.R'
     'func_envir.R'

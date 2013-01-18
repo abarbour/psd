@@ -1,17 +1,21 @@
+`spectral_properties`
+---------------------
+[ ] formulas for various quantities
+
 `riedsid`
 ---------
-[ ] improve documentation
-[ ] remove loop !!!
 [ ] riedsid.spec method
 
 `pspectrum`
 -----------
+[ ] example
+[ ] improve function documentation
 [ ] add option to change constraint method for riedsid
 [ ] decimation (and in `psdcore`)
 
 
 Miscellany
 ----------
-[ ] replace variables names 'spec' with something less obviously-prone to
-collision
+[ ] migrate examples in functions to ./examp/
 [ ] scripts (or demo/vignette?) to plot the `histlist`
+[ ] remove references to src/ctap_simple.c and test build

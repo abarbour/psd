@@ -45,7 +45,7 @@
   spectral-leakage suppression properties of the Thomson
   prolate tapers, so that in spectra with large dynamic
   range, power bleeds from the strong peaks into
-  neighboring frequency bands of low amplitude − spectral
+  neighboring frequency bands of low amplitude -- spectral
   leakage. Prewhitening can ameliorate the problem, at
   least for red spectra [see Chapter 9, Percival and Walden
   (1993)].

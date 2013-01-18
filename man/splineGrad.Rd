@@ -41,8 +41,11 @@
   the original series? Apparently, there is no difference.
 }
 \examples{
+#' \\dontrun{
 ##
 ## Spline gradient
+##
+set.seed(1234)
 require(stats)
 x <- seq(0,5*pi,by=pi/64)
 y <- cos(x) #**2
@@ -56,6 +59,7 @@ splineGrad(x, y, TRUE, spar=0.2)
 splineGrad(x, y, TRUE, spar=0.6)
 splineGrad(x, y, TRUE, spar=1.0)
 ##
+#' }
 }
 \seealso{
   \code{\link{smooth.spline}}

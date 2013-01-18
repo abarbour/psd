@@ -1,6 +1,6 @@
 #' Adaptive sine multitaper power spectral density estimation.
 #' 
-#'
+#' xxx
 #'
 #' @name pspectrum
 #' @export
@@ -14,7 +14,6 @@
 #' @param verbose logical; Should messages be given?
 #' @param ... optional arguments (unused)
 #' @return Object with class 'spec'.
-#' 
 pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @S3method pspectrum default
@@ -80,7 +79,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TR
 #' @param ntap scalar; the number of tapers to apply during spectum estimation
 #' @param ... additional parameters
 #' @return An object with class 'spec'
-#'
 pilot_spec <- function(...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @S3method pilot_spec default
