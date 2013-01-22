@@ -58,15 +58,7 @@
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.taper}}
-#' @examples
-#' is.taper(as.taper(1))
-#' is.taper(as.taper(1:10))
-#' is.taper(as.taper(matrix(1:10,ncol=1)))
-#' as.taper(list(x=1:10,y=1:30)) # note dimensions
-#' as.taper(x<-data.frame(x=1:10,y=10:19))
-#' as.taper(x, min_taper=3, max_taper=10)
-#' # class 'character' is in-coercible; raise error
-#' as.taper(c("a","b"))
+#' @example x_examp/taper.R
 as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   # taper should be non-zero integer, since it represents the
   # number of tapered sections to average; hence, floor.
@@ -93,8 +85,11 @@ as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @aliases taper
 #' @rdname taper-methods
-#" @docType package
+# @docType package
+#' @import RColorBrewer
+#'
 #' @seealso \code{\link{as.taper}}, \code{\link{constrain_tapers}}
+#' @param ... optional arguments
 #' @examples
 #' ##
 #' tap <- as.taper(c(1:49,50:0)+rnorm(1e2))
@@ -109,7 +104,7 @@ NULL
 #' @rdname taper-methods
 #' @name print
 #' @S3method print taper
-print.taper <- function(x){
+print.taper <- function(x, ...){
   stopifnot(is.taper(x))
   xh <- paste(as.character(head(x)), collapse=" ")
   xt <- paste(as.character(tail(x)), collapse=" ")
@@ -119,9 +114,9 @@ print.taper <- function(x){
 #' @rdname taper-methods
 #' @name summary
 #' @S3method summary taper
-summary.taper <- function(x){
-  stopifnot(is.taper(x))
-  toret <- summary.default(x)
+summary.taper <- function(object, ...){
+  stopifnot(is.taper(object))
+  toret <- summary.default(object)
   class(toret) <- "summary.taper"
   return(toret)
 }
@@ -130,7 +125,7 @@ summary.taper <- function(x){
 #' @name print
 # @aliases print.summary.taper
 #' @S3method print summary.taper
-print.summary.taper <- function(x){
+print.summary.taper <- function(x, ...){
   cat("summary of tapers:\n")
   print(summary(x))
 }
@@ -232,7 +227,7 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #' 
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @name spectral_properties
-#' @param x object with class taper
+#' @param tapvec object with class taper
 #' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
 #' @param n.freq scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the taper object is assumed to be the number)
 #' @param ... additional arguments (unused)
@@ -246,13 +241,13 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #' }
 #' @export
 #' @keywords properties taper resolution uncertainty degrees-of-freedom bandwidth
-spectral_properties <- function(x, f.samp=1, n.freq=NULL, ...) UseMethod("spectral_properties")
+spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, ...) UseMethod("spectral_properties")
 #' @rdname spectral_properties
 #' @S3method spectral_properties spec
-spectral_properties.spec <- function(...) .NotYetImplemented()
+spectral_properties.spec <- function(tapvec, f.samp=1, n.freq=NULL, ...) .NotYetImplemented()
 #' @rdname spectral_properties
 #' @S3method spectral_properties taper
-spectral_properties.taper <- function(x, f.samp=1, n.freq=NULL, ...){
+spectral_properties.taper <- function(tapvec, f.samp=1, n.freq=NULL, ...){
   stopifnot(is.taper(tapvec))
   K <- unclass(tapvec)
   Nyquist <- f.samp/2
@@ -295,6 +290,7 @@ spectral_properties.taper <- function(x, f.samp=1, n.freq=NULL, ...){
 #'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to find weights
+#' @param ntap integer; the number of tapers to provide weightings for.
 #' @return A list with taper indices, and the weights \eqn{W_N}.
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
 
@@ -306,9 +302,7 @@ parabolic_weights.taper <- function(tapvec, tap.index=1L){
   return(kWeights)
 }
 
-#' @param ntap integer; the number of tapers to provide weightings for
 #' @rdname parabolic_weights
-#' @param ntap integer; the number of tapers to calculate for
 #' @export
 #' @keywords taper taper-weighting
 parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
@@ -454,6 +448,7 @@ minspan.taper <- function(tapvec, ...){
 #' @title constrain_tapers
 #' @aliases constrain_tapers
 #' @export
+#' @import Peaks
 #' @keywords taper taper-constraints
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
@@ -541,17 +536,17 @@ ctap_simple.taper <- function(tapvec, tapseq=NA, maxslope=1, ...){
   maxslope <- as.numeric(maxslope)
   # c-code used for speed up of forward+backward operations
   # until it's packaged, need to dynamic load:
-  owd <- getwd()
+  #owd <- getwd()
   #src <- "/Users/abarbour/nute.processing/development/rlpSpec/src"
   #src <- "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/src"
-  src <- "/Users/abarbour-l/rojo.processing/R/dev/rlpSpec/src"
-  setwd(src)
-  system("rm ctap_simple.*o")
-  system("R CMD SHLIB ctap_simple.c")
-  dyn.load("ctap_simple.so")
-  setwd(owd)
-  tapvec.adj <- as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope))
-  ##as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
+  #src <- "/Users/abarbour-l/rojo.processing/R/dev/rlpSpec/src"
+  #setwd(src)
+  #system("rm ctap_simple.*o")
+  #system("R CMD SHLIB ctap_simple.c")
+  #dyn.load("ctap_simple.so")
+  #setwd(owd)
+  #tapvec.adj <- as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope))
+  tapvec.adj <- as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
   return(tapvec.adj)
 }
 

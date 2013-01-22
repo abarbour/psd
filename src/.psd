@@ -1,2 +1,0 @@
-wget http://igppweb.ucsd.edu/~parker/Software/Source/psd.f
-mv psd.f .psd.f

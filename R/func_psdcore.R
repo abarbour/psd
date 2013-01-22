@@ -28,7 +28,6 @@
 #' @param Nyquist.normalize  logical; should the units be returned in Hz, rather than Nyquist?
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
 #' @param as.spec  logical; should the object returned be of class 'spec'
-# @param force_calc  logical; force spectrum (used for development purposes)
 #' @param ...  (unused) Optional parameters
 #'
 #' @name psdcore
@@ -37,21 +36,7 @@
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
-#' @examples
-#' X.d <- rnorm(1e3)
-#' plot(psdcore(X.d, ntaper=10), log="dB", ylim=10*c(-1,1))
-#' psd.n <- psdcore(X.d, ntaper=10, Nyquist.normalize=FALSE)
-#' lines(psd.n$freq, 10*log10(psd.n$spec), col="red") # note normalization
-#' abline(h=c(0, 3), col=c("black","red"), lwd=2)
-#'
-#' # 10Hz sampling
-#' plot(psdcore(X.d, X.frq=10, ntaper=10), log="dB", ylim=10*c(-0.3,1.7))
-#' psd.n <- psdcore(X.d, X.frq=10, ntaper=10, Nyquist.normalize=FALSE)
-#' lines(10*psd.n$freq, 10*log10(psd.n$spec), col="red") # note normalization
-#' abline(h=c(10, 3), col=c("black","red"), lwd=2)
-#' 
-#' # if ntaper is a vector:
-#' psdcore(X.d, ntaper=rep(10,length(X.d))
+# @example x_examp/psdcore.R
 psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @S3method psdcore default
@@ -78,7 +63,7 @@ psdcore.default <- function(X.d,
   ###  When ntaper is a scalar, initialize
   ##
   lt <- length(ntaper)
-  if ((lt == 1) | (force_calc)){
+  if (lt == 1){
     #
     # 
     # original series

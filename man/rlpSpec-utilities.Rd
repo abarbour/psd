@@ -1,7 +1,5 @@
 \docType{package}
 \name{rlpSpec-utilities}
-\alias{NA_mat}
-\alias{as.colvec}
 \alias{as.rowvec}
 \alias{char2envir}
 \alias{colvec}
@@ -9,16 +7,19 @@
 \alias{is.spec}
 \alias{is.taper}
 \alias{mod}
+\alias{mod.default}
 \alias{modulo}
 \alias{na_mat}
-\alias{nas}
+\alias{na_mat.default}
 \alias{ones}
+\alias{ones.default}
 \alias{rlpSpec-utilities}
 \alias{rlpSpec-utilities-package}
 \alias{rowvec}
 \alias{vector_reshape}
-\alias{zeroes}
+\alias{vector_reshape.default}
 \alias{zeros}
+\alias{zeros.default}
 \title{Various utility functions.}
 \usage{
   char2envir(envchar)

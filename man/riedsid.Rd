@@ -7,16 +7,15 @@
   riedsid(psd, ntaper, tapseq = NULL, constrained = TRUE,
     c.method = NULL, ...)
 
-  riedsid.spec(pspec, ...)
+  riedsid.spec(psd, ntaper = psd$taper, tapseq = NULL,
+    constrained = TRUE, c.method = NULL, ...)
 
   riedsid.default(psd, ntaper, tapseq = NULL,
     constrained = TRUE, c.method = NULL, ...)
 }
 \arguments{
-  \item{psd}{vector; the spectral values used to optimize
-  taper numbers}
-
-  \item{pspec}{object with class 'spec'}
+  \item{psd}{vector or class 'spec'; the spectral values
+  used to optimize taper numbers}
 
   \item{ntaper}{scalar or vector; number of tapers to apply
   optimization}

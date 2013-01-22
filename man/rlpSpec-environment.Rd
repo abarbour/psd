@@ -5,6 +5,7 @@
 \alias{rlpSpec-environment}
 \alias{rlp_envAssign}
 \alias{rlp_envAssignGet}
+\alias{rlp_envClear}
 \alias{rlp_envGet}
 \alias{rlp_envList}
 \alias{rlp_envStatus}
@@ -49,10 +50,8 @@
   assign}
 
   \item{...}{For \code{rlp_envClear}: arguments passed to
-  \code{rlp_initEnv}}
-
-  \item{...}{For \code{rlp_initEnv}: arguments passed to
-  \code{new.env}}
+  \code{rlp_initEnv}. For \code{rlp_initEnv}: arguments
+  passed to \code{new.env}}
 
   \item{adapt_stages}{scalar; The number of adaptive
   iterations to save (excluding pilot spectrum).}
@@ -123,11 +122,10 @@
 
   If the environment has not yet been initialized (it
   should never need to be prior to running
-  \code{pspectrum}) the command \code{rlp_initEnv()} should
-  be used. If a fresh environment is desired, and the
-  environment already exists, the command
-  \code{rlp_envClear()} (which is really just an alias for
-  \code{rlp_initEnv(refresh=TRUE)}) can be used.
+  \code{pspectrum}) \code{rlp_initEnv} should be used. If a
+  fresh environment is desired, and the environment already
+  exists, \code{rlp_envClear} (which is really just an
+  alias for \code{rlp_initEnv(refresh=TRUE)}) can be used.
 
   One could set \code{.rlpenv} to another string, if a
   different environment is desired.

@@ -21,10 +21,7 @@
   which to find weights}
 
   \item{ntap}{integer; the number of tapers to provide
-  weightings for}
-
-  \item{ntap}{integer; the number of tapers to calculate
-  for}
+  weightings for.}
 }
 \value{
   A list with taper indices, and the weights \eqn{W_N}.

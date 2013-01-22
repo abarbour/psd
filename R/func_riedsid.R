@@ -16,8 +16,7 @@
 #' @keywords taper taper-constraints riedel-sidorenko
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' 
-#' @param psd vector; the spectral values used to optimize taper numbers
-#' @param pspec object with class 'spec'
+#' @param psd vector or class 'spec'; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as psd)
 #' @param constrained logical; should the taper constraints be applied to the optimum tapers?
@@ -31,10 +30,10 @@ riedsid <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, .
 
 #' @rdname riedsid
 #' @S3method riedsid spec
-riedsid.spec <- function(pspec, ...){
-  psd <- pspec$spec
-  ntap <- pspec$taper
-  riedsid(psd, ntap, ...)
+riedsid.spec <- function(psd, ntaper=psd$taper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...){
+  stopifnot(is.spec(psd))
+  psd <- psd$spec
+  riedsid(psd, ntaper, ...)
   #.NotYetImplemented()
 }
 

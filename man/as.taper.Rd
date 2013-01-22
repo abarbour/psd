@@ -61,7 +61,7 @@ as.taper(list(x=1:10,y=1:30)) # note dimensions
 as.taper(x<-data.frame(x=1:10,y=10:19))
 as.taper(x, min_taper=3, max_taper=10)
 # class 'character' is in-coercible; raise error
-as.taper(c("a","b"))
+try(as.taper(c("a","b")))
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

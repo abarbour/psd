@@ -65,8 +65,6 @@ envir2char <- function(envir){
 #' @keywords utilities vector-manipulation matrix-manipulation
 vector_reshape <- function(x, vec.shape=c("horizontal","vertical")) UseMethod("vector_reshape")
 #' @rdname rlpSpec-utilities
-#' @name vector_reshape
-#' @docType methods
 #' @S3method vector_reshape default
 vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
   x <- as.vector(x)
@@ -79,10 +77,10 @@ vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
 #' \code{rowvec} returns the object as a horizontally long vector.
 #' @details \code{colvec, rowvec} are simple wrapper functions to \code{vector_reshape}.
 #' @rdname rlpSpec-utilities
-#' @aliases as.colvec
 #' @export
 #' @keywords utilities vector-manipulation matrix-manipulation
 colvec <- function(x) vector_reshape(x, "vertical")
+
 #' @rdname rlpSpec-utilities
 #' @aliases as.rowvec
 #' @export
@@ -150,7 +148,6 @@ is.taper <- function(Obj) inherits(Obj, "taper")
 #' 
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @name splineGrad
-#' @aliases spline_gradients
 #' @param dseq  numeric; a vector of positions for \code{dsig}.
 #' @param dsig  numeric; a vector of values (which will have a spline fit to them).
 #' @param plot.derivs  logical; should the derivatives be plotted?
@@ -162,8 +159,6 @@ is.taper <- function(Obj) inherits(Obj, "taper")
 #' @example x_examp/splinegrad.R
 splineGrad <- function(dseq, dsig, plot.derivs=FALSE, ...) UseMethod("splineGrad")
 #' @rdname splineGrad
-#' @name splineGrad
-#' @docType methods
 #' @S3method splineGrad default
 splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   #
@@ -173,7 +168,8 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   # @dseq: the sequence (index) for @dsig, the signal
   # output is the same length as the input
   #
-  require(stats, graphics)
+  require(stats)
+  require(graphics)
   #
   # create a weighted cubic spline
   smspl <- stats::smooth.spline(dseq, dsig, ...)
@@ -263,7 +259,6 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 #' \code{NA} values, the representation of which is set by \code{NA_real_}
 #' @export
 #' @keywords utilities vector-creation matrix-creation
-#' @aliases nas NA_mat
 #' @examples
 #' ## matrix and vector creation:
 #' # NA matrix
@@ -272,14 +267,11 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 #' na_mat(nd,nd-1)
 na_mat <- function(nrow, ncol=1) UseMethod("na_mat")
 #' @rdname rlpSpec-utilities
-#' @name na_mat
-#' @docType methods
 #' @S3method na_mat default
 na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 #' @description \code{zeros} populate a column-wise matrix with zeros; whereas,
 #' \code{ones} populates a column-wise matrix with ones
 #' @rdname rlpSpec-utilities
-#' @aliases zeroes
 #' @export 
 #' @keywords utilities vector-creation matrix-creation
 # params described by na_mat
@@ -291,10 +283,9 @@ na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 #' zeroes(nd)
 zeros <- function(nrow) UseMethod("zeros")
 #' @rdname rlpSpec-utilities
-#' @name zeros
-#' @docType methods
 #' @S3method zeros default
 zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
+
 #' @rdname rlpSpec-utilities
 #' @export
 #' @keywords utilities vector-creation matrix-creation
@@ -305,8 +296,6 @@ zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nro
 #' ##
 ones <- function(nrow) UseMethod("ones")
 #' @rdname rlpSpec-utilities
-#' @name ones
-#' @docType methods
 #' @S3method ones default
 ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
 
@@ -337,15 +326,13 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow
 #' @example x_examp/mod.R
 mod <- function(X, Y) UseMethod("mod")
 #' @rdname rlpSpec-utilities
-#' @name mod
-#' @docType methods
 #' @S3method mod default
 mod.default <- function(X, Y){
   stopifnot(is.numeric(c(X, Y)))
   ## modulo division
   X1 <- trunc( trunc(X/Y) * Y)
   Z <- trunc(X) - X1
-  return(z)
+  return(Z)
 }
 
 ###

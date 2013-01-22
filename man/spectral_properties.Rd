@@ -4,15 +4,17 @@
 \alias{spectral_properties.taper}
 \title{Calculate spectral properties such as standard error and resolution.}
 \usage{
-  spectral_properties(x, f.samp = 1, n.freq = NULL, ...)
-
-  spectral_properties.spec(...)
-
-  spectral_properties.taper(x, f.samp = 1, n.freq = NULL,
+  spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
     ...)
+
+  spectral_properties.spec(tapvec, f.samp = 1,
+    n.freq = NULL, ...)
+
+  spectral_properties.taper(tapvec, f.samp = 1,
+    n.freq = NULL, ...)
 }
 \arguments{
-  \item{x}{object with class taper}
+  \item{tapvec}{object with class taper}
 
   \item{f.samp}{scalar; the sampling frequency (e.g. Hz) of
   the series the tapers are for}

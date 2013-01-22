@@ -18,9 +18,9 @@
 #' string; \code{.rlpenv} is set when attaching the package. 
 #' 
 #' If the environment has not yet been initialized (it should never need to be prior
-#' to running \code{pspectrum}) the command \code{rlp_initEnv()} should be used.
+#' to running \code{pspectrum}) \code{rlp_initEnv} should be used.
 #' If a fresh environment is desired, and the environment already exists, 
-#' the command \code{rlp_envClear()} (which is
+#' \code{rlp_envClear} (which is
 #' really just an alias for \code{rlp_initEnv(refresh=TRUE)}) can be used.
 #'
 #' One could set \code{.rlpenv} 
@@ -68,7 +68,7 @@ rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
 #' @description \code{rlp_envClear} clears the contents of the environment.
 #' @note \code{rlp_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname rlpSpec-environment
-#' @name rlp_envStatus
+#' @name rlp_envClear
 #' @seealso \code{\link{rlp_initEnv}}
 rlp_envClear <- function(...) rlp_initEnv(refresh=TRUE, ...)
 
@@ -124,8 +124,7 @@ rlp_envAssign <- function(variable, value, envir=.rlpenv){
 #' @rdname rlpSpec-environment
 #' @name rlp_envAssignGet
 # placing these at the end for orderliness.
-#' @param ... For \code{rlp_envClear}: arguments passed to \code{rlp_initEnv}
-#' @param ... For \code{rlp_initEnv}: arguments passed to \code{new.env}
+#' @param ... For \code{rlp_envClear}: arguments passed to \code{rlp_initEnv}. For \code{rlp_initEnv}: arguments passed to \code{new.env}
 rlp_envAssignGet <- function(variable, value, envir=.rlpenv){
   ## set contents of envir::variable to value
   rlp_envAssign(variable, value, envir=envir)

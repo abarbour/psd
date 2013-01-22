@@ -1,7 +1,6 @@
-\docType{methods}
 \name{splineGrad}
 \alias{splineGrad}
-\alias{spline_gradients}
+\alias{splineGrad.default}
 \title{Numerical derivatives of a series based on a weighted, smooth spline representation.}
 \usage{
   splineGrad(dseq, dsig, plot.derivs = FALSE, ...)

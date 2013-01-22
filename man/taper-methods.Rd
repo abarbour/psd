@@ -8,11 +8,11 @@
 \alias{taper-methods}
 \title{Generic methods for objects with class 'taper'.}
 \usage{
-  print.taper(x)
+  print.taper(x, ...)
 
-  summary.taper(x)
+  summary.taper(object, ...)
 
-  print.summary.taper(x)
+  print.summary.taper(x, ...)
 
   lines.taper(x, lwd = 1.8, col = "red", ...)
 
@@ -20,6 +20,9 @@
 
   plot.taper(x, color.pal = c("Blues", "Spectral"),
     ylim = NULL, ...)
+}
+\arguments{
+  \item{...}{optional arguments}
 }
 \description{
   Generic methods for objects with class 'taper'.

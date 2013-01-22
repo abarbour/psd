@@ -27,10 +27,10 @@ Imports:
     zoo (>= 1.7-9)
 Suggests:
     ggplot2 (>= 0.9-3),
-    multitaper (>= 1.0-2),
-    sfsmisc (>= 1.0-23),
+    multitaper (>= 1.0-2)
 Collate:
     'rlpSpec-package.R'
+    'zzz.R'
     'func_pspectrum.R'
     'func_psdcore.R'
     'func_riedsid.R'
@@ -38,4 +38,3 @@ Collate:
     'func_whiten.R'
     'func_envir.R'
     'func_utils.R'
-    'zzz.R'
