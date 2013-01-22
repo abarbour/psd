@@ -6,6 +6,10 @@ demos
 -----
 [ ] fix mag
 
+tests
+-----
+[ ] do they work?
+
 datasets
 --------
 [X] magsat
@@ -31,4 +35,4 @@ datasets
 Miscellany
 ----------
 [ ] migrate examples in functions to ./examp/
-[ ] remove references to src/ctap_simple.c and test build
+[X] remove references to src/ctap_simple.c and test build {[ ]}

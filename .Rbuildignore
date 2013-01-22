@@ -8,6 +8,7 @@
 .gitignore
 ^src/.gitignore$
 README.md
+install_rlp
 ^.*/.gitignore$
 x_S4/
 x_data_prep/
@@ -20,4 +21,5 @@ x_m/
 x_notes/
 x_rsrc/
 x_tex/
+x_tests/
 x_vignettes/
