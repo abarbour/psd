@@ -1,8 +1,8 @@
 Package: rlpSpec
 Type: Package
-Title: Adaptive sine-multitaper spectrum estimation.
+Title: Adaptive, sine-multitaper power spectral density estimation.
 Version: 0.1-0
-Date: 2013-01-15
+Date: 2013-01-21
 Author: Robert L. Parker and Andrew J. Barbour
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
@@ -26,7 +26,7 @@ Imports:
     signal (>= 0.7-2),
     zoo (>= 1.7-9)
 Suggests:
-    ggplot2 (>= 0.9.3),
+    ggplot2 (>= 0.9-3),
     multitaper (>= 1.0-2),
     sfsmisc (>= 1.0-23),
 Collate:

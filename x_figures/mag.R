@@ -45,16 +45,17 @@ library(xtable)
 
 ###
 #
-magx <- 1:length(mag$raw)
+mag$km <- 1:length(mag$raw)
 pdf("./magsat.pdf",height=3.5)
-plot(magx, mag$raw, type="s", 
+plot(raw ~ km, mag, type="s", 
      main="MAGSAT Airborne-magnetometer data",
      xlab="Along-path distance, km", yaxs="i", ylim=280*c(-1,1),
      ylab="nanoTesla")
 mtext("Horizontal-component field")
 text(200, 100, "raw series")
-lines(magx, mag$clean-50, type="s", col="red")
+lines(clean-50 ~ km, mag, type="s", col="red")
 text(350, -150, "cleaned series (-50)", col="red")
+lines(edit-100 ~ km, mag)
 dev.off()
 #
 psmag1 <- pspectrum(mag$clean, niter=5, plot=F)

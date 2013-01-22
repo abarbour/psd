@@ -1,14 +1,14 @@
-#' Multitaper power spectral density of a series.
+#' Multitaper power spectral density estimates of a series.
 #'
-#' Compute a power spectral density (PSD) estimate 
+#' Compute power spectral density (PSD) estimates
 #' for the input series using sine multitapers.
 #'  
 #' The parameter \code{ntaper} specifies the number of sine tapers to be used 
-#' at each frequency: if it's a scalar, the same number of tapers will be used
-#' at every frequency; otherwise, use \code{ntaper(j)} sine tapers at \code{frequency(j)}.
+#' at each frequency: equal tapers at each frequency for a scalar; 
+#' otherwise, use \code{ntaper(j)} sine tapers at \code{frequency(j)}.
 #'
-#' The series length \code{N} is truncated, if necessary, so that \code{1+N/2} evenly spaced
-#' frequencies are returned. 
+#' The series length \code{N} is truncated, if necessary, so that \code{1+N/2} evenly 
+#' spaced frequencies are returned. 
 #'
 #' The parameter \code{ndecimate} determines the PSDs actually 
 #' computed, defined as \code{(1+n/2)/ndecimate}; other
@@ -28,13 +28,13 @@
 #' @param Nyquist.normalize  logical; should the units be returned in Hz, rather than Nyquist?
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
 #' @param as.spec  logical; should the object returned be of class 'spec'
-#' @param force_calc  logical; force spectrum (used for development purposes)
-#' @param ...  (unused); parameters passed to [ NULL ]
+# @param force_calc  logical; force spectrum (used for development purposes)
+#' @param ...  (unused) Optional parameters
 #'
 #' @name psdcore
 #' @export
 #' @keywords spectrum-estimation normalization prewhiten
-#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker.
+#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
 #' @examples
@@ -52,7 +52,7 @@
 #' 
 #' # if ntaper is a vector:
 #' psdcore(X.d, ntaper=rep(10,length(X.d))
-psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, force_calc=FALSE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @S3method psdcore default
 psdcore.default <- function(X.d, 
@@ -66,7 +66,6 @@ psdcore.default <- function(X.d,
                             Nyquist.normalize=TRUE,
                             plotpsd=FALSE,
                             as.spec=TRUE,
-                            force_calc=FALSE,
                             ...
                            ) {
   #

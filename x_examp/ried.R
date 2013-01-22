@@ -1,4 +1,4 @@
-\dontrun{
+# \dontrun{
 ##
 ## Riedel-Sidorenko--Parker taper optimization
 ##
@@ -31,4 +31,4 @@ lines(rtap)
 lines(as.taper(rep.int(ntap,nd)), col="blue")
 par(op)
 ##
-}
+# }

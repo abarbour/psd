@@ -4,10 +4,10 @@
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
   pspectrum(x, x.frqsamp = 1, ntap_pilot = 10, niter = 4,
-    verbose = TRUE, ...)
+    verbose = TRUE, no.history = FALSE, ...)
 
   pspectrum.default(x, x.frqsamp = 1, ntap_pilot = 10,
-    niter = 2, verbose = TRUE, ...)
+    niter = 4, verbose = TRUE, no.history = FALSE, ...)
 }
 \arguments{
   \item{x}{vector; series to estimate PSD for.}
@@ -23,20 +23,43 @@
 
   \item{verbose}{logical; Should messages be given?}
 
-  \item{...}{optional arguments (unused)}
+  \item{no.history}{logical; Should the adaptive history
+  \emph{not} be saved?}
+
+  \item{...}{Optional parameters passed to
+  \code{\link{riedsid}}}
 }
 \value{
   Object with class 'spec'.
 }
 \description{
-  Adaptive sine multitaper power spectral density
-  estimation.
+  This is the primary function to be used in this package,
+  and returns power spectral density estimates where the
+  number of tapers at each frequency has been iteratively
+  optimized (\code{niter} times).
+}
+\details{
+  See the \strong{Adaptive estimation} section in the
+  description of the \code{\link{rlpSpec-package}} for
+  details regarding adaptive estimation.
+}
+\examples{
+# \\dontrun{
+NULL
+# }
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com> based on R.L.
-  Parker's algorithm.
+  A.J. Barbour <andy.barbour@gmail.com> adapted original by
+  R.L. Parker.
 }
 \seealso{
-  \code{\link{psdcore}}, \code{\link{riedsid}}
+  \code{\link{psdcore}}, \code{\link{riedsid}},
+  \code{\link{rlpSpec-package}}
 }
+\keyword{numerical-derivative}
+\keyword{riedel-sidorenko}
+\keyword{spectrum-estimation}
+\keyword{taper}
+\keyword{taper-constraints}
+\keyword{taper-weighting}
 

@@ -45,7 +45,7 @@ NULL
 #' @param refresh logical; should the contents of the environment be trashed?
 #' @param verbose logical; should messages be given?
 #' @return \code{rlp_initEnv} returns (invisibly) the result of \code{rlp_envStatus()}.
-#' @seealso \code{\link{new.env}}, \code{\link{baseenv}}
+#' @seealso \code{new.env}, \code{baseenv}
 rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
   # initialize the psd calculation environment
   if (exists(envir)){ new_env <- FALSE } else {new_env <- TRUE}

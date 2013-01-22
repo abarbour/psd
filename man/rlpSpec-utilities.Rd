@@ -103,7 +103,7 @@
   is equivalent to \code{(X) \%\% (Y)}.
 }
 \description{
-  Various utility functions.
+  Various utility functions are used:
 
   \code{char2envir} converts a character string of an
   environment name to an evaluated name; whereas,
@@ -196,7 +196,7 @@ zeroes(nd)
 ones(nd)
 ##
 ##
-#' \\dontrun{
+# \\dontrun{
 ##
 ## modulo division
 ##
@@ -210,10 +210,10 @@ all.equal(mc1a, mc1b) # TRUE
 all.equal(mc2a, mc2b) # "Mean absolute difference: 2"
 all.equal(mc2a, mc2c) # TRUE
 ##
-#' }
+# }
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com>
+  A.J. Barbour <andy.barbour@gmail.com>
 }
 \references{
   For \code{\link{mod}}: see Peter Dalgaard's explanation
@@ -222,11 +222,9 @@ all.equal(mc2a, mc2c) # TRUE
   \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
 }
 \seealso{
-  \code{\link{eval}}, \code{\link{deparse}}
+  \code{\link{rlpSpec-package}}
 
   \code{\link{as.taper}}
-
-  \code{\link{Arith}}
 }
 \keyword{S3methods}
 \keyword{arithmetic-operations}

@@ -6,64 +6,64 @@
 \alias{spec.rlp}
 \title{Adaptively estimate power spectral densities of an optimally tapered series.}
 \description{
-  Perform adaptive estimation of a series' power spectral
-  density (PSD) with the sine multitapers in which the
-  number of tapers (and hence the resolution and
-  uncertainty) vary according to spectral shape. The main
-  function to be used is \code{\link{pspectrum}}.
+  Perform adaptive estimation of the power spectral density
+  (PSD) using the sine multitapers in which the number of
+  tapers (and hence the resolution and uncertainty) vary
+  according to spectral shape. The main function to be used
+  is \code{\link{pspectrum}}.
 }
 \details{
-  In frequency ranges where the spectrum is relatively
-  flat, more tapers are taken and so a higher accuracy is
-  attained at the expense of lower frequency resolution.
-  The program makes a pilot estimate of the spectrum, then
-  uses Riedel and Sidorenko's estimate of the MSE (minimum
-  square error) value, which is based on an estimate of the
-  2nd derivative of the PSD. The process is repeated
-  \code{niter} times. This is the default mode of
-  operation, with \code{niter=4}. Further iteration may be
+  In frequency ranges where the spectrum (\eqn{S}) is
+  relatively flat, more tapers are taken and so a higher
+  accuracy is attained at the expense of lower frequency
+  resolution. The program makes a pilot estimate of the
+  spectrum, then uses Riedel and Sidorenko's estimate of
+  the MSE (minimum square error) value, which is based on
+  an estimate of the second derivative of the PSD
+  (\eqn{S''}). The process is repeated \code{niter} times;
+  the default is \code{niter=4}. Further iteration may be
   necessary to reach convergence, or an acceptably low
   spectral variance. Although the term "acceptable" is
-  subjective, one can usually detect an unconverged state
-  by a rather jagged appearence of the spectrum.
-}
-\section{Adaptive estimation}{
-  The adaptive process used is as follows. A quadratic fit
-  to the log PSD within an adaptively determined frequency
-  band is used to find an estimate of the local second
-  derivative of the spectrum. This is used in an equation
-  like R-S eq (13) for the MSE taper number, with the
-  difference that a parabolic weighting is applied with
-  increasing taper order. Because the FFTs of the tapered
-  series can be found by resampling the FFT of the original
-  time series (doubled in length and padded with zeros)
-  only one FFT is required per series, no matter how many
-  tapers are used. The spectra associated with the sine
-  tapers are weighted before averaging with a parabolically
-  varying weight. The expression for the optimal number of
-  tapers given by R-S must be modified since it gives an
-  unbounded result near points where \eqn{S''} vanishes,
-  which happens at many points in most spectra. This
-  program restricts the rate of growth of the number of
-  tapers so that a neighboring covering interval estimate
-  is never completely contained in the next such interval.
-}
+  rather subjective, one can usually detect an unconverged
+  state by a rather jagged appearence of the spectrum.
 
-\section{Resolution and uncertainty}{
-  The sine multitaper adaptive process introduces a
-  variable resolution and error in the frequency domain.
-  The errors are estimated in the simplest way, from the
-  number of degrees of freedom (two per taper); a more
-  sophisticated (and complicated) approach would be to
-  estimate via jack-knifing (Prieto et al 2007). The
-  frequency resolution is found from \eqn{\frac{K \cdot
-  f_N}{N_f}} where \eqn{f_N} is the Nyquist frequency and
-  \eqn{N_f} is the number of frequencies estimated.
+  \subsection{Adaptive estimation}{ The adaptive process
+  used is as follows. A quadratic fit to the logarithm of
+  the PSD within an adaptively determined frequency band is
+  used to find an estimate of the local second derivative
+  of the spectrum. This is used in an equation like R-S eq
+  (13) for the MSE taper number, with the difference that a
+  parabolic weighting is applied with increasing taper
+  order. Because the FFTs of the tapered series can be
+  found by resampling the FFT of the original time series
+  (doubled in length and padded with zeros) only one FFT is
+  required per series, no matter how many tapers are used.
+  The spectra associated with the sine tapers are weighted
+  before averaging with a parabolically varying weight. The
+  expression for the optimal number of tapers given by R-S
+  must be modified since it gives an unbounded result near
+  points where \eqn{S''} vanishes, which happens at many
+  points in most spectra. This program restricts the rate
+  of growth of the number of tapers so that a neighboring
+  covering interval estimate is never completely contained
+  in the next such interval. }
+
+  \subsection{Resolution and uncertainty}{ The sine
+  multitaper adaptive process introduces a variable
+  resolution and error in the frequency domain. See
+  documentation for \code{\link{spectral_properties}}
+  details on how these are computed. }
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com>
+  Robert L. Parker and Andrew J. Barbour
+  <andy.barbour@gmail.com>
 }
 \references{
+  Parker, R. L., \emph{PSD}, Program documentation.
+  \emph{Maintained Software}, N.p. 11 Nov. 2011, Web. 17
+  Jan. 2013,
+  <\url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}>.
+
   Percival, D. B., and A.T. Walden (1993), Spectral
   analysis for physical applications, \emph{Cambridge
   University Press}
@@ -86,12 +86,6 @@
 
   Walden, A. T., and E. J. McCoy, and D. B. Percival
   (1995), The effective bandwidth of a multitaper spectral
-  estimator, \emph{Biometrika}, \strong{82}(1), 201--214,
-  \url{http://biomet.oxfordjournals.org/content/82/1/201}
-
-  Parker, R. L., \emph{PSD}, Program documentation.
-  \emph{Maintained Software}, N.p. 11 Nov. 2011, Web. 17
-  Jan. 2013,
-  <\url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}>.
+  estimator, \emph{Biometrika}, \strong{82}(1), 201--214.
 }
 

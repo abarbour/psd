@@ -1,25 +1,25 @@
 #' Perform adaptive estimation 
-#' of a series' power spectral density (PSD) with the sine multitapers
-#' in which the number of tapers (and hence the resolution and uncertainty) 
+#' of the power spectral density (PSD) using the sine multitapers in which
+#' the number of tapers (and hence the resolution and uncertainty) 
 #' vary according to spectral shape. 
 #' The main function to be used 
 #' is \code{\link{pspectrum}}.
 #'
-#' In frequency ranges where the spectrum 
+#' @details
+#' In frequency ranges where the spectrum  (\eqn{S})
 #' is relatively flat, more tapers are taken and so a higher accuracy is 
 #' attained at the expense of lower frequency resolution. 
-#' The program makes a pilot estimate of the spectrum, then uses 
+#' The program makes a pilot estimate of the spectrum, then uses
 #' Riedel and Sidorenko's estimate of the MSE (minimum square error) value, 
-#' which is based on an estimate of the 2nd derivative of the PSD. 
-#' The process is repeated \code{niter} times. 
-#' This is the default mode of operation, with \code{niter=4}. 
+#' which is based on an estimate of the second derivative of the PSD (\eqn{S''}). 
+#' The process is repeated \code{niter} times; the default is \code{niter=4}. 
 #' Further iteration may be necessary to reach convergence, or an acceptably low
-#' spectral variance. Although the term "acceptable" is subjective, one can 
+#' spectral variance. Although the term "acceptable" is rather subjective, one can 
 #' usually detect an unconverged state by a rather jagged appearence of the spectrum.
 #'
-#'
-#' @section Adaptive estimation:
-#' The adaptive process used is as follows. A quadratic fit to the log PSD within an 
+#' \subsection{Adaptive estimation}{
+#' The adaptive process used is as follows. A quadratic fit to the logarithm of the
+#' PSD within an 
 #' adaptively determined frequency band is used to find an estimate of the local second 
 #' derivative of the spectrum. This is used in an equation like R-S eq (13) for 
 #' the MSE taper number, with the difference that a parabolic weighting is applied with 
@@ -33,42 +33,27 @@
 #' This program restricts the rate of growth of the number of tapers so that a 
 #' neighboring covering interval estimate is never completely contained in the next 
 #' such interval.
+#' }
 #'
-#' @section Resolution and uncertainty:
+#' \subsection{Resolution and uncertainty}{
 #' The sine multitaper adaptive process 
 #' introduces a variable resolution and error in the frequency domain. 
-# Complete information is contained in the output as the 
-# corridor of 1-standard-deviation errors, and in \eqn{K}, the number of tapers 
-# used at each frequency.
-#
-#' The errors are estimated in the simplest way, 
-#' from the number of degrees of freedom (two per taper); a more 
-#' sophisticated (and complicated) approach would be to
-#' estimate via jack-knifing (Prieto et al 2007).
-#' The frequency resolution is found from 
-#' \eqn{\frac{K \cdot f_N}{N_f}} where 
-#' \eqn{f_N} is the 
-#' Nyquist frequency and \eqn{N_f} is the number of frequencies estimated.
-#'
-# @section Scientific background:
-#
-# A bunch of stuff, and inline equation \eqn{r}, and a newline equation:
-# \deqn{
-# \frac{\partial^2 s}{\partial r^2}= 0
-# }
-# and some more.
-# 
-# And more.
+#' See documentation for \code{\link{spectral_properties}} details on
+#' how these are computed.
+#' }
 #'
 #' @docType package
 #' @name rlpSpec-package
 #' @aliases rlpSpec, rlpspec-package, spec.rlp
 #' @title Adaptively estimate power spectral densities of an optimally tapered series.
 #' 
-#' @author Andrew Barbour <andy.barbour@@gmail.com> 
+#' @author Robert L. Parker and Andrew J. Barbour <andy.barbour@@gmail.com> 
 #' 
 #' @import Peaks RColorBrewer signal zoo
 #' @useDynLib rlpSpec
+#'
+#' @references Parker, R. L., \emph{PSD}, Program documentation. \emph{Maintained Software}, N.p. 11 Nov. 2011,
+#' Web. 17 Jan. 2013, <\url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}>.
 #'
 #' @references Percival, D. B., and A.T. Walden (1993),
 #' Spectral analysis for physical applications,
@@ -89,12 +74,51 @@
 #'
 #' @references Walden, A. T., and  E. J. McCoy, and D. B. Percival (1995),
 #' The effective bandwidth of a multitaper spectral estimator,
-#' \emph{Biometrika}, \strong{82}(1), 201--214,
-#' \url{http://biomet.oxfordjournals.org/content/82/1/201}
-#'
-#' @references Parker, R. L., \emph{PSD}, Program documentation. \emph{Maintained Software}, N.p. 11 Nov. 2011,
-#' Web. 17 Jan. 2013, <\url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}>.
+#' \emph{Biometrika}, \strong{82}(1), 201--214.
+# \url{http://biomet.oxfordjournals.org/content/82/1/201}
 #'
 # @seealso \code{\link{pspectrum}}, \code{\link{psdcore}}
 #'  
+NULL
+
+##
+## Datasets
+##
+
+#' A single line of MAGSAT horizontal field intensity.
+#' 
+#' The Magnetic Satellite (MAGSAT) mission 
+#' provided a wealth of airborne-magnetometer data
+#' spanning the globe (Langel el al., 1982).  
+#' This dataset represents a single track of horizontal field
+#' intensities (a very small subset of the full collection!).
+#'
+#' \subsection{Raw and Clean Sets}{
+#' There are many artificial data points in raw MAGSAT; these are true instrumental
+#' artefacts, and can severely affect
+#' power spectral density (PSD) estimates.  
+#' A clean series has been included
+#' so that a comparison of PSDs may be made.
+#'
+#' Some command like \code{subset(magsat, abs(mdiff) > 0)}
+#' can be used to identify the rows where edits have been made.
+#' }
+#' 
+#' @name magsat
+#' @docType data
+#' @format A dataframe with 2048 observations on the following 4 variables.
+#'
+#' \describe{
+#' \item{\code{km}}{Relative along-track distance, in kilometers. The first observation is at zero kilometers.}
+#' \item{\code{raw}}{Raw intensities, in nanoTesla.}
+#' \item{\code{clean}}{Edited raw intensites, in nanoTesla}
+#' \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanoTesla.}
+#' }
+#'
+#' @references Langel, R., G. Ousley, J. Berbert, J. Murphy, and M. Settle, (1982),
+#' The MAGSAT mission, \emph{Geophysical Research Letters}, \strong{9} (4), 243-245.
+#' @source Data subsetter: \url{http://ftpbrowser.gsfc.nasa.gov/magsat.html} 
+# need login from outside browser?
+# @source Entire MAGSAT archive: \url{ftp://spdf.gsfc.nasa.gov/pub/data/magsat/}
+#' @keywords datasets magsat
 NULL

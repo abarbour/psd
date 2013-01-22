@@ -31,25 +31,28 @@
   \code{constrained=TRUE}}
 
   \item{...}{optional argments passed to
-  \code{constrain_tapers}}
+  \code{\link{constrain_tapers}}}
+}
+\value{
+  Object with class 'taper'.
 }
 \description{
   Estimates the optimal number of tapers at each frequency
-  of given PSD; the optimal value chosen is based on the
-  Riedel-Sidorenko MSE recipe, and modified by R.L. Parker.
+  of given PSD, using a modified Riedel-Sidorenko MSE
+  recipe (RS-RLP).
 }
 \details{
-  First, weighted derivatives of the input PSD are
-  computed. Using those derivates the optimal number of
-  tapers is found through the RS-RLP formulation. The
-  default state returns constrained optimal-tapers using
-  \code{\link{constrain_tapers}}, but this can be turned
-  off with \code{constrained=FALSE}.
+  The optimization is as follows. First, weighted
+  derivatives of the input PSD are computed. Using those
+  derivates the optimal number of tapers is found through
+  the RS-RLP formulation. Constraints are then placed on
+  the practicable number of tapers.
+
+  Set \code{constrained=FALSE} to turn off taper
+  constraints.
 }
 \examples{
-#'
-#' \\dontrun{
-#'
+# \\dontrun{
 ##
 ## Riedel-Sidorenko--Parker taper optimization
 ##
@@ -82,10 +85,10 @@ lines(rtap)
 lines(as.taper(rep.int(ntap,nd)), col="blue")
 par(op)
 ##
-#' }
+# }
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com> ported original by
+  A.J. Barbour <andy.barbour@gmail.com> adapted original by
   R.L. Parker.
 }
 \seealso{

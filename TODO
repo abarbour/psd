@@ -1,21 +1,34 @@
+vignettes
+---------
+[ ] plot the `histlist`
+
+demos
+-----
+[ ] fix mag
+
+datasets
+--------
+[X] magsat
+[ ] scarb
+[ ] bsm
+
 `spectral_properties`
 ---------------------
-[ ] formulas for various quantities
+[ ] check formulas for various quantities
 
 `riedsid`
 ---------
-[ ] riedsid.spec method
+[X] riedsid.spec method
+***  test it [ ]
 
 `pspectrum`
 -----------
 [ ] example
-[ ] improve function documentation
-[ ] add option to change constraint method for riedsid
-[ ] decimation (and in `psdcore`)
-
+[X] improve function documentation
+[X] add option to change constraint method for riedsid
+***  test it [ ]
 
 Miscellany
 ----------
 [ ] migrate examples in functions to ./examp/
-[ ] scripts (or demo/vignette?) to plot the `histlist`
 [ ] remove references to src/ctap_simple.c and test build

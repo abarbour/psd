@@ -1,2 +1,4 @@
-* logsmoo
-* splineGrad option for `riedsid`
+** well-tested decimation option
+** logsmoo
+** splineGrad option for `riedsid`
+** reidsid spectral derivatives as .c

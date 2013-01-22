@@ -41,7 +41,7 @@
   the original series? Apparently, there is no difference.
 }
 \examples{
-#' \\dontrun{
+# \\dontrun{
 ##
 ## Spline gradient
 ##
@@ -59,10 +59,13 @@ splineGrad(x, y, TRUE, spar=0.2)
 splineGrad(x, y, TRUE, spar=0.6)
 splineGrad(x, y, TRUE, spar=1.0)
 ##
-#' }
+# }
+}
+\author{
+  A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{smooth.spline}}
+  \code{smooth.spline}
 }
 \keyword{numerical-derivative}
 \keyword{spline-gradient}

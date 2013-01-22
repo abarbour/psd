@@ -35,7 +35,7 @@ tap <- as.taper(tap/2)
 lines(tap)
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com>
+  A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
   \code{\link{as.taper}}, \code{\link{constrain_tapers}}

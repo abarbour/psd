@@ -19,16 +19,16 @@
 \description{
   In a tapered spectrum estimation algorithm, it is
   necessary to enforce rules on the number of tapers that
-  may be applied.  For example, we cannot apply zero tapers
-  (the result would be a raw periodogram) or one million
-  tapers (that would be absurd, and violate orthogonality
-  conditions for any series less than two million terms
-  long!).
+  may be applied.
 }
 \details{
   Formal requirements enforced by this function are:
   \itemize{ \item Non-zero. \item Integer values. \item
-  Fewer than the half-length of the spectrum. }
+  Fewer than the half-length of the spectrum. } For
+  example, we cannot apply zero tapers (the result would be
+  a raw periodogram) or one million tapers (that would be
+  absurd, and violate orthogonality conditions for any
+  series less than two million terms long!).
 
   An object with S3 class 'taper' is created; this will
   have a minimum number of tapers in each position set by
@@ -43,20 +43,11 @@
   data.frame, and list.
 
   Multiple objects are concatenated into a single vector
-  dimension.  For example, if the object is
-  \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the
-  corresponding 'taper' objects for the following arguments
-  are:
+  dimension.
 
-  \describe{ \item{\emph{defaults}}{\code{[1,2,3,4,5,1,1]}}
-  \item{\code{setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
-  \item{\code{max_taper=5}}{\code{[1,2,3,4,5,1,1]}}
-  \item{\code{max_taper=5,setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
-  }
-
-  It should be clear that enabling \code{setspan} will only
-  override \code{max_taper} should it be larger than the
-  half-width of the series.
+  Enabling \code{setspan} will only override
+  \code{max_taper} should it be larger than the half-width
+  of the series.
 }
 \note{
   No support (yet) for use of \code{min_taper,max_taper} as
@@ -73,7 +64,7 @@ as.taper(x, min_taper=3, max_taper=10)
 as.taper(c("a","b"))
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com>
+  A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
   \code{\link{is.taper}}

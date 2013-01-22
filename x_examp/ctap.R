@@ -1,4 +1,4 @@
-#' \dontrun{
+# \dontrun{
 ##
 ## Constrain tapers
 ##
@@ -24,4 +24,4 @@ lines(kopt.loess, col="dark green", lwd=3)
 lines(kopt.slope, col="black")
 ##
 ##
-#' }
+# }

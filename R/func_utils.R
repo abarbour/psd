@@ -1,6 +1,9 @@
 #' @title Various utility functions.
+#'
+#' @description Various utility functions are used:
+#'
 #' @keywords methods S3methods utilities
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @rdname rlpSpec-utilities
 #' @name rlpSpec-utilities
 #' @docType package
@@ -23,7 +26,7 @@ NULL
 #' @return \code{char2envir} returns the result of evaluating the object: an 
 #' environment object; \code{envir2char} returns the result of deparsing the 
 #' environment name: a character string.
-#' @seealso \code{\link{eval}}, \code{\link{deparse}}
+#' @seealso \code{\link{rlpSpec-package}}
 #' @examples
 #' ##
 #' ## Evaluate character strings
@@ -79,12 +82,12 @@ vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
 #' @aliases as.colvec
 #' @export
 #' @keywords utilities vector-manipulation matrix-manipulation
-colvec <- function(x) vector_shape(x, "vertical")
+colvec <- function(x) vector_reshape(x, "vertical")
 #' @rdname rlpSpec-utilities
 #' @aliases as.rowvec
 #' @export
 #' @keywords utilities vector-manipulation matrix-manipulation
-rowvec <- function(x) vector_shape(x, "horizontal")
+rowvec <- function(x) vector_reshape(x, "horizontal")
 
 #' @description \code{is.spec} reports whether an object has class S3 class 'spec', as
 #' would one returned by, for example, \code{spectrum}.
@@ -145,6 +148,7 @@ is.taper <- function(Obj) inherits(Obj, "taper")
 #  fsigderiv2.alt <- SPLFUN.alt(dseq, deriv=1);
 #  print(all.equal(fsigderiv2,fsigderiv2.alt));}
 #' 
+#' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @name splineGrad
 #' @aliases spline_gradients
 #' @param dseq  numeric; a vector of positions for \code{dsig}.
@@ -154,8 +158,8 @@ is.taper <- function(Obj) inherits(Obj, "taper")
 #' @return A matrix with columns representing \eqn{x, f(x), f'(x), f''(x)}.
 #' @export
 #' @keywords utilities spline-gradient numerical-derivative
-#' @seealso \code{\link{smooth.spline}}
-#' @example examp/splinegrad.R
+#' @seealso \code{smooth.spline}
+#' @example x_examp/splinegrad.R
 splineGrad <- function(dseq, dsig, plot.derivs=FALSE, ...) UseMethod("splineGrad")
 #' @rdname splineGrad
 #' @name splineGrad
@@ -330,8 +334,7 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow
 #' @keywords utilities modulo-division arithmetic-operations
 #' @rdname rlpSpec-utilities
 #' @aliases modulo
-#' @seealso \code{\link{Arith}}
-#' @example examp/mod.R
+#' @example x_examp/mod.R
 mod <- function(X, Y) UseMethod("mod")
 #' @rdname rlpSpec-utilities
 #' @name mod

@@ -101,7 +101,9 @@
   "noisy" series can be bogus.
 
   \code{\link{minspan}} sets the maximum span a taper
-  object may have.
+  object may have, which is necessary because it would be
+  nonsense to have more tapers than the length of the
+  series.
 
   \code{\link{constrain_tapers}} refines the number of
   tapers; the method by which it does this is chosen with
@@ -117,14 +119,12 @@
   \item \code{'none'} returns unbounded tapers. }
 }
 \details{
-  \code{\link{minspan}} is necessary because it would be
-  nonsense to have more tapers than the length of the
-  series. The value set is defined as the minimum of the
-  half-length of the series, and 7/5 times the tapers.  In
-  code this would be something like:
-  \code{min(length(tapvec)/2, 7*tapvec/5)}
+  \code{\link{minspan}} bounds the number of tapers between
+  the minimum of the half-length of the series, and 7/5
+  times the tapers.  In code this would look something
+  like: \code{min(length(tapvec)/2, 7*tapvec/5)}
 }
-\section{Constraint methods}{
+\section{Details of Constraint Methods}{
   \subsection{via first differencing (default)}{
   \code{\link{ctap_simple}} is the default, and preferred
   constraint method. The algortihm uses first-differencing
@@ -151,21 +151,20 @@
   spectroscopy.
 
   The main function behind this method is from Morhac
-  (2008): \code{\link[Peaks]{SpectrumSmoothMarkov}}. This
-  calculates the probability that the number of tapers
-  would have changed (from it's previous value); it is very
-  fast.  Details of the theory behind this algorithm may be
-  found in Morhac (2008) and Silagadze (1996). }
+  (2008): \code{SpectrumSmoothMarkov}. This calculates the
+  probability that the number of tapers would have changed
+  (from it's previous value); it is very fast.  Details of
+  the theory behind this algorithm may be found in Morhac
+  (2008) and Silagadze (1996). }
 
   \subsection{via LOESS smoothing}{
-  \code{\link{ctap_loess}} uses \code{\link[stats]{loess}}
-  to smooth the taper vector; is can be very slow thanks to
-  quadratic scaling. }
+  \code{\link{ctap_loess}} uses \code{loess} to smooth the
+  taper vector; is can be very slow thanks to quadratic
+  scaling. }
 
   \subsection{via Friedman super-smoothing}{
-  \code{\link{ctap_friedman}} uses
-  \code{\link[stats]{supsmu}}, the Friedman super-smoother.
-  }
+  \code{\link{ctap_friedman}} uses \code{supsmu}, the
+  Friedman super-smoother. }
 }
 
 \section{Warning}{
@@ -180,10 +179,10 @@
   tails become.
 
   \code{\link{ctap_markov}} results tend to be strongly
-  dependent on the tuning parameters given to
-  \code{\link{loess}} (for obvious reasons); hence, some
-  effort should be given to understand their effect, and/or
-  re-tuning them if needed.
+  dependent on the tuning parameters given to \code{loess}
+  (for obvious reasons); hence, some effort should be given
+  to understand their effect, and/or re-tuning them if
+  needed.
 
   \code{\link{ctap_friedman}} results are generally poor in
   my opinion; hence, the method may be removed in future
@@ -196,10 +195,10 @@ demo("ctap")
 }
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com> and R.L.Parker.
-  AJB ported some of RLP's original code to the R language,
-  and wrote the main function in \code{\link{ctap_simple}}
-  as C-code. The main function used by
+  A.J. Barbour <andy.barbour@gmail.com> and R.L.Parker. AJB
+  adapted some of RLP's original code, and wrote the main
+  function in \code{\link{ctap_simple}} for dynamic loading
+  C-code. The main function used by
   \code{\link{ctap_markov}} is from Morhac (2008).
 }
 \references{
@@ -208,8 +207,7 @@ demo("ctap")
 
   Silagadze, Z.K. (1996), A new algorithm for automatic
   photopeak searches, \emph{Nucl. Instrum. Meth. A},
-  \strong{376} 451.
-
+  \strong{376} 451,
   \url{http://arxiv.org/abs/hep-ex/9506013}
 }
 \seealso{

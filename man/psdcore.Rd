@@ -1,19 +1,19 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.default}
-\title{Multitaper power spectral density of a series.}
+\title{Multitaper power spectral density estimates of a series.}
 \usage{
   psdcore(X.d, X.frq = 1, ntaper = as.taper(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     Nyquist.normalize = TRUE, plotpsd = FALSE,
-    as.spec = TRUE, force_calc = FALSE, ...)
+    as.spec = TRUE, ...)
 
   psdcore.default(X.d, X.frq = 1, ntaper = as.taper(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     Nyquist.normalize = TRUE, plotpsd = FALSE,
-    as.spec = TRUE, force_calc = FALSE, ...)
+    as.spec = TRUE, ...)
 }
 \arguments{
   \item{X.d}{the series to estimate a spectrum for}
@@ -44,21 +44,17 @@
   \item{as.spec}{logical; should the object returned be of
   class 'spec'}
 
-  \item{force_calc}{logical; force spectrum (used for
-  development purposes)}
-
-  \item{...}{(unused); parameters passed to [ NULL ]}
+  \item{...}{(unused) Optional parameters}
 }
 \description{
-  Compute a power spectral density (PSD) estimate for the
+  Compute power spectral density (PSD) estimates for the
   input series using sine multitapers.
 }
 \details{
   The parameter \code{ntaper} specifies the number of sine
-  tapers to be used at each frequency: if it's a scalar,
-  the same number of tapers will be used at every
-  frequency; otherwise, use \code{ntaper(j)} sine tapers at
-  \code{frequency(j)}.
+  tapers to be used at each frequency: equal tapers at each
+  frequency for a scalar; otherwise, use \code{ntaper(j)}
+  sine tapers at \code{frequency(j)}.
 
   The series length \code{N} is truncated, if necessary, so
   that \code{1+N/2} evenly spaced frequencies are returned.
@@ -87,8 +83,8 @@ abline(h=c(10, 3), col=c("black","red"), lwd=2)
 psdcore(X.d, ntaper=rep(10,length(X.d))
 }
 \author{
-  Andrew Barbour <andy.barbour@gmail.com> ported original
-  by R.L.Parker.
+  A.J. Barbour <andy.barbour@gmail.com> adapted original by
+  R.L.Parker.
 }
 \seealso{
   \code{\link{pspectrum}}, \code{\link{riedsid}}

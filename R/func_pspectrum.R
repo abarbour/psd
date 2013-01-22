@@ -1,23 +1,31 @@
 #' Adaptive sine multitaper power spectral density estimation.
 #' 
-#' xxx
+#' This is the primary function to be used in this package, and returns
+#' power spectral density estimates where the number of tapers at each
+#' frequency has been iteratively optimized (\code{niter} times).
+#'
+#' See the \strong{Adaptive estimation} section in the description of
+#' the \code{\link{rlpSpec-package}} for details regarding adaptive estimation.
 #'
 #' @name pspectrum
 #' @export
-#' @author Andrew Barbour <andy.barbour@@gmail.com> based on R.L. Parker's algorithm.
-#' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
+#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
+#' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}, \code{\link{rlpSpec-package}}
+#' @keywords spectrum-estimation riedel-sidorenko taper taper-constraints taper-weighting numerical-derivative
 #' 
 #' @param x vector; series to estimate PSD for.
 #' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}.
 #' @param ntap_pilot scalar; the number of sine tapers to use in the pilot spectrum estimation.
 #' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum.
 #' @param verbose logical; Should messages be given?
-#' @param ... optional arguments (unused)
+#' @param no.history logical; Should the adaptive history \emph{not} be saved?
+#' @param ... Optional parameters passed to \code{\link{riedsid}}
 #' @return Object with class 'spec'.
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, ...) UseMethod("pspectrum")
+#' @example x_examp/pspec.R
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, no.history=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TRUE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, no.history=FALSE, ...){
   stopifnot(length(x)>1)
   #
   adapt_message <- function(stage){
@@ -35,6 +43,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TR
       Pspec <- pilot_spec(x=x, x.frequency=x.frqsamp, ntap=ntap_pilot)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
+      if (no.history) save_hist <- FALSE
       if (save_hist){
         new_adapt_history(niter)
         update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
@@ -42,10 +51,10 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TR
       x <- 0 # to prevent passing orig data back/forth
     }
     ## calculate optimal tapers
-    kopt <- riedsid(Pspec$spec, Pspec$taper)
+    kopt <- riedsid(Pspec$spec, Pspec$taper, ...)
     stopifnot(exists('kopt'))
     ## reapply to spectrum
-    Pspec <- psdcore(X.d=x, ntaper=kopt)
+    Pspec <- psdcore(X.d=x, X.frq=x.frqsamp, ntaper=kopt, plotpsd=FALSE)
     ## update history
     if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
   }
@@ -54,8 +63,9 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TR
 
 #' Calculate the pilot power spectral densities.
 #'
-#' This PSD -- the pilot spectrum -- is used as the figurative starting point
+#' This PSD -- the pilot spectrum -- is used as the starting point
 #' for the adaptive estimation routine.
+#'
 #' A fixed number
 #' of tapers is applied across all frequencies using \code{\link{psdcore}}, and
 #' subsequent taper-refinements are based on the spectral derivatives
@@ -63,22 +73,23 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=2, verbose=TR
 #' how many adaptive stages may be needed (though there are no formal convergence
 #' criteria to speak of).
 #' 
-#' @note A mean value and linear trend are removed from the series prior to
-#' estimation, and no decimation is performed  
+#' A mean value and linear trend are removed from the series prior to
+#' estimation, and no decimation is performed.
+#'
 #' The taper series of the returned spectrum is constrained using
 #' \code{as.taper(..., minspan=TRUE)}.
 #'
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot
 #' @export
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{psdcore}}
+#' @author A.J. Barbour <andy.barbour@@gmail.com>
+#' @seealso \code{\link{psdcore}}, \code{\link{as.taper}}, \code{\link{minspan}}
 #'
 #' @param x vetor; the data series to find a pilot spectrum for
 #' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
 #' @param ntap scalar; the number of tapers to apply during spectum estimation
-#' @param ... additional parameters
-#' @return An object with class 'spec'
+#' @param ... (unused) additional parameters
+#' @return An object with class 'spec'.
 pilot_spec <- function(...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @S3method pilot_spec default

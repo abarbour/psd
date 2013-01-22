@@ -156,7 +156,7 @@
   \code{\link{rlpSpec-utilities}},
   \code{\link{char2envir}}, \code{\link{pspectrum}}
 
-  \code{\link{new.env}}, \code{\link{baseenv}}
+  \code{new.env}, \code{baseenv}
 
   \code{\link{rlp_initEnv}}
 }

@@ -2,17 +2,19 @@
 #' 
 #' Estimates the
 #' optimal number of tapers at each frequency of
-#' given PSD; the optimal value chosen is based on the
-#' Riedel-Sidorenko MSE recipe, and modified by R.L. Parker.
+#' given PSD, using a modified Riedel-Sidorenko MSE recipe (RS-RLP).
 #' 
-#' First, weighted derivatives of the input PSD are computed.
-#' Using those derivates the optimal number of tapers is found through the RS-RLP formulation.
-#' The default state returns constrained optimal-tapers using
-#' \code{\link{constrain_tapers}}, but this can be turned off with \code{constrained=FALSE}.
+#' The optimization is as follows. First, weighted derivatives of the 
+#' input PSD are computed.
+#' Using those derivates the optimal number of tapers is found through the 
+#' RS-RLP formulation.
+#' Constraints are then placed on the practicable number of tapers.
+#'
+#' Set \code{constrained=FALSE} to turn off taper constraints.
 #'
 #' @export
 #' @keywords taper taper-constraints riedel-sidorenko
-#' @author A.J. Barbour <andy.barbour@@gmail.com> ported original by R.L. Parker.
+#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' 
 #' @param psd vector; the spectral values used to optimize taper numbers
 #' @param pspec object with class 'spec'
@@ -20,10 +22,11 @@
 #' @param tapseq vector; representing positions or frequencies (same length as psd)
 #' @param constrained logical; should the taper constraints be applied to the optimum tapers?
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
-#' @param ... optional argments passed to \code{constrain_tapers}
+#' @param ... optional argments passed to \code{\link{constrain_tapers}}
+#' @return Object with class 'taper'.
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}
-#' @example examp/ried.R
+#' @example x_examp/ried.R
 riedsid <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
@@ -43,7 +46,7 @@ riedsid.default <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method
   # num freqs
   nf <- rlp_envAssignGet("num_freqs", length(psd))
   # prelims
-  eps <- .Machine$double.eps # was: 1e-78  #  A small number to protect against zeros
+  eps <- .Machine$double.eps**2 # was: 1e-78  #  A small number to protect against zeros
   Ones <- ones(nf) # was rowvec, now col 
   Zeros <- zeros(nf) # was rowvec, now col
   # vectorize initial estimate

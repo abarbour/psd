@@ -2,11 +2,7 @@
 #'
 #' In a tapered spectrum estimation algorithm, it is
 #' necessary to enforce rules on the number of tapers
-#' that may be applied.  For example, we cannot apply
-#' zero tapers (the result would be a raw periodogram)
-#' or one million tapers (that would be absurd, and
-#' violate orthogonality
-#' conditions for any series less than two million terms long!).
+#' that may be applied.
 #'
 #' Formal requirements enforced by this function are:
 #' \itemize{
@@ -14,6 +10,11 @@
 #' \item Integer values.
 #' \item Fewer than the half-length of the spectrum.
 #' }
+#' For example, we cannot apply
+#' zero tapers (the result would be a raw periodogram)
+#' or one million tapers (that would be absurd, and
+#' violate orthogonality
+#' conditions for any series less than two million terms long!).
 #' 
 #' An object with S3 class 'taper' is created;
 #' this will have
@@ -30,19 +31,21 @@
 #' and list.  
 #'
 #' Multiple objects are concatenated into a single
-#' vector dimension.  For example, if the object is 
-#' \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding 'taper'
-#' objects for the following arguments are:
-#'
-#' \describe{
-#' \item{\emph{defaults}}{\code{[1,2,3,4,5,1,1]}}
-#' \item{\code{setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
-#' \item{\code{max_taper=5}}{\code{[1,2,3,4,5,1,1]}}
-#' \item{\code{max_taper=5,setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
-#' }
-#'
-#' It should be clear that enabling \code{setspan} will only override
+#' vector dimension.  
+#' 
+#' Enabling \code{setspan} will only override
 #' \code{max_taper} should it be larger than the half-width of the series.
+#'
+# @section Example of For example, if the object is 
+# \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding 'taper'
+# objects for the following arguments are:
+#
+# \describe{
+# \item{\emph{defaults}}{\code{[1,2,3,4,5,1,1]}}
+# \item{\code{setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
+# \item{\code{max_taper=5}}{\code{[1,2,3,4,5,1,1]}}
+# \item{\code{max_taper=5,setspan=TRUE}}{\code{[1,2,3,3,3,1,1]}}
+# }
 #'
 #' @note No support (yet) for use of \code{min_taper,max_taper} as vectors, although
 #' this could be quite desirable.
@@ -53,7 +56,7 @@
 #' @param max_taper Set all values greater than this to this.
 #' @param setspan logical; should the taper object be passed through \code{\link{minspan}} before it is return?
 #' @export
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.taper}}
 #' @examples
 #' is.taper(as.taper(1))
@@ -87,7 +90,7 @@ as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #' @title Generic methods for objects with class 'taper'.
 #' @keywords methods S3methods taper
 #' @name taper-methods
-#' @author Andrew Barbour <andy.barbour@@gmail.com>
+#' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @aliases taper
 #' @rdname taper-methods
 #" @docType package
@@ -191,11 +194,43 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #' Various spectral properties may be computed from the vector of tapers, and
 #' if necessary the sampling frequency.
 #'
-#' @section Uncertainty:
-#' @section Resolution:
-#' @section DoF:
-#' @section Bandwidth:
+#' @section Parameter Details:
+#' \subsection{Uncertainty}{
+#' The errors are estimated in the simplest way, 
+#' from the number of degrees of freedom; a more 
+#' sophisticated (and complicated) approach is to
+#' estimate via jack-knifing (Prieto et al 2007)
+#' which is not yet available.
+#'
+#' Here the standard error \eqn{\delta S} is returned so \eqn{\delta S \cdot S} 
+#' represents spectral uncertainty.
+#' }
+#'
+#' \subsection{Resolution}{
+#' The frequency resolution depends on the number of tapers (\eqn{K}), and
+#' is found from 
+#' \deqn{\frac{K \cdot f_N}{N_f}} 
+#' where \eqn{f_N} is the Nyquist
+#' frequency and \eqn{N_f} is the 
+#' number of frequencies estimated.
+#' }
+#'
+#' \subsection{Degrees of Freedom}{
+#' There are two degrees of freedom for each taper.
+#' }
+#'
+#' \subsection{Bandwidth}{
+#' The bandwidth of a multitaper estimate depends on the number of
+#' tapers.
+#' Following Walden et al (1995) the effective bandwidth is \eqn{\approx 2W}
+#' where
+#' \deqn{W = \frac{K + 1}{2N}} 
+#(N+1)}}
+#' and \eqn{N} is the number of terms in the series, which makes \eqn{N \cdot W} the
+#' approximate time-bandwidth product.
+#' }
 #' 
+#' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @name spectral_properties
 #' @param x object with class taper
 #' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
@@ -204,12 +239,13 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #' @return A list with the following properties (and names):
 #' \itemize{
 #' \item{\code{taper}: The original taper vector.}
-#' \item{\code{stderr}: The standard error of the spectrum.  Multiply by PSD for spectral uncertainty.}
+#' \item{\code{stderr}: The standard error of the spectrum.}
 #' \item{\code{resolution}: The effective spectral resolution.}
-#' \item{\code{dof}: The number of degrees of freedom. May be used for jacknifing confidence intervals.}
+#' \item{\code{dof}: The number of degrees of freedom.}
 #' \item{\code{bw}: The effective bandwidth of the spectrum.}
 #' }
 #' @export
+#' @keywords properties taper resolution uncertainty degrees-of-freedom bandwidth
 spectral_properties <- function(x, f.samp=1, n.freq=NULL, ...) UseMethod("spectral_properties")
 #' @rdname spectral_properties
 #' @S3method spectral_properties spec
@@ -241,26 +277,25 @@ spectral_properties.taper <- function(x, f.samp=1, n.freq=NULL, ...){
 ###  Weighting methods
 ###
 
-#' Calculate weighting factors for 'taper' object.
+#' Calculate parabolic weighting factors.
+#'
+#' The resampled spectrum involves summing weighted tapers; this produces
+#' the weighting factors.
 #'
 #' Weighting factors are calculated as follows:
-#'
 #' \deqn{W_N \equiv n_T^2 - \frac{3  K_N^2}{2 n_T (n_T - 1/4) (n_T + 1)}}
-#'
 #' where \eqn{n_T} is the total number of tapers, and 
 #' \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]} 
 #'
-#'
-#' @title parabolic_weights
 #' @export
 #' @keywords taper taper-weighting
-#' @author Andrew Barbour <andy.barbour@@gmail.com> ported original by R.L.Parker,
+#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker,
 #' and authored the optimized version.
 #' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
 #'
 #' @param tapvec 'taper' object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to find weights
-#' @return a list with taper indices, and the weights \eqn{W_N}.
+#' @return A list with taper indices, and the weights \eqn{W_N}.
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
 
 #' @rdname parabolic_weights
@@ -311,11 +346,13 @@ parabolic_weights_fast.default <- function(ntap=1L){
 NULL
 
 #' @description \code{\link{minspan}} sets the maximum span a taper object
-#' may have. 
-#' @details \code{\link{minspan}} is necessary because it would be nonsense to
-#' have more tapers than the length of the series. The value set is
-#' defined as the minimum of the half-length of the series, and 7/5 times
-#' the tapers.  In code this would be something like: \code{min(length(tapvec)/2, 7*tapvec/5)}
+#' may have, which is necessary because it would be nonsense to
+#' have more tapers than the length of the series. 
+#' 
+#' @details \code{\link{minspan}} bounds the number of tapers between
+#' the minimum of the half-length of the series, and 7/5 times
+#' the tapers.  In code this would look something like: 
+#' \code{min(length(tapvec)/2, 7*tapvec/5)}
 #'
 #' @rdname taper-constraints
 #' @title minspan
@@ -323,9 +360,9 @@ NULL
 #' @keywords taper taper-constraints
 #' @seealso \code{\link{splineGrad}}, \code{\link{riedsid}}
 #'
-#' @author Andrew Barbour <andy.barbour@@gmail.com> and R.L.Parker. AJB ported
-#' some of RLP's original code to the R language,
-#' and wrote the main function in \code{\link{ctap_simple}} as C-code.
+#' @author A.J. Barbour <andy.barbour@@gmail.com> and R.L.Parker. 
+#' AJB adapted some of RLP's original code,
+#' and wrote the main function in \code{\link{ctap_simple}} for dynamic loading C-code.
 #' The main function used by \code{\link{ctap_markov}} is from Morhac (2008).
 #'
 minspan <- function(tapvec, ...) UseMethod("minspan")
@@ -355,7 +392,7 @@ minspan.taper <- function(tapvec, ...){
 #'   \item \code{'none'} returns unbounded tapers.
 #' }
 #' 
-#' @section Constraint methods:
+#' @section Details of Constraint Methods:
 #' \subsection{via first differencing (default)}{
 #'  \code{\link{ctap_simple}} is the default, and preferred constraint method.
 #' The algortihm uses first-differencing to modify the number
@@ -380,19 +417,19 @@ minspan.taper <- function(tapvec, ...){
 #' quantum-well probability chains, which are
 #' commonly used in gamma-ray spectroscopy.
 #'
-#' The main function behind this method is from Morhac (2008): \code{\link[Peaks]{SpectrumSmoothMarkov}}.
+#' The main function behind this method is from Morhac (2008): \code{SpectrumSmoothMarkov}.
 #' This calculates the probability that the number of tapers would have
 #' changed (from it's previous value); it is very fast.  Details of the theory 
 #' behind this algorithm may be found in Morhac (2008) and Silagadze (1996).
 #' }
 #' 
 #' \subsection{via LOESS smoothing}{
-#' \code{\link{ctap_loess}} uses \code{\link[stats]{loess}} to smooth the taper vector; is
+#' \code{\link{ctap_loess}} uses \code{loess} to smooth the taper vector; is
 #' can be very slow thanks to quadratic scaling.
 #' }
 #'
 #' \subsection{via Friedman super-smoothing}{
-#' \code{\link{ctap_friedman}} uses \code{\link[stats]{supsmu}}, the Friedman super-smoother.
+#' \code{\link{ctap_friedman}} uses \code{supsmu}, the Friedman super-smoother.
 #' }
 #'
 #' @section Warning:
@@ -406,7 +443,7 @@ minspan.taper <- function(tapvec, ...){
 #' the shorter the tails become.
 #'
 #' \code{\link{ctap_markov}} results tend to be strongly dependent on
-#' the tuning parameters given to \code{\link{loess}} (for obvious reasons); hence, 
+#' the tuning parameters given to \code{loess} (for obvious reasons); hence, 
 #' some effort should be given to understand
 #' their effect, and/or re-tuning them if needed.
 #'
@@ -435,8 +472,8 @@ minspan.taper <- function(tapvec, ...){
 #'
 #' @references Morhac, M. (2008), Peaks: Peaks, \emph{R package}, \strong{version 0.2}
 #' @references Silagadze, Z.K. (1996), A new algorithm for automatic photopeak searches,
-#' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451.
-#' @references \url{http://arxiv.org/abs/hep-ex/9506013}
+#' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451,
+#' \url{http://arxiv.org/abs/hep-ex/9506013}
 #'
 #' @examples
 #' \dontrun{
