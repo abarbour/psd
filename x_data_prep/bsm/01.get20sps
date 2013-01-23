@@ -1,0 +1,6 @@
+#!/bin/sh
+PROG="get_20sps.csh"
+${PROG} B073 varian073bcs2006  2009 105 13:00:00 2009 105 16:00:00 p
+${PROG} B084 pinyon084bcs2006  2009 105 13:00:00 2009 105 16:00:00 p
+rm -f B0*.tar B0*.r.txt
+gzip *.txt

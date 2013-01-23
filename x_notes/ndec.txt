@@ -1,0 +1,26 @@
+Robert L. Parker
+Jan 31 (3 days ago)
+
+Hi Andy
+
+...
+
+pspectrum works without crashing when Ndecimate > 1.  I think your problem is in believing that the length of psd is different on exit from psdcore from the length going in.  The statements at the bottom of psdcore (lines 69-71 in my code) interpolate the spectrum from the unevenly spaced psd back onto uniformly spaced frequencies, and with the same number, 1+n/2, as before, even when the actual number computed is 10 times smaller.  The function interp1 is a simple linear interpolator, a standard matlab function.
+
+Let me know of this doesn't fix the problem.
+
+-Bob.
+
+
+On Jan 9, 2012, at 7:42 PM, Andrew Barbour wrote:
+
+> Hi Bob,
+> I'm almost finished porting your psd matlab functions (sent a few months back) to the R language, which has gone smoothly and encouragingly.  But, I am stuck in the adaptive estimation point and hope you could help me understand.
+> 
+> The trouble arises when decimation other than 1 is used; specifically, where is the vector 'ntaper' decimated?  Considering the main loop:  'psdcore' decimates the spectrum but apparently 'ntaper' is left unaltered; thus, 'riedsid' chokes when the vector 'psd' is shorter than 'ntaper' in the second round of estimation (it cannot form 'nspan').
+> 
+> Is there something I haven't considered?  If not I can imagine the fix would be to return 'tapers' from 'psdcore', but I just wanted to check with you.
+> 
+> thanks,
+> Andy
+> 

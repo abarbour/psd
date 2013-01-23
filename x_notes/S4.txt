@@ -1,0 +1,8 @@
+#http://www.ci.tuwien.ac.at/Conferences/useR-2004/Keynotes/Leisch.pdf
+deﬁne classes: setClass()
+• create objects: new()
+• deﬁne generics: setGeneric()
+• deﬁne methods: setMethods()
+• convert objects: as(), setAs()
+• check object validity: setValidity(), validObject()
+• access registry: showClass(), showMethods(), getMethod()

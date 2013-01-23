@@ -1,0 +1,8 @@
+#   When a function calling UseMethod("fun") is applied to an 
+#   object with class attribute c("first", "second"), the 
+#   system searches for a function called fun.first and, 
+#   if it finds it, applies it to the object. If no such 
+#   function is found a function called fun.second is tried. 
+#   If no class name produces a suitable function, the 
+#   function fun.default is used, if it exists, or an error 
+#   results.
