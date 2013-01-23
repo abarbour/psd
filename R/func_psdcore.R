@@ -102,7 +102,7 @@ psdcore.default <- function(X.d,
   } else {
     X <- X.d
     ntap <- ntaper
-    stopifnot(length(X)==length(ntap))
+    #stopifnot(length(X)==length(ntap))
     n.e <- rlp_envGet("len_even")
     nhalf <- rlp_envGet("len_even_half")
     varx <- rlp_envGet("ser_even_var")
@@ -221,16 +221,16 @@ psdcore.default <- function(X.d,
   if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
   pltpsd <- function(...){
-    Xpg <- spec.pgram(X, log="no", pad=1, taper=0, detrend=F, demean=F, plot=F)
+    Xpg <- spec.pgram(X, log="no", pad=1, taper=0, detrend=detrend, demean=demean, plot=FALSE)
     opar <- par(no.readonly = TRUE)
-    par(mar=rep(2,4), oma=rep(0,4))
+    par(mar=rep(2,4), oma=rep(2,4))
     layout(matrix(c(1,2),ncol=1),c(1,2))
     lpsd <- 10*log10(psd.n)
     lpgram <- 10*log10(Xpg$spec)
     r1 <- range(lpsd)
     r2 <- range(lpgram)
     plot(log10(Xpg$freq), lpgram, 
-         col="red", type="l", main="spectra",
+         col="red", type="l", main="Naive and Multitaper Power Spectral Densities",
          ,ylim=c(min(r1,r2), max(r1,r2)))
     lines(log10(frq), lpsd, type="l")
     legend("bottomleft",c("spec.pgram","rlpSpec"),col=c("red","black"),lty=1)

@@ -9,6 +9,9 @@
 ^src/.gitignore$
 README.md
 install_rlp
+data/.assemb_data
+inst/doc/.sweave
+inst/doc/rlpSpec.tex
 ^.*/.gitignore$
 x_S4/
 x_data_prep/
