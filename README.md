@@ -1,13 +1,6 @@
-README for rlpSpec
-
-Creation date:  Wed Jan 11 14:27:31 PST 2012
-
-data/           datasets 
-rsrc/           rfunctions
-
 This work is a port of Robert Parker's (Matlab version of) PSD*
 
-From the site:
+From Parker's site:
 
 """
 	P.S.D. stands for the Power Spectral Density, often simply
