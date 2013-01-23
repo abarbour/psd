@@ -7,7 +7,8 @@
 \usage{
   pilot_spec(...)
 
-  pilot_spec.default(x, x.frequency = 1, ntap = 10, ...)
+  \method{pilot_spec}{default} (x, x.frequency = 1,
+    ntap = 10, ...)
 }
 \arguments{
   \item{x}{vetor; the data series to find a pilot spectrum

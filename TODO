@@ -1,3 +1,10 @@
+Miscellany
+----------
+[X] build --as-cran --no-multiarch --no-examples
+*** remove --no-examples and get to build [ ]
+[ ] migrate examples in functions to ./examp/
+[X] remove references to src/ctap_simple.c and test build {[X]}
+
 vignettes
 ---------
 [ ] plot the `histlist`
@@ -32,7 +39,3 @@ datasets
 [X] add option to change constraint method for riedsid
 ***  test it [ ]
 
-Miscellany
-----------
-[ ] migrate examples in functions to ./examp/
-[X] remove references to src/ctap_simple.c and test build {[ ]}

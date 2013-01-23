@@ -39,6 +39,7 @@
 # @example x_examp/psdcore.R
 psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, ...) UseMethod("psdcore")
 #' @rdname psdcore
+#' @method psdcore default
 #' @S3method psdcore default
 psdcore.default <- function(X.d, 
                             X.frq=1, 
@@ -54,7 +55,7 @@ psdcore.default <- function(X.d,
                             ...
                            ) {
   #
-  require(signal, quietly=TRUE, warn.conflicts=FALSE)
+  #require(signal, quietly=TRUE, warn.conflicts=FALSE)
   #
   series <- deparse(substitute(X.d))
   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
@@ -62,11 +63,12 @@ psdcore.default <- function(X.d,
   ##
   ###  When ntaper is a scalar, initialize
   ##
+  # only one taper: usually means a first run
   lt <- length(ntaper)
-  if (lt == 1){
-    #
-    # 
-    # original series
+  # onle one variable in the env (init): it hasn't been added to yet
+  nenvar <- length(rlp_envStatus()$listing)
+  if (lt == 1 | nenvar == 1){
+    # original series length
     n.o <- rlp_envAssignGet("len_orig", length(X.d))
     #
     X <- prewhiten(X.d, 
@@ -100,6 +102,7 @@ psdcore.default <- function(X.d,
   } else {
     X <- X.d
     ntap <- ntaper
+    stopifnot(length(X)==length(ntap))
     n.e <- rlp_envGet("len_even")
     nhalf <- rlp_envGet("len_even_half")
     varx <- rlp_envGet("ser_even_var")
@@ -128,12 +131,12 @@ psdcore.default <- function(X.d,
     f <- seq.int(0, nhalf, by=1)
   }
   ##
-  lt2 <- length(drop(ntaper))
+  lt2 <- length(drop(ntap))
   ##
   ###  Calculate the psd by averaging over tapered estimates
   nfreq <- length(f)
   ##
-  if (sum(ntaper) > 0) {
+  if (sum(ntap) > 0) {
     psd <- zeros(nfreq)
     n2e <- 2*n.e
     Rfftz <- Re(fftz)
@@ -169,10 +172,8 @@ psdcore.default <- function(X.d,
       return(psdv)
     }
     # ** compiled code doesn't appear to help speed
-    #     require(compiler)
-    #     PSDFUNc <- cmpfun(PSDFUN)
+    #     PSDFUNc <- compiler::cmpfun(PSDFUN)
     # ** foreach is easier to follow, but foreach solution is actually slower :(
-    #     require(foreach)
     #     psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
     psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=1.0)

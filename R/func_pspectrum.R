@@ -24,6 +24,7 @@
 #' @example x_examp/pspec.R
 pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, no.history=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
+#' @method pspectrum default
 #' @S3method pspectrum default
 pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, no.history=FALSE, ...){
   stopifnot(length(x)>1)
@@ -92,6 +93,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TR
 #' @return An object with class 'spec'.
 pilot_spec <- function(...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
+#' @method pilot_spec default
 #' @S3method pilot_spec default
 pilot_spec.default <- function(x, x.frequency=1, ntap=10, ...){
   stopifnot(length(ntap)==1)

@@ -9,11 +9,11 @@
     Nyquist.normalize = TRUE, plotpsd = FALSE,
     as.spec = TRUE, ...)
 
-  psdcore.default(X.d, X.frq = 1, ntaper = as.taper(1),
-    ndecimate = 1L, demean = TRUE, detrend = TRUE,
-    na.action = stats::na.fail, first.last = TRUE,
-    Nyquist.normalize = TRUE, plotpsd = FALSE,
-    as.spec = TRUE, ...)
+  \method{psdcore}{default} (X.d, X.frq = 1,
+    ntaper = as.taper(1), ndecimate = 1L, demean = TRUE,
+    detrend = TRUE, na.action = stats::na.fail,
+    first.last = TRUE, Nyquist.normalize = TRUE,
+    plotpsd = FALSE, as.spec = TRUE, ...)
 }
 \arguments{
   \item{X.d}{the series to estimate a spectrum for}

@@ -29,7 +29,7 @@
   vector_reshape(x,
     vec.shape = c("horizontal", "vertical"))
 
-  vector_reshape.default(x,
+  \method{vector_reshape}{default} (x,
     vec.shape = c("horizontal", "vertical"))
 
   colvec(x)
@@ -42,19 +42,19 @@
 
   na_mat(nrow, ncol = 1)
 
-  na_mat.default(nrow, ncol = 1)
+  \method{na_mat}{default} (nrow, ncol = 1)
 
   zeros(nrow)
 
-  zeros.default(nrow)
+  \method{zeros}{default} (nrow)
 
   ones(nrow)
 
-  ones.default(nrow)
+  \method{ones}{default} (nrow)
 
   mod(X, Y)
 
-  mod.default(X, Y)
+  \method{mod}{default} (X, Y)
 }
 \arguments{
   \item{envchar}{An object with class 'character'.}
@@ -170,7 +170,6 @@ char2envir(some_nonexistent_environment) # error
 ##
 ##
 ## Check for spec object:
-require(stats)
 # quick power spectral density
 x <- rnorm(1e2, sd=10)
 psd <- spectrum(x, plot=FALSE)

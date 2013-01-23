@@ -85,10 +85,18 @@ as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @aliases taper
 #' @rdname taper-methods
-# @docType package
+#' @docType methods
 #' @import RColorBrewer
 #'
-#' @seealso \code{\link{as.taper}}, \code{\link{constrain_tapers}}
+#' @seealso \code{\link{as.taper}}, \code{\link{constrain_tapers}}, \code{par}
+#' @param x taper object
+#' @param object taper object
+#' @param lwd line width (default is 1.8)
+#' @param col color of line (default is "red")
+#' @param pch point character (default is "_")
+#' @param cex point size (default is 1)
+#' @param color.pal color palette to use (choices are: "Blues","Spectral")
+#' @param ylim optional limits for y-axis
 #' @param ... optional arguments
 #' @examples
 #' ##
@@ -103,6 +111,8 @@ NULL
 
 #' @rdname taper-methods
 #' @name print
+#' @aliases print.taper
+#' @method print taper
 #' @S3method print taper
 print.taper <- function(x, ...){
   stopifnot(is.taper(x))
@@ -113,6 +123,8 @@ print.taper <- function(x, ...){
 
 #' @rdname taper-methods
 #' @name summary
+#' @aliases summary.taper
+#' @method summary taper
 #' @S3method summary taper
 summary.taper <- function(object, ...){
   stopifnot(is.taper(object))
@@ -123,7 +135,8 @@ summary.taper <- function(object, ...){
 
 #' @rdname taper-methods
 #' @name print
-# @aliases print.summary.taper
+#' @aliases print.summary.taper
+#' @method print summary.taper
 #' @S3method print summary.taper
 print.summary.taper <- function(x, ...){
   cat("summary of tapers:\n")
@@ -132,6 +145,8 @@ print.summary.taper <- function(x, ...){
 
 #' @rdname taper-methods
 #' @name lines
+#' @aliases lines.taper
+#' @method lines taper
 #' @S3method lines taper
 lines.taper <- function(x, lwd=1.8, col="red", ...){
   stopifnot(is.taper(x))
@@ -143,6 +158,8 @@ lines.taper <- function(x, lwd=1.8, col="red", ...){
 
 #' @rdname taper-methods
 #' @name points
+#' @aliases points.taper
+#' @method points taper
 #' @S3method points taper
 points.taper <- function(x, pch="_", cex=1, ...){
   stopifnot(is.taper(x))
@@ -154,11 +171,12 @@ points.taper <- function(x, pch="_", cex=1, ...){
 
 #' @rdname taper-methods
 #' @name plot
+#' @aliases plot.taper
+#' @method plot taper
 #' @S3method plot taper
 plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
   stopifnot(is.taper(x))
   #if isS4(x) x <- x@tapers
-  require(RColorBrewer)
   nt <- length(x)
   xi <- 1:nt
   mx <- max(x)
@@ -243,9 +261,13 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
 #' @keywords properties taper resolution uncertainty degrees-of-freedom bandwidth
 spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, ...) UseMethod("spectral_properties")
 #' @rdname spectral_properties
+#' @aliases spectral_properties.spec
+#' @method spectral_properties spec
 #' @S3method spectral_properties spec
 spectral_properties.spec <- function(tapvec, f.samp=1, n.freq=NULL, ...) .NotYetImplemented()
 #' @rdname spectral_properties
+#' @aliases spectral_properties.taper
+#' @method spectral_properties taper
 #' @S3method spectral_properties taper
 spectral_properties.taper <- function(tapvec, f.samp=1, n.freq=NULL, ...){
   stopifnot(is.taper(tapvec))
@@ -293,21 +315,23 @@ spectral_properties.taper <- function(tapvec, f.samp=1, n.freq=NULL, ...){
 #' @param ntap integer; the number of tapers to provide weightings for.
 #' @return A list with taper indices, and the weights \eqn{W_N}.
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
-
 #' @rdname parabolic_weights
+#' @aliases parabolic_weights.taper
+#' @method parabolic_weights taper
 #' @S3method parabolic_weights taper
 parabolic_weights.taper <- function(tapvec, tap.index=1L){
   stopifnot(is.taper(tapvec) | ((tap.index > 0L) & (tap.index <= length(tapvec))))
   kWeights <- parabolic_weights_fast(tapvec[as.integer(tap.index)])
   return(kWeights)
 }
-
 #' @rdname parabolic_weights
+#' @aliases parabolic_weights_fast
 #' @export
 #' @keywords taper taper-weighting
 parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
-
 #' @rdname parabolic_weights
+#' @aliases parabolic_weights_fast.taper
+#' @method parabolic_weights_fast default
 #' @S3method parabolic_weights_fast default
 parabolic_weights_fast.default <- function(ntap=1L){
   ntap <- max(1, as.integer(ntap[1]))
@@ -360,17 +384,13 @@ NULL
 #' The main function used by \code{\link{ctap_markov}} is from Morhac (2008).
 #'
 minspan <- function(tapvec, ...) UseMethod("minspan")
-
-# @rdname minspan
 #' @rdname taper-constraints
+#' @aliases minspan.taper
+#' @method minspan taper
 #' @S3method minspan taper
 minspan.taper <- function(tapvec, ...){
   stopifnot(is.taper(tapvec))
   nspan <- as.taper(7*tapvec/5, max_taper=length(tapvec)/2)
-  # matrixStats (>= 0.6.2),
-  #require(matrixStats)
-  #Ones <- ones(nf)
-  #nspan <- as.taper(matrixStats::rowMins(cbind(Ones*nf/2, 7*as.matrix(tapvec)/5)))
   return(nspan)
 }
 
@@ -446,7 +466,7 @@ minspan.taper <- function(tapvec, ...){
 #'
 #' @rdname taper-constraints
 #' @title constrain_tapers
-#' @aliases constrain_tapers
+#' @aliases constrain_tapers taper-constraints
 #' @export
 #' @import Peaks
 #' @keywords taper taper-constraints
@@ -483,6 +503,8 @@ constrain_tapers <- function(tapvec, tapseq=NULL,
                                                  "none"),
                              verbose=TRUE, ...) UseMethod("constrain_tapers")
 #' @rdname taper-constraints
+#' @aliases constrain_tapers.taper
+#' @method constrain_tapers taper
 #' @S3method constrain_tapers taper
 constrain_tapers.taper <- function(tapvec, tapseq=NULL,
                                    constraint.method=c("simple.slope",
@@ -522,11 +544,13 @@ constrain_tapers.taper <- function(tapvec, tapseq=NULL,
 }
 
 #' @rdname taper-constraints
-#' @aliases constrain_taper_simple_slope
+#' @aliases constrain_taper_simple_slope ctap_simple
 #' @export
 #' @keywords taper taper-constraints
 ctap_simple <- function(tapvec, tapseq=NA, maxslope=1, ...) UseMethod("ctap_simple")
 #' @rdname taper-constraints
+#' @aliases ctap_simple.taper
+#' @method ctap_simple taper
 #' @S3method ctap_simple taper
 ctap_simple.taper <- function(tapvec, tapseq=NA, maxslope=1, ...){
   stopifnot(is.taper(tapvec))
@@ -535,31 +559,21 @@ ctap_simple.taper <- function(tapvec, tapseq=NA, maxslope=1, ...){
   tapvec <- as.numeric(tapvec)
   maxslope <- as.numeric(maxslope)
   # c-code used for speed up of forward+backward operations
-  # until it's packaged, need to dynamic load:
-  #owd <- getwd()
-  #src <- "/Users/abarbour/nute.processing/development/rlpSpec/src"
-  #src <- "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/src"
-  #src <- "/Users/abarbour-l/rojo.processing/R/dev/rlpSpec/src"
-  #setwd(src)
-  #system("rm ctap_simple.*o")
-  #system("R CMD SHLIB ctap_simple.c")
-  #dyn.load("ctap_simple.so")
-  #setwd(owd)
-  #tapvec.adj <- as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope))
   tapvec.adj <- as.taper(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
   return(tapvec.adj)
 }
 
 #' @rdname taper-constraints
-#' @aliases constrain_taper_markov_chain
+#' @aliases constrain_taper_markov_chain ctap_markov
 #' @export
 #' @keywords taper taper-constraints
 ctap_markov <- function(tapvec, tapseq=NA, chain.width=round(5*length(tapvec)), ...) { UseMethod("ctap_markov") }
 #' @rdname taper-constraints
+#' @aliases ctap_markov.taper
+#' @method ctap_markov taper
 #' @S3method ctap_markov taper
 ctap_markov.taper <- function(tapvec, tapseq=NA, chain.width=round(5*length(tapvec)), normalize=TRUE, ...){
   stopifnot(is.taper(tapvec))
-  require("Peaks")
   # tapseq not needed
   # bound the chain.width
   MC.win <- max(1, round(chain.width))
@@ -569,11 +583,13 @@ ctap_markov.taper <- function(tapvec, tapseq=NA, chain.width=round(5*length(tapv
 }
 
 #' @rdname taper-constraints
-#' @aliases constrain_taper_loess_smooth
+#' @aliases constrain_taper_loess_smooth ctap_loess
 #' @export
 #' @keywords taper taper-constraints
 ctap_loess <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){ UseMethod("ctap_loess") }
 #' @rdname taper-constraints
+#' @aliases ctap_loess.taper
+#' @method ctap_loess taper
 #' @S3method ctap_loess taper
 ctap_loess.taper <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
   stopifnot(is.taper(tapvec))
@@ -582,7 +598,6 @@ ctap_loess.taper <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1,
     tapseq <- 1:length(tapvec)
     if (verbose) warning("Generated a position sequence; results may be bogus.")
   }
-  require(stats)
   lt <- length(tapvec)
   if (verbose & lt > 1e4) warning("Loess-method has quadratic memory scaling (1e3 pt -> 10 Mb)...")
   trc <- ifelse(lt >= 1e3, "approximate", "exact")
@@ -595,11 +610,13 @@ ctap_loess.taper <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1,
 }
 
 #' @rdname taper-constraints
-#' @aliases constrain_taper_friedman_smooth
+#' @aliases constrain_taper_friedman_smooth ctap_friedman
+#' @aliases ctap_friedman.taper
 #' @export
 #' @keywords taper taper-constraints
 ctap_friedman <- function(tapvec, tapseq=NULL, smoo.span=.3, smoo.bass=2, verbose=TRUE, ...){ UseMethod("ctap_friedman") }
 #' @rdname taper-constraints
+#' @method ctap_friedman taper
 #' @S3method ctap_friedman taper
 ctap_friedman.taper <- function(tapvec, tapseq=NULL, smoo.span=.3, smoo.bass=2, verbose=TRUE, ...){
   stopifnot(is.taper(tapvec))
@@ -608,7 +625,6 @@ ctap_friedman.taper <- function(tapvec, tapseq=NULL, smoo.span=.3, smoo.bass=2, 
     tapseq <- 1:length(tapvec)
     if (verbose) warning("Generated a position sequence; results may be bogus.")
   }
-  require(stats)
   # Friedman's super smoother.
   # Meh.
   tapvec.adj <- as.taper(stats::supsmu(tapseq, as.numeric(tapvec), span=smoo.span, bass=smoo.bass)$y)

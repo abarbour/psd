@@ -51,7 +51,7 @@ rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
   if (exists(envir)){ new_env <- FALSE } else {new_env <- TRUE}
   if( new_env | refresh ){
     assign(x=envir, 
-           value=new.env(parent=baseenv(), ...), 
+           value=new.env(parent=globalenv(), ...),  #baseenv()
            envir=.GlobalEnv)
     msg <- "initialized"
     if (verbose) {
@@ -80,6 +80,7 @@ rlp_envClear <- function(...) rlp_initEnv(refresh=TRUE, ...)
 rlp_envStatus <- function(envir=.rlpenv){
   #rlp_initEnv(refresh=FALSE, verbose=FALSE)
   if (is.environment(envir)) envir <- substitute(deparse(envir))
+  #is_init <- ifelse(exists(envir))
   return(list(env_name=envir, 
               obviously_exists=exists(envir), 
               listing=rlp_envList(envir),
@@ -94,8 +95,9 @@ rlp_envStatus <- function(envir=.rlpenv){
 #' @export
 rlp_envList <- function(envir=.rlpenv){
   ## return listing of envir::variable
-  if (is.character(envir)) envir <- char2envir(envir)
-  ls(envir=envir)
+  stopifnot(is.character(envir))
+  ENV <- char2envir(envir)
+  ls(envir=ENV, all.names=TRUE)
 }
 
 #' @description \code{rlp_envGet} returns a the value of \code{variable}.
@@ -106,8 +108,13 @@ rlp_envList <- function(envir=.rlpenv){
 #' @export
 rlp_envGet <- function(variable, envir=.rlpenv){
   ## return contents on envir::variable
-  if (is.character(envir)) envir <- char2envir(envir)
-  get(variable, envir=envir)
+  stopifnot(is.character(variable) & is.character(envir))
+  ENV <- char2envir(envir)
+  if (!exists(variable, envir=ENV)){
+    return(NULL)
+  } else {
+    return(get(variable, envir=ENV))
+  }
 }
 
 #' @description \code{rlp_envAssign} assigns \code{value} to \code{variable}, but does not return it.
@@ -116,8 +123,9 @@ rlp_envGet <- function(variable, envir=.rlpenv){
 #' @param value character; the name of the variable to assign
 rlp_envAssign <- function(variable, value, envir=.rlpenv){
   ## set contents of envir::variable to value
-  if (is.character(envir)) envir <- char2envir(envir)
-  assign(variable, value, envir=envir)
+  stopifnot(is.character(variable) & is.character(envir))
+  ENV <- char2envir(envir)
+  assign(variable, value, envir=ENV)
 }
 
 #' @description \code{rlp_envAssignGet} both assigns and returns a value.

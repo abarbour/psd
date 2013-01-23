@@ -6,8 +6,9 @@
   pspectrum(x, x.frqsamp = 1, ntap_pilot = 10, niter = 4,
     verbose = TRUE, no.history = FALSE, ...)
 
-  pspectrum.default(x, x.frqsamp = 1, ntap_pilot = 10,
-    niter = 4, verbose = TRUE, no.history = FALSE, ...)
+  \method{pspectrum}{default} (x, x.frqsamp = 1,
+    ntap_pilot = 10, niter = 4, verbose = TRUE,
+    no.history = FALSE, ...)
 }
 \arguments{
   \item{x}{vector; series to estimate PSD for.}

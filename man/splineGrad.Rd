@@ -5,7 +5,8 @@
 \usage{
   splineGrad(dseq, dsig, plot.derivs = FALSE, ...)
 
-  splineGrad.default(dseq, dsig, plot.derivs = FALSE, ...)
+  \method{splineGrad}{default} (dseq, dsig,
+    plot.derivs = FALSE, ...)
 }
 \arguments{
   \item{dseq}{numeric; a vector of positions for

@@ -3,15 +3,17 @@
 \alias{parabolic_weights.taper}
 \alias{parabolic_weights_fast}
 \alias{parabolic_weights_fast.default}
+\alias{parabolic_weights_fast.taper}
 \title{Calculate parabolic weighting factors.}
 \usage{
   parabolic_weights(tapvec, tap.index = 1L)
 
-  parabolic_weights.taper(tapvec, tap.index = 1L)
+  \method{parabolic_weights}{taper} (tapvec,
+    tap.index = 1L)
 
   parabolic_weights_fast(ntap = 1L)
 
-  parabolic_weights_fast.default(ntap = 1L)
+  \method{parabolic_weights_fast}{default} (ntap = 1L)
 }
 \arguments{
   \item{tapvec}{'taper' object; the number of tapers at

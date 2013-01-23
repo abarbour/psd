@@ -30,7 +30,6 @@ Suggests:
     multitaper (>= 1.0-2)
 Collate:
     'rlpSpec-package.R'
-    'zzz.R'
     'func_pspectrum.R'
     'func_psdcore.R'
     'func_riedsid.R'
@@ -38,3 +37,4 @@ Collate:
     'func_whiten.R'
     'func_envir.R'
     'func_utils.R'
+    'zzz.R'

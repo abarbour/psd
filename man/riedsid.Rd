@@ -7,10 +7,11 @@
   riedsid(psd, ntaper, tapseq = NULL, constrained = TRUE,
     c.method = NULL, ...)
 
-  riedsid.spec(psd, ntaper = psd$taper, tapseq = NULL,
-    constrained = TRUE, c.method = NULL, ...)
+  \method{riedsid}{spec} (psd, ntaper = psd$taper,
+    tapseq = NULL, constrained = TRUE, c.method = NULL,
+    ...)
 
-  riedsid.default(psd, ntaper, tapseq = NULL,
+  \method{riedsid}{default} (psd, ntaper, tapseq = NULL,
     constrained = TRUE, c.method = NULL, ...)
 }
 \arguments{

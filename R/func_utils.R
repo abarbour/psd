@@ -65,6 +65,7 @@ envir2char <- function(envir){
 #' @keywords utilities vector-manipulation matrix-manipulation
 vector_reshape <- function(x, vec.shape=c("horizontal","vertical")) UseMethod("vector_reshape")
 #' @rdname rlpSpec-utilities
+#' @method vector_reshape default
 #' @S3method vector_reshape default
 vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
   x <- as.vector(x)
@@ -98,7 +99,6 @@ rowvec <- function(x) vector_reshape(x, "horizontal")
 #' @keywords utilities inherits is
 #' @examples
 #' ## Check for spec object:
-#' require(stats)
 #' # quick power spectral density
 #' x <- rnorm(1e2, sd=10)
 #' psd <- spectrum(x, plot=FALSE)
@@ -159,6 +159,7 @@ is.taper <- function(Obj) inherits(Obj, "taper")
 #' @example x_examp/splinegrad.R
 splineGrad <- function(dseq, dsig, plot.derivs=FALSE, ...) UseMethod("splineGrad")
 #' @rdname splineGrad
+#' @method splineGrad default
 #' @S3method splineGrad default
 splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   #
@@ -167,9 +168,6 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   #
   # @dseq: the sequence (index) for @dsig, the signal
   # output is the same length as the input
-  #
-  require(stats)
-  require(graphics)
   #
   # create a weighted cubic spline
   smspl <- stats::smooth.spline(dseq, dsig, ...)
@@ -267,6 +265,7 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 #' na_mat(nd,nd-1)
 na_mat <- function(nrow, ncol=1) UseMethod("na_mat")
 #' @rdname rlpSpec-utilities
+#' @method na_mat default
 #' @S3method na_mat default
 na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 #' @description \code{zeros} populate a column-wise matrix with zeros; whereas,
@@ -283,6 +282,7 @@ na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 #' zeroes(nd)
 zeros <- function(nrow) UseMethod("zeros")
 #' @rdname rlpSpec-utilities
+#' @method zeros default
 #' @S3method zeros default
 zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
 
@@ -296,6 +296,7 @@ zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nro
 #' ##
 ones <- function(nrow) UseMethod("ones")
 #' @rdname rlpSpec-utilities
+#' @method ones default
 #' @S3method ones default
 ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
 
@@ -326,6 +327,7 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow
 #' @example x_examp/mod.R
 mod <- function(X, Y) UseMethod("mod")
 #' @rdname rlpSpec-utilities
+#' @method mod default
 #' @S3method mod default
 mod.default <- function(X, Y){
   stopifnot(is.numeric(c(X, Y)))
@@ -334,5 +336,3 @@ mod.default <- function(X, Y){
   Z <- trunc(X) - X1
   return(Z)
 }
-
-###

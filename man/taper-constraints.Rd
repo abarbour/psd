@@ -22,37 +22,39 @@
 \usage{
   minspan(tapvec, ...)
 
-  minspan.taper(tapvec, ...)
+  \method{minspan}{taper} (tapvec, ...)
 
   constrain_tapers(tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
     verbose = TRUE, ...)
 
-  constrain_tapers.taper(tapvec, tapseq = NULL,
+  \method{constrain_tapers}{taper} (tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
     verbose = TRUE, ...)
 
   ctap_simple(tapvec, tapseq = NA, maxslope = 1, ...)
 
-  ctap_simple.taper(tapvec, tapseq = NA, maxslope = 1, ...)
+  \method{ctap_simple}{taper} (tapvec, tapseq = NA,
+    maxslope = 1, ...)
 
   ctap_markov(tapvec, tapseq = NA,
     chain.width = round(5 * length(tapvec)), ...)
 
-  ctap_markov.taper(tapvec, tapseq = NA,
+  \method{ctap_markov}{taper} (tapvec, tapseq = NA,
     chain.width = round(5 * length(tapvec)),
     normalize = TRUE, ...)
 
   ctap_loess(tapvec, tapseq = NULL, loess.span = 0.3,
     loess.degree = 1, verbose = TRUE, ...)
 
-  ctap_loess.taper(tapvec, tapseq = NULL, loess.span = 0.3,
-    loess.degree = 1, verbose = TRUE, ...)
+  \method{ctap_loess}{taper} (tapvec, tapseq = NULL,
+    loess.span = 0.3, loess.degree = 1, verbose = TRUE,
+    ...)
 
   ctap_friedman(tapvec, tapseq = NULL, smoo.span = 0.3,
     smoo.bass = 2, verbose = TRUE, ...)
 
-  ctap_friedman.taper(tapvec, tapseq = NULL,
+  \method{ctap_friedman}{taper} (tapvec, tapseq = NULL,
     smoo.span = 0.3, smoo.bass = 2, verbose = TRUE, ...)
 }
 \arguments{

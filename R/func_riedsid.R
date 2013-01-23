@@ -29,6 +29,8 @@
 riedsid <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
+#' @aliases riedsid.spec
+#' @method riedsid spec
 #' @S3method riedsid spec
 riedsid.spec <- function(psd, ntaper=psd$taper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...){
   stopifnot(is.spec(psd))
@@ -38,6 +40,7 @@ riedsid.spec <- function(psd, ntaper=psd$taper, tapseq=NULL, constrained=TRUE, c
 }
 
 #' @rdname riedsid
+#' @method riedsid default
 #' @S3method riedsid default
 riedsid.default <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) {
   ## spectral values

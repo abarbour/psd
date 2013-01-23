@@ -7,11 +7,12 @@
   prewhiten(tser, AR.max = 0L, detrend = TRUE,
     demean = TRUE, plot = TRUE, verbose = TRUE)
 
-  prewhiten.default(tser, x.fsamp = 1, x.start = c(1, 1),
-    ...)
+  \method{prewhiten}{default} (tser, x.fsamp = 1,
+    x.start = c(1, 1), ...)
 
-  prewhiten.ts(tser, AR.max = 0L, detrend = TRUE,
-    demean = TRUE, plot = TRUE, verbose = TRUE)
+  \method{prewhiten}{ts} (tser, AR.max = 0L,
+    detrend = TRUE, demean = TRUE, plot = TRUE,
+    verbose = TRUE)
 }
 \arguments{
   \item{tser}{vector; An object to prewhiten.}

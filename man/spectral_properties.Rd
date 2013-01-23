@@ -7,10 +7,10 @@
   spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
     ...)
 
-  spectral_properties.spec(tapvec, f.samp = 1,
+  \method{spectral_properties}{spec} (tapvec, f.samp = 1,
     n.freq = NULL, ...)
 
-  spectral_properties.taper(tapvec, f.samp = 1,
+  \method{spectral_properties}{taper} (tapvec, f.samp = 1,
     n.freq = NULL, ...)
 }
 \arguments{
