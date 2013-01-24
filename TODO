@@ -7,7 +7,8 @@ Miscellany
 
 vignettes
 ---------
-[ ] plot the `histlist`
+[ ] develop overview
+*** plotting adaptive history
 
 demos
 -----
@@ -32,8 +33,15 @@ datasets
 [X] riedsid.spec method
 ***  test it [ ]
 
+`psdcore`
+-----------
+[ ] option to prevent environment clashes
+[ ] example
+
 `pspectrum`
 -----------
+[ ] option to show final with raw periodogram
+*** ensure Nyquist.normalize affects pgram too [ ]
 [ ] example
 [X] improve function documentation
 [X] add option to change constraint method for riedsid
