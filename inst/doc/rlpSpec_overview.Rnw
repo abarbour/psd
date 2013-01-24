@@ -14,6 +14,7 @@
 \usepackage{natbib}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
 \newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+\newcommand{\naive}[0]{na\"{\i}ve}
 %% path, filename, caption, label
 \newcommand{\listing}[4]{        %
   \begin{figure}[H]              %
@@ -33,9 +34,29 @@ density estimation}
 \maketitle
 \begin{abstract}
   The purpose of this vignette is to provide an overview of the
-  features included in \rlp{}.
-  One can also find information through the help info:
-  \Rcmd{rlpSpec-package}
+  features included in \rlp{}, which allow the
+  user to compute sophisticated power spectral
+  density (PSD) estimates for a univariate series, with very little tuning effort.
+  The sine multitapers are used in which
+  the number of tapers varies with spectral shape, according
+  to the optimal value proposed by \citet{rs1995}.
+  The adaptive procedure
+  iteratively refines the optimal number of tapers at each frequency,
+  which, assuming convergence, will produce
+  spectra with significantly
+  reduced variance (compared to \naive{} estimators),
+  and minimum biasing effects.
+  Resolution and uncertainty in a multitaper scheme
+  are controlled by the number of tapers used.
+  This means we do
+  not need to resort to either windowing methods 
+  which inherently degrade resolution of low-frequency features
+  (e.g. Welch), or smoothing kernels 
+  which can badly distort important features without careful tuning
+  (e.g. Daniell, as in \Rcmd{stats::spec.pgram}).
+  In this sense
+  \rlp{} is best suited for data having
+  spectra with both large dynamic range and strong, sharply changing features.
 \end{abstract}
 \tableofcontents
 \section{Quick start: A minimal example.}
@@ -45,46 +66,105 @@ density estimation}
 %	{Call matrix}	% caption
 %	{fig:callmat}	% fig label
 
-We need a datasource to begin with:
+First load the package into the namespace:
+%<<echo=FALSE, eval=TRUE>>=
+%#opar <- par(no.readonly = TRUE)
+%par(mar=rep(2,4), oma=rep(2.,4))
+%@ 
 <<keep.source=TRUE, eval=TRUE>>=
 library(rlpSpec)
+@ 
+We now need a dataset to analyze.
+Among the datasets included in \rlp{} is a subset of
+the Magnetic Satellite (MAGSAT) mission \citep{langel1982}.
+Specifically, we have included along-track measurements
+of horizontal magnetic-field strength from a gimballed, airborne magnetometer,
+sampled once every kilometer, which means the spectrum may represent
+crustal magnetization with wavelengths longer than 2 km.
+<<keep.source=TRUE, eval=TRUE>>=
 data(magsat)
 @ 
-Setting assumptions regarding the stationarity of the series aside,
-we can find power spectral density estimates for these data quite simply:
+The format of the data set is a \Rcmd{data.frame} with four
+sets of information:
+<<keep.source=TRUE, eval=TRUE>>=
+names(magsat)
+@ 
+The \Rcmd{raw} and \Rcmd{clean} names represent raw
+and edited intensities respectively, expressed in units of nanoTesla; 
+\Rcmd{mdiff} is the difference between them.
+The difference between them is a matter of just a few points
+attributable to instrumental malfunction. 
 <<eval=TRUE, echo=TRUE>>=
-psd1 <- pspectrum(magsat$raw)
-psd2 <- pspectrum(magsat$clean)
+subset(magsat, abs(mdiff)>0)
 @
-which performs four iterations of adaptive taper refinement.
+These deviations can,
+as we will see, adversely affect the accuracy of any PSD estimate,
+multitaper or otherwise.
 
-Finally, we can compare the two.  Since \Rcmd{pspectrum} returns
-an object with class \Rcmd{spec}, we have access to methods within \Rcmd{stats}.
-\begin{figure}
+Setting aside any discussion regarding sample stationarity,
+we can find power spectral density (PSD)
+estimates for the two series quite simply:
+<<eval=TRUE, echo=TRUE>>=
+psdr <- pspectrum(magsat$raw)
+psdc <- pspectrum(magsat$clean)
+@
+Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by four
+iterations of refinement (the default).
+With each iteration
+the number of tapers is adjusted 
+to the optimal number, based on the weighted
+spectral derivatives, following \citet{rs1995}.
+In general, spectral variance is reduced
+with sequential refinements, but is not necessarily quaranteed to converge.
+Note that in the example
+the sampling frequency of both series
+is km$^{-1}$, so we need not change the sampling rate
+argument.
+
+Let's now visualize the two PSD estimates, recalling that the difference between
+the \Rcmd{raw} and \Rcmd{clean} samples is a mere two points.
+\footnote{
+Note that \Rcmd{pspectrum} returns
+an object with class \Rcmd{spec}, so we have access to methods 
+within \Rcmd{stats}, including \Rcmd{plot.spec}.
+%<<eval=TRUE, echo=TRUE>>=
+%class(psdc)
+%@
+}
+%%
+\begin{figure}[htbp!]
 \begin{center}
+%<<eval=TRUE, fig=TRUE, echo=TRUE, width=8, height=4.5, label=fig_magsat>>=
 <<eval=TRUE, fig=TRUE, echo=TRUE, label=fig_magsat>>=
-plot(psd2, log="dB")
-lines(psd1$freq, 10*log10(psd1$spec), col="red")
+plot(psdc, log="dB")
+lines(psdr$freq, 10*log10(psdr$spec), col="red")
+legend("bottomleft",c("magsat$raw","magsat$clean"),col=c("red","black"),lty=1,lwd=2)
 @
 \end{center}
 \caption{Comparison of power spectral densities for the \Rcmd{MAGSAT} data
 included with \rlp{}.}
 \label{fig:one}
 \end{figure}
-Note the drastic improvement in both variance and bias between the two series:
-\Rcmd{magsat\$clean} is free of large, instrumental artefacts and shows
-a very red spectrum typically found in geophysical datasets.
-The outliers removed are here:
-<<eval=TRUE, echo=TRUE>>=
-subset(magsat, abs(mdiff)>0)
-@
+%%
+Figure \ref{fig:one} compares the spectra for the \Rcmd{raw} and \Rcmd{clean} 
+samples.  This plot shows a
+drastic improvement in shape between the two series,
+simply because the large outliers have been removed.
+The \Rcmd{clean} PSD shows the
+very red spectrum typical of geophysical processes \citep{agnew1992}.
+It also shows a rolloff in signal
+somewhere around the 20 kilometer wavelengths; whereas, the 
+\Rcmd{raw} PSD looks highly unrealistic at higher wavelengths, and
+shows some curvature bias at low frequencies.
 
 \section{Comparisons with other methods}
 
-As shown in the MAGSAT example, 
-we are concerned with improving variance and bias to gain an
-improved understanding of the physics behind the signals in the data.
-But how does this method compare with other methods?
+As we have shown in the MAGSAT example, 
+improved understanding of the physics behind the signals in the data
+is of great concern.
+Assuming a sample is free of non-physical points, how do
+PSD estimates from \rlp{}
+compare with other methods?
 
 \subsection{\Rcmd{stats::spectrum}}
 Included in the core distribution of R is \Rcmd{stats::spectrum}, which
@@ -92,156 +172,67 @@ accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
 parametric and non-parametric estimation, respectively.  Our method is
 non-parametric; hence, we will compare to the latter.
 
-Included in \Rcmd{rlpSpec::psdcore} is an optional argument to compare the 
-results with a naive estimator|the raw periodogram. 
-In R this is equivalent to 
+Included in \rlp{} is
+an option
+to compare the 
+results with a \naive{} estimator--the raw periodogram--from within the
+spectrum calculator, \Rcmd{psdcore}.
+In R this estimator is equivalent to running:
 <<eval=FALSE, echo=TRUE>>=
-spec.pgram(X, log="no", pad=1, taper=0, detrend=FALSE, demean=FALSE, plot=F)
+spec.pgram(X, pad=1, taper=0, detrend=FALSE, demean=FALSE, plot=F)
 @
+which \Rcmd{psdcore} also calculates.
 
-Returning to the previous dataset, let's compare the methods for the
-\Rcmd{clean}
-data, but \Rcmd{psdcore} does not clear the working environment, so we
-do that first:
+As a matter of bookkeeping, we must deal with the working environment
+accessed by \rlp{} functions.
+Specifically, \Rcmd{psdcore} does not clear anything from the working
+environment, but accesses some of its content under certain conditions; 
+hence, we must first manually clear the environment to prevent bogus results:
 <<eval=TRUE, echo=TRUE>>=
+str(rlp_envStatus())
 rlpSpec:::rlp_envClear()
+str(rlp_envStatus())
 @
-and then re-calculate the PSDs using the optimized tapers
-and the raw periodogram (with \Rcmd{detrend <- demean <- TRUE}):
-\begin{figure}
+and then re-calculate the multitaper PSD and the
+raw periodogram.  The results are shown in Figure \ref{fig:two}.
+
+\begin{figure}[htbp!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, width=8, height=6, label=fig_magsat_naive>>=
-str(rlp_envStatus())
-ntap <- psd2$taper
+%<<eval=TRUE, echo=TRUE, fig=TRUE, width=8, height=6, label=fig_magsat_naive>>=
+<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_magsat_naive>>=
+ntap <- psdc$taper
 psdcore(magsat$clean, ntaper=ntap, plotpsd=TRUE)
-str(rlp_envStatus())
 @
-\caption{Comparison between naive and multitaper PSD estimators for the 
-clean \Rcmd{MAGSAT} data.}
+%str(rlp_envStatus())
+\caption{Top: Comparison between \naive{} and multitaper PSD estimators for the 
+clean \Rcmd{MAGSAT} data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
+and power axis is in decibels.
+Bottom: The spatial series used to estimate the PSDs.}
 \end{center}
 \label{fig:two}
 \end{figure}
 
-%%\begin{quote}
-%%  \texttt{R CMD rlpSpec -d hellorlpSpec}.
-%%\end{quote}
+\subsection{\Rcmd{multitaper::}}
 
-%A new \texttt{hellorlpSpec/man/hellorlpSpec-package.Rd} should have
-%been created with the contents of figure \ref{hello-rlpSpec}; and
-%`\texttt{R CMD check hellorlpSpec}' should terminate successfully.
-%
-%\section{Example: Pseudoprimality}
-%
-%\subsection{Package Description}
-%
-%\listing{pseudoprime/R/pseudoprime-package.R}
-%        {pseudoprime-package.R}
-%        {Package description for \texttt{pseudoprime}}
-%        {pseudoprime-package}
+\section{Assesing spectral properties}
+In a multitaper scheme,
+the computation of resolution and uncertainty (shown as blue lines
+in Figure \ref{fig:one} depends on the 
+the number of tapers; hence, the methods internal to \Rcmd{plot.spec}
+are not appropriate.
 
-%One could imagine, for instance, a less trivial package that actually
-%does something; enter \texttt{pseudoprime}, a toy that tests for
-%primes using Fermat's little
-%theorem.\footnote{\href{http://en.wikipedia.org/wiki/Fermat\%27s_little_theorem}{http://en.wikipedia.org/wiki/Fermat\textquotesingle s\_little\_theorem}}
-%
-%A package description has been provided in figure
-%\ref{pseudoprime-package}; notice the \texttt{rlpSpec()} statement in
-%line 30: each \rlpSpec{} description block must be followed by a
-%statement, even header material that describes a file or package in
-%lieu of a specific function. \texttt{rlpSpec()} is provided as a
-%\texttt{NOOP} (null statement) to stand in for such cases.
+%%
+\section{Call overview}
 
-%The first sentence of any \rlpSpec{} block briefly describes its
-%object; and may be followed directly by a \rlpSpec{} tag
-%(fig. \ref{hello-rlpSpec}, line 2) or a more detailed description
-%(fig.  \ref{pseudoprime-package}, line 3). The detailed description
-%begins after the intervening blank line, and continues until the first
-%\rlpSpec{} tag (fig. \ref{pseudoprime-package}, line 19).
-
-%Each \rlpSpec{} tag begins with an asperand, like \texttt{@name},
-%\texttt{@author}, etc.; which means, incidentally, that all real
-%asperands have to be escaped with a double-asperand, as in
-%\verb=\email{pcd@@rlpSpec}= (fig. \ref{pseudoprime-package}, line
-%23).
-%
-%Furthermore, although \rlpSpec{} tags replace many of the structural
-%Rd elements such as \verb=\title=, \verb=\keyword=, etc.; stylistic Rd
-%elements such as \verb=\emph= and \verb=\email= can be used freely
-%within \rlpSpec{} tags. See ``Writing R Extensions'' for
-%details. \citep[\S2.3 ``Marking text'']{r-core}
-%
-%\subsection{Fermat Test}
-%
-%\listing{pseudoprime/R/fermat.R}
-%        {fermat.R}
-%        {rlpSpec example \texttt{fermat.R}}
-%        {fermat}
-%
-%<<echo=false, results=hide, eval=FALSE>>=
-%rlpSpec('pseudoprime',
-%           rlpSpec='pseudoprime',
-%           copy.package=FALSE,
-%           unlink.target=FALSE)
-%
-%@
-%
-%When documenting functions (fig. \ref{fermat}), every parameter must
-%be documented with a \texttt{@param} tag (line 8); which consists of
-%\texttt{@param <variable> <description>}. Similarly, the return value
-%must be documented with \texttt{@return <description>} (lines 9-10).
-%
-%Notice \texttt{@callGraphPrimitives} (line 11): it creates a call
-%graph at the default depth similar to figure \ref{fermat-test},
-%including primitive functions; \texttt{@callGraph}, on the other hand,
-%would exclude primitive functions.\footnote{Note that this feature requires
-%package {\tt Rgraphviz} $\geq 1.19.2$, and as of {\tt rlpSpec} $0.1-1$
-%the {\tt callgraph} feature is not automatically executed; see
-%help for {\tt make.callgraph.roclet}.}
-%
-
-\begin{figure}[H]
+\begin{figure}[htbp!]
  \centering
- \includegraphics{yuml.png}
+ \includegraphics[width=0.6\textwidth]{yuml_d.png}%%
+ \includegraphics[width=0.3\textwidth]{yuml_n.png}
  \caption{Simplified call graph.}
  \label{fig:calls}
 \end{figure}
 
-%
-%\subsection{Pseudoprime}
-%
-%\listing{pseudoprime/R/pseudoprime.R}
-%        {pseudoprime.R}
-%        {rlpSpec example \texttt{pseudoprime.R}}
-%        {pseudoprime}
-%
-%Notice the header in \texttt{pseudoprime.R} (fig. \ref{pseudoprime})
-%terminated by \texttt{rlpSpec()}; \texttt{@include fermat.R} (line 1)
-%signals that \texttt{fermat.R} should be loaded before
-%\texttt{pseudoprime.R}.  \rlpSpec{} will update
-%\texttt{DESCRIPTION} accordingly.
-%
-%\texttt{@export} (line 15) signifies that \texttt{is.pseudoprime} will
-%be added to an export directive in \texttt{NAMESPACE}.
-%
-%\subsection{Running \rlpSpec{}}
-%
-%Running \texttt{`R CMD rlpSpec -d pseudoprime'} populates \texttt{man}
-%with Rd files, edits \texttt{DESCRIPTION} and \texttt{NAMESPACE}, and
-%puts call graphs in \texttt{inst/doc}:
-%
-%<<echo=false,eval=FALSE>>=
-%rlpSpec('pseudoprime',
-%           rlpSpec='pseudoprime',
-%           copy.package=FALSE,
-%           unlink.target=FALSE)
-%
-%@
-%
-%The \texttt{rlpSpec} function is an alternative to \texttt{`R CMD
-%  rlpSpec'}; see the help page for details. Note that version 0.1-3 \texttt{`R CMD
-%  rlpSpec'} is not available anymore.
-%
-%
-%%\bibliographystyle{plainnat}
-%%\bibliography{REFS}
+%%
+\bibliographystyle{plainnat}
+\bibliography{REFS}
 \end{document}

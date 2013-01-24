@@ -1,0 +1,14 @@
+#!/usr/bin/env awk -f
+BEGIN{
+	ORS=","
+}NR==1{
+	if (yuml==0){
+		yuml="http://yuml.me/diagram/scruffy/class/"
+		yuml="http://yuml.me/diagram/class/"
+	}
+	printf"wget -O yuml.png \"%s",yuml
+}{
+	print
+}END{
+	printf"\"\n"
+}

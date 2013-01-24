@@ -10,17 +10,23 @@ set -e
 ##
 YUML="http://yuml.me/diagram/scruffy/class/"
 YUML="http://yuml.me/diagram/class/"
-##
-cat << XXX | awk 'BEGIN{ORS=","}NR==1{printf"wget -O yuml.png \"%s",yuml}{print}END{printf"\"\n"}' yuml=${YUML} | sh
+
+## call notes
+cat << XXX | yuml.fawk | sh
 [note: PSPECTRUM controls the adaptive process. It repeats NITER times.{bg:darkorange}]
+[note: With each iteration RIEDSID optimizes the number of tapers depending on the shape of the current spectrum.{bg:cornsilk}]
+XXX
+mv yuml.png yuml_n.png
+
+## call graph
+cat << XXX | yuml.fawk | sh
 [PSPECTRUM]-.-%3E[RIEDSID]
 [RIEDSID]-.-%3E[PSDCORE]
-[note: With each iteration RIEDSID optimizes the number of tapers depending on the shape of the current spectrum.{bg:cornsilk}]
 [PSDCORE]NITER times%20-.-%3E[PSPECTRUM]
 [PILOT_SPEC]%3C-%3E[PSDCORE]
 [PILOT_SPEC]%3C-%3E[PSPECTRUM]
 [CONSTRAIN_TAPERS]%3C-%3E[RIEDSID]
 XXX
-##
-convert yuml.png yuml.pdf
-open yuml.pdf
+mv yuml.png yuml_d.png
+
+open yuml_?.png

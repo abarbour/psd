@@ -13,6 +13,7 @@ data/.assemb_data
 inst/doc/.sweave
 inst/doc/rlpSpec.tex
 ^.*/.gitignore$
+notes/
 x_S4/
 x_data_prep/
 x_demo/
