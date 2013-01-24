@@ -11,7 +11,11 @@ README.md
 install_rlp
 data/.assemb_data
 inst/doc/.sweave
-inst/doc/rlpSpec.tex
+inst/doc/Rplots.pdf
+inst/doc/Sweave-manual.pdf
+inst/doc/graph.R
+inst/doc/yuml.fawk
+inst/doc/yuml.sh
 ^.*/.gitignore$
 notes/
 x_S4/
