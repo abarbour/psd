@@ -4,3 +4,6 @@
 rlpSpec.Rproj
 .*ignore
 .DS_Store
+.git_commit_messages
+.pull
+.push

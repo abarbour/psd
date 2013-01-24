@@ -74,6 +74,10 @@ included with \rlp{}.}
 Note the drastic improvement in both variance and bias between the two series:
 \Rcmd{magsat\$clean} is free of large, instrumental artefacts and shows
 a very red spectrum typically found in geophysical datasets.
+The outliers removed are here:
+<<eval=TRUE, echo=TRUE>>=
+subset(magsat, abs(mdiff)>0)
+@
 
 \section{Comparisons with other methods}
 
