@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+#
+# generate flow diagrams:
+# http://yuml.me/diagram/scruffy/class/samples
+#
+# %3E ">"
+# %3C "<"
+# %20 " "
+##
+YUML="http://yuml.me/diagram/scruffy/class/"
+YUML="http://yuml.me/diagram/class/"
+##
+cat << XXX | awk 'BEGIN{ORS=","}NR==1{printf"wget -O yuml.png \"%s",yuml}{print}END{printf"\"\n"}' yuml=${YUML} | sh
+[note: PSPECTRUM controls the adaptive process. It repeats NITER times.{bg:darkorange}]
+[PSPECTRUM]-.-%3E[RIEDSID]
+[RIEDSID]-.-%3E[PSDCORE]
+[note: With each iteration RIEDSID optimizes the number of tapers depending on the shape of the current spectrum.{bg:cornsilk}]
+[PSDCORE]NITER times%20-.-%3E[PSPECTRUM]
+[PILOT_SPEC]%3C-%3E[PSDCORE]
+[PILOT_SPEC]%3C-%3E[PSPECTRUM]
+[CONSTRAIN_TAPERS]%3C-%3E[RIEDSID]
+XXX
+##
+convert yuml.png yuml.pdf
+open yuml.pdf

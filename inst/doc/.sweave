@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+~/bin/Sweave.sh -ld rlpSpec_overview.Rnw
+open rlpSpec_overview.pdf

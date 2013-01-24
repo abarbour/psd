@@ -1,0 +1,243 @@
+\documentclass{article}
+% sweave fig help:
+% http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
+% borrowing design from roxygen -- AJB Jan 13
+%% \VignetteIndexEntry{rlpSpec Overview Vignette}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{url}
+\usepackage{upquote}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{float}
+\usepackage{natbib}
+\newcommand{\Rcmd}[1]{\texttt{#1}}
+\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+%% path, filename, caption, label
+\newcommand{\listing}[4]{        %
+  \begin{figure}[H]              %
+    \centering                   %
+    \VerbatimInput[numbers=left, %
+      frame=single,              %
+      label=#2]{#1}              %
+    \caption{#3}                 %
+    \label{#4}                   %
+  \end{figure}                   %
+}
+\author{Andrew J. Barbour \url{<andy.barbour@gmail.com>}
+and Robert L. Parker}
+\title{An overview of \rlp{}: Adaptive sine multitaper power spectral
+density estimation}
+\begin{document}
+\maketitle
+\begin{abstract}
+  The purpose of this vignette is to provide an overview of the
+  features included in \rlp{}.
+  One can also find information through the help info:
+  \Rcmd{rlpSpec-package}
+\end{abstract}
+\tableofcontents
+\section{Quick start: A minimal example.}
+
+%\listing{graph.R} % src
+%	{graph} % src label
+%	{Call matrix}	% caption
+%	{fig:callmat}	% fig label
+
+We need a datasource to begin with:
+<<keep.source=TRUE, eval=TRUE>>=
+library(rlpSpec)
+data(magsat)
+@ 
+Setting assumptions regarding the stationarity of the series aside,
+we can find power spectral density estimates for these data quite simply:
+<<eval=TRUE, echo=TRUE>>=
+psd1 <- pspectrum(magsat$raw)
+psd2 <- pspectrum(magsat$clean)
+@
+which performs four iterations of adaptive taper refinement.
+
+Finally, we can compare the two.  Since \Rcmd{pspectrum} returns
+an object with class \Rcmd{spec}, we have access to methods within \Rcmd{stats}.
+\begin{figure}
+\begin{center}
+<<eval=TRUE, fig=TRUE, echo=TRUE, label=fig_magsat>>=
+plot(psd2, log="dB")
+lines(psd1$freq, 10*log10(psd1$spec), col="red")
+@
+\end{center}
+\caption{Comparison of power spectral densities for the \Rcmd{MAGSAT} data
+included with \rlp{}.}
+\label{fig:one}
+\end{figure}
+Note the drastic improvement in both variance and bias between the two series:
+\Rcmd{magsat\$clean} is free of large, instrumental artefacts and shows
+a very red spectrum typically found in geophysical datasets.
+
+\section{Comparisons with other methods}
+
+As shown in the MAGSAT example, 
+we are concerned with improving variance and bias to gain an
+improved understanding of the physics behind the signals in the data.
+But how does this method compare with other methods?
+
+\subsection{\Rcmd{stats::spectrum}}
+Included in the core distribution of R is \Rcmd{stats::spectrum}, which
+accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
+parametric and non-parametric estimation, respectively.  Our method is
+non-parametric; hence, we will compare to the latter.
+
+Included in \Rcmd{rlpSpec::psdcore} is an optional argument to compare the 
+results with a naive estimator|the raw periodogram. 
+In R this is equivalent to 
+<<eval=FALSE, echo=TRUE>>=
+spec.pgram(X, log="no", pad=1, taper=0, detrend=FALSE, demean=FALSE, plot=F)
+@
+
+Returning to the previous dataset, let's compare the methods for the
+\Rcmd{clean}
+data, but \Rcmd{psdcore} does not clear the working environment, so we
+do that first:
+<<eval=TRUE, echo=TRUE>>=
+rlpSpec:::rlp_envClear()
+@
+and then re-calculate the PSDs using the optimized tapers
+and the raw periodogram (with \Rcmd{detrend <- demean <- TRUE}):
+\begin{figure}
+\begin{center}
+<<eval=TRUE, echo=TRUE, fig=TRUE, width=8, height=6, label=fig_magsat_naive>>=
+str(rlp_envStatus())
+ntap <- psd2$taper
+psdcore(magsat$clean, ntaper=ntap, plotpsd=TRUE)
+str(rlp_envStatus())
+@
+\caption{Comparison between naive and multitaper PSD estimators for the 
+clean \Rcmd{MAGSAT} data.}
+\end{center}
+\label{fig:two}
+\end{figure}
+
+%%\begin{quote}
+%%  \texttt{R CMD rlpSpec -d hellorlpSpec}.
+%%\end{quote}
+
+%A new \texttt{hellorlpSpec/man/hellorlpSpec-package.Rd} should have
+%been created with the contents of figure \ref{hello-rlpSpec}; and
+%`\texttt{R CMD check hellorlpSpec}' should terminate successfully.
+%
+%\section{Example: Pseudoprimality}
+%
+%\subsection{Package Description}
+%
+%\listing{pseudoprime/R/pseudoprime-package.R}
+%        {pseudoprime-package.R}
+%        {Package description for \texttt{pseudoprime}}
+%        {pseudoprime-package}
+
+%One could imagine, for instance, a less trivial package that actually
+%does something; enter \texttt{pseudoprime}, a toy that tests for
+%primes using Fermat's little
+%theorem.\footnote{\href{http://en.wikipedia.org/wiki/Fermat\%27s_little_theorem}{http://en.wikipedia.org/wiki/Fermat\textquotesingle s\_little\_theorem}}
+%
+%A package description has been provided in figure
+%\ref{pseudoprime-package}; notice the \texttt{rlpSpec()} statement in
+%line 30: each \rlpSpec{} description block must be followed by a
+%statement, even header material that describes a file or package in
+%lieu of a specific function. \texttt{rlpSpec()} is provided as a
+%\texttt{NOOP} (null statement) to stand in for such cases.
+
+%The first sentence of any \rlpSpec{} block briefly describes its
+%object; and may be followed directly by a \rlpSpec{} tag
+%(fig. \ref{hello-rlpSpec}, line 2) or a more detailed description
+%(fig.  \ref{pseudoprime-package}, line 3). The detailed description
+%begins after the intervening blank line, and continues until the first
+%\rlpSpec{} tag (fig. \ref{pseudoprime-package}, line 19).
+
+%Each \rlpSpec{} tag begins with an asperand, like \texttt{@name},
+%\texttt{@author}, etc.; which means, incidentally, that all real
+%asperands have to be escaped with a double-asperand, as in
+%\verb=\email{pcd@@rlpSpec}= (fig. \ref{pseudoprime-package}, line
+%23).
+%
+%Furthermore, although \rlpSpec{} tags replace many of the structural
+%Rd elements such as \verb=\title=, \verb=\keyword=, etc.; stylistic Rd
+%elements such as \verb=\emph= and \verb=\email= can be used freely
+%within \rlpSpec{} tags. See ``Writing R Extensions'' for
+%details. \citep[\S2.3 ``Marking text'']{r-core}
+%
+%\subsection{Fermat Test}
+%
+%\listing{pseudoprime/R/fermat.R}
+%        {fermat.R}
+%        {rlpSpec example \texttt{fermat.R}}
+%        {fermat}
+%
+%<<echo=false, results=hide, eval=FALSE>>=
+%rlpSpec('pseudoprime',
+%           rlpSpec='pseudoprime',
+%           copy.package=FALSE,
+%           unlink.target=FALSE)
+%
+%@
+%
+%When documenting functions (fig. \ref{fermat}), every parameter must
+%be documented with a \texttt{@param} tag (line 8); which consists of
+%\texttt{@param <variable> <description>}. Similarly, the return value
+%must be documented with \texttt{@return <description>} (lines 9-10).
+%
+%Notice \texttt{@callGraphPrimitives} (line 11): it creates a call
+%graph at the default depth similar to figure \ref{fermat-test},
+%including primitive functions; \texttt{@callGraph}, on the other hand,
+%would exclude primitive functions.\footnote{Note that this feature requires
+%package {\tt Rgraphviz} $\geq 1.19.2$, and as of {\tt rlpSpec} $0.1-1$
+%the {\tt callgraph} feature is not automatically executed; see
+%help for {\tt make.callgraph.roclet}.}
+%
+
+\begin{figure}[H]
+ \centering
+ \includegraphics{yuml.png}
+ \caption{Simplified call graph.}
+ \label{fig:calls}
+\end{figure}
+
+%
+%\subsection{Pseudoprime}
+%
+%\listing{pseudoprime/R/pseudoprime.R}
+%        {pseudoprime.R}
+%        {rlpSpec example \texttt{pseudoprime.R}}
+%        {pseudoprime}
+%
+%Notice the header in \texttt{pseudoprime.R} (fig. \ref{pseudoprime})
+%terminated by \texttt{rlpSpec()}; \texttt{@include fermat.R} (line 1)
+%signals that \texttt{fermat.R} should be loaded before
+%\texttt{pseudoprime.R}.  \rlpSpec{} will update
+%\texttt{DESCRIPTION} accordingly.
+%
+%\texttt{@export} (line 15) signifies that \texttt{is.pseudoprime} will
+%be added to an export directive in \texttt{NAMESPACE}.
+%
+%\subsection{Running \rlpSpec{}}
+%
+%Running \texttt{`R CMD rlpSpec -d pseudoprime'} populates \texttt{man}
+%with Rd files, edits \texttt{DESCRIPTION} and \texttt{NAMESPACE}, and
+%puts call graphs in \texttt{inst/doc}:
+%
+%<<echo=false,eval=FALSE>>=
+%rlpSpec('pseudoprime',
+%           rlpSpec='pseudoprime',
+%           copy.package=FALSE,
+%           unlink.target=FALSE)
+%
+%@
+%
+%The \texttt{rlpSpec} function is an alternative to \texttt{`R CMD
+%  rlpSpec'}; see the help page for details. Note that version 0.1-3 \texttt{`R CMD
+%  rlpSpec'} is not available anymore.
+%
+%
+%%\bibliographystyle{plainnat}
+%%\bibliography{REFS}
+\end{document}
