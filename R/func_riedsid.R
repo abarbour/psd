@@ -21,20 +21,27 @@
 #' @param tapseq vector; representing positions or frequencies (same length as psd)
 #' @param constrained logical; should the taper constraints be applied to the optimum tapers?
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
+#' @param sensitivity string; sets how sensitive the spectral derivatives are
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
 #' @return Object with class 'taper'.
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}
 #' @example x_examp/ried.R
-riedsid <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) UseMethod("riedsid")
+riedsid <- function(psd, ntaper, 
+                    tapseq=NULL, constrained=TRUE, c.method=NULL, 
+                    sensitivity=c("Optim","Less","More"),
+                    ...) UseMethod("riedsid")
 
 #' @rdname riedsid
 #' @aliases riedsid.spec
 #' @method riedsid spec
 #' @S3method riedsid spec
-riedsid.spec <- function(psd, ntaper=psd$taper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...){
+riedsid.spec <- function(psd, ...){
+  #                          tapseq=NULL, constrained=TRUE, c.method=NULL, 
+  #                          sensitivity=c("Optim","Less","More"), ...){
   stopifnot(is.spec(psd))
   psd <- psd$spec
+  ntaper <- psd$taper
   riedsid(psd, ntaper, ...)
   #.NotYetImplemented()
 }
@@ -42,13 +49,15 @@ riedsid.spec <- function(psd, ntaper=psd$taper, tapseq=NULL, constrained=TRUE, c
 #' @rdname riedsid
 #' @method riedsid default
 #' @S3method riedsid default
-riedsid.default <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method=NULL, ...) {
+riedsid.default <- function(psd, ntaper, 
+                            tapseq=NULL, constrained=TRUE, c.method=NULL, 
+                            sensitivity=c("Optim","Less","More"), ...) {
   ## spectral values
   psd <- as.vector(psd)
   # num freqs
   nf <- rlp_envAssignGet("num_freqs", length(psd))
   # prelims
-  eps <- .Machine$double.eps**2 # was: 1e-78  #  A small number to protect against zeros
+  eps <- .Machine$double.eps #**2 # was: 1e-78  #  A small number to protect against zeros
   Ones <- ones(nf) # was rowvec, now col 
   Zeros <- zeros(nf) # was rowvec, now col
   # vectorize initial estimate
@@ -81,21 +90,24 @@ riedsid.default <- function(psd, ntaper, tapseq=NULL, constrained=TRUE, c.method
   #
   # Smooth spectral derivatives
   #
+  dsens <- switch(match.arg(sensitivity), Optim=12, More=6, Less=24) # 12 is optim
   DFUN <- function(j, 
                    j1=j-nspan[j]+nadd-1, 
                    j2=j+nspan[j]+nadd-1, 
                    jr=j1:j2, 
                    logY=lY[jr], 
-                   dEps=eps){
+                   dEps=eps,
+                   CC=dsens){
     u <- jr - (j1 + j2)/2 # rowvec 
     u2 <- u*u             # rowvec
     L <- j2-j1+1          # constant
     L2 <- L*L             # constant
     LL2 <- L*L2           # constant
     LL2L <- LL2 - L       # constant
-    uzero <- (L2 - 1)/12  # constant
+    #CC <- 12 # (orig)
+    uzero <- (L2 - 1)/CC  # constant
     # first deriv
-    dY <- u %*% logY * 12 / LL2L
+    dY <- u %*% logY * CC / LL2L
     # second deriv
     d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2-4)
     return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))

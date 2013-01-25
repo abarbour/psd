@@ -25,11 +25,13 @@
 
   \method{points}{taper} (x, pch = "_", cex = 1, ...)
 
-  \method{plot}{taper} (x,
+  \method{plot}{taper} (x, xi = NULL,
     color.pal = c("Blues", "Spectral"), ylim = NULL, ...)
 }
 \arguments{
   \item{x}{taper object}
+
+  \item{xi}{optional vector for indices of \code{x}}
 
   \item{object}{taper object}
 

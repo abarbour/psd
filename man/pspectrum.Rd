@@ -4,11 +4,11 @@
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
   pspectrum(x, x.frqsamp = 1, ntap_pilot = 10, niter = 4,
-    verbose = TRUE, no.history = FALSE, ...)
+    verbose = TRUE, no.history = FALSE, plot = TRUE, ...)
 
   \method{pspectrum}{default} (x, x.frqsamp = 1,
     ntap_pilot = 10, niter = 4, verbose = TRUE,
-    no.history = FALSE, ...)
+    no.history = FALSE, plot = TRUE, ...)
 }
 \arguments{
   \item{x}{vector; series to estimate PSD for.}
@@ -26,6 +26,8 @@
 
   \item{no.history}{logical; Should the adaptive history
   \emph{not} be saved?}
+
+  \item{plot}{logical; Should the results be plotted?}
 
   \item{...}{Optional parameters passed to
   \code{\link{riedsid}}}

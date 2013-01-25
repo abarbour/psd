@@ -5,14 +5,14 @@
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.}
 \usage{
   riedsid(psd, ntaper, tapseq = NULL, constrained = TRUE,
-    c.method = NULL, ...)
+    c.method = NULL,
+    sensitivity = c("Optim", "Less", "More"), ...)
 
-  \method{riedsid}{spec} (psd, ntaper = psd$taper,
-    tapseq = NULL, constrained = TRUE, c.method = NULL,
-    ...)
+  \method{riedsid}{spec} (psd, ...)
 
   \method{riedsid}{default} (psd, ntaper, tapseq = NULL,
-    constrained = TRUE, c.method = NULL, ...)
+    constrained = TRUE, c.method = NULL,
+    sensitivity = c("Optim", "Less", "More"), ...)
 }
 \arguments{
   \item{psd}{vector or class 'spec'; the spectral values
@@ -29,6 +29,9 @@
 
   \item{c.method}{string; constraint method to use if
   \code{constrained=TRUE}}
+
+  \item{sensitivity}{string; sets how sensitive the
+  spectral derivatives are}
 
   \item{...}{optional argments passed to
   \code{\link{constrain_tapers}}}

@@ -90,6 +90,7 @@ as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #'
 #' @seealso \code{\link{as.taper}}, \code{\link{constrain_tapers}}, \code{par}
 #' @param x taper object
+#' @param xi optional vector for indices of \code{x}
 #' @param object taper object
 #' @param lwd line width (default is 1.8)
 #' @param col color of line (default is "red")
@@ -174,11 +175,14 @@ points.taper <- function(x, pch="_", cex=1, ...){
 #' @aliases plot.taper
 #' @method plot taper
 #' @S3method plot taper
-plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
+plot.taper <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
   stopifnot(is.taper(x))
   #if isS4(x) x <- x@tapers
   nt <- length(x)
-  xi <- 1:nt
+  if (is.null(xi)){
+    xi <- 1:nt
+  }
+  stopifnot(length(xi)==nt)
   mx <- max(x)
   pal <- match.arg(color.pal)
   npal <- switch(pal, RdYlBu=11, Spectral=11, Blues=9)
@@ -189,7 +193,8 @@ plot.taper <- function(x, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
                ylab="number of tapers",
                xlab="taper index",
                ylim=ylim, yaxs="i", 
-               xlim=c(-1, nt+2), xaxs="i",
+               #xlim=c(-1, nt+2), 
+                         xaxs="i",
                lwd=1.8,
                type="h",
                col=cols[x],

@@ -9,6 +9,19 @@
 #' @docType package
 NULL
 
+#' @description \code{dB} returns an object converted to decibels.
+#' @details Decibels are defined as \deqn{10 \log{}_{10} x}.
+#' @rdname rlpSpec-utilities
+#' @param Rat numeric; A ratio to convert to decibels (\code{dB}).
+#' @return numeric
+#' @export
+#' @aliases decibels
+#' @keywords utilities normalization
+#' @seealso \code{\link{rlpSpec-package}}
+#' @examples
+#' db(1) # signal is equal <--> zero dB
+dB <- function(Rat){return(10*log10(Rat))}
+
 #' @description \code{char2envir} converts a character string of an environment 
 #' name to an evaluated name; whereas, \code{envir2char} converts an environment 
 #' name to a character string.

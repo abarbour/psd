@@ -7,18 +7,19 @@
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     Nyquist.normalize = TRUE, plotpsd = FALSE,
-    as.spec = TRUE, ...)
+    as.spec = TRUE, refresh = FALSE, ...)
 
   \method{psdcore}{default} (X.d, X.frq = 1,
     ntaper = as.taper(1), ndecimate = 1L, demean = TRUE,
     detrend = TRUE, na.action = stats::na.fail,
     first.last = TRUE, Nyquist.normalize = TRUE,
-    plotpsd = FALSE, as.spec = TRUE, ...)
+    plotpsd = FALSE, as.spec = TRUE, refresh = FALSE, ...)
 }
 \arguments{
   \item{X.d}{the series to estimate a spectrum for}
 
-  \item{X.frq}{scalar; the sampling frequency (e.g. Hz)}
+  \item{X.frq}{scalar; the sampling information (see
+  section Sampling)}
 
   \item{ntaper}{scalar, or vector; the number of tapers}
 
@@ -44,6 +45,9 @@
   \item{as.spec}{logical; should the object returned be of
   class 'spec'}
 
+  \item{refresh}{logical; ensure a free environment prior
+  to execution}
+
   \item{...}{(unused) Optional parameters}
 }
 \description{
@@ -51,17 +55,25 @@
   input series using sine multitapers.
 }
 \details{
-  The parameter \code{ntaper} specifies the number of sine
-  tapers to be used at each frequency: equal tapers at each
-  frequency for a scalar; otherwise, use \code{ntaper(j)}
-  sine tapers at \code{frequency(j)}.
+  \subsection{Tapering}{ The parameter \code{ntaper}
+  specifies the number of sine tapers to be used at each
+  frequency: equal tapers at each frequency for a scalar;
+  otherwise, use \code{ntaper(j)} sine tapers at
+  \code{frequency(j)}. }
 
-  The series length \code{N} is truncated, if necessary, so
-  that \code{1+N/2} evenly spaced frequencies are returned.
+  \subsection{Truncation}{ The series length \code{N} is
+  truncated, if necessary, so that \code{1+N/2} evenly
+  spaced frequencies are returned. }
 
-  The parameter \code{ndecimate} determines the PSDs
-  actually computed, defined as \code{(1+n/2)/ndecimate};
-  other values are found via linear interpolation.
+  \subsection{Decimation}{ The parameter \code{ndecimate}
+  determines the PSDs actually computed, defined as
+  \code{(1+n/2)/ndecimate}; other values are found via
+  linear interpolation. }
+
+  \subsection{Sampling}{ If \code{X.frq > 0} it's assumed
+  the value represents \emph{frequency} (e.g. Hz).  If
+  \code{X.frq < 0} it's assumed the value represents
+  \emph{interval} (e.g. seconds). }
 }
 \section{Warning}{
   Decimation is not well tested as of this point.

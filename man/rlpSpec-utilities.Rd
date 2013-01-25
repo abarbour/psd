@@ -3,6 +3,8 @@
 \alias{as.rowvec}
 \alias{char2envir}
 \alias{colvec}
+\alias{dB}
+\alias{decibels}
 \alias{envir2char}
 \alias{is.spec}
 \alias{is.taper}
@@ -22,6 +24,8 @@
 \alias{zeros.default}
 \title{Various utility functions.}
 \usage{
+  dB(Rat)
+
   char2envir(envchar)
 
   envir2char(envir)
@@ -57,6 +61,9 @@
   \method{mod}{default} (X, Y)
 }
 \arguments{
+  \item{Rat}{numeric; A ratio to convert to decibels
+  (\code{dB}).}
+
   \item{envchar}{An object with class 'character'.}
 
   \item{envir}{An object of class 'environment'.}
@@ -79,6 +86,8 @@
   division}
 }
 \value{
+  numeric
+
   \code{char2envir} returns the result of evaluating the
   object: an environment object; \code{envir2char} returns
   the result of deparsing the environment name: a character
@@ -105,6 +114,8 @@
 }
 \description{
   Various utility functions are used:
+
+  \code{dB} returns an object converted to decibels.
 
   \code{char2envir} converts a character string of an
   environment name to an evaluated name; whereas,
@@ -136,6 +147,8 @@
   \code{mod} finds the modulo division of X and Y.
 }
 \details{
+  Decibels are defined as \deqn{10 \log{}_{10} x}.
+
   \code{colvec, rowvec} are simple wrapper functions to
   \code{vector_reshape}.
 
@@ -157,6 +170,7 @@
   slower for large numeric vectors.
 }
 \examples{
+db(1) # signal is equal <--> zero dB
 ##
 ## Evaluate character strings
 print(.rlpenv)
@@ -224,6 +238,8 @@ all.equal(mc2a, mc2c) # TRUE
 \seealso{
   \code{\link{rlpSpec-package}}
 
+  \code{\link{rlpSpec-package}}
+
   \code{\link{as.taper}}
 }
 \keyword{S3methods}
@@ -235,6 +251,7 @@ all.equal(mc2a, mc2c) # TRUE
 \keyword{matrix-manipulation}
 \keyword{methods}
 \keyword{modulo-division}
+\keyword{normalization}
 \keyword{utilities}
 \keyword{vector-creation}
 \keyword{vector-manipulation}

@@ -57,6 +57,7 @@
 #' is used to impute them with real numbers.
 #'
 #' @name prewhiten
+#' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com> and Robert L. Parker
 #' @keywords prewhiten autoregressive-innovations timeseries S3methods
 #' @seealso \code{\link{psdcore}}, \code{\link{pspectrum}}
@@ -80,6 +81,7 @@ prewhiten.default <- function(tser, x.fsamp=1, x.start=c(1, 1), ...){
   prewhiten(Xts, ...)
 }
 #' @rdname prewhiten
+#' @aliases prewhiten.ts
 #' @method prewhiten ts
 #' @S3method prewhiten ts
 prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE){

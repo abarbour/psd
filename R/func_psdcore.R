@@ -3,22 +3,34 @@
 #' Compute power spectral density (PSD) estimates
 #' for the input series using sine multitapers.
 #'  
+#' @details
+#' \subsection{Tapering}{
 #' The parameter \code{ntaper} specifies the number of sine tapers to be used 
 #' at each frequency: equal tapers at each frequency for a scalar; 
 #' otherwise, use \code{ntaper(j)} sine tapers at \code{frequency(j)}.
+#' }
 #'
+#' \subsection{Truncation}{
 #' The series length \code{N} is truncated, if necessary, so that \code{1+N/2} evenly 
 #' spaced frequencies are returned. 
+#' }
 #'
+#' \subsection{Decimation}{
 #' The parameter \code{ndecimate} determines the PSDs actually 
 #' computed, defined as \code{(1+n/2)/ndecimate}; other
 #' values are found via linear interpolation.
+#' }
+#'
+#' \subsection{Sampling}{
+#'  If \code{X.frq > 0} it's assumed the value represents \emph{frequency} (e.g. Hz).
+#'  If \code{X.frq < 0} it's assumed the value represents \emph{interval} (e.g. seconds).
+#' }
 #'
 #' @section Warning:
 #' Decimation is not well tested as of this point.
 #'
 #' @param X.d  the series to estimate a spectrum for 
-#' @param X.frq  scalar; the sampling frequency (e.g. Hz)
+#' @param X.frq  scalar; the sampling information (see section Sampling)
 #' @param ntaper  scalar, or vector; the number of tapers
 #' @param ndecimate  scalar; decimation factor
 #' @param demean  logical; should \code{X.d} be centered about the mean
@@ -28,6 +40,7 @@
 #' @param Nyquist.normalize  logical; should the units be returned in Hz, rather than Nyquist?
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
 #' @param as.spec  logical; should the object returned be of class 'spec'
+#' @param refresh  logical; ensure a free environment prior to execution
 #' @param ...  (unused) Optional parameters
 #'
 #' @name psdcore
@@ -37,7 +50,7 @@
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
 # @example x_examp/psdcore.R
-psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
 #' @S3method psdcore default
@@ -52,14 +65,27 @@ psdcore.default <- function(X.d,
                             Nyquist.normalize=TRUE,
                             plotpsd=FALSE,
                             as.spec=TRUE,
+                            refresh=FALSE,
                             ...
                            ) {
   #
-  #require(signal, quietly=TRUE, warn.conflicts=FALSE)
+  if (refresh) rlpSpec:::rlp_envClear()
   #
   series <- deparse(substitute(X.d))
-  X.d <- na.action(stats::ts(X.d, frequency=X.frq))
-  Nyq <- stats::frequency(X.d)/2
+  if (X.frq > 0){
+    # value represents sampling frequency
+    X.d <- na.action(stats::ts(X.d, frequency=X.frq))
+    Nyq <- stats::frequency(X.d)/2
+  } else if (X.frq < 0){
+    # value is sampling interval
+    X.frq <- abs(X.frq)
+    X.d <- na.action(stats::ts(X.d, deltat=X.frq))
+    Nyq <- 1/stats::deltat(X.d)/2
+  } else {
+    stop("bad sampling information")
+  }
+  #   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
+  #   Nyq <- stats::frequency(X.d)/2
   ##
   ###  When ntaper is a scalar, initialize
   ##
@@ -67,7 +93,7 @@ psdcore.default <- function(X.d,
   lt <- length(ntaper)
   # onle one variable in the env (init): it hasn't been added to yet
   nenvar <- length(rlp_envStatus()$listing)
-  if (lt == 1 | nenvar == 1){
+  if (lt == 1 | nenvar == 1 | refresh){
     # original series length
     n.o <- rlp_envAssignGet("len_orig", length(X.d))
     #
@@ -220,24 +246,56 @@ psdcore.default <- function(X.d,
   indic <- 2:(nfreq-1)
   if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
-  pltpsd <- function(...){
-    Xpg <- spec.pgram(X, log="no", pad=1, taper=0, detrend=detrend, demean=demean, plot=FALSE)
+  pltpsd <- function(Xser, frqs, psds, nyq, nNyq, detrend, demean, ...){
+    Xser <- ts(Xser, frequency=1) # so we can normalize properly
+    Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=demean, plot=FALSE)
+    if (nNyq) {
+      Xpg$freq <- Xpg$freq * 2 * nyq
+      Xpg$spec <- nyq * Xpg$spec
+    }
     opar <- par(no.readonly = TRUE)
-    par(mar=rep(2,4), oma=rep(2,4))
-    layout(matrix(c(1,2),ncol=1),c(1,2))
-    lpsd <- 10*log10(psd.n)
-    lpgram <- 10*log10(Xpg$spec)
-    r1 <- range(lpsd)
-    r2 <- range(lpgram)
-    plot(log10(Xpg$freq), lpgram, 
-         col="red", type="l", main="Naive and Multitaper Power Spectral Densities",
-         ,ylim=c(min(r1,r2), max(r1,r2)))
-    lines(log10(frq), lpsd, type="l")
-    legend("bottomleft",c("spec.pgram","rlpSpec"),col=c("red","black"),lty=1)
-    plot(X,type="l", main=sprintf("spec series ( dt:%s | dm:%s | f.l:%s )", demean, detrend, first.last))
+    par(mar=c(2, 3, 2.3, 1.2), oma=rep(2,4), las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
+    #layout(matrix(c(1,2), ncol=1), c(1,2))
+    layout(matrix(c(1,1,2,2,3,4), 3, 2, byrow = TRUE))
+    ## Prelims:
+    # rlp
+    lfrq <- log10(frqs)
+    rm(frqs)
+    db_psd <- 10*log10(psds)
+    rm(psds)
+    # spec.pgram
+    db_pgram <- 10*log10(Xpg$spec)
+    lfrqp <- log10(Xpg$freq)
+    rm(Xpg)
+    r1 <- range(db_psd)
+    r2 <- range(db_pgram)
+    ## Spectra, in decibels
+    plot(lfrqp, db_pgram, col="red", type="l", 
+         main="Naive and Multitaper PSD",
+         xaxs="i", xlab="",
+         ylab="dB, units^2 * delta",
+         ylim=c(min(r1,r2), max(r1,r2)))
+    mtext("frequency, log10 1 / delta", side=1, line=1.5)
+    #mtext(, cex=0.6)
+    abline(h=0, v=log10(nyq), col="dark gray", lwd=2, lty=3)
+    lines(lfrq, db_psd, type="l")
+    legend("bottomleft",c("20% cosine","rlpSpec"), col=c("red","black"), lty=1, lwd=2, cex=0.9)
+    ## tapers
+    plot(ntap, lfrq)
+    ## original series
+    plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
+    mtext("index", side=1, line=1.5)
+    mtext(sprintf("( dt:%s | dm:%s | f.l:%s )", demean, detrend, first.last), cex=0.6)
+    ## autocorrelation
+    acf(Xser, main="")
+    mtext("lag", side=1, line=1.5)
+    ## reset params
     par(opar)
   }
-  if (plotpsd) pltpsd(...)
+  ## Plot it
+  if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, nyq=Nyq, nNyq=Nyquist.normalize, 
+                      detrend=detrend, demean=demean, ...)
+  ##
   funcall<-paste(as.character(match.call()[]),collapse=" ") 
   psd.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(psd.n), 
