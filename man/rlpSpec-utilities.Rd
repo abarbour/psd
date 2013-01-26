@@ -25,7 +25,7 @@
 \alias{zeros.default}
 \title{Various utility functions.}
 \usage{
-  vardiff(X)
+  vardiff(Xd)
 
   dB(Rat)
 
@@ -64,7 +64,7 @@
   \method{mod}{default} (X, Y)
 }
 \arguments{
-  \item{X}{object to difference}
+  \item{Xd}{object to difference}
 
   \item{Rat}{numeric; A ratio to convert to decibels
   (\code{dB}).}

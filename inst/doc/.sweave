@@ -13,7 +13,7 @@ done
 #open rlpSpec_overview.pdf
 cat << XXX | grep -v ^'#' > /tmp/tmp$$
 normalization
-#rlpSpec_overview
+rlpSpec_overview
 XXX
 cat /tmp/tmp$$ | awk '{
 	printf"set -e\nrm -f %s.pdf\n",$1

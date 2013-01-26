@@ -14,9 +14,9 @@ NULL
 #' @export
 #' @keywords utilities
 #' @seealso \code{\link{rlpSpec-package}}
-#' @param X object to difference
+#' @param Xd object to difference
 #' @return numeric
-vardiff <- function(X){var(diff(X))}
+vardiff <- function(Xd){stats::var(diff(Xd))}
 
 #' @description \code{dB} returns an object converted to decibels.
 #' @details Decibels are defined as \deqn{10 \log{}_{10} x}.
