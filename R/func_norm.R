@@ -7,7 +7,6 @@
 #' @aliases normalization
 #' @keywords spectrum-estimation normalization prewhiten
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @docType package
 #'
 #' @param Spec spectrum to normalize
 #' @param Fnyq nyquist frequency

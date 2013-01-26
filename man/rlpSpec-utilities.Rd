@@ -1,4 +1,3 @@
-\docType{package}
 \name{rlpSpec-utilities}
 \alias{as.rowvec}
 \alias{char2envir}
@@ -16,7 +15,6 @@
 \alias{ones}
 \alias{ones.default}
 \alias{rlpSpec-utilities}
-\alias{rlpSpec-utilities-package}
 \alias{rowvec}
 \alias{vardiff}
 \alias{vector_reshape}

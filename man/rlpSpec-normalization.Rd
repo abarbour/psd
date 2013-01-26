@@ -1,4 +1,3 @@
-\docType{package}
 \name{rlpSpec-normalization}
 \alias{normalization}
 \alias{nyqnorm}
@@ -8,7 +7,6 @@
 \alias{psdnorm.default}
 \alias{psdnorm.spec}
 \alias{rlpSpec-normalization}
-\alias{rlpSpec-normalization-package}
 \title{Normalization of the power spectral densities.}
 \usage{
   psdnorm(Spec, Fnyq, verbose = TRUE, ...)

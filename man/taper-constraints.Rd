@@ -1,4 +1,3 @@
-\docType{package}
 \name{taper-constraints}
 \alias{constrain_taper_friedman_smooth}
 \alias{constrain_taper_loess_smooth}
@@ -17,7 +16,6 @@
 \alias{minspan}
 \alias{minspan.taper}
 \alias{taper-constraints}
-\alias{taper-constraints-package}
 \title{Taper constraint methods.}
 \usage{
   minspan(tapvec, ...)

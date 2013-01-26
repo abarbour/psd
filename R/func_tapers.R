@@ -367,7 +367,6 @@ parabolic_weights_fast.default <- function(ntap=1L){
 #' @keywords taper taper-constraints riedel-sidorenko
 #' @rdname taper-constraints
 #' @name taper-constraints
-#' @docType package
 NULL
 
 #' @description \code{\link{minspan}} sets the maximum span a taper object

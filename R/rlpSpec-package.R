@@ -44,7 +44,7 @@
 #'
 #' @docType package
 #' @name rlpSpec-package
-#' @aliases rlpSpec rlpspec-package spec.rlp
+#' @aliases rlpSpec spec.rlp
 #' @title Adaptively estimate power spectral densities of an optimally tapered series.
 #' 
 #' @author Robert L. Parker and Andrew J. Barbour <andy.barbour@@gmail.com> 

@@ -6,7 +6,6 @@
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @rdname rlpSpec-utilities
 #' @name rlpSpec-utilities
-#' @docType package
 NULL
 
 #' @description \code{vardiff} reeturns the variance of the first difference of the series.

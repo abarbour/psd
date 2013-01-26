@@ -13,6 +13,9 @@
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{fullpage}
+\usepackage{makeidx} % for indexing
+\usepackage{showidx}
+\makeindex % comment to have no index
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
@@ -36,12 +39,51 @@ and Robert L. Parker}
 \begin{document}
 \maketitle
 \begin{abstract}
-  The purpose of this vignette is to provide an overview of
-  the normalization used by \rlp{} and compare it to other
-  estimators.
+  Normalizations come in many forms, but here we 
+  outline
+  the normalization used by \rlp{}: power spectral density.
 \end{abstract}
 \tableofcontents
 \section{Background}
+There can often be confusion about the different quantities used
+in spectral analysis \footnote{
+This post to \Rcmd{R-help} very eloquently describes the problem,
+and provides some guidance:
+\url{
+http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html
+}
+%https://stat.ethz.ch/pipermail/r-help/2006-February/087377.html
+},
+partly due to myriad nomenclature within the incredibly vast literature
+on the subject.
+Regarding nomenclature:
+Phrases including ``amplitude spectrum",
+``energy spectral density", ``power", ``power spectra", and even "spectra"
+all mean \emph{something}, but are rarely equivalent.
+
+Let us, for the sake of brevity, assume we have a stationary signal 
+$f(x)$
+having Fourier Transform (FT)
+$F(s)$, which is complex.
+The \index{amplitude spectrum} of this signal is simply the 
+real component of the FT, $\arg \{F\}$,
+which we'll denote as $^{\mathtt{(A)}} S$.
+The corresponding
+\index{phase spectrum}
+is thus $\mathrm{mod} F$, or $^{\mathtt{(\phi)}} S$.
+These quantities are, however, meaningless.
+
+
+The latter assumes that the
+spectrum has the normalization used in  power -- which is that the Nyquist
+is assumed to be 1,0, always (power doesn't ask for a sample interval).
+But psd assumes that the interval is 1 (unless you specify otherwise)
+so that the Nyquist is 0.5. So say you have a white noise with variance
+1: power will return a flat spectrum with level 0 db (=1) but psd will
+return a level of 2 (=3 db), both so that the level times the Nyquist will be 1.
+But logsmoo, told that the interval is 1, will multiply the spectrum by
+2 to covert from lc**2/Nyquist to lc**2/Hz: giving 3 dB for the spectrum from
+power, but 6 dB (=4) for the spectrum from psd.
 
 %\listing{graph.R} % src
 %	{graph} % src label
@@ -187,4 +229,5 @@ Bottom: The spatial series used to estimate the PSDs.}
 %\bibliographystyle{plainnat}
 %\bibliography{REFS}
 
+\printindex
 \end{document}
