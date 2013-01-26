@@ -12,6 +12,7 @@
 \usepackage{grffile}
 \usepackage{float}
 \usepackage{natbib}
+\usepackage{fullpage}
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
@@ -31,8 +32,7 @@
 }
 \author{Andrew J. Barbour \url{<andy.barbour@gmail.com>}
 and Robert L. Parker}
-\title{An overview of \rlp{}: Adaptive sine multitaper power spectral
-density estimation}
+\title{\rlp{}: Adaptive sine multitaper power spectral density estimation}
 \begin{document}
 \maketitle
 \begin{abstract}

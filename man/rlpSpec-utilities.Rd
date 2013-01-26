@@ -18,12 +18,15 @@
 \alias{rlpSpec-utilities}
 \alias{rlpSpec-utilities-package}
 \alias{rowvec}
+\alias{vardiff}
 \alias{vector_reshape}
 \alias{vector_reshape.default}
 \alias{zeros}
 \alias{zeros.default}
 \title{Various utility functions.}
 \usage{
+  vardiff(X)
+
   dB(Rat)
 
   char2envir(envchar)
@@ -61,6 +64,8 @@
   \method{mod}{default} (X, Y)
 }
 \arguments{
+  \item{X}{object to difference}
+
   \item{Rat}{numeric; A ratio to convert to decibels
   (\code{dB}).}
 
@@ -86,6 +91,8 @@
   division}
 }
 \value{
+  numeric
+
   numeric
 
   \code{char2envir} returns the result of evaluating the
@@ -114,6 +121,9 @@
 }
 \description{
   Various utility functions are used:
+
+  \code{vardiff} reeturns the variance of the first
+  difference of the series.
 
   \code{dB} returns an object converted to decibels.
 
@@ -236,6 +246,8 @@ all.equal(mc2a, mc2c) # TRUE
   \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
 }
 \seealso{
+  \code{\link{rlpSpec-package}}
+
   \code{\link{rlpSpec-package}}
 
   \code{\link{rlpSpec-package}}

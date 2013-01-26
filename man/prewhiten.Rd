@@ -5,14 +5,16 @@
 \title{Prewhiten a series.}
 \usage{
   prewhiten(tser, AR.max = 0L, detrend = TRUE,
-    demean = TRUE, plot = TRUE, verbose = TRUE)
+    demean = TRUE, plot = TRUE, verbose = TRUE,
+    x.fsamp = 1, x.start = c(1, 1), ...)
 
-  \method{prewhiten}{default} (tser, x.fsamp = 1,
-    x.start = c(1, 1), ...)
+  \method{prewhiten}{default} (tser, AR.max = 0L,
+    detrend = TRUE, demean = TRUE, plot = TRUE,
+    verbose = TRUE, x.fsamp = 1, x.start = c(1, 1), ...)
 
   \method{prewhiten}{ts} (tser, AR.max = 0L,
     detrend = TRUE, demean = TRUE, plot = TRUE,
-    verbose = TRUE)
+    verbose = TRUE, x.fsamp = NA, x.start = NA, ...)
 }
 \arguments{
   \item{tser}{vector; An object to prewhiten.}

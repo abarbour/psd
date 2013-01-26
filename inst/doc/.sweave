@@ -1,4 +1,21 @@
 #!/bin/sh
 set -e
-~/bin/Sweave.sh -ld rlpSpec_overview.Rnw
-open rlpSpec_overview.pdf
+for RNW in *.Rnw
+do
+  echo ${RNW} | awk '{
+    	fi=$0
+	gsub("\\."," ")
+	#printf"~/bin/Sweave.sh -ld %s\nopen %s.pdf\n",fi,$1
+  }'
+done
+
+#~/bin/Sweave.sh -ld 
+#open rlpSpec_overview.pdf
+cat << XXX | grep -v ^'#' > /tmp/tmp$$
+normalization
+#rlpSpec_overview
+XXX
+cat /tmp/tmp$$ | awk '{
+	printf"set -e\nrm -f %s.pdf\n",$1
+	printf"~/bin/Sweave.sh -ld %s.Rnw\nopen %s.pdf\n",$1,$1
+	}' | sh

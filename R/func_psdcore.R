@@ -39,9 +39,11 @@
 #' @param first.last  the extrapolates to give the zeroth and Nyquist frequency estimates
 #' @param Nyquist.normalize  logical; should the units be returned in Hz, rather than Nyquist?
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
-#' @param as.spec  logical; should the object returned be of class 'spec'
+#' @param as.spec  logical; should the object returned be of class 'spec'?
 #' @param refresh  logical; ensure a free environment prior to execution
+#' @param verbose logical; should messages be given?
 #' @param ...  (unused) Optional parameters
+#' @return An list object, invibibly.  If \code{as.spec=TRUE} then an object with class 'spec'.
 #'
 #' @name psdcore
 #' @export
@@ -50,7 +52,7 @@
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
 # @example x_examp/psdcore.R
-psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
 #' @S3method psdcore default
@@ -66,10 +68,11 @@ psdcore.default <- function(X.d,
                             plotpsd=FALSE,
                             as.spec=TRUE,
                             refresh=FALSE,
+                            verbose=FALSE,
                             ...
                            ) {
   #
-  if (refresh) rlpSpec:::rlp_envClear()
+  if (refresh) rlpSpec:::rlp_envClear(verbose=verbose)
   #
   series <- deparse(substitute(X.d))
   if (X.frq > 0){
@@ -227,7 +230,6 @@ psdcore.default <- function(X.d,
   ## Normalize by variance, 
   trap.area <- sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
-  timebp <- as.numeric(ntap/2)
   psd.n <- psd * (2 * varx / (trap.area * bandwidth))
   frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
   #and (optionally) the Nyquist frequency so units will be in (units**2/Hz)
@@ -235,6 +237,9 @@ psdcore.default <- function(X.d,
     frq <- 2 * Nyq * frq
     psd.n <- Nyq * psd.n
   }
+  ## timebp
+  timebp <- as.numeric(ntap/2)
+  ## bandwidth
   # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
   # half-width W = (K + 1)/{2(N + 1)}
   # effective bandwidth ~ 2 W (accurate for many spectral windows)
@@ -277,7 +282,7 @@ psdcore.default <- function(X.d,
          ylim=c(min(r1,r2), max(r1,r2)))
     mtext("frequency, log10 1 / delta", side=1, line=1.5)
     #mtext(, cex=0.6)
-    abline(h=0, v=log10(nyq), col="dark gray", lwd=2, lty=3)
+    abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
     lines(lfrq, db_psd, type="l")
     legend("bottomleft",c("20% cosine","rlpSpec"), col=c("red","black"), lty=1, lwd=2, cex=0.9)
     ## tapers
@@ -316,7 +321,9 @@ psdcore.default <- function(X.d,
                   detrend = detrend, 
                   demean = demean,
                   timebp=timebp,
-                  nyquist.normalized=Nyquist.normalize)
+                  nyquist.frequency=Nyq,
+                  nyquist.normalized=Nyquist.normalize
+                  )
   if (as.spec){class(psd.out) <- "spec"}
   return(invisible(psd.out))
 }

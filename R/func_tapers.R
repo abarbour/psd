@@ -65,6 +65,7 @@ as.taper <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   # pmin/pmax.int are fast versions of
   x <- as.vector(unlist(x))
   if (is.null(max_taper)) max_taper <- max(x)
+  #print(summary(unclass(x)))
   stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper & !(is.character(x)))
   x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(x))))
   #x[x < min_taper] <- min_taper
@@ -345,8 +346,9 @@ parabolic_weights_fast.default <- function(ntap=1L){
   K2 <- kseq * kseq # vector
   NT2 <- ntap * ntap # scalar
   NT3 <- NT2 * ntap # scalar
+  #w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
   TW <- matrix((NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2), ncol=lk)
-  return(list(taper_seq=kseq+1, taper_weights=TW))
+  return(list(taper_seq=kseq+1, taper_weights=TW ))
 }
 
 ###

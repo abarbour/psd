@@ -1,3 +1,6 @@
+==================================================================================
+Personal communication: DCA
+==================================================================================
 Andy:
 
         I think I have resolved my concerns about the spectral levels for
@@ -44,9 +47,296 @@ to present results.
 Thanks
 Duncan
 
-==========================================================================================
+==================================================================================
+https://stat.ethz.ch/pipermail/r-help/2006-February/087377.html
+==================================================================================
 
+[R] How do I normalize a PSD?
+
+Keith Chamberlain Keith.Chamberlain at colorado.edu 
+Thu Feb 2 05:14:50 CET 2006
+Previous message: [R] Computing s^2 for non-negative least squares.
+Next message: [R] Filtering the time series
+Messages sorted by: [ date ] [ thread ] [ subject ] [ author ]
+Dear Tom,
+
+Short answer, if your using spec.pgram(), use the smoothing kernel to get a
+better estimate at the frequency centered in the bandwidth. If your
+frequency bin of interest is wider than the bandwidth of the kernel, average
+across frequencies (I think). The estimate appears to be normalized already.
+
+If you are calculating your PSD independently, then oversample (e.g. 2,
+perhaps 4 or more times the highest frequency you need to characterize, and
+sum (not average) across the frequency bin to get the power estimate of the
+center frequency in that bin. Shove the whole signal into memory and don't
+window it if you can. The oversampling improves your estimate and reduces
+the variance. Getting the FFT of the whole signal at once eliminates edge
+effects that would occur if you segmented the data. Whatever your PSD is
+normalized to, the sum across frequencies in your bin will maintain that
+property. 
+
+If you are really wanting to see the PSD plotted by period rather than
+frequency, plot the inverse of your frequency values.
+
+The normalization part is a separate (and huge, perhaps neglected, perhaps
+overrated) subject. Here is how I have tried to make sense out of it.
+
+I do not have years and years of experience in spectral analysis, but
+perhaps you may find this a more simple (minded?) description. I was taught
+the definition of the power spectrum using "Numerical Recipes" from Press,
+et al (e.g. any of 1988, 1992, and 2002, for FORTRAN, C, and C++
+respectively). Their description seems different (as Leif suggested) from
+other sources. They also happen to caution (strongly) about the distinction
+between "one-sided" and "two-sided" PSDs, but I'm not sure to what extent
+other authors have concerned themselves with that point, or that it is even
+necessary in most practical applications (warning: non-expert opinion).
+
+In the definition I learned, a periodogram is considered "normalized" in the
+sense that the sum across the frequency range has something to do with some
+quantity (Sum Squared, Mean Squared, etc.) of a signal in the time domain. 
+
+Let
+N = Number of samples
+Fc = Nyquist critical frequency
+C = Normalization parameter
+
+P2(f) = C * Mod(fft(signal))^2 from -fc to fc: Press et al call a
+"two-sided" estimate, even if just the power at positive frequencies is
+returned.
+
+P1(f) = C * Mod(fft(signal))^2 from DC to fc, but all frequencies excluding
+DC and Nyquist are multiplied by 2. Press et al. consider this the
+"one-sided" estimate. 
+
+The reason they call those "one" or "two" sided is that the sum of the power
+over all of the frequencies will be equivalent even though the one sided
+estimate has only half the data points.
+Sum(P2) == sum(P1)
+
+The parameter C is what I think I understand as the normalization parameter,
+and besides the one/two sided nomenclature issue, is where authors seem to
+differ. Regardless of which definition of the PSD is used, where C = 1/N,
+the periodogram (to Press, et al.) would be normed to the Sum Squared of the
+signal in the time domain. I believe some authors might call that form
+un-normalized, depending on whether or not 1/N was included in the
+definition of a periodogram that they happen to have been working from.
+Where C = 1/N^2, the periodogram would be normed to the Mean Squared of the
+signal in the time-domain. Where C = some other factor, the periodogram is
+normed to the equivalent of that factor from the time-domain. That's my
+(perhaps oversimplified) understanding.
+
+>From Venables & Ripley, listed as a source on >?spec.pgram, the definition
+used for that function seems comparable - though I wouldn't count out the
+possibility that I missed or misread something. The factor C in that case is
+1/N so the PSD estimate should sum to the Sum Squared in the time domain.
+There are 2 caveats. The first is a point that Leif pointed out, that the
+periodogram from spec.pgram() is normalized to frequency. I need to reread
+that section in Venables & Ripley and look at the link provided in another
+recent reply in more detail to be certain. For now, I am making the
+assumption that the parameter would be used 'in addition' to the 1/N factor.
+I highly recommend that you reference the sources from the spec.pgram help
+page.
+
+Second, smoothing and tapering are defined separately from the PSD, so I do
+not think the equalities hold up as well between a quantity of the
+(unsmoothed) time-domain signal, and its normalized (smoothed &/or tapered)
+power spectrum.
+
+I hope this helps, wasn't to long, and that my weak editing skills did not
+make to grand an appearance.
+
+Regards,
+KeithC.
+
+
+Message: 30
+Date: Tue, 31 Jan 2006 13:02:03 -0800
+From: Leif Kirschenbaum <leif at reflectivity.com>
+Subject: Re: [R] How do I "normalise" a power spectral density
+To: r-help at stat.math.ethz.ch, Tom C Cameron <bgytcc at leeds.ac.uk>
+Message-ID: <200601312102.k0VL29fS003509 at hypatia.math.ethz.ch>
+Content-Type: text/plain; charset=iso-8859-1
+
+I have done a fair bit of spectral analysis, and hadn't finished collecting
+my thoughts for a reply, so hadn't replied yet.
+
+What exactly do you mean by normalize?
+  I have not used the functons periodogram or spectrum, however from the
+description for periodogram it appears that it returns the spectral density,
+which is already normalized by frequency, so you don't have to worry about
+changing the appearance of your periodogram or power spectrum if you change
+the time intervals of your data. With a normal Fourier Transform, not only
+do you need to complex square the terms but you also need to divide by a
+normalizing factor to give power-per-frequency-bin, which the periodogram
+appears to do.
+
+  However, if you look in various textbooks, the definition of the Fourier
+Transform (FT) varies from author to author in the magnitude of the
+prepended scaling factor. Since the periodogram is related to the FT
+(periodogram ultimately uses the function mvfft), without examination of the
+code for periodogram you cannot know the scaling factor, which is almost
+always one of the following:
+  1.0
+  1/2
+  1/(2*pi)
+  SQRT(1/2)
+  SQRT(1/(2*pi))
+  In fact, if you obtain an FT (or FFT or DFT) from a piece of electronics
+(say an electronic spectrum analyzer), the prepending factor can vary from
+manufacturer to manufacturer.
+  Fortunately, there is a strict relationship between the variance of your
+signal and the integrated spectral density. If your time signal is x(t), the
+spectral density is S(f), and fc = frequency(x)/2 the Nyquist cutoff
+frequency, then this may be expressed as:
+
+  variance(x(t)) = constant * {Integral from 0 to fc of S(f)}
+
+In R-code: let x be your time series, and "constant" be the unknown scaling
+factor (1/2, 1/2pi, etc.)
+  p <- periodogram(x)
+  var(x) == constant * sum(p[[1]])/length(p[[1]])
+
+Or:
+  constant = sum(p[[1]])/length(p[[1]])/var(x)
+
+and we find that the appropriate scaling constant is 1.0.
+
+  As regards plotting versus period, the periodogram returns arrays of
+spectral amplitude and frequencies. The frequencies are in inverse units of
+the intervals of your time series. i.e. if your time series is 1-point per
+day, then the frequencies are in 1/day units. Thus if you wish to plot
+amplitude versus period in weeks you have a little math to do.
+  I believe that plotting is usually versus frequency since most observers
+are interested in how things vary versus frequency: multiple evenly spaced
+peaks on a linear frequency scale indicates the presence of harmonics; this
+is not so simply seen in a plot versus period. ex. peaks of 10 Hz, 20 Hz, 30
+Hz, 40 Hz,... in period would be at periods of 100 ms, 50 ms, 25 ms, 12.5
+ms, and the peaks are not evenly spaced.
+  Additionally, there are all kinds of typical responses versus frequency
+(1/f, 1/f^2) which are clearly seen in plots versus frequency as straight
+lines (log power vs log frequency), but would come out as curves in plots
+versus period.
+  I can see how ecological studies may indeed be more interested in the
+periods.
+
+  However, I would be wary of using the periodogram function, for if I
+calculate periodograms of the same sinewave but for differing lengths of the
+sample, the spectral density does not come out the same. All 4 of the plots
+produced by the code below should overlay, and yet as the time series
+becomes longer there appears to be an increasing offset of the magnitudes
+returned. (black-brown-blue-red)
+
+x0<-ts(data=sin(2*pi*1.1*(1:1000)/10),frequency=10)
+p0<-periodogram(x0)
+var(x0)
+
+x1<-ts(data=sin(2*pi*1.1*(1:10000)/10),frequency=10)
+p1<-periodogram(x1)
+var(x1)
+
+x2<-ts(data=sin(2*pi*1.1*(1:100000)/10),frequency=10)
+p2<-periodogram(x2)
+var(x2)
+
+x3<-ts(data=sin(2*pi*1.1*(1:1000000)/10),frequency=10)
+p3<-periodogram(x3)
+var(x3)
+
+plot(p3[[2]],p3[[1]],col="red",type="p",pch=19,cex=0.05,log="y",
+	xlim=c(0.1,0.12),ylim=c(1e-30,1e-15))
+points(p2[[2]],p2[[1]],type="l",col="blue")
+points(p1[[2]],p1[[1]],type="l",col="brown")
+points(p0[[2]],p0[[1]],type="o",col="black")
+
+
+> Message: 113
+> Date: Mon, 30 Jan 2006 17:45:58 -0800
+> From: Spencer Graves <spencer.graves at pdf.com>
+> Subject: Re: [R] How do I "normalise" a power spectral density
+> 	analysis?
+> To: Tom C Cameron <bgytcc at leeds.ac.uk>
+> Cc: r-help at stat.math.ethz.ch
+> Message-ID: <43DEC156.2090900 at pdf.com>
+> Content-Type: text/plain; charset=us-ascii; format=flowed
+> 
+> 	  Since I have not seen a reply to this post, I will 
+> offer a comment, 
+> even though I have not used spectral analysis myself and 
+> therefore have 
+> you intuition about it.  First, from the definitions I read in the 
+> results from, e.g., RSiteSearch("time series power spectral density") 
+> [e.g., 
+> http://finzi.psych.upenn.edu/R/library/GeneTS/html/periodogram
+> .html] and 
+> "spectral analysis" in Venables and Ripley (2002) Modern Applied 
+> Statistics with S (Springer), I see no reason why you 
+> couldn't plot the 
+> spectrum vs. the period rather than the frequency.  Someone else may 
+> help us understand why it is usually plotted vs. the frequency;  I'd 
+> guess that the standard plot looks more like the integrand in the 
+> standard Fourier inversion formula, but I'm not sure.
+> 
+> 	  If you'd like more help from this listserve, you 
+> might briefly 
+> describe the problem you are trying to solve, why you think spectral 
+> analysis analysis should help, and include a toy example with some 
+> self-contained R code to illustrate what you tried and what you don't 
+> understand about it.  (And PLEASE do read the posting guide! 
+> "www.R-project.org/posting-guide.html".  Nothing is certain but 
+> following that posting guide will, I believe, tend to 
+> increase the speed 
+> and utility of response.)
+> 
+> 	  hope this helps.
+> 	  spencer graves
+> 
+> Tom C Cameron wrote:
+> 
+> > Hi everyone
+> > 
+> > Can anyone tell me how I normalise a power spectral density 
+> (PSD) plot of a
+> > periodical time-series. At present I get the graphical 
+> output of spectrum VS
+> > frequency.
+> > 
+> > What I want to acheive is period VS spectrum? Are these the 
+> same things but the
+> > x-axis scale needs transformed ?
+> > 
+> > Any help would be greatly appreciated
+> > 
+> > Tom
+> > 
+> ..............................................................
+> .............
+> > Dr Tom C Cameron                        office: 0113 34 
+> 32837 (10.23 Miall)
+> > Ecology & Evolution Res. Group.         lab: 0113 34 32884 
+> (10.20 Miall)
+> > School of Biological Sciences           Mobile: 07966160266
+> > University of Leeds                     email: 
+> t.c.cameron at leeds.ac.uk
+> > Leeds LS2 9JT
+> > LS2 9JT
+> > 
+> > ______________________________________________
+> > R-help at stat.math.ethz.ch mailing list
+> > https://stat.ethz.ch/mailman/listinfo/r-help
+> > PLEASE do read the posting guide! 
+> http://www.R-project.org/posting-guide.html
+>
+
+
+Previous message: [R] Computing s^2 for non-negative least squares.
+Next message: [R] Filtering the time series
+Messages sorted by: [ date ] [ thread ] [ subject ] [ author ]
+More information about the R-help mailing list
+
+
+==================================================================================
 http://www.animations.physics.unsw.edu.au/jw/dB.htm
+==================================================================================
 
 Definition and examples
 

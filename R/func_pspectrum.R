@@ -21,32 +21,37 @@
 #' @param no.history logical; Should the adaptive history \emph{not} be saved?
 #' @param plot logical; Should the results be plotted?
 #' @param ... Optional parameters passed to \code{\link{riedsid}}
-#' @return Object with class 'spec'.
+#' @return Object with class 'spec', invisibly.
 #' @example x_examp/pspec.R
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
   stopifnot(length(x)>1)
   xo <- rlpSpec:::rlp_envAssignGet("original_series", x)
   #
-  adapt_message <- function(stage){
+  adapt_message <- function(stage, dvar=NULL){
     stopifnot(stage>=0)
-    if (stage==0){stage <- paste(stage,"(pilot)")}
-    message(sprintf("Stage  %s  estimation", stage))
+    if (stage==0){
+      stage <- paste(stage,"est. (pilot)")
+    } else {
+      stage <- paste(stage, sprintf("est. (A.V.R. %.01f dB)", dB(dvar)))
+    }
+    message(sprintf("Stage  %s ", stage))
   }
   #
   niter <- abs(niter)
   plotpsd_ <- FALSE
   for (stage in 0:niter){
-    if (verbose) adapt_message(stage)
     if (stage==0){
+      if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      rlp_initEnv(refresh=TRUE,verbose=verbose)
+      rlp_initEnv(refresh=TRUE, verbose=verbose)
       # --- pilot spec ---
       # normalization is there
       Pspec <- pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot)
+      dvar.o <- vardiff(Pspec$spec)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
@@ -56,8 +61,9 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TR
       }
       xo <- 0 # to prevent passing orig data back/forth
     }
+    rverb <- ifelse(stage>0, FALSE, TRUE)
     ## calculate optimal tapers
-    kopt <- riedsid(Pspec$spec, Pspec$taper, ...)
+    kopt <- riedsid(Pspec, verbose=rverb, ...)
     stopifnot(exists('kopt'))
     ## reapply to spectrum
     if (stage==niter & plot){
@@ -66,11 +72,12 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TR
       rm(x)
     }
     ##print(plotpsd_)
-    Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, plotpsd=plotpsd_)
+    Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, plotpsd=plotpsd_, verbose=FALSE)
+    if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec)/dvar.o)
     ## update history
     if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
   }
-  return(Pspec)
+  return(invisible(Pspec))
 }
 
 #' Calculate the pilot power spectral densities.
@@ -101,7 +108,8 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=10, niter=4, verbose=TR
 #' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
 #' @param ntap scalar; the number of tapers to apply during spectrum estimation
 #' @param ... additional parameters passed to \code{\link{psdcore}}
-#' @return An object with class 'spec'.
+#' @return An object with class 'spec', invisibly.  It also assigns it to
+#' \code{"final_psd"} in the working environment.
 pilot_spec <- function(x, x.frequency=1, ntap=5, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @method pilot_spec default
@@ -126,5 +134,5 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=5, ...){
   # return taper object
   Pspec$taper <- as.taper(Ptap, setspan=TRUE)
   #
-  return(Pspec)
+  return(invisible(rlpSpec:::rlp_envAssignGet("final_psd", Pspec)))
 }

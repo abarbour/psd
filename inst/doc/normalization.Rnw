@@ -1,0 +1,190 @@
+\documentclass{article}
+% sweave fig help:
+% http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
+% borrowing design from roxygen -- AJB Jan 13
+%% \VignetteIndexEntry{rlpSpec Normalization Vignette}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{url}
+\usepackage{upquote}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{fullpage}
+\newcommand{\SC}[1]{\textsc{#1}}
+\newcommand{\SCY}[0]{\SC{Yes}}
+\newcommand{\SCN}[0]{\SC{No}}
+\newcommand{\Rcmd}[1]{\texttt{#1}}
+\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+\newcommand{\naive}[0]{na\"{\i}ve}
+%% path, filename, caption, label
+\newcommand{\listing}[4]{        %
+  \begin{figure}[H]              %
+    \centering                   %
+    \VerbatimInput[numbers=left, %
+      frame=single,              %
+      label=#2]{#1}              %
+    \caption{#3}                 %
+    \label{#4}                   %
+  \end{figure}                   %
+}
+\author{Andrew J. Barbour \url{<andy.barbour@gmail.com>}
+and Robert L. Parker}
+\title{Normalization of Power Spectral Density}
+\begin{document}
+\maketitle
+\begin{abstract}
+  The purpose of this vignette is to provide an overview of
+  the normalization used by \rlp{} and compare it to other
+  estimators.
+\end{abstract}
+\tableofcontents
+\section{Background}
+
+%\listing{graph.R} % src
+%	{graph} % src label
+%	{Call matrix}	% caption
+%	{fig:callmat}	% fig label
+
+First load the package into the namespace:
+%% libload
+<<eval=TRUE, eval=TRUE>>=
+library(rlpSpec)
+@ 
+
+%% RSEIS mtapspec
+%     /* choose normalization based on inorm flag  */
+%	anrm = 1.;
+%	switch (inorm) {
+%	case 0:
+%		anrm = 1.;
+%		break;
+%	case 1:
+%		anrm = npoints;
+%		break;
+%	case 2:
+%		anrm = 1 / dt;
+%		break;
+%	case 3:
+%		anrm = sqrt((double) npoints);
+%		break;
+%	default:
+%		anrm = 1.;
+%		break;
+% then
+%  norm = 1.0/(anrm*anrm);
+%	
+%<<eval=TRUE, echo=TRUE>>=
+%Mspec <- mtapspec(a, dt, MTP=list(kind=1, nwin=5, npi=3, inorm = 3))
+%str(Mspec)
+%@
+%where \Rcmd{nwin} is the number of tapers taken, and 
+%\Rcmd{inorm} is he normalization flag.  Digging a bit into .
+%       a: vector time series
+%      dt: sample rate
+%    klen: length of fft
+%     MTP: MTM parameters, list:
+%          kind kind of taper average
+%          nwin number of windows
+%          npi number of Pi-prolate functions
+%          inorm normalization flag
+%We obviously need to deal with the sampling information since it is not
+%one (as assumed by default).  
+%The information we have is that the 
+%measurements are taken every 0.3 seconds.
+%We can use account for the
+%sampling interval (as opposed to sampling rate) easily
+%by using a negative value for \Rcmd{X.frq}, which \Rcmd{psdcore}
+%will interpret as
+%an interval instead of a frequency. 
+%An example highlights this:
+%% samp inv vs frq
+%<<eval=TRUE, echo=TRUE>>=
+%all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
+%@
+%
+%Returning to the $\delta$O$_{18}$ data, we can now calculate the spectrum:
+%%% adaptive OH PSD
+%<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_rseis_OH>>=
+%Aspec <- pspectrum(a, -dt, 5, niter=1, plot=FALSE)
+%Pspec <- psdcore(a, -dt, 5)
+%pltf <- Mspec$freq
+%nt <- 1:Mspec$numfreqs
+%# multiply by Nyquist
+%nyq <- frequency(ats)/2
+%pltp <- dB(Mspec$spec[nt] * nyq)
+%Xspec <- spec.pgram(ts(a, frequency=1), pad=1, taper=0.2, detrend=TRUE, demean=TRUE, plot=FALSE)
+%Xspec$freq <- Xspec$freq * 2 * nyq
+%Xspec$spec <- nyq * Xspec$spec
+%plot(Xspec, log="dB", col="dark grey")
+%plot(Pspec, log="dB", add=TRUE)
+%lines(pltf, pltp, col="dark red")
+%plot(Aspec, log="dB", add=TRUE, col="dark blue", lwd=1.5)
+%@
+%
+%This is a situation where the adaptive method can be overly aggressive
+%in taper application. Remember, it all depends on the spectral shape.
+%
+%and enhance 
+%instead with an adaptive procedure:
+%Pspec <- pspectrum(a, -dt, 5, verbose=FALSE, no.history=TRUE, plot=TRUE)
+
+%\begin{figure}[htbp!]
+%\begin{center}
+%\label{}
+%\caption{}
+%\end{center}
+%\end{figure}
+
+\subsection{\Rcmd{stats::spectrum}}
+Included in the core distribution of R is \Rcmd{stats::spectrum}, which
+accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
+parametric and non-parametric estimation, respectively.  
+The user can optionally apply a single cosine taper, and/or a smoothing kernel.
+Our method is non-parametric; hence, we will compare to the latter.
+
+%% pgram
+<<eval=FALSE, echo=TRUE>>=
+spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=FALSE)
+@
+However,
+the logical arguments \Rcmd{detrend} and \Rcmd{demean} to \Rcmd{psdcore}
+are passed to \Rcmd{spec.pgram}; they are,
+by default, both \SC{True}.
+
+As a matter of bookkeeping, we must deal with the working environment
+accessed by \rlp{} functions.
+Specifically, 
+we should ensure
+\Rcmd{psdcore} does not access any inappropriate information by
+setting \Rcmd{refresh=TRUE}.
+We can then
+re-calculate the multitaper PSD and the
+raw periodogram with \Rcmd{plotpsd=TRUE}.  
+The results are shown in Figure \ref{fig:two}.
+
+\begin{figure}[htbp!]
+\begin{center}
+%% magsat compare
+<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_magsat_naive>>=
+data(magsat)
+psdcore(magsat$clean, ntaper=10, refresh=TRUE, plotpsd=TRUE)
+@
+\caption{Top: Comparison between \naive{} and multitaper PSD estimators for the 
+clean \Rcmd{MAGSAT} data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
+and power axis is in decibels.
+Bottom: The spatial series used to estimate the PSDs.}
+\end{center}
+\label{fig:two}
+\end{figure}
+
+\subsection{\Rcmd{multitaper::spec.mtm}}
+\subsection{\Rcmd{SDF::sapa}}
+
+%% bib
+%\bibliographystyle{plainnat}
+%\bibliography{REFS}
+
+\end{document}

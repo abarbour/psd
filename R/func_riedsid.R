@@ -19,30 +19,32 @@
 #' @param psd vector or class 'spec'; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as psd)
+#' @param Deriv.method character string; choice of gradient estimation method 
+#' @param Local.loss string; sets how sensitive the spectral derivatives are
 #' @param constrained logical; should the taper constraints be applied to the optimum tapers?
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
-#' @param sensitivity string; sets how sensitive the spectral derivatives are
+#' @param verbose logical; should messages be printed?
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
 #' @return Object with class 'taper'.
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}
 #' @example x_examp/ried.R
 riedsid <- function(psd, ntaper, 
-                    tapseq=NULL, constrained=TRUE, c.method=NULL, 
-                    sensitivity=c("Optim","Less","More"),
-                    ...) UseMethod("riedsid")
+                    tapseq=NULL, 
+                    Deriv.method=c("local_ls","spg"),
+                    Local.loss=c("Optim","Less","More"),
+                    constrained=TRUE, c.method=NULL,
+                    verbose=TRUE, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
 #' @aliases riedsid.spec
 #' @method riedsid spec
 #' @S3method riedsid spec
 riedsid.spec <- function(psd, ...){
-  #                          tapseq=NULL, constrained=TRUE, c.method=NULL, 
-  #                          sensitivity=c("Optim","Less","More"), ...){
   stopifnot(is.spec(psd))
-  psd <- psd$spec
-  ntaper <- psd$taper
-  riedsid(psd, ntaper, ...)
+  Psd <- psd$spec
+  Ntap <- psd$taper
+  riedsid(psd=Psd, ntaper=Ntap, ...)
   #.NotYetImplemented()
 }
 
@@ -50,8 +52,11 @@ riedsid.spec <- function(psd, ...){
 #' @method riedsid default
 #' @S3method riedsid default
 riedsid.default <- function(psd, ntaper, 
-                            tapseq=NULL, constrained=TRUE, c.method=NULL, 
-                            sensitivity=c("Optim","Less","More"), ...) {
+                            tapseq=NULL, 
+                            Deriv.method=c("qls","spg"),
+                            Local.loss=c("Optim","Less","More"),
+                            constrained=TRUE, c.method=NULL,
+                            verbose=TRUE, ...) {
   ## spectral values
   psd <- as.vector(psd)
   # num freqs
@@ -76,7 +81,7 @@ riedsid.default <- function(psd, ntaper,
   nadd <- 1 + max(nspan)
   Y <- c(psd[nadd:2], psd, psd[(nf-1):(nf-nadd)])
   Y[Y <= 0] <- eps
-  lY <- log(Y)
+  lY <- log10(Y) # log in matlab is log_10
   dY <- d2Y <- Zeros
   #
   if (is.null(tapseq) | (length(tapseq) != length(psd))){
@@ -90,36 +95,63 @@ riedsid.default <- function(psd, ntaper,
   #
   # Smooth spectral derivatives
   #
-  dsens <- switch(match.arg(sensitivity), Optim=12, More=6, Less=24) # 12 is optim
-  DFUN <- function(j, 
-                   j1=j-nspan[j]+nadd-1, 
-                   j2=j+nspan[j]+nadd-1, 
-                   jr=j1:j2, 
-                   logY=lY[jr], 
-                   dEps=eps,
-                   CC=dsens){
-    u <- jr - (j1 + j2)/2 # rowvec 
-    u2 <- u*u             # rowvec
-    L <- j2-j1+1          # constant
-    L2 <- L*L             # constant
-    LL2 <- L*L2           # constant
-    LL2L <- LL2 - L       # constant
-    #CC <- 12 # (orig)
-    uzero <- (L2 - 1)/CC  # constant
-    # first deriv
-    dY <- u %*% logY * CC / LL2L
-    # second deriv
-    d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2-4)
-    return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))
+  lsmeth <- switch(match.arg(Deriv.method), qls=TRUE, spg=FALSE)
+  if (lsmeth){
+    dsens <- switch(match.arg(Local.loss), Optim=12, More=6, Less=24) # 12 is optim
+    DFUN <- function(j, 
+                     j1=j-nspan[j]+nadd-1, 
+                     j2=j+nspan[j]+nadd-1, 
+                     jr=j1:j2, 
+                     logY=lY[jr], 
+                     dEps=eps,
+                     CC=dsens){
+      u <- jr - (j1 + j2)/2 # rowvec 
+      u2 <- u*u             # rowvec
+      L <- j2-j1+1          # constant
+      L2 <- L*L             # constant
+      LL2 <- L*L2           # constant
+      LL2L <- LL2 - L       # constant
+      #CC <- 12 # (orig)
+      uzero <- (L2 - 1)/CC  # constant
+      # first deriv
+      dY <- u %*% logY * CC / LL2L
+      # second deriv
+      d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2-4)
+      return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))
+    }
+    DX <- 1:nf
+    RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
+    attr(RSS, which="lsderiv") <- lsmeth
+    RSS <- rlpSpec:::rlp_envAssignGet("spectral_derivatives.ls", RSS)
+    RSS <- abs(colSums(RSS))
+    # sums:
+    #[ ,1] fdY2
+    #[ ,2] fd2Y
+    #[ ,3] fdEps
+    msg <- "local quadratic regression"
+  } else {
+    RSS <- splineGrad(dseq=log10(1+seq.int(0,.5,length.out=length(psd))), 
+                      dsig=log10(psd),
+                      plot.derivs=FALSE, ...) #, spar=1)
+    attr(RSS, which="lsderiv") <- lsmeth
+    RSS <- rlpSpec:::rlp_envAssignGet("spectral_derivatives", RSS) 
+    #returns log
+    RSS[,2:4] <- 10**RSS[,2:4]
+    RSS <- abs(eps + RSS[,4] + RSS[,3]**2)
+    msg <- "weighted cubic spline"
   }
-  DX <- 1:nf
-  RStmp <- rlp_envAssignGet("spectral_derivatives", vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1)))
-  #[1,] fdY2
-  #[2,] fd2Y
-  #[3,] fdEps
-  kopt <- as.taper( 3.437544 / abs(colSums(RStmp)) ** 0.4 )
-  rm(RStmp)
-  
+  if (verbose) message(sprintf("Using spectral derivatives from  %s", msg))
+  ##
+  # (480)^0.2 == 3.437544
+  KC <- 3.437544
+  ##
+  #(480)^0.2*abs(psd./d2psd)^0.4
+  # Original form:  kopt = 3.428*abs(psd ./ d2psd).^0.4;
+  # kopt = round( 3.428 ./ abs(eps + d2Y + dY.^2).^0.4 );
+  ##
+  stopifnot(exists("RSS"))
+  kopt <- as.taper( KC / (RSS ** 0.4) ) #/
+  rm(RSS)
   #
   #   for (  j  in  1:nf ) {
   #     j1 <- j - nspan[j] + nadd - 1
@@ -149,12 +181,15 @@ riedsid.default <- function(psd, ntaper,
   #   #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
   #   #
   #   # the optimal number of tapers (in an MSE sense):
-  #   kopt_old <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 )
+  #   kopt_old <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 ) 
   #   #
   #print(all.equal(kopt_old,kopt)) # TRUE!
   ##
   ## Constrain tapers
-  if (constrained) kopt <- constrain_tapers(kopt, kseq, c.method, ...)
+  if (constrained) kopt <- constrain_tapers(tapvec=kopt, 
+                                            tapseq=kseq, 
+                                            constraint.method=c.method, 
+                                            verbose=verbose)
   ##
   return(kopt)
 } 

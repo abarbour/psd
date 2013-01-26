@@ -9,6 +9,15 @@
 #' @docType package
 NULL
 
+#' @description \code{vardiff} reeturns the variance of the first difference of the series.
+#' @rdname rlpSpec-utilities
+#' @export
+#' @keywords utilities
+#' @seealso \code{\link{rlpSpec-package}}
+#' @param X object to difference
+#' @return numeric
+vardiff <- function(X){var(diff(X))}
+
 #' @description \code{dB} returns an object converted to decibels.
 #' @details Decibels are defined as \deqn{10 \log{}_{10} x}.
 #' @rdname rlpSpec-utilities

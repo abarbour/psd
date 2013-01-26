@@ -7,13 +7,14 @@
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     Nyquist.normalize = TRUE, plotpsd = FALSE,
-    as.spec = TRUE, refresh = FALSE, ...)
+    as.spec = TRUE, refresh = FALSE, verbose = FALSE, ...)
 
   \method{psdcore}{default} (X.d, X.frq = 1,
     ntaper = as.taper(1), ndecimate = 1L, demean = TRUE,
     detrend = TRUE, na.action = stats::na.fail,
     first.last = TRUE, Nyquist.normalize = TRUE,
-    plotpsd = FALSE, as.spec = TRUE, refresh = FALSE, ...)
+    plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,
+    verbose = FALSE, ...)
 }
 \arguments{
   \item{X.d}{the series to estimate a spectrum for}
@@ -43,12 +44,18 @@
   compared to the \code{spec.pgram} estimate}
 
   \item{as.spec}{logical; should the object returned be of
-  class 'spec'}
+  class 'spec'?}
 
   \item{refresh}{logical; ensure a free environment prior
   to execution}
 
+  \item{verbose}{logical; should messages be given?}
+
   \item{...}{(unused) Optional parameters}
+}
+\value{
+  An list object, invibibly.  If \code{as.spec=TRUE} then
+  an object with class 'spec'.
 }
 \description{
   Compute power spectral density (PSD) estimates for the

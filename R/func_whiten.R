@@ -72,19 +72,19 @@
 #' @param x.start start time of observations (for non \code{ts} objects)
 #' @param ... variables passed to \code{prewhiten.ts} (for non \code{ts} objects)
 #'
-prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE) UseMethod("prewhiten")
+prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
 #' @rdname prewhiten
 #' @method prewhiten default
 #' @S3method prewhiten default
-prewhiten.default <- function(tser, x.fsamp=1, x.start=c(1, 1), ...){
+prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...){
   Xts <- stats::ts(tser, frequency=x.fsamp, start=x.start)
-  prewhiten(Xts, ...)
+  prewhiten(Xts, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE)
 }
 #' @rdname prewhiten
 #' @aliases prewhiten.ts
 #' @method prewhiten ts
 #' @S3method prewhiten ts
-prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE){
+prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=NA, x.start=NA, ...){
   # prelims
   stopifnot(stats::is.ts(tser))
   #requires zoo

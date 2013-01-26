@@ -38,3 +38,4 @@ Collate:
     'func_envir.R'
     'func_utils.R'
     'zzz.R'
+    'func_norm.R'

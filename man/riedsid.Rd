@@ -4,15 +4,19 @@
 \alias{riedsid.spec}
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.}
 \usage{
-  riedsid(psd, ntaper, tapseq = NULL, constrained = TRUE,
-    c.method = NULL,
-    sensitivity = c("Optim", "Less", "More"), ...)
+  riedsid(psd, ntaper, tapseq = NULL,
+    Deriv.method = c("local_ls", "spg"),
+    Local.loss = c("Optim", "Less", "More"),
+    constrained = TRUE, c.method = NULL, verbose = TRUE,
+    ...)
 
   \method{riedsid}{spec} (psd, ...)
 
   \method{riedsid}{default} (psd, ntaper, tapseq = NULL,
-    constrained = TRUE, c.method = NULL,
-    sensitivity = c("Optim", "Less", "More"), ...)
+    Deriv.method = c("qls", "spg"),
+    Local.loss = c("Optim", "Less", "More"),
+    constrained = TRUE, c.method = NULL, verbose = TRUE,
+    ...)
 }
 \arguments{
   \item{psd}{vector or class 'spec'; the spectral values
@@ -24,14 +28,19 @@
   \item{tapseq}{vector; representing positions or
   frequencies (same length as psd)}
 
+  \item{Deriv.method}{character string; choice of gradient
+  estimation method}
+
+  \item{Local.loss}{string; sets how sensitive the spectral
+  derivatives are}
+
   \item{constrained}{logical; should the taper constraints
   be applied to the optimum tapers?}
 
   \item{c.method}{string; constraint method to use if
   \code{constrained=TRUE}}
 
-  \item{sensitivity}{string; sets how sensitive the
-  spectral derivatives are}
+  \item{verbose}{logical; should messages be printed?}
 
   \item{...}{optional argments passed to
   \code{\link{constrain_tapers}}}
