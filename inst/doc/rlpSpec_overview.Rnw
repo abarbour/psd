@@ -30,8 +30,7 @@
     \label{#4}                   %
   \end{figure}                   %
 }
-\author{Andrew J. Barbour \url{<andy.barbour@gmail.com>}
-and Robert L. Parker}
+\author{Andrew J. Barbour and Robert L. Parker}
 \title{\rlp{}: Adaptive sine multitaper power spectral density estimation}
 \begin{document}
 \maketitle
