@@ -1,5 +1,6 @@
 Miscellany
 ----------
+[ ] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 *** remove --no-examples and get to build [ ]
 [ ] migrate examples in functions to ./examp/
@@ -35,15 +36,15 @@ datasets
 
 `psdcore`
 -----------
-[ ] option to prevent environment clashes
+[X] option to prevent environment clashes
 [ ] example
 
 `pspectrum`
 -----------
-[ ] option to show final with raw periodogram
-*** ensure Nyquist.normalize affects pgram too [ ]
+[ ] ensure normalization occurs only once!
+[X] option to show final with raw periodogram
+*** ensure Nyquist.normalize affects pgram too [X]
 [ ] example
 [X] improve function documentation
 [X] add option to change constraint method for riedsid
-***  test it [ ]
 

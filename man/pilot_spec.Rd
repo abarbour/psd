@@ -43,13 +43,13 @@
   prior to estimation, and no decimation is performed.
 
   The taper series of the returned spectrum is constrained
-  using \code{as.taper(..., minspan=TRUE)}.
+  using \code{as.tapers(..., minspan=TRUE)}.
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{psdcore}}, \code{\link{as.taper}},
+  \code{\link{psdcore}}, \code{\link{as.tapers}},
   \code{\link{minspan}}
 }
 

@@ -1,14 +1,14 @@
 \name{parabolic_weights}
 \alias{parabolic_weights}
-\alias{parabolic_weights.taper}
+\alias{parabolic_weights.tapers}
 \alias{parabolic_weights_fast}
 \alias{parabolic_weights_fast.default}
-\alias{parabolic_weights_fast.taper}
+\alias{parabolic_weights_fast.tapers}
 \title{Calculate parabolic weighting factors.}
 \usage{
   parabolic_weights(tapvec, tap.index = 1L)
 
-  \method{parabolic_weights}{taper} (tapvec,
+  \method{parabolic_weights}{tapers} (tapvec,
     tap.index = 1L)
 
   parabolic_weights_fast(ntap = 1L)
@@ -16,7 +16,7 @@
   \method{parabolic_weights_fast}{default} (ntap = 1L)
 }
 \arguments{
-  \item{tapvec}{'taper' object; the number of tapers at
+  \item{tapvec}{'tapers' object; the number of tapers at
   each frequency}
 
   \item{tap.index}{integer; the index of \code{tapvec} from
@@ -45,6 +45,6 @@
 \seealso{
   \code{\link{psdcore}}, \code{\link{riedsid}}
 }
-\keyword{taper}
-\keyword{taper-weighting}
+\keyword{tapers}
+\keyword{tapers-weighting}
 

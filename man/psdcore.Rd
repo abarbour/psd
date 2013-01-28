@@ -3,14 +3,14 @@
 \alias{psdcore.default}
 \title{Multitaper power spectral density estimates of a series.}
 \usage{
-  psdcore(X.d, X.frq = 1, ntaper = as.taper(1),
+  psdcore(X.d, X.frq = 1, ntaper = as.tapers(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     Nyquist.normalize = TRUE, plotpsd = FALSE,
     as.spec = TRUE, refresh = FALSE, verbose = FALSE, ...)
 
   \method{psdcore}{default} (X.d, X.frq = 1,
-    ntaper = as.taper(1), ndecimate = 1L, demean = TRUE,
+    ntaper = as.tapers(1), ndecimate = 1L, demean = TRUE,
     detrend = TRUE, na.action = stats::na.fail,
     first.last = TRUE, Nyquist.normalize = TRUE,
     plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,

@@ -1,8 +1,8 @@
-\name{as.taper}
-\alias{as.taper}
-\title{Coerce an object into a 'taper' object.}
+\name{as.tapers}
+\alias{as.tapers}
+\title{Coerce an object into a 'tapers' object.}
 \usage{
-  as.taper(x, min_taper = 1, max_taper = NULL,
+  as.tapers(x, min_taper = 1, max_taper = NULL,
     setspan = FALSE)
 }
 \arguments{
@@ -13,8 +13,9 @@
   \item{max_taper}{Set all values greater than this to
   this.}
 
-  \item{setspan}{logical; should the taper object be passed
-  through \code{\link{minspan}} before it is return?}
+  \item{setspan}{logical; should the tapers object be
+  passed through \code{\link{minspan}} before it is
+  return?}
 }
 \description{
   In a tapered spectrum estimation algorithm, it is
@@ -30,7 +31,7 @@
   absurd, and violate orthogonality conditions for any
   series less than two million terms long!).
 
-  An object with S3 class 'taper' is created; this will
+  An object with S3 class 'tapers' is created; this will
   have a minimum number of tapers in each position set by
   \code{min_taper}, and a maximum number of tapers in each
   position set by \code{max_taper}. If \code{minspan=TRUE},
@@ -38,7 +39,7 @@
   which will restrict the maximum tapers to less than or
   equal to the half-length of the spectrum.
 
-  Various classes can be coerced into a 'taper' object;
+  Various classes can be coerced into a 'tapers' object;
   those tested sofar include: scalar, vector, matrix,
   data.frame, and list.
 
@@ -67,8 +68,8 @@ try(as.taper(c("a","b")))
   A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{is.taper}}
+  \code{\link{is.tapers}}
 }
 \keyword{S3methods}
-\keyword{taper}
+\keyword{tapers}
 

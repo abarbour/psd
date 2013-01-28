@@ -62,7 +62,7 @@ NULL
 \keyword{numerical-derivative}
 \keyword{riedel-sidorenko}
 \keyword{spectrum-estimation}
-\keyword{taper}
-\keyword{taper-constraints}
-\keyword{taper-weighting}
+\keyword{tapers}
+\keyword{tapers-constraints}
+\keyword{tapers-weighting}
 

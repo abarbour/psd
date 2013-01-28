@@ -46,7 +46,7 @@
   \code{\link{constrain_tapers}}}
 }
 \value{
-  Object with class 'taper'.
+  Object with class 'tapers'.
 }
 \description{
   Estimates the optimal number of tapers at each frequency
@@ -107,6 +107,6 @@ par(op)
   \code{\link{constrain_tapers}}, \code{\link{psdcore}}
 }
 \keyword{riedel-sidorenko}
-\keyword{taper}
-\keyword{taper-constraints}
+\keyword{tapers}
+\keyword{tapers-constraints}
 

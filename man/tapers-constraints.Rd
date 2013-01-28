@@ -1,62 +1,62 @@
-\name{taper-constraints}
+\name{tapers-constraints}
 \alias{constrain_taper_friedman_smooth}
 \alias{constrain_taper_loess_smooth}
 \alias{constrain_taper_markov_chain}
 \alias{constrain_taper_simple_slope}
 \alias{constrain_tapers}
-\alias{constrain_tapers.taper}
+\alias{constrain_tapers.tapers}
 \alias{ctap_friedman}
-\alias{ctap_friedman.taper}
+\alias{ctap_friedman.tapers}
 \alias{ctap_loess}
-\alias{ctap_loess.taper}
+\alias{ctap_loess.tapers}
 \alias{ctap_markov}
-\alias{ctap_markov.taper}
+\alias{ctap_markov.tapers}
 \alias{ctap_simple}
-\alias{ctap_simple.taper}
+\alias{ctap_simple.tapers}
 \alias{minspan}
-\alias{minspan.taper}
-\alias{taper-constraints}
+\alias{minspan.tapers}
+\alias{tapers-constraints}
 \title{Taper constraint methods.}
 \usage{
   minspan(tapvec, ...)
 
-  \method{minspan}{taper} (tapvec, ...)
+  \method{minspan}{tapers} (tapvec, ...)
 
   constrain_tapers(tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
     verbose = TRUE, ...)
 
-  \method{constrain_tapers}{taper} (tapvec, tapseq = NULL,
+  \method{constrain_tapers}{tapers} (tapvec, tapseq = NULL,
     constraint.method = c("simple.slope", "markov.chain", "loess.smooth", "friedman.smooth", "none"),
     verbose = TRUE, ...)
 
   ctap_simple(tapvec, tapseq = NA, maxslope = 1, ...)
 
-  \method{ctap_simple}{taper} (tapvec, tapseq = NA,
+  \method{ctap_simple}{tapers} (tapvec, tapseq = NA,
     maxslope = 1, ...)
 
   ctap_markov(tapvec, tapseq = NA,
     chain.width = round(5 * length(tapvec)), ...)
 
-  \method{ctap_markov}{taper} (tapvec, tapseq = NA,
+  \method{ctap_markov}{tapers} (tapvec, tapseq = NA,
     chain.width = round(5 * length(tapvec)),
     normalize = TRUE, ...)
 
   ctap_loess(tapvec, tapseq = NULL, loess.span = 0.3,
     loess.degree = 1, verbose = TRUE, ...)
 
-  \method{ctap_loess}{taper} (tapvec, tapseq = NULL,
+  \method{ctap_loess}{tapers} (tapvec, tapseq = NULL,
     loess.span = 0.3, loess.degree = 1, verbose = TRUE,
     ...)
 
   ctap_friedman(tapvec, tapseq = NULL, smoo.span = 0.3,
     smoo.bass = 2, verbose = TRUE, ...)
 
-  \method{ctap_friedman}{taper} (tapvec, tapseq = NULL,
+  \method{ctap_friedman}{tapers} (tapvec, tapseq = NULL,
     smoo.span = 0.3, smoo.bass = 2, verbose = TRUE, ...)
 }
 \arguments{
-  \item{tapvec}{'taper' object; the number of tapers at
+  \item{tapvec}{'tapers' object; the number of tapers at
   each frequency}
 
   \item{tapseq}{vector; positions or frequencies --
@@ -90,7 +90,7 @@
   \item{...}{optional arguments (unused)}
 }
 \value{
-  An object with class 'taper'.
+  An object with class 'tapers'.
 }
 \description{
   In the Riedel-Sidorenko recipe, the number of optimal
@@ -100,7 +100,7 @@
   tapers applied; this is because the derivatives of
   "noisy" series can be bogus.
 
-  \code{\link{minspan}} sets the maximum span a taper
+  \code{\link{minspan}} sets the maximum span a tapers
   object may have, which is necessary because it would be
   nonsense to have more tapers than the length of the
   series.
@@ -214,6 +214,6 @@ demo("ctap")
   \code{\link{splineGrad}}, \code{\link{riedsid}}
 }
 \keyword{riedel-sidorenko}
-\keyword{taper}
-\keyword{taper-constraints}
+\keyword{tapers}
+\keyword{tapers-constraints}
 

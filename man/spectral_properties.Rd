@@ -1,7 +1,7 @@
 \name{spectral_properties}
 \alias{spectral_properties}
 \alias{spectral_properties.spec}
-\alias{spectral_properties.taper}
+\alias{spectral_properties.tapers}
 \title{Calculate spectral properties such as standard error and resolution.}
 \usage{
   spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
@@ -10,18 +10,18 @@
   \method{spectral_properties}{spec} (tapvec, f.samp = 1,
     n.freq = NULL, ...)
 
-  \method{spectral_properties}{taper} (tapvec, f.samp = 1,
+  \method{spectral_properties}{tapers} (tapvec, f.samp = 1,
     n.freq = NULL, ...)
 }
 \arguments{
-  \item{tapvec}{object with class taper}
+  \item{tapvec}{object with class tapers}
 
   \item{f.samp}{scalar; the sampling frequency (e.g. Hz) of
   the series the tapers are for}
 
   \item{n.freq}{scalar; the number of frequencies of the
-  original spectrum (if \code{NULL} the length of the taper
-  object is assumed to be the number)}
+  original spectrum (if \code{NULL} the length of the
+  tapers object is assumed to be the number)}
 
   \item{...}{additional arguments (unused)}
 }
@@ -72,6 +72,6 @@
 \keyword{degrees-of-freedom}
 \keyword{properties}
 \keyword{resolution}
-\keyword{taper}
+\keyword{tapers}
 \keyword{uncertainty}
 

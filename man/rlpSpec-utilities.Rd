@@ -6,7 +6,7 @@
 \alias{decibels}
 \alias{envir2char}
 \alias{is.spec}
-\alias{is.taper}
+\alias{is.tapers}
 \alias{mod}
 \alias{mod.default}
 \alias{modulo}
@@ -43,7 +43,7 @@
 
   is.spec(Obj)
 
-  is.taper(Obj)
+  is.tapers(Obj)
 
   na_mat(nrow, ncol = 1)
 
@@ -103,9 +103,9 @@
   either one row (if \code{vec.shape=="horizontal"}), or
   one column (\code{"vertical"}).
 
-  \code{is.spec} and \code{is.taper} both return logicals
+  \code{is.spec} and \code{is.tapers} both return logicals
   about whether or not the object does have class 'spec' or
-  'taper', respectively
+  'tapers', respectively
 
   \code{na_mat} returns a matrix of dimensions
   \code{(nrow,ncol)} with \code{NA} values, the
@@ -141,9 +141,9 @@
   class 'spec', as would one returned by, for example,
   \code{spectrum}.
 
-  \code{is.taper} reports whether an object has S3 class
-  'taper', as would one returned by, for example,
-  \code{\link{as.taper}}.
+  \code{is.tapers} reports whether an object has S3 class
+  'tapers', as would one returned by, for example,
+  \code{\link{as.tapers}}.
 
   \code{na_mat} populates a matrix of specified dimensions
   with \code{NA} values.
@@ -202,9 +202,9 @@ is.spec(psd) # TRUE
 psd <- unclass(psd)
 is.spec(psd) # FALSE
 ##
-## check for taper
-is.taper(x)
-is.taper(as.taper(x))
+## check for tapers
+is.tapers(x)
+is.tapers(as.tapers(x))
 ##
 ## matrix and vector creation:
 # NA matrix
@@ -250,7 +250,7 @@ all.equal(mc2a, mc2c) # TRUE
 
   \code{\link{rlpSpec-package}}
 
-  \code{\link{as.taper}}
+  \code{\link{as.tapers}}
 }
 \keyword{S3methods}
 \keyword{arithmetic-operations}
