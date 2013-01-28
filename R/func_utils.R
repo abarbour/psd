@@ -113,8 +113,8 @@ rowvec <- function(x) vector_reshape(x, "horizontal")
 #' would one returned by, for example, \code{spectrum}.
 #' @rdname rlpSpec-utilities
 #' @param Obj  An object to test for class inheritance.
-#' @return \code{is.spec} and \code{is.taper} both return
-#' logicals about whether or not the object does have class 'spec' or 'taper', 
+#' @return \code{is.spec} and \code{is.tapers} both return
+#' logicals about whether or not the object does have class 'spec' or 'tapers', 
 #' respectively
 #' @export
 #' @keywords utilities inherits is
@@ -132,18 +132,18 @@ rowvec <- function(x) vector_reshape(x, "horizontal")
 #' ##
 is.spec <- function(Obj) inherits(Obj, "spec")
 
-#' @description \code{is.taper} reports whether an object has S3 class 'taper', as
-#' would one returned by, for example, \code{\link{as.taper}}.
+#' @description \code{is.tapers} reports whether an object has S3 class 'tapers', as
+#' would one returned by, for example, \code{\link{as.tapers}}.
 #' @export
 #' @keywords utilities inherits is
 #' @rdname rlpSpec-utilities
-#' @seealso \code{\link{as.taper}}
+#' @seealso \code{\link{as.tapers}}
 #' @examples
-#' ## check for taper
-#' is.taper(x)
-#' is.taper(as.taper(x))
+#' ## check for tapers
+#' is.tapers(x)
+#' is.tapers(as.tapers(x))
 #' ##
-is.taper <- function(Obj) inherits(Obj, "taper")
+is.tapers <- function(Obj) inherits(Obj, "tapers")
 
 #' Numerical derivatives of a series based on a weighted, smooth spline representation.
 #' 

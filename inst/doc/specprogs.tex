@@ -1,0 +1,21 @@
+% needs
+%\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+%\newcommand{\SC}[1]{\textsc{#1}}
+%\newcommand{\SCY}[0]{\SC{Yes}}
+%\newcommand{\SCN}[0]{\SC{No}}
+\begin{table}[htbp!]
+\centering
+\caption{A comparison of functions comparable to \rlp{}, excluding
+raw periodogram estimators.}
+\begin{tabular}{r l c c l}
+\hline
+\SC{Function} & \SC{Namespace} & \SC{Sine m.t.?} & \SC{Adaptive?} & \SC{Reference} \\
+\hline
+\Rcmd{mtapspec} & \Rcmd{RSEIS} & \SCY{} & \SCN{} & \citet{lees1995} \\
+\Rcmd{spectrum} & \Rcmd{stats} & \SCN{} & \SCN{} & \citet{rcore} \\
+\Rcmd{spec.mtm} & \Rcmd{multitaper} & \SCY{} & \SCY{} & \citet{rahim2012} \\
+\Rcmd{SDF} & \Rcmd{sapa} & \SCY{} & \SCN{} & \citet{percival1993} \\
+\hline
+\end{tabular}
+\label{tbl:methods}
+\end{table}

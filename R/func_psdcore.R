@@ -52,13 +52,13 @@
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
 # @example x_examp/psdcore.R
-psdcore <- function(X.d, X.frq=1, ntaper=as.taper(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, X.frq=1, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
 #' @S3method psdcore default
 psdcore.default <- function(X.d, 
                             X.frq=1, 
-                            ntaper=as.taper(1), 
+                            ntaper=as.tapers(1), 
                             ndecimate=1L,
                             demean=TRUE, 
                             detrend=TRUE,
@@ -139,7 +139,7 @@ psdcore.default <- function(X.d,
   }
   # if ntaper is a vector, this doesn't work [ ]
   ##
-  if (!(is.taper(ntap))) ntap <- as.taper(ntap, setspan=TRUE)
+  if (!(is.tapers(ntap))) ntap <- as.tapers(ntap, setspan=TRUE)
   ##
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){

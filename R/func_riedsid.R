@@ -13,7 +13,7 @@
 #' Set \code{constrained=FALSE} to turn off taper constraints.
 #'
 #' @export
-#' @keywords taper taper-constraints riedel-sidorenko
+#' @keywords tapers tapers-constraints riedel-sidorenko
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' 
 #' @param psd vector or class 'spec'; the spectral values used to optimize taper numbers
@@ -25,7 +25,7 @@
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
-#' @return Object with class 'taper'.
+#' @return Object with class 'tapers'.
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}
 #' @example x_examp/ried.R
@@ -71,7 +71,7 @@ riedsid.default <- function(psd, ntaper,
   } else {
     ntap <- ntaper
   }
-  if (!is.taper(ntap)) ntap <- as.taper(ntap)
+  if (!is.tapers(ntap)) ntap <- as.tapers(ntap)
   
   # Set the number of tapers to within the range: 1/2 nf, 7/5 ntap
   # rowMins produces a rowvec of rowwise minimums; convert to colvec
@@ -150,7 +150,7 @@ riedsid.default <- function(psd, ntaper,
   # kopt = round( 3.428 ./ abs(eps + d2Y + dY.^2).^0.4 );
   ##
   stopifnot(exists("RSS"))
-  kopt <- as.taper( KC / (RSS ** 0.4) ) #/
+  kopt <- as.tapers( KC / (RSS ** 0.4) ) #/
   rm(RSS)
   #
   #   for (  j  in  1:nf ) {
@@ -181,7 +181,7 @@ riedsid.default <- function(psd, ntaper,
   #   #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
   #   #
   #   # the optimal number of tapers (in an MSE sense):
-  #   kopt_old <- as.taper( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 ) 
+  #   kopt_old <- as.tapers( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 ) 
   #   #
   #print(all.equal(kopt_old,kopt)) # TRUE!
   ##

@@ -169,22 +169,23 @@ Unfortunately the suite of extensions with similar functionality
 is relatively limited; hopefully we have
 summarized the available functions in Table \ref{tbl:methods}.
 
-\begin{table}[htbp!]
-\centering
-\caption{A comparison of functions comparable to \rlp{}, excluding
-raw periodogram estimators.}
-\begin{tabular}{r l c c l}
-\hline
-\SC{Function} & \SC{Namespace} & \SC{Sine m.t.?} & \SC{Adaptive?} & \SC{Reference} \\
-\hline
-\Rcmd{mtapspec} & \Rcmd{RSEIS} & \SCY{} & \SCN{} & \citet{lees1995} \\
-\Rcmd{spectrum} & \Rcmd{stats} & \SCN{} & \SCN{} & \citet{rcore} \\
-\Rcmd{spec.mtm} & \Rcmd{multitaper} & \SCY{} & \SCY{} & \citet{rahim2012} \\
-\Rcmd{SDF} & \Rcmd{sapa} & \SCY{} & \SCN{} & \citet{percival1993} \\
-\hline
-\end{tabular}
-\label{tbl:methods}
-\end{table}
+%\begin{table}[htbp!]
+%\centering
+%\caption{A comparison of functions comparable to \rlp{}, excluding
+%raw periodogram estimators.}
+%\begin{tabular}{r l c c l}
+%\hline
+%\SC{Function} & \SC{Namespace} & \SC{Sine m.t.?} & \SC{Adaptive?} & \SC{Reference} \\
+%\hline
+%\Rcmd{mtapspec} & \Rcmd{RSEIS} & \SCY{} & \SCN{} & \citet{lees1995} \\
+%\Rcmd{spectrum} & \Rcmd{stats} & \SCN{} & \SCN{} & \citet{rcore} \\
+%\Rcmd{spec.mtm} & \Rcmd{multitaper} & \SCY{} & \SCY{} & \citet{rahim2012} \\
+%\Rcmd{SDF} & \Rcmd{sapa} & \SCY{} & \SCN{} & \citet{percival1993} \\
+%\hline
+%\end{tabular}
+%\label{tbl:methods}
+%\end{table}
+\input{specprogs}
 
 We now perform some tests to get a sense of how the results of
 \rlp{} compare with the methods in Table \ref{tbl:methods}.
@@ -389,6 +390,6 @@ are not appropriate.
 \end{figure}
 
 %%
-\bibliographystyle{plainnat}
+\bibliographystyle{apalike} %plainnat}
 \bibliography{REFS}
 \end{document}

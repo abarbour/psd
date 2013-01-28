@@ -11,7 +11,7 @@
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}, \code{\link{rlpSpec-package}}
-#' @keywords spectrum-estimation riedel-sidorenko taper taper-constraints taper-weighting numerical-derivative
+#' @keywords spectrum-estimation riedel-sidorenko tapers tapers-constraints tapers-weighting numerical-derivative
 #' 
 #' @param x vector; series to estimate PSD for.
 #' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}.
@@ -96,13 +96,13 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
 #' estimation, and no decimation is performed.
 #'
 #' The taper series of the returned spectrum is constrained using
-#' \code{as.taper(..., minspan=TRUE)}.
+#' \code{as.tapers(..., minspan=TRUE)}.
 #'
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{psdcore}}, \code{\link{as.taper}}, \code{\link{minspan}}
+#' @seealso \code{\link{psdcore}}, \code{\link{as.tapers}}, \code{\link{minspan}}
 #'
 #' @param x vetor; the data series to find a pilot spectrum for
 #' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
@@ -131,8 +131,8 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=5, ...){
   Ptap <- Pspec$taper
   # generate a series, if necessary
   if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
-  # return taper object
-  Pspec$taper <- as.taper(Ptap, setspan=TRUE)
+  # return tapers object
+  Pspec$taper <- as.tapers(Ptap, setspan=TRUE)
   #
   return(invisible(rlpSpec:::rlp_envAssignGet("final_psd", Pspec)))
 }

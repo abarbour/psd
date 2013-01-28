@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
@@ -25,6 +25,8 @@
 \newcommand{\Rcmd}[1]{\texttt{#1}}
 \newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
 \newcommand{\naive}[0]{na\"{\i}ve}
+\newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
+\newcommand{\idx}[1]{\index{#1}{#1}} 
 %% path, filename, caption, label
 \newcommand{\listing}[4]{        %
   \begin{figure}[H]              %
@@ -41,8 +43,8 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  Normalizations come in many forms, depending
-  on the quantity in consideration.
+%  Normalizations come in many forms, depending
+%  on the quantity in consideration.
   Units matter, and having correct ones
   is crucial to interpretation of spectral
   analyses.
@@ -57,10 +59,8 @@
 There can often be confusion about the different quantities used
 in spectral analysis \footnote{
 This post to \Rcmd{R-help} very eloquently describes the problem,
-and provides some guidance:
-\url{
-http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html
-}
+and provides some guidance:\\
+\url{http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html}
 %https://stat.ethz.ch/pipermail/r-help/2006-February/087377.html
 },
 partly due to myriad nomenclature within the incredibly vast literature
@@ -73,18 +73,22 @@ all mean \emph{something}, but are rarely equivalent.
 Let us, for the sake of brevity, assume we are in 
 the time domain, and we are considering a stationary signal 
 $f$
-having Fourier Transform $\FTp{f}$ represented by
+having Fourier Transform $\FTp{f}$ which is complex, represented by
 $F$.
-The \index{amplitude spectrum} of this transform pair is simply the 
-amplitude of complex $F$, or $\mathrm{mod} \{F\}$; we will denote 
+The 
+\bidx{amplitude spectrum}
+of this transform pair is simply the 
+amplitude of $F$, or $\mathrm{mod} \{F\}$; we will denote 
 this as $^{\mathtt{(A)}} S$.
 The corresponding
-\index{phase spectrum}
-is thus $\arg F$, denoted $^{\mathtt{(\phi)}} S$.
+\bidx{phase spectrum}
+is thus $\arg \{F\}$, denoted $^{\mathtt{(\phi)}} S$.
 
 How do we interpret the quantities 
 
 Table with equivalent expressions
+
+\input{specprogs}
 
 The latter assumes that the
 spectrum has the normalization used in  power -- which is that the Nyquist
@@ -124,6 +128,7 @@ all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 dB <- function(y) 10*log10(y)
 S0 <- dB(2)
 @ 
+
 
 %% RSEIS mtapspec
 %     /* choose normalization based on inorm flag  */
@@ -255,8 +260,8 @@ The results are shown in Figure \ref{fig:two}.
 \subsection{\Rcmd{SDF::sapa}}
 
 %% bib
-%\bibliographystyle{plainnat}
-%\bibliography{REFS}
+\bibliographystyle{apalike}
+\bibliography{REFS}
 
 \printindex
 \end{document}
