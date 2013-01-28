@@ -11,7 +11,7 @@ NULL
 #' @description \code{vardiff} reeturns the variance of the first difference of the series.
 #' @rdname rlpSpec-utilities
 #' @export
-#' @keywords utilities
+#' @keywords utilities first-difference variance
 #' @seealso \code{\link{rlpSpec-package}}
 #' @param Xd object to difference
 #' @return numeric
@@ -21,14 +21,26 @@ vardiff <- function(Xd){stats::var(diff(Xd))}
 #' @details Decibels are defined as \deqn{10 \log{}_{10} x}.
 #' @rdname rlpSpec-utilities
 #' @param Rat numeric; A ratio to convert to decibels (\code{dB}).
+#' @param invert logical; assumes \code{Rat} is already in decibels, so return ratio
+#' @param pos.only logical; if \code{invert=FALSE}, sets negative or zero values to NA
+
 #' @return numeric
 #' @export
-#' @aliases decibels
-#' @keywords utilities normalization
+#' @aliases decibels db
+#' @keywords utilities normalization decibel
 #' @seealso \code{\link{rlpSpec-package}}
 #' @examples
-#' db(1) # signal is equal <--> zero dB
-dB <- function(Rat){return(10*log10(Rat))}
+#' dB(1) # signal is equal <--> zero dB
+dB <- function(Rat, invert=FALSE, pos.only=TRUE){
+  CC <- 10
+  if (invert) {
+    toret <- 10**(Rat/CC)
+  } else {
+    if (pos.only) Rat[Rat <= 0] <- NA
+    toret <- CC*log10(Rat)
+  }
+  return(toret)
+}
 
 #' @description \code{char2envir} converts a character string of an environment 
 #' name to an evaluated name; whereas, \code{envir2char} converts an environment 

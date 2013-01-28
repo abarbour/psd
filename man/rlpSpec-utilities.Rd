@@ -3,6 +3,7 @@
 \alias{char2envir}
 \alias{colvec}
 \alias{dB}
+\alias{db}
 \alias{decibels}
 \alias{envir2char}
 \alias{is.spec}
@@ -25,7 +26,7 @@
 \usage{
   vardiff(Xd)
 
-  dB(Rat)
+  dB(Rat, invert = FALSE)
 
   char2envir(envchar)
 
@@ -66,6 +67,9 @@
 
   \item{Rat}{numeric; A ratio to convert to decibels
   (\code{dB}).}
+
+  \item{invert}{logical; assumes \code{Rat} is already in
+  decibels, so return ratio}
 
   \item{envchar}{An object with class 'character'.}
 
@@ -178,7 +182,7 @@
   slower for large numeric vectors.
 }
 \examples{
-db(1) # signal is equal <--> zero dB
+dB(1) # signal is equal <--> zero dB
 ##
 ## Evaluate character strings
 print(.rlpenv)
@@ -254,7 +258,9 @@ all.equal(mc2a, mc2c) # TRUE
 }
 \keyword{S3methods}
 \keyword{arithmetic-operations}
+\keyword{decibel}
 \keyword{environment}
+\keyword{first-difference}
 \keyword{inherits}
 \keyword{is}
 \keyword{matrix-creation}
@@ -263,6 +269,7 @@ all.equal(mc2a, mc2c) # TRUE
 \keyword{modulo-division}
 \keyword{normalization}
 \keyword{utilities}
+\keyword{variance}
 \keyword{vector-creation}
 \keyword{vector-manipulation}
 

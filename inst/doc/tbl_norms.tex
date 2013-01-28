@@ -1,0 +1,24 @@
+% needs
+%\newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
+%\newcommand{\idx}[1]{\index{#1}{#1}} 
+%\newcommand{\FT}[0]{\mathfrak{F}}
+%\newcommand{\FTp}[1]{\FT{}\{#1\}}
+%\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+%\newcommand{\SC}[1]{\textsc{#1}}
+%\newcommand{\SCY}[0]{\SC{Yes}}
+%\newcommand{\SCN}[0]{\SC{No}}
+\begin{table}[htbp!]
+\centering
+\caption{Representors of various spectral quantities.}
+\begin{tabular}{r l l l l}
+\hline
+\SC{Expression} & \SC{Representing} & \SC{Equivalent expression} & & \\
+\hline
+\df{} & stationary timeseries &  &  &  \\
+\dF{} & Fourier transform of \df{} & \dFTp{f} &  &  \\
+\daS{} & \bidx{amplitude spectrum} of \dF{} & $|\dF{}|$ or  \dmodF{} & & \\
+\dpS{} & \bidx{phase spectrum} of \dF{} & \dargF{} & & \\
+\hline
+\end{tabular}
+\label{tbl:norm}
+\end{table}

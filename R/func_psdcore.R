@@ -78,15 +78,16 @@ psdcore.default <- function(X.d,
   if (X.frq > 0){
     # value represents sampling frequency
     X.d <- na.action(stats::ts(X.d, frequency=X.frq))
-    Nyq <- stats::frequency(X.d)/2
   } else if (X.frq < 0){
     # value is sampling interval
-    X.frq <- abs(X.frq)
-    X.d <- na.action(stats::ts(X.d, deltat=X.frq))
-    Nyq <- 1/stats::deltat(X.d)/2
+    X.d <- na.action(stats::ts(X.d, deltat=abs(X.frq)))
+    
   } else {
     stop("bad sampling information")
   }
+  # samoling and nyquist
+  X.frq <- stats::frequency(X.d)
+  Nyq <- X.frq/2
   #   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
   #   Nyq <- stats::frequency(X.d)/2
   ##
@@ -234,8 +235,8 @@ psdcore.default <- function(X.d,
   frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
   #and (optionally) the Nyquist frequency so units will be in (units**2/Hz)
   if (Nyquist.normalize) {
-    frq <- 2 * Nyq * frq
-    psd.n <- Nyq * psd.n
+    frq <- X.frq * frq
+    psd.n <- psd.n / X.frq
   }
   ## timebp
   timebp <- as.numeric(ntap/2)

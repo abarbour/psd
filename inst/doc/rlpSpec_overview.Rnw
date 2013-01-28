@@ -185,7 +185,7 @@ summarized the available functions in Table \ref{tbl:methods}.
 %\end{tabular}
 %\label{tbl:methods}
 %\end{table}
-\input{specprogs}
+\input{tbl_specprogs}
 
 We now perform some tests to get a sense of how the results of
 \rlp{} compare with the methods in Table \ref{tbl:methods}.
