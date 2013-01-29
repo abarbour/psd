@@ -73,12 +73,7 @@ all mean \emph{something}, but are rarely equivalent.
 Let us, for the sake of brevity, assume we are in 
 the time domain, and we are considering a discrete stationary signal \df{}
 of length $N$,
-having Fourier transform \dFTp{f}\footnote{
-A proper Discrete Fourier Transform (DFT) must
-be normalized by the length of the series; however, most
-DFT programs (including \Rcmd{stats::fft}) eschew this normalization for 
-efficiency's sake.
-} which is complex, and represented by\dF{}.
+having Fourier transform \dFTp{f} which is complex, and represented by\dF{}.
 The \bidx{amplitude spectrum}
 of this transform pair is simply the 
 amplitude of \dF{}, or \dmodF{}; we will denote this as \daS{}.
@@ -90,19 +85,8 @@ How do we interpret the quantities
 Table with equivalent expressions
 \input{tbl_norms}
 
-\input{tbl_specprogs}
 
-The latter assumes that the
-spectrum has the normalization used in  power -- which is that the Nyquist
-is assumed to be 1,0, always (power doesn't ask for a sample interval).
-But psd assumes that the interval is 1 (unless you specify otherwise)
-so that the Nyquist is 0.5. So say you have a white noise with variance
-1: power will return a flat spectrum with level 0 db (=1) but psd will
-return a level of 2 (=3 db), both so that the level times the Nyquist will be 1.
-But logsmoo, told that the interval is 1, will multiply the spectrum by
-2 to convert from lc**2/Nyquist to lc**2/Hz: giving 3 dB for the spectrum from
-power, but 6 dB (=4) for the spectrum from psd.
-
+\section{A from-scratch example: White noise.}
 A straightforward way to understand normalization in spectral analysis
 is to analyze a real, stationary series which is normally distributed with
 known variance, $x=\mathcal{N}(\mu,\sigma^2)$.
@@ -120,6 +104,12 @@ interval is once per second, we should expect a
 across all frequencies $[0, 0.5]$ so that the area under the spectrum is
 equal to one.
 
+We first generate a series, and find its Fourier transform\footnote{
+A proper Discrete Fourier Transform (DFT) must
+be normalized by the length of the series; however, most
+DFT programs (including \Rcmd{stats::fft}) eschew this normalization for 
+efficiency's sake.
+}.
 <<eval=TRUE, echo=TRUE>>=
 set.seed(1234)
 N <- 256
@@ -130,71 +120,134 @@ class(X)
 length(X)
 @
 
-Let us first find the amplitude and phase response:
+We immediately find the amplitude and phase response:
 <<eval=TRUE, echo=TRUE>>=
 Sa <- Mod(X) # Amplitude spectrum
 Sp <- Arg(X)  # Phase spectrum
 @
-
-followed by the energy spectral densities, noting the equivalence
-between the complex conjugate based estimates.
-between
+followed by the energy spectral densities\footnote{Note the equivalence
+between the complex conjugate based estimates.}
 <<eval=TRUE, echo=TRUE>>=
 XC <- Conj(X)
 all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 @
 
-So now we are able to find single-sided power spectral density estimates
-\begin{figure}[htbp!]
+The single-sided power spectral density (PSD) estimates
+follow, once we
+set the Nyquist frequency, defined as half the sampling rate\footnote{
+Although the PSD of a white noise process is not strictly bandlimited,
+we will use it to demonstrate differences in normalization.}.
+<<eval=TRUE, echo=TRUE>>=
+fsamp <- 1  # sampling freq, Hz
+fNyq <- fsamp/2   # nyquist
+Nf <- N/2
+nyfreqs <- seq.int(from=0, to=fNyq, length.out=Nf)
+S <- Se[1:Nf] * 2 / N   # Finally, the PSD!
+@
+
+\begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD>>=
-## Single sided PSD
-Nf <- N/2
-S <- 2*Se[1:Nf]/N
-fsamp <- 1  # sampling freq, Hz
-fNyq <- fsamp/2   # nyquist or shannon(?) freq
-nyfreq <- seq.int(from=0, to=fNyq, length.out=Nf) # frequencies
-plot(nyfreq, S, type="h", xlab="Nyquist frequency", ylab="units**2 / Nyq.-freq.", main="")
-lines(nyfreq, S) #, type="s")
+plot(nyfreqs, S, type="h", xlab="Nyquist frequency", ylab="units**2 / freq")
 mSn <- mean(S)
-#abline(h=xv/fNyq, lwd=2) # expected PSD for N(0,1)
-polygon(c(0,fNyq,fNyq,0,0), c(0,0,mSn,mSn,0), lwd=2, lty=4, border="red")
+polygon(c(0,fNyq,fNyq,0,0), c(0,0,mSn,mSn,0), lwd=2, lty=2, border="red")
 @
 \label{fig:psdN}
-\caption{Power spectral density of a single $\mathcal{N}(0,1)$ process.}
+\caption{Power spectral density estimates for a single realization of a 
+$\mathcal{N}(0,1)$ process in linear units.  
+The dashed rectangle encompasses the area under the mean spectral level,
+used to find the integrated spectrum.}
 \end{center}
 \end{figure}
 
-We test the integrated spectrum result in Equation X:
+Figure \ref{fig:psdN} plots the PSD of our white noise series; it also shows
+the mean value of the PSD, from which we can test ourselves for
+proper normalization:
+ an estimate of the integrated spectrum
+should roughly equal the known variance.
 <<eval=TRUE, echo=TRUE>>=
-dB <- function(y) 10*log10(y)
-# Approximations of process variance:
-xv_1 <- mSn * fNyq
-xv_2 <- sum(S)/Nf * fNyq
+test_norm <- function(sval, nyq, xvar){svar <- sval * nyq; return(svar/xvar)}
+print(xv_1 <- test_norm(mSn, fNyq, xv))
+xv_2 <- sum(S)/Nf * fNyq / xv  # an alternate test
 all.equal(xv_1, xv_2)
-xv_1/xv
 @
 
-We test the integrated spectrum result in Equation X:
+But what if the sampling frequency \texttt{fsamp} changes? An obvious change will be
+the actual Nyquist frequency, which means the variance normalization-test will
+fail if the PSD estimates are not re-scaled.  We simply re-scale the frequencies
+and PSDs
+with the sampling rate
+to obtain the properly-normalized spectra.
+
 <<eval=TRUE, echo=TRUE>>=
-# crude representation of the integrated spectrum, which
-# should equal the variance of the original series (xv)
-S_sum <- function(S_ave, fr, fl=0) S_ave*(fr - fl)
-S_sum(mSn, fNyq)/xv             #1 
-S_sum(mSn, fNyq, -fNyq)/xv      #2
-sum(Se)/N/N                     #1
-mSe <-round(mean(Se))
-S_sum(mSe, fNyq)/xv             #64
-S_sum(mSe, fNyq)/Nf/xv          #1
+fsamp <- 20
+fNyq <- fsamp/2
+freq <- fsamp*nyfreqs 
+Snew <- S / fsamp
 @
 
+To compare the scalings it will be useful to show the spectral values
+in decibels (relative to units$^2/$frequency):
+<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD2>>=
+dB <- function(y) 10*log10(y)
+plot(nyfreqs, dB(S), type="h", xlab="Frequency", ylab="dB")
+lines(nyfreqs, dB(Snew), col="blue", lwd=2)
+mSn <- mean(Snew)
+abline(h=dB(1/fsamp), col="grey")
+lines(c(0,fNyq), rep(dB(mSn),2), lwd=2, lty=2, col="red")
+# test variance
+test_norm(mSn, fNyq, xv)
+@
+
+\section{Comparisons between estimators}
+We wish to compare the normalizations used by other PSD estimation programs;
+these are summarized in \ref{tbl:methods}.
+\input{tbl_specprogs}
+
+\subsection{\Rcmd{stats::spectrum}}
+\Rcmd{spectrum} is a wrapper which calls the appropriate spectrum
+estimator. For our examples we compare to \Rcmd{spec.pgram}.
+Using default settings \Rcmd{spec.pgram} assumes the sampling frequency
+for the input series is 1, and normalizes accordingly.
+Sampling information used be included by creating a \Rcmd{ts}
+object from the series prior to spectrum estimation:
+%
 <<eval=TRUE, echo=TRUE>>=
-freq <- fsamp*nyfreq # Nyq-freq to Hz
+fsamp <- 20
+xt <- ts(x, frequency=fsamp)
+pgram20 <- spec.pgram(xt, pad=1, taper=0, plot=FALSE)
+pgram01 <- spec.pgram(ts(xt, frequency=1), pad=1, taper=0, plot=FALSE)
+@
 
-S0 <- dB(2)
-@ 
+The first order question is obviously whether these spectra pass variance-normalization
+tests, which they do not, but only by a factor of two (too small):
+%
+<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PGRAM>>=
+test_norm(mean(pgram01$spec), 0.5, xv)
+test_norm(mean(pgram20$spec), 10, xv)
+plot(pgram20, log="dB", ylim=36*c(-1,.3))
+plot(pgram01, log="dB", add=TRUE, col="red")
+abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))
+@
 
+But why?  The program assumes normalization for complex series: Spectra returned for
+real data are deficient by a factor of two. Consider the following example:
+%
+<<eval=TRUE, echo=TRUE>>=
+psd1 <- spec.pgram(x, plot=FALSE)
+psd2 <- spec.pgram(xc<-complex(real=x, imag=x), plot=FALSE, demean=TRUE)
+mean(Mod(xc))
+mean((psd2$spec / psd1$spec))
+@
 
+This means that unless we are interested in analyzing complex
+timeseries, we need only multiply by two for properly normalized spectra using \Rcmd{spectrum}, assuming the sampling information is included in the input series.
+
+%<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=RSEIS>>=
+%@
+%
+%<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=MTM>>=
+%@
 %% RSEIS mtapspec
 %     /* choose normalization based on inorm flag  */
 %	anrm = 1.;

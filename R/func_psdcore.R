@@ -235,7 +235,7 @@ psdcore.default <- function(X.d,
   frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
   #and (optionally) the Nyquist frequency so units will be in (units**2/Hz)
   if (Nyquist.normalize) {
-    frq <- X.frq * frq
+    frq <- frq * X.frq
     psd.n <- psd.n / X.frq
   }
   ## timebp
