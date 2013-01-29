@@ -26,7 +26,7 @@
 \usage{
   vardiff(Xd)
 
-  dB(Rat, invert = FALSE)
+  dB(Rat, invert = FALSE, pos.only = TRUE)
 
   char2envir(envchar)
 
@@ -70,6 +70,9 @@
 
   \item{invert}{logical; assumes \code{Rat} is already in
   decibels, so return ratio}
+
+  \item{pos.only}{logical; if \code{invert=FALSE}, sets
+  negative or zero values to NA}
 
   \item{envchar}{An object with class 'character'.}
 
