@@ -40,51 +40,56 @@
   \end{figure}                   %
 }
 \author{Andrew J. Barbour}
-\title{Normalization of Spectral Analyses}
+\title{Normalization used in \rlp{}}
 \begin{document}
 \maketitle
 \begin{abstract}
-%  Normalizations come in many forms, depending
-%  on the quantity in consideration.
-  Units matter, and having correct ones
-  is crucial to interpretation of spectral
-  analyses.
-  Here we outline
+  A vast and deep pool of
+  literature exists on the subject of spectral 
+  analysis; wading through it can
+  obscure even the most
+  fundamental concepts
+  to the inexperienced practitioner.
+  Appropriate interpretation of spectral analyses
+  depends crucially on the normalization used, and
+  here we outline
   the normalization used by \rlp{}, namely
-  the power spectral density, 
-  and compare it to other quantities 
-  commonly encountered in spectral analysis.
+  \bidx{power spectral density} (PSD).
+  We compare the PSD to other quantities 
+  commonly encountered in spectral analysis research, as
+  well as normalizations used in a subset of 
+  the current suite of spectral analysis tools available in R.
 \end{abstract}
 \tableofcontents
 \section{Background}
 There can often be confusion about the different quantities used
-in spectral analysis \footnote{
-This post to \Rcmd{R-help} illustrates the confusion common in spectral analyses:\\
+in spectral analysis\footnote{
+A nice illustration of the type of
+confusion common in spectral analyses
+of confusion is found in
+this thread on \Rcmd{R-help}:\\
 \url{http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html}
-%https://stat.ethz.ch/pipermail/r-help/2006-February/087377.html
 },
 partly due to myriad nomenclature within the incredibly vast literature
 on the subject.
-Regarding nomenclature:
-Phrases including ``amplitude spectrum",
-``energy spectral density", ``power", ``power spectra", and even "spectra"
-all mean \emph{something}, but are rarely equivalent.
+Commonly one finds similarly sounding phrases, including ``amplitude spectrum",
+``energy spectral density", ``power", ``power spectra", and even "spectra".
+These all mean \emph{something}, but are rarely equivalent, and can be used improperly.
 
 Let us, for the sake of brevity, assume we are in 
 the time domain, and we are considering a discrete stationary signal \df{}
 of length $N$,
-having Fourier transform \dFTp{f} which is complex, and represented by\dF{}.
+having a Discrete Fourier Transform \dFTp{f} represented by\dF{}.
 The \bidx{amplitude spectrum}
 of this transform pair is simply the 
-amplitude of \dF{}, or \dmodF{}; we will denote this as \daS{}.
-The pair's corresponding \bidx{phase spectrum}
+amplitude of \dF{}, or \dmodF{}, which we will denote this as \daS{}.
+This transform pair's corresponding \bidx{phase spectrum}
 is the phase angle of \dF{}, or \dargF{}, denoted by \dpS{}.
 
 How do we interpret the quantities 
 
 Table with equivalent expressions
 \input{tbl_norms}
-
 
 \section{A from-scratch example: White noise.}
 A straightforward way to understand normalization in spectral analysis
@@ -93,21 +98,23 @@ known variance, $x=\mathcal{N}(\mu,\sigma^2)$.
 A fundamental result found in many texts on spectral analysis is
 %
 \begin{equation}
-\mathrm{var}\{x\} \equiv \sigma_x^2 = \int_{-1/2}^{1/2} \dS{}(f) df 
+\mathrm{var}\{x\} \equiv \sigma_x^2 
+= \int_{-1/2}^{1/2} {\dPSD{}} (f) df 
+= 2 \int_{0}^{1/2} {\dPSD{}} (f) df 
 \end{equation}
 %
-which says if we integrate the power spectral density
-over all frequencies we can obtain the process variance.
+which says if we integrate the \idx{power spectral density}
+over all frequencies we can obtain the variance of the source process.
 If we have a $\mathcal{N}(0, 1)$ process, and assume the sampling
 interval is once per second, we should expect a
  flat spectrum of 2 units$^2/$Nyquist 
 across all frequencies $[0, 0.5]$ so that the area under the spectrum is
 equal to one.
 
-We first generate a series, and find its Fourier transform\footnote{
-A proper Discrete Fourier Transform (DFT) must
-be normalized by the length of the series; however, most
-DFT programs (including \Rcmd{stats::fft}) eschew this normalization for 
+We can illustrate this with a few lines of code.
+First, generate a series, and then find its iscrete Fourier Transform (DFT)\footnote{
+A proper DFT is normalized by the length of the series; however, most
+DFT calculators (including \Rcmd{stats::fft}) eschew this normalization for 
 efficiency's sake.
 }.
 <<eval=TRUE, echo=TRUE>>=
@@ -120,23 +127,27 @@ class(X)
 length(X)
 @
 
-We immediately find the amplitude and phase response:
+We can easily find the amplitude and phase response:
 <<eval=TRUE, echo=TRUE>>=
 Sa <- Mod(X) # Amplitude spectrum
-Sp <- Arg(X)  # Phase spectrum
+Sp <- Arg(X) # Phase spectrum
 @
-followed by the energy spectral densities\footnote{Note the equivalence
-between the complex conjugate based estimates.}
+followed by equivalent \idx{energy spectral density}
+calculations\footnote{
+Note the equivalence
+between the complex conjugate based estimates.
+}
 <<eval=TRUE, echo=TRUE>>=
 XC <- Conj(X)
 all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 @
 
-The single-sided power spectral density (PSD) estimates
-follow, once we
-set the Nyquist frequency, defined as half the sampling rate\footnote{
-Although the PSD of a white noise process is not strictly bandlimited,
-we will use it to demonstrate differences in normalization.}.
+The single-sided \idx{power spectral density} (PSD) estimates
+follow once the Nyquist frequency is set; this
+is defined as half the sampling rate\footnote{
+Although a white noise process is not strictly bandlimited,
+we will use it to demonstrate differences in normalization.
+}.
 <<eval=TRUE, echo=TRUE>>=
 fsamp <- 1  # sampling freq, Hz
 fNyq <- fsamp/2   # nyquist
@@ -149,22 +160,28 @@ S <- Se[1:Nf] * 2 / N   # Finally, the PSD!
 \begin{center}
 <<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD>>=
 plot(nyfreqs, S, type="h", xlab="Nyquist frequency", ylab="units**2 / freq")
-mSn <- mean(S)
-polygon(c(0,fNyq,fNyq,0,0), c(0,0,mSn,mSn,0), lwd=2, lty=2, border="red")
+print(c(mSn <- mean(S), mSm <- median(S)))
+abline(h=c(mSn,mSm), lwd=2, lty=c(2,3), col="red")
 @
+%polygon(c(0,fNyq,fNyq,0,0), c(0,0,mSn,mSn,0), lwd=2, lty=2, border="red")
 \label{fig:psdN}
 \caption{Power spectral density estimates for a single realization of a 
 $\mathcal{N}(0,1)$ process in linear units.  
-The dashed rectangle encompasses the area under the mean spectral level,
-used to find the integrated spectrum.}
+The dashed line shows the mean spectral level and the dotted line
+shows the median spectral level; these can be
+used to find the integrated spectrum and test normalization.}
 \end{center}
 \end{figure}
 
-Figure \ref{fig:psdN} plots the PSD of our white noise series; it also shows
-the mean value of the PSD, from which we can test ourselves for
-proper normalization:
- an estimate of the integrated spectrum
+An estimate of the integrated spectrum
 should roughly equal the known variance.
+Figure \ref{fig:psdN} plots the PSD of our white noise series; it also shows
+the mean value of the PSD\footnote{
+Estimates for the PSD of a white noise series
+are approximately log-normally distributed; hence,
+a simple mean value is highly biased estimator.
+}, from which we can perform a variance--normalization
+test:
 <<eval=TRUE, echo=TRUE>>=
 test_norm <- function(sval, nyq, xvar){svar <- sval * nyq; return(svar/xvar)}
 print(xv_1 <- test_norm(mSn, fNyq, xv))
@@ -173,31 +190,44 @@ all.equal(xv_1, xv_2)
 @
 
 But what if the sampling frequency \texttt{fsamp} changes? An obvious change will be
-the actual Nyquist frequency, which means the variance normalization-test will
+the actual Nyquist frequency, which means the variance--normalization test will
 fail if the PSD estimates are not re-scaled.  We simply re-scale the frequencies
-and PSDs
+and PSD
 with the sampling rate
 to obtain the properly-normalized spectra.
 
 <<eval=TRUE, echo=TRUE>>=
 fsamp <- 20
-fNyq <- fsamp/2
-freq <- fsamp*nyfreqs 
+fNyq <- fsamp / 2
+freqs <- fsamp * nyfreqs 
 Snew <- S / fsamp
 @
 
-To compare the scalings it will be useful to show the spectral values
-in decibels (relative to units$^2/$frequency):
+To compare the scalings it is helpful to instead show the spectral values
+in decibels (relative to 1 units$^2/$frequency).
+\begin{figure}[htb!]
+\begin{center}
 <<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD2>>=
+    # decibel function
 dB <- function(y) 10*log10(y)
-plot(nyfreqs, dB(S), type="h", xlab="Frequency", ylab="dB")
-lines(nyfreqs, dB(Snew), col="blue", lwd=2)
+    # and some plots...
+plot(freqs, dB(S), type="h", xlab="Frequency", ylab="dB")
+lines(freqs, dB(Snew), col="blue", lwd=2)
+abline(h=dB(1/fNyq), col="grey", lwd=2)
 mSn <- mean(Snew)
-abline(h=dB(1/fsamp), col="grey")
 lines(c(0,fNyq), rep(dB(mSn),2), lwd=2, lty=2, col="red")
-# test variance
+    # finally, test variance.
 test_norm(mSn, fNyq, xv)
 @
+\label{fig:psdsamp}
+\caption{Rescaled PSD estimates for a single realization of a 
+$\mathcal{N}(0,1)$ process with a sampling rate of 20 s$^{-1}$ rather
+than 1 s$^{-1}$ as from before.  
+The dashed line shows the mean (rescaled) spectral level, and the
+grey line shows the predicted mean value from the Nyquist
+frequency.}
+\end{center}
+\end{figure}
 
 \section{Comparisons between estimators}
 We wish to compare the normalizations used by other PSD estimation programs;
@@ -222,6 +252,8 @@ pgram01 <- spec.pgram(ts(xt, frequency=1), pad=1, taper=0, plot=FALSE)
 The first order question is obviously whether these spectra pass variance-normalization
 tests, which they do not, but only by a factor of two (too small):
 %
+\begin{figure}[htb!]
+\begin{center}
 <<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PGRAM>>=
 test_norm(mean(pgram01$spec), 0.5, xv)
 test_norm(mean(pgram20$spec), 10, xv)
@@ -229,6 +261,10 @@ plot(pgram20, log="dB", ylim=36*c(-1,.3))
 plot(pgram01, log="dB", add=TRUE, col="red")
 abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))
 @
+\label{fig:pgram}
+\caption{\Rcmd{spec.pgram}}
+\end{center}
+\end{figure}
 
 But why?  The program assumes normalization for complex series: Spectra returned for
 real data are deficient by a factor of two. Consider the following example:

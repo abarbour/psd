@@ -12,14 +12,20 @@
 \caption{Representors of various spectral quantities.}
 \begin{tabular}{r l l l l}
 \hline
-\SC{Expression} & \SC{Representing} & \SC{Equivalent expression} & & \\
+\SC{Expression} & \SC{Representing} & \SC{Equivalent expressions} & & \\
 \hline
-\df{} & stationary timeseries &  &  &  \\
-\dF{} & Fourier transform of \df{} & \dFTp{f} &  &  \\
-\daS{} & \bidx{amplitude spectrum} of \dF{} & $|\dF{}|$ or  \dmodF{} & & \\
-\dpS{} & \bidx{phase spectrum} of \dF{} & \dargF{} & & \\
-\dS{} & \bidx{energy spectral density} of \daS{} & & \\
-\dS{} & \bidx{power spectral density} of \daS{} & & \\
+\df{} & stationary timeseries &  
+	& & \\
+\dF{} & Fourier transform of \df{} & 
+	\dFTp{\df{}} & & \\
+\daS{} & \bidx{amplitude spectrum} of \df{} & 
+	$|\dF{}|$ or  \dmodF{} & & \\
+\dpS{} & \bidx{phase spectrum} of \df{} & 
+	\dargF{} & & \\
+\dESD{} & \bidx{energy spectral density} of \df{} & 
+	$|\dF{}|^2 = \dmod{\dF{} \star \dF{}^*} = \dmod{\dF{}^* \star \dF{}}$ & & \\
+\dPSD{} & \bidx{power spectral density} of \df{} & 
+	$\mathcal{E}\{|\dF{}|^2\}=|\dF{}|^2 / N$ & & \\
 \hline
 \end{tabular}
 \label{tbl:norm}

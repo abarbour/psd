@@ -5,12 +5,18 @@
 \newcommand{\enm}[1]{\ensuremath{#1}} %% null
 \newcommand{\dFT}[0]{\enm{\mathfrak{F}}} %% fourier transform operator (FT)
 \newcommand{\dFTp}[1]{\enm{\dFT{}\{#1\}}} %% FT{...}
-\newcommand{\df}[0]{\enm{f}} %% stationary signal f
-\newcommand{\dF}[0]{\enm{F}} %% FT{f}
-\newcommand{\dmodF}[0]{\enm{\mathrm{mod} \{\dF{}\}}}
+\newcommand{\df}[0]{\enm{x}} %% stationary signal f
+\newcommand{\dF}[0]{\enm{X}} %% FT{f}
+\newcommand{\dmod}[1]{\enm{\mathrm{mod} \{#1\}}}
+\newcommand{\dmodF}[0]{\dmod{\dF{}}}
 \newcommand{\dargF}[0]{\enm{\mathrm{arg} \{\dF{}\}}}
 \newcommand{\ds}[0]{\enm{s}} %% spectrum
 \newcommand{\dS}[0]{\enm{S}} %% Spectrum
-\newcommand{\dsupS}[1]{\enm{\dS{}^{#1}}} %% superscript Spectrum
-\newcommand{\daS}[1]{\dsupS{\mathrm{(A)}}} %% amplitude Spectrum
-\newcommand{\dpS}[1]{\dsupS{\mathrm{(\phi)}}} %% phase Spectrum
+\newcommand{\dsupsf}[1]{\enm{^{#1}\ds{}}} %% superscript spectrum front
+\newcommand{\dsupSf}[1]{\enm{^{#1}\dS{}}} %% superscript Spectrum front
+\newcommand{\dsupsb}[1]{\enm{\ds{}^{#1}}} %% superscript spectrum back
+\newcommand{\dsupSb}[1]{\enm{\dS{}^{#1}}} %% superscript Spectrum back
+\newcommand{\daS}[1]{\dsupsf{\mathrm{(A)}}} %% amplitude Spectrum
+\newcommand{\dpS}[1]{\dsupsf{\mathrm{(\phi)}}} %% phase Spectrum
+\newcommand{\dESD}[1]{\dsupSf{\mathrm{(E)}}} %% energy Spectral density
+\newcommand{\dPSD}[1]{\dsupSf{\mathrm{(P)}}} %% power Spectral density
