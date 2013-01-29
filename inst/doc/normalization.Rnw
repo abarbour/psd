@@ -10,12 +10,13 @@
 \usepackage{upquote}
 \usepackage{graphicx}
 \usepackage{grffile}
+\usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{fullpage}
 \usepackage{makeidx} % for indexing
-\usepackage{showidx} % shows page (remove when complete)
+%\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
 %%
 \include{symdefs}
@@ -54,11 +55,14 @@
   depends crucially on the normalization used, and
   here we outline
   the normalization used by \rlp{}, namely
+  the \bidx{single-sided}
   \bidx{power spectral density} (PSD).
-  We compare the PSD to other quantities 
-  commonly encountered in spectral analysis research, as
-  well as normalizations used in a subset of 
-  the current suite of spectral analysis tools available in R.
+  We briefly outline the background mathematics,
+  present an example from scratch,
+  and compare the results with
+  the normalization used by 
+  the spectrum estimator included in the base distribution of
+  R: \Rcmd{stats::spectrum}.
 \end{abstract}
 \tableofcontents
 \section{Background}
@@ -91,6 +95,344 @@ How do we interpret the quantities
 Table with equivalent expressions
 \input{tbl_norms}
 
+\section{DCA}
+To fix the first problem we define $X_T (t)$ as the process 
+$X (t)$ on the finite interval $(-T/2, \,T/2)$:
+%
+\[
+X_T (t) = \left \{
+\begin{array}{cc}
+X(t) & -T/2 \le t \le T/2\\
+0 & \mathrm{ otherwise.} \\
+\end{array}
+\right .
+\]
+%
+This is not stationary, but that is all right for now.
+Any particular realization of this process
+has a bounded 2-norm and thus has an ordinary Fourier transform:
+%
+\[
+\Xfo_T (f) = \Fo [ X_T (t)] = 
+\intone X_T (t) e^{-2 \pi i ft} \, dt = 
+\int_{-T/2}^{T/2}  X (t) e^{-2 \pi i ft} \, dt
+\]
+%
+But $\Xfo_T$ is still a random function of $f$;
+to remove this,
+we we find its squared magnitude and take the expected value:
+$\Ex [ | \Xfo_T (f) | ^ 2 ]$.
+
+We then let $T$ tend to infinity;
+but we can easily see that if we do this,
+this expected value would grow to infinity -- and
+so we divide it by the interval length $2T$ to tame the growth.
+Putting all this together gives us a function of frequency
+%
+\begin{equation}
+\label{eq-psddef1}
+\begin{split}
+S(f) & = \lim_{T \to \infty} \frac{1}{T}
+\Ex [ | \Xfo_T (f) | ^ 2 ] \\
+& = \lim_{T \to \infty} \Ex \left [ \frac{1}{T} \left | 
+\int_{-T/2}^{T/2}  X (t) e^{-2 \pi i ft} \, dt \right | ^ 2 \right ]
+\end{split}
+\end{equation}
+
+Equation (\ref{eq-psddef1}) defines the power spectral density;
+\label{sy-psd}
+\index{Power spectral density!Fourier transform definition}
+it can be shown that $S(f)$ exists for all
+stationary processes $X$ with zero mean and a bounded variance.
+It is, obviously, real and non-negative.
+
+\subsection{norm}
+You should be aware that equation (\ref{eq-psddef1}) defines
+a particular normalization for the PSD: one that is not always used,
+and indeed is probably the less common one.
+Equation (\ref{eq-psddef1}) defines what is called
+the \textbf{two-sided} PSD,
+because in it we allow $f$ to run from $-\infty$ to $\infty$.
+As with the Fourier tranform of a real function,
+when $X$ is real the power spectrum $S(f)$ is even:
+we only need the values for $f \ge 0$.
+What is used in this case is usually the
+\textbf{one-sided} PSD,
+\index{Power spectral density!one-sided}
+which is given by $2 S(f)$ for $f \ge 0$;
+we explain the factor of two below.
+In using other people's spectra,
+you should be aware that the spectrum,
+unspecified, might be either the two-sided spectrum
+shown for positive $f$ only, or the one-sided spectrum -- and
+you should,
+even at the risk of being accused of pedantry,
+specify which one you have used.
+
+Looking at (\ref{eq-psddef1}) we can observe that $S(f) $ at any particular $f$
+is obtained from products of $X$ with itself,
+so it is related only to the second order moment of $X$
+-- no third order moments are involved.
+We already introduced a function
+involving second-order moments of $X$, namely
+the autocovariance $R(\tau$,
+defined in equations (\ref{eq-covarts}) and (\label{eq-covarco}).
+Does $S(f)$ provide independent information about $X$,
+or is there a connection between $R(\tau)$ and $S(f)$?
+Somewhat surprisingly the answer is that the
+functions $R(\tau)$ and $S(f)$
+contain \textit{exactly} the same information,
+because $S(f)$ is just the Fourier transform of $R(\tau)$
+\index{Power spectral density!autocovariance definition}
+%
+\begin{equation}
+\label{eq-psddef2}
+S(f) = \Fo [ R(t) ] =
+\intone R(t) e ^ {-2 \pi i ft} \, dt
+\end{equation}
+%
+Equation (\ref{eq-psddef2}) is often used as an alternative definition
+of the PSD,
+not least because it is
+(as we will see)
+more useful than equation (\ref{eq-psddef1})
+for proving theorems about the PSD.
+
+For real data, $R(\tau)$ is not just even (as it always is)
+but also real.
+In that case we can write
+%
+\begin{equation}
+\label{eq-psddef3}
+S(f) = \half \int_0^{\infty} R(t) \cos(-2 \pi ft) \, dt
+\end{equation}
+%
+where $S(f)$ is the two-sided spectrum;
+the $\half$ absorbs a factor of two
+produced when we change the limits of the integral.
+If we used the one-sided spectrum (as makes
+sense for a real series) we would omit
+the $\half$;
+for generality
+we will use the definition given by equation (\ref{eq-psddef2}).
+
+Before we establish the truth of (\ref{eq-psddef2}) we note a few
+consequences of it.
+Since $R(t)$ is a real even function of $t$, (\ref{eq-psddef2})
+implies that $S(f)$ is also a real and even function in $f$.
+But the fact that
+$S(f)$ must be non-negative puts severe restrictions on what
+functions $R(t)$ might be autocovariances; clearly
+not every even function
+with a Fourier transform will have a positive
+Fourier transform.
+
+The inverse transform of (\ref{eq-psddef2}) is
+%
+\begin{equation}
+\label{eq-psdinv}
+R(t) = \intone S(f) e ^ {2 \pi i ft} \, df
+\end{equation}
+%
+and recall from the definition of $R(t)$ that
+%
+\[
+R(0) = \Ex [X(t) X(t)] = \Var [X] = \sigma ^ 2
+\]
+%
+remembering that $X$ is a zero-mean process.
+Setting $t = 0$ in
+(\ref{eq-psddef2}) gives an important result:
+%
+\begin{equation}
+\label{eq-psdnorm}
+\sigma ^ 2 = \intone S (f) \, df
+\end{equation}
+%
+That is,
+\textit{the area under the power spectrum is the variance
+of the process.}
+It is to preserve this property that
+we double $S(f)$ if we use the one-sided PSD;
+then the integrated area is again the variance even though we
+we integrate $S(f)$ only over positive frequencies.
+
+Now we verify (\ref{eq-psddef2});
+the argument follows the lines of the one
+given in Section \ref{sec.chap.fourier.correl},
+except that here we are considering random functions,
+and there we were considering conventional functions.
+We start with the squared magnitude of the Fourier transform
+of the windowed function $X_T$:
+%
+\begin{equation}
+\label{eq-ftsq}
+| \Xfo_T | ^ 2 = \Xfo_T \Xfo_T ^ *
+\end{equation}
+%
+Recall that the Fourier transform of a convolution is the product of the
+Fourier transforms;
+and, since $X_T$ is real
+%
+\begin{equation}
+\label{eq-ftconj}
+\Xfo^*_T (f)
+= \intone X_T (t) e ^ {2 \pi i ft} \, dt 
+= \intone X_T (-t) e ^ {-2 \pi i ft} \, dt 
+= \Fo [ X_T (-t) ]
+\end{equation}
+%
+Combining the convolution theorem with (\ref{eq-ftconj})
+and (\ref{eq-ftsq}), we have
+%
+\begin{equation}
+\label{eq-ftsq2}
+| \Xfo_T | ^ 2 = \Fo [ X_T (t) \conv X_T (-t) ]
+= \Fo \left [ \intone X_T (s) X_T (s - t) \, ds \right ]
+\end{equation}
+%
+In (\ref{eq-psddef1}) we have normalized by the interval $T$,
+so we put that
+into the definition of another function:
+%
+\begin{equation}
+\label{eq-autofrmpsd}
+R_T (t) = \frac{1}{T} X_T (t) \conv X_T (-t)
+= \frac{1}{T} \intone X_T (s) X_T (s - t) \, ds 
+\end{equation}
+%
+Then by (\ref{eq-ftsq2}), the Fourier transform of $R_T$ is
+%
+\begin{equation}
+\label{eq-ftsq3}
+\Fo [ R_T ] = \intone e ^ {-2 \pi i ft} R_T (t) \, dt
+= \frac{1}{T}\Fo [ X_T (t) \conv X_T (-t) ] =
+\frac{| \Xfo_T | ^ 2}{T}
+\end{equation}
+%
+Our definition of the PSD is (\ref{eq-psddef1});
+let us plug (\ref{eq-ftsq3}) into that so that we get
+%
+\begin{equation}
+\label{eq-psdftsq}
+S(f) = 
+\lim_{T \to \infty} \Ex \left [
+\frac{| \Xfo_T | ^ 2}{T} \right ] = 
+\lim_{T \to \infty} 
+\intone e ^ {-2 \pi i ft } \Ex [ R_T (t) ] \, dt
+\end{equation}
+%
+From (\ref{eq-autofrmpsd}) we see that $R_T (t)$ is even in $t$,
+so we can always write $R_T (t) = R_T ( | t | )$;
+in the following we will assume 
+$t \ge 0$ and then replace $t$ by $| t |$ at the end.
+We know $X_T (s)$
+vanishes outside the interval $(-T/2, T/2)$ and therefore the integrand
+of (\ref{eq-autofrmpsd}) must vanish when $ s > T/2$ or when $| s - t | > T/2$;
+see Figure \ref{fig.chap.psd.integrand}.
+Therefore we can reduce the interval of integration in
+(\ref{eq-autofrmpsd}) to be over $(-T/2 + t, \,T/2)$ instead of the whole real line.
+Also observe that, once $t > T/2$,
+the nonzero sections cease to overlap,
+and the integrand is identically zero.
+
+These considerations lead to the result
+%
+\begin{equation}
+\label{eq-autofin}
+R_T (t) = 
+\left \{
+\begin{array}{cc}
+\frac{1}{T} \int_{-T/2+ t }^{T/2} X_T (s) X_T (s - t ) \, ds & 0 \le t < T/2 \\
+0 & t \ge T/2 \\
+\end{array}
+\right .
+\end{equation}
+%
+Further simplifications ensue when we take the expected value, as
+dictated by (\ref{eq-psdftsq}); for the segment $0 \le t < T/2$
+%
+\[
+\Ex [ R_T (t) ] = \frac{1}{T} \int_{-T/2+ t }^{T/2}
+\Ex [ X_T (s) X_T (s - t ) ] \, ds
+= \frac{1}{T} \int_{-T/2+ t }^{T/2} R(-t) \, ds
+\]
+%
+where we have, finally,
+introduced the actual autocovariance of the process, $R(t)$.
+Since $R(-t) = R(t)$, which is independent
+of $s$, we can evaluate the $s$ integral explicitly:
+%
+\begin{equation}
+\Ex [ R_T (t) ] = \frac{R(t)}{T} \int_{-T/2+ t }^{T/2}
+1 \cdot \, ds = R(t) \left [ 1 - \frac{t}{T} \right ]
+\qquad \mathrm{for} \quad 0 \le t \le T
+\end{equation}
+%
+From (\ref{eq-autofin}) $\Ex [ R_T (t) ] = 0$ when $t \ge T$.
+Recalling that $R_T$
+is even, we can write
+the negative $t$ behavior from $R_T (t) = R_T (-t)$,
+and obtain the following complete description for the
+expected value of $R_T$:
+%
+\begin{equation}
+\label{eq-expauto}
+\Ex [ R_T (t)] = R(t) \Lambda_T (t)
+\end{equation}
+%
+where
+%
+\[
+\Lambda_T (t) =
+\left \{
+\begin{array}{cc}
+1 - | t | / T & |t| \le T \\
+0 & | t | > T \\
+\end{array}
+\right \}
+\]
+%
+which is just a triangle function of unit height
+and width $2T$.
+
+Substituting (\ref{eq-expauto}) into
+(\ref{eq-psdftsq}) gives us the following
+very plausible expression for the PSD:
+%
+\begin{equation}
+\label{eq-psdfrmauto}
+S(f) = 
+\lim_{T \to \infty} 
+\Fo [ R(t) \Lambda_T (t) ] = 
+\lim_{T \to \infty} 
+\intone e ^ {-2 \pi i ft } R(t) \Lambda_T (t) \, dt
+\end{equation}
+
+If we can put the limit in (\ref{eq-psdfrmauto}) inside the integral,
+and since $ \Lambda_T (s) \to 1$ as $T \to \infty$,
+we then have the result we claimed:
+equation (\ref{eq-psddef2}).
+This last step is where some care is needed.
+\citet{Priestley81} (pp. ??)
+uses the Lebesgue Dominated Convergence Theorem, and the
+further condition that
+%
+\begin{equation}
+\label{eq-autorestr}
+\intone | R(t) | \, dt < \infty 
+\end{equation}
+%
+to prove that it is permitted to reverse the order of the limit 
+and the integral.
+Section \ref{sec.chap.psd.proof} contains
+a proof (by Parker)
+that makes a different set of assumptions about $R(t)$.
+
+
+%%
+%%
+%%
 \section{A from-scratch example: White noise.}
 A straightforward way to understand normalization in spectral analysis
 is to analyze a real, stationary series which is normally distributed with
@@ -229,19 +571,23 @@ frequency.}
 \end{center}
 \end{figure}
 
-\section{Comparisons between estimators}
+\section{Normalization used in \Rcmd{stats::spectrum}}
 We wish to compare the normalizations used by other PSD estimation programs;
 these are summarized in \ref{tbl:methods}.
 \input{tbl_specprogs}
 
-\subsection{\Rcmd{stats::spectrum}}
-\Rcmd{spectrum} is a wrapper which calls the appropriate spectrum
-estimator. For our examples we compare to \Rcmd{spec.pgram}.
-Using default settings \Rcmd{spec.pgram} assumes the sampling frequency
-for the input series is 1, and normalizes accordingly.
-Sampling information used be included by creating a \Rcmd{ts}
+\subsection{}
+Included in the core distribution of R is \Rcmd{stats::spectrum}, which
+accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
+parametric and non-parametric estimation, respectively.  
+The user can optionally apply a single cosine taper, and/or a smoothing kernel.
+For this discussion we compare to \Rcmd{spec.pgram}.
+
+\Rcmd{spec.pgram} assumes the sampling frequency
+for the input series is 1, and normalizes accordingly; however,
+sampling information used be included by creating a \Rcmd{ts}
 object from the series prior to spectrum estimation:
-%
+
 <<eval=TRUE, echo=TRUE>>=
 fsamp <- 20
 xt <- ts(x, frequency=fsamp)
@@ -249,14 +595,17 @@ pgram20 <- spec.pgram(xt, pad=1, taper=0, plot=FALSE)
 pgram01 <- spec.pgram(ts(xt, frequency=1), pad=1, taper=0, plot=FALSE)
 @
 
-The first order question is obviously whether these spectra pass variance-normalization
-tests, which they do not, but only by a factor of two (too small):
-%
-\begin{figure}[htb!]
-\begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PGRAM>>=
+A first order question is obviously whether these spectra pass our
+ variance-normalization test: they do not, but only by a factor of two (too small):
+
+<<eval=TRUE, echo=TRUE>>=
 test_norm(mean(pgram01$spec), 0.5, xv)
 test_norm(mean(pgram20$spec), 10, xv)
+@
+
+\begin{figure}[h!]
+\begin{center}
+<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PGRAM>>=
 plot(pgram20, log="dB", ylim=36*c(-1,.3))
 plot(pgram01, log="dB", add=TRUE, col="red")
 abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))
@@ -266,147 +615,36 @@ abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))
 \end{center}
 \end{figure}
 
-But why?  The program assumes normalization for complex series: Spectra returned for
-real data are deficient by a factor of two. Consider the following example:
-%
+But why?  The program assumes normalization for a 
+\bidx{double-sided spectrum}, which conflicts with our definition of the 
+\idx{one-sided} spectrum
+by a factor of two.
+We can illustrate this with the following example:
+
 <<eval=TRUE, echo=TRUE>>=
 psd1 <- spec.pgram(x, plot=FALSE)
 psd2 <- spec.pgram(xc<-complex(real=x, imag=x), plot=FALSE, demean=TRUE)
-mean(Mod(xc))
+mx <- mean(Mod(x))
+mxc <- mean(Mod(xc))
+(mxc/mx)**2
 mean((psd2$spec / psd1$spec))
 @
 
 This means that unless we are interested in analyzing complex
-timeseries, we need only multiply by two for properly normalized spectra using \Rcmd{spectrum}, assuming the sampling information is included in the input series.
+timeseries, we need only multiply by two for properly normalized spectra 
+using \Rcmd{spectrum}, assuming the sampling information is included in the series.
 
-%<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=RSEIS>>=
-%@
-%
-%<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=MTM>>=
-%@
-%% RSEIS mtapspec
-%     /* choose normalization based on inorm flag  */
-%	anrm = 1.;
-%	switch (inorm) {
-%	case 0:
-%		anrm = 1.;
-%		break;
-%	case 1:
-%		anrm = npoints;
-%		break;
-%	case 2:
-%		anrm = 1 / dt;
-%		break;
-%	case 3:
-%		anrm = sqrt((double) npoints);
-%		break;
-%	default:
-%		anrm = 1.;
-%		break;
-% then
-%  norm = 1.0/(anrm*anrm);
-%	
-%<<eval=TRUE, echo=TRUE>>=
-%Mspec <- mtapspec(a, dt, MTP=list(kind=1, nwin=5, npi=3, inorm = 3))
-%str(Mspec)
-%@
-%where \Rcmd{nwin} is the number of tapers taken, and 
-%\Rcmd{inorm} is he normalization flag.  Digging a bit into .
-%       a: vector time series
-%      dt: sample rate
-%    klen: length of fft
-%     MTP: MTM parameters, list:
-%          kind kind of taper average
-%          nwin number of windows
-%          npi number of Pi-prolate functions
-%          inorm normalization flag
-%We obviously need to deal with the sampling information since it is not
-%one (as assumed by default).  
-%The information we have is that the 
-%measurements are taken every 0.3 seconds.
-%We can use account for the
-%sampling interval (as opposed to sampling rate) easily
-%by using a negative value for \Rcmd{X.frq}, which \Rcmd{psdcore}
-%will interpret as
-%an interval instead of a frequency. 
-%An example highlights this:
-%% samp inv vs frq
-%<<eval=TRUE, echo=TRUE>>=
-%all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
-%@
-%
-%Returning to the $\delta$O$_{18}$ data, we can now calculate the spectrum:
-%%% adaptive OH PSD
-%<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_rseis_OH>>=
-%Aspec <- pspectrum(a, -dt, 5, niter=1, plot=FALSE)
-%Pspec <- psdcore(a, -dt, 5)
-%pltf <- Mspec$freq
-%nt <- 1:Mspec$numfreqs
-%# multiply by Nyquist
-%nyq <- frequency(ats)/2
-%pltp <- dB(Mspec$spec[nt] * nyq)
-%Xspec <- spec.pgram(ts(a, frequency=1), pad=1, taper=0.2, detrend=TRUE, demean=TRUE, plot=FALSE)
-%Xspec$freq <- Xspec$freq * 2 * nyq
-%Xspec$spec <- nyq * Xspec$spec
-%plot(Xspec, log="dB", col="dark grey")
-%plot(Pspec, log="dB", add=TRUE)
-%lines(pltf, pltp, col="dark red")
-%plot(Aspec, log="dB", add=TRUE, col="dark blue", lwd=1.5)
-%@
-%
-%This is a situation where the adaptive method can be overly aggressive
-%in taper application. Remember, it all depends on the spectral shape.
-%
-%and enhance 
-%instead with an adaptive procedure:
-%Pspec <- pspectrum(a, -dt, 5, verbose=FALSE, no.history=TRUE, plot=TRUE)
+\section{Other PSD estimators}
+The suite of extensions to base R which have
+similar functionality
+is relatively limited; however, there are at least three with
+can produce sophisticated PSD estimates.   We have
+summarized the available functions in Table \ref{tbl:methods}
+so far as we know\footnote{
+As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
+}.
 
-
-
-\subsection{\Rcmd{stats::spectrum}}
-Included in the core distribution of R is \Rcmd{stats::spectrum}, which
-accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
-parametric and non-parametric estimation, respectively.  
-The user can optionally apply a single cosine taper, and/or a smoothing kernel.
-Our method is non-parametric; hence, we will compare to the latter.
-
-%% pgram
-<<eval=FALSE, echo=TRUE>>=
-spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=FALSE)
-@
-However,
-the logical arguments \Rcmd{detrend} and \Rcmd{demean} to \Rcmd{psdcore}
-are passed to \Rcmd{spec.pgram}; they are,
-by default, both \SC{True}.
-
-As a matter of bookkeeping, we must deal with the working environment
-accessed by \rlp{} functions.
-Specifically, 
-we should ensure
-\Rcmd{psdcore} does not access any inappropriate information by
-setting \Rcmd{refresh=TRUE}.
-We can then
-re-calculate the multitaper PSD and the
-raw periodogram with \Rcmd{plotpsd=TRUE}.  
-The results are shown in Figure \ref{fig:two}.
-
-%\begin{figure}[htbp!]
-%\begin{center}
-%%% magsat compare
-%<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_magsat_naive>>=
-%data(magsat)
-%psdcore(magsat$clean, ntaper=10, refresh=TRUE, plotpsd=TRUE)
-%@
-%\caption{Top: Comparison between \naive{} and multitaper PSD estimators for the 
-%clean \Rcmd{MAGSAT} data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
-%and power axis is in decibels.
-%Bottom: The spatial series used to estimate the PSDs.}
-%\end{center}
-%\label{fig:two}
-%\end{figure}
-
-\subsection{\Rcmd{multitaper::spec.mtm}}
-\subsection{\Rcmd{SDF::sapa}}
+\input{tbl_specprogs}
 
 %% bib
 \bibliographystyle{apalike}

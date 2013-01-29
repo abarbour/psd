@@ -4,18 +4,28 @@
 %\newcommand{\SCY}[0]{\SC{Yes}}
 %\newcommand{\SCN}[0]{\SC{No}}
 \begin{table}[htbp!]
-\centering
-\caption{A comparison of functions comparable to \rlp{}, excluding
-extensions which only estimate raw-periodograms.}
-\begin{tabular}{r l c c l}
+\begin{centering}
+%%
+\caption{A comparison of power spectral density estimators in R,
+excluding extensions which only estimate raw-periodograms.
+Normalizations are shown as either "single" or "double" for
+either single- or double-sided spectra, and "various"
+if there are multiple, optional normalizations. A $(*)$ denotes
+the default for a function having an option for 
+either
+single or double.}
+%%
+\begin{tabular}{r l c c c l}
 \hline
-\SC{Function} & \SC{Namespace} & \SC{Sine m.t.?} & \SC{Adaptive?} & \SC{Reference} \\
+\SC{Function} & \SC{Namespace} & \SC{Sine m.t.?} & \SC{Adaptive?} & \SC{Norm.} & \SC{Reference} \\
 \hline
-\Rcmd{mtapspec} & \Rcmd{RSEIS} & \SCY{} & \SCN{} & \citet{lees1995} \\
-\Rcmd{spectrum} & \Rcmd{stats} & \SCN{} & \SCN{} & \citet{rcore} \\
-\Rcmd{spec.mtm} & \Rcmd{multitaper} & \SCY{} & \SCY{} & \citet{rahim2012} \\
-\Rcmd{SDF} & \Rcmd{sapa} & \SCY{} & \SCN{} & \citet{percival1993} \\
+\Rcmd{mtapspec}  & \Rcmd{RSEIS}     & \SCY{} & \SCN{} & various & \citet{lees1995} \\
+\Rcmd{pspectrum} & \rlp{}           & \SCY{} & \SCY{} & single  & \citet{rlpspec} \\
+\Rcmd{spectrum}  & \Rcmd{stats}     & \SCN{} & \SCN{} & double  & \citet{rcore} \\
+\Rcmd{spec.mtm}  & \Rcmd{multitaper}& \SCY{} & \SCY{} & double & \citet{rahim2012} \\
+\Rcmd{SDF}       & \Rcmd{sapa}      & \SCY{} & \SCN{} & single$^*$ & \citet{percival1993} \\
 \hline
 \end{tabular}
 \label{tbl:methods}
+\end{centering}
 \end{table}
