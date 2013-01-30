@@ -1,0 +1,38 @@
+README
+/Users/abarbour/nute.processing/development/rlpSpec/inst/doc
+Creation date:	Tue Jan 29 20:59:57 PST 2013
+
+##
+## DFT benchmark vignette [DONE]
+##
+	fftw.Rnw
+	fftw.pdf
+	# see /Users/abarbour/Google\ Drive/PUB/rlpSpec
+	fftw_bench_even.pdf
+	fftw_bench_odd.pdf
+##
+## Normalization vignette [ ]
+##
+	normalization.Rnw
+	normalization.pdf
+	tbl_norms.tex		normalization definitions
+##
+## Overview benchmark vignette [ ]
+##
+	rlpSpec_overview.Rnw
+	rlpSpec_overview.pdf
+	yuml.fawk*
+	yuml.sh*
+	yuml_d.png
+	yuml_n.png
+##
+## Common files
+##
+	symdefs.tex		math symbol definitions
+	tbl_specprogs.tex	spectral estimation programs
+	REFS.bib		references
+
+##
+## Misc.
+##
+tmp.R

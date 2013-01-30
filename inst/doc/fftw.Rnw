@@ -1,0 +1,236 @@
+\documentclass[12pt]{article}
+% sweave fig help:
+% http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
+% borrowing design from roxygen -- AJB Jan 13
+%% \VignetteIndexEntry{rlpSpec Normalization Vignette}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{url}
+\usepackage{upquote}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{fullpage}
+\usepackage{makeidx} % for indexing
+%\usepackage{showidx} % shows page (remove when complete)
+\makeindex % comment to have no index
+%%
+\include{symdefs}
+%%
+\newcommand{\SC}[1]{\textsc{#1}}
+\newcommand{\SCY}[0]{\SC{Yes}}
+\newcommand{\SCN}[0]{\SC{No}}
+\newcommand{\Rcmd}[1]{\texttt{#1}}
+\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+\newcommand{\naive}[0]{na\"{\i}ve}
+\newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
+\newcommand{\idx}[1]{\index{#1}{#1}} 
+%% path, filename, caption, label
+\newcommand{\listing}[4]{        %
+  \begin{figure}[H]              %
+    \centering                   %
+    \VerbatimInput[numbers=left, %
+      frame=single,              %
+      label=#2]{#1}              %
+    \caption{#3}                 %
+    \label{#4}                   %
+  \end{figure}                   %
+}
+\author{Andrew J. Barbour}
+\title{Benchmarks for Discrete Fourier Transforms}
+\begin{document}
+\maketitle
+\begin{abstract}
+The base DFT calculator in R, \Rcmd{stats::fft}, uses
+the Mixed-Radix algorithm of \citet{singleton1969}.
+In this vignette we show how 
+this calculator compares
+to \Rcmd{FFT} in the \Rcmd{fftw} package \citep{fftw}, which uses the
+FFTW algorithm of \citet{frigo2005}.
+For univariate DFT computations,
+the methods are nearly equivalent with two exceptions which
+are not mutually exclusive: 
+(A) the series to be transformed is very long, and 
+especially (B) when the series length is not highly composite.
+In both exceptions the algorithm \Rcmd{FFT} outperforms \Rcmd{fft}.
+\end{abstract}
+\tableofcontents
+\section{Benchmarking function}
+We use both functions in their default state, and ask them
+to transform the same univariate random series.
+Benchmark information comes from the \Rcmd{rbenchmark}
+program, and the versatile \Rcmd{plyr} and
+\Rcmd{reshape2} packages are used to manipulate the information
+for this presentation; \Rcmd{ggplot2} is used for plotting. 
+First we load the libraries needed:
+<<eval=FALSE, echo=TRUE>>=
+rm(list=ls())
+library(fftw)
+library(rbenchmark)
+library(plyr)
+library(reshape2)
+library(ggplot2)
+@
+and create a benchmark function:
+<<eval=FALSE, echo=TRUE>>=
+reps <- 10
+dftbm <- function(nd, repls=reps){
+	set.seed(1234)
+	x <- rnorm(nd, mean=0, sd=1)
+	bmd <- benchmark(replications=repls, fftw::FFT(x), stats::fft(x))
+	bmd$num_dat <- nd
+	bmd$relative[is.na(bmd$relative)] <- 1   # NA happens.
+	return(bmd)
+}
+@
+
+\section{Highly composite (HC) series}
+It's well known that DFT algorithms are most efficient
+for ``Highly Composite Numbers"\footnote{
+This is the reason for the \Rcmd{stats::nextn} function.
+}, specifically multiples of (2,3,5).
+
+So, we create a vector of series lengths we wish to benchmark
+<<eval=TRUE, echo=TRUE>>=
+(nterms.even <- round(2**seq.int(from=4,to=20,by=1)))
+@
+and use it with \Rcmd{lapply} and the benchmark function
+previously defined.
+These data are further distilled into a usable format
+with \Rcmd{ldply}:
+<<eval=FALSE, echo=TRUE>>=
+bench.even <- function(){
+  benchdat.e <- plyr::ldply(lapply(X=nterms.even, FUN=dftbm))
+  }
+bench.even()
+@
+
+In order to plot the results, we need to 
+perform some map/reduce operations on the data
+\citep{wickham2010}:
+<<eval=FALSE, echo=TRUE>>=
+pltbench <- function(lentyp=c("even","odd")){
+  benchdat <- switch(match.arg(lentyp), even=benchdat.e, odd=benchdat.o)
+  stopifnot(exists("benchdat"))
+  tests <- unique(benchdat$test)
+  ## subset only information we care about
+  allbench.df.drp <- subset(benchdat, 
+        select=c(test, num_dat, user.self, sys.self, elapsed, relative))
+  ## reduce data.frame with melt
+  allbench.df.mlt <- reshape2::melt(allbench.df.drp, 
+                                    id.vars=c("test","num_dat"))
+  ## calculate the summary information to be plotted:
+  tmpd <- plyr::ddply(allbench.df.mlt, 
+                      .(variable,  num_dat),
+                      summarise, 
+                      summary="medians", # just a name
+                      value=ggplot2::mean_cl_normal(value)[1,1])
+  ## create copies for each test and map to data.frame
+  allmeds <<- plyr::ldply(lapply(X=tests, 
+                                 FUN=function(x,df=tmpd){
+                                       df$test <- x; return(df)
+                                     }))
+  ## plot the benchmark data
+  g <- ggplot(data=allbench.df.mlt,
+              aes(x=log10(num_dat),
+                  y=log2(value),
+                  # 1/sqrt(n) standard errors [assumes N(0,1)]
+                  ymin=log2(value*(1-1/sqrt(reps))),
+                  ymax=log2(value*(1+1/sqrt(reps))),
+                  colour=test,
+                  group=test)) +
+       scale_colour_discrete(guide="none") + 
+       theme_bw()+
+       ylim(c(-11,11))+
+       xlim(c(0.5,6.5))+
+       ggtitle(sprintf("DFT benchmarks of %s length series",toupper(lentyp)))
+  ## add previous summary curves if exist
+  if (exists("allmeds.prev")){
+     g <- g + geom_path(size=1.5, colour="dark grey", data=allmeds.prev, 
+                        aes(group=test))
+                        }
+  ## create a facetted version
+  g2 <- g + facet_grid(variable~test) #, scales="free_y")
+  ## add the summary data as a line
+  g3 <- g2 + geom_path(colour="black", data=allmeds, aes(group=test))
+  ## and finally the data
+  print(g4 <<- g3 + geom_pointrange())
+}
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<eval=FALSE, echo=TRUE, fig=TRUE, label=EVEN>>=
+pltbench("even")
+@
+\includegraphics[width=\textwidth]{fftw_bench_even}
+\label{fig:even}
+\caption{DFT benchmark results for HC series lengths.}
+\end{center}
+\end{figure}
+For each row of the figure we plot summary curves\footnote{
+Based on this post:\\
+{\small
+\url{http://geokook.wordpress.com/2012/12/29/row-wise-summary-curves-in-faceted-ggplot2-figures/}
+}
+} so we can easily inter-compare the benchmark data.
+
+\section{Non highly composite (NHC) series}
+DFT algorithms can have drastically reduced performance
+if the series length is not highly composite (NHC).
+We now test NHC series by adding one to the HC series-length
+vector (also restricting the total length for sanity's sake):
+<<eval=FALSE, echo=TRUE>>=
+nterms.odd <- nterms.even + 1
+nterms.odd <- nterms.odd[nterms.odd < 50e3] # painfully long otherwise!
+@
+and performing the full set of benchmarks again:
+<<eval=FALSE, echo=TRUE>>=
+bench.odd <- function(){
+  benchdat.o <- plyr::ldply(lapply(X=nterms.odd, FUN=dftbm))
+  }
+bench.odd() # FAIR WARNING: this can take a while!!
+@
+
+We can now visualize the results, with the addition of
+the HC summary curves:
+
+\begin{figure}[htb!]
+\begin{center}
+<<eval=FALSE, echo=TRUE, fig=TRUE, label=ODD>>=
+allmeds.prev <- allmeds
+pltbench("odd")
+@
+\includegraphics[width=\textwidth]{fftw_bench_odd}
+\label{fig:odd}
+\caption{DFT benchmark results for NHC series lengths.
+We also show the summary curves for the HC results
+to highlight the drastic degradation in performance.}
+\end{center}
+\end{figure}
+
+\section{Conclusion}
+
+Figures \ref{fig:even} and \ref{fig:odd} compare the DFT
+calculations for HC and NHC length series.
+For univariate DFT computations,
+the methods are nearly equivalent with two exceptions which
+are not mutually exclusive: 
+(A) the series to be transformed is very long, and 
+especially (B) when the series length is not highly composite.
+In both exceptions the algorithm \Rcmd{FFT} outperforms \Rcmd{fft}.
+In the case of exception (B), both methods have
+drastically increased computation times; hence, zero padding should be
+done to ensure the length does not adversely
+affect the efficiency of the DFT calculator.
+
+%% bib
+\bibliographystyle{apalike}
+\bibliography{REFS}
+
+\printindex
+\end{document}
