@@ -1,19 +1,22 @@
 Miscellany
 ----------
+[ ] migrate examples in functions to ./examp/
 [ ] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 *** remove --no-examples and get to build [ ]
-[ ] migrate examples in functions to ./examp/
+*** *** why do they not build??
 [X] remove references to src/ctap_simple.c and test build {[X]}
 
 vignettes
 ---------
 [ ] develop overview
-*** plotting adaptive history [ ] 
+[ ] finish norm
 
 demos
 -----
-[ ] fix mag
+[-] fix mag (now in vignette)
+*** remove demo file
+*** plotting adaptive history [ ] 
 
 tests
 -----
@@ -21,9 +24,9 @@ tests
 
 datasets
 --------
-[X] magsat
 [ ] scarb
 [ ] bsm
+[X] magsat
 
 `spectral_properties`
 ---------------------
@@ -36,15 +39,15 @@ datasets
 
 `psdcore`
 -----------
-[X] option to prevent environment clashes
 [ ] example
+[X] option to prevent environment clashes
 
 `pspectrum`
 -----------
+[ ] example
 [ ] ensure normalization occurs only once!
 [X] option to show final with raw periodogram
 *** ensure Nyquist.normalize affects pgram too [X]
-[ ] example
 [X] improve function documentation
 [X] add option to change constraint method for riedsid
 
