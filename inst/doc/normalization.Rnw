@@ -19,7 +19,7 @@
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
 %%
-\include{symdefs}
+\input{mathsyms}
 %%
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}

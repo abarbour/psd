@@ -2,6 +2,10 @@ README
 /Users/abarbour/nute.processing/development/rlpSpec/inst/doc
 Creation date:	Tue Jan 29 20:59:57 PST 2013
 
+Notes:
+	* do not use \include (use \input)
+	(build creates aux files and CRAN checks NOTE/COMPLAIN)
+
 ##
 ## DFT benchmark vignette [DONE]
 ##

@@ -109,6 +109,7 @@ psdcore.default <- function(X.d,
                    verbose=FALSE)
     #
     # Force series to be even in length (modulo division)
+    # nextn(factors=2) ?
     n.e <- rlp_envAssignGet("len_even", n.o - n.o%%2 )
     X.even <- as.matrix(X[1:n.e])
     rlp_envAssign("ser_orig", X)
@@ -125,10 +126,13 @@ psdcore.default <- function(X.d,
       ntap <- ntaper[1:nt]
     }
     ##  Remove mean & pad with zeros
-    X.dem <- matrix(c(X.even, zeros(n.e)), ncol=1)
+    X.dem <- c(X.even, zeros(n.e))
     ##  Take double-length fft
-    # mvfft takes matrix (allos multicolumn)
-    fftz <- rlp_envAssignGet("fft_even_demeaned_padded", stats::mvfft(X.dem))
+    # mvfft takes matrix (also multicolumn)
+    #fftz <- stats::mvfft(matrix(X.dem, ncol=1))
+    # but fftw is faster (apparent for long series)
+    fftz <- fftw::FFT(as.numeric(X.dem))
+    fftz <- rlp_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
     X <- X.d
     ntap <- ntaper
@@ -140,7 +144,14 @@ psdcore.default <- function(X.d,
   }
   # if ntaper is a vector, this doesn't work [ ]
   ##
-  if (!(is.tapers(ntap))) ntap <- as.tapers(ntap, setspan=TRUE)
+  # if the user wants a raw periodogram: by all meanss
+  DOAS <- FALSE
+  if (lt == 1){
+    if (ntaper > 0) DOAS <- TRUE
+  } else {
+    if (!(is.tapers(ntap))) DOAS <- TRUE
+  }
+  if (DOAS) ntap <- as.tapers(ntap, setspan=TRUE)
   ##
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
@@ -169,12 +180,11 @@ psdcore.default <- function(X.d,
   if (sum(ntap) > 0) {
     psd <- zeros(nfreq)
     n2e <- 2*n.e
-    Rfftz <- Re(fftz)
     # get a set of all possible weights for the current taper-vector
     # then the function need only subset the master set
     # faster? YES
     KPWM <- parabolic_weights_fast(max(ntap))
-    PSDFUN <- function(fj, n2.e=n2e, KPW=KPWM, ntaps=ntap, Xfft=Rfftz){
+    PSDFUN <- function(fj, n2.e=n2e, KPW=KPWM, ntaps=ntap, Xfft=fftz){
       # parabolic weights, index m+1, column vec out
       #print(c(fj,fj2,n2.e))
       ##NT <- ntaps[fj+1]
@@ -196,9 +206,9 @@ psdcore.default <- function(X.d,
       f1 <- Xfft[j1+1]
       f2 <- Xfft[j2+1]
       af12. <- f1 - f2
-      af122. <- af12. * af12.
+      af122. <- af12. * af12. # will be complex, but Mod == abs
       #psdv <- KPW$taper_weights %*% matrix(af122., ncol=1)
-      psdv <- Kwgt %*% matrix(af122., ncol=1)
+      psdv <- Kwgt %*% matrix(abs(af122.), ncol=1)
       return(psdv)
     }
     # ** compiled code doesn't appear to help speed
@@ -206,13 +216,13 @@ psdcore.default <- function(X.d,
     # ** foreach is easier to follow, but foreach solution is actually slower :(
     #     psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
-    psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=1.0)
+    psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     message("zero taper result == raw periodogram")
     Xfft <- rlp_envGet("fft_even_demeaned_padded")
     ff <- Xfft[1:nfreq]
     N0 <- rlp_envGet("len_orig")
-    psd <- ff * Conj(ff) / N0
+    psd <- abs(ff * Conj(ff)) / N0
   }
   ##  Interpolate if necessary to uniform freq sampling
   if (lt > 1 && ndecimate > 1){
@@ -226,6 +236,7 @@ psdcore.default <- function(X.d,
     psd <- tmp.yi
   }
   ##
+  # should not be complex at this point!!
   stopifnot(!is.complex(psd))
   #psd <- as.rowvec(psd)
   ## Normalize by variance, 
@@ -252,12 +263,16 @@ psdcore.default <- function(X.d,
   indic <- 2:(nfreq-1)
   if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
-  pltpsd <- function(Xser, frqs, psds, nyq, nNyq, detrend, demean, ...){
-    Xser <- ts(Xser, frequency=1) # so we can normalize properly
+  pltpsd <- function(Xser, frqs, psds, taps, nyq, nNyq, detrend, demean, ...){
+    #Xser <- ts(Xser, frequency=X.frq) 
+    fsamp <- frequency(Xser) # so we can normalize properly
+    stopifnot(fsamp==X.frq)
     Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=demean, plot=FALSE)
     if (nNyq) {
-      Xpg$freq <- Xpg$freq * 2 * nyq
-      Xpg$spec <- nyq * Xpg$spec
+      # frequencies are appropriate,
+      # but spectrum is normed for double-sided whereas rlpSpec single-sided; hence,
+      # factor of 2
+      Xpg$spec <- Xpg$spec * 2
     }
     opar <- par(no.readonly = TRUE)
     par(mar=c(2, 3, 2.3, 1.2), oma=rep(2,4), las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
@@ -287,7 +302,11 @@ psdcore.default <- function(X.d,
     lines(lfrq, db_psd, type="l")
     legend("bottomleft",c("20% cosine","rlpSpec"), col=c("red","black"), lty=1, lwd=2, cex=0.9)
     ## tapers
-    plot(ntap, lfrq)
+    if (is.tapers(taps)){
+      plot(taps, lfrq)
+    } else {
+      plot(lfrq, taps, type="h")
+    }
     ## original series
     plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
     mtext("index", side=1, line=1.5)
@@ -299,7 +318,9 @@ psdcore.default <- function(X.d,
     par(opar)
   }
   ## Plot it
-  if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, nyq=Nyq, nNyq=Nyquist.normalize, 
+  if (plotpsd) pltpsd(Xser=X, frqs=frq, 
+                      psds=psd.n, taps=ntap,
+                      nyq=Nyq, nNyq=Nyquist.normalize, 
                       detrend=detrend, demean=demean, ...)
   ##
   funcall<-paste(as.character(match.call()[]),collapse=" ") 

@@ -19,7 +19,7 @@
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
 %%
-\include{symdefs}
+\input{mathsyms}
 %%
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
@@ -41,7 +41,7 @@
   \end{figure}                   %
 }
 \author{Andrew J. Barbour}
-\title{Benchmarks for Discrete Fourier Transforms}
+\title{Benchmarks for Discrete Fourier Transforms in R}
 \begin{document}
 \maketitle
 \begin{abstract}

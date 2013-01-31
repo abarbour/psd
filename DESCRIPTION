@@ -19,13 +19,15 @@ Depends:
     stats,
     utils,
     graphics,
-    grDevices
+    grDevices,
+    fftw (>= 1.0-3)
 Imports:
     Peaks (>= 0.2),
     RColorBrewer (>= 1.0-5),
     signal (>= 0.7-2),
     zoo (>= 1.7-9)
 Suggests:
+    RSEIS (>= 3.0-9),
     ggplot2 (>= 0.9-3),
     multitaper (>= 1.0-2)
 Collate:

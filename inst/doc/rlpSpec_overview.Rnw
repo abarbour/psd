@@ -12,6 +12,7 @@
 \usepackage{grffile}
 \usepackage{float}
 \usepackage{natbib}
+\usepackage{amsmath}
 \usepackage{fullpage}
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
@@ -107,18 +108,26 @@ Setting aside any discussion regarding sample stationarity,
 we can find power spectral density (PSD)
 estimates for the two series quite simply:
 %% pspectrum
-<<eval=FALSE, echo=TRUE>>=
-psdr <- pspectrum(magsat$raw, verbose=FALSE)
-psdc <- pspectrum(magsat$clean, verbose=FALSE)
+<<eval=TRUE, echo=TRUE>>=
+psdr <- pspectrum(magsat$raw)
+psdc <- pspectrum(magsat$clean)
 @
-Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by four
-iterations of refinement (the default).
+Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
+\Rcmd{niter}
+iterations of refinement (defaulting to 3).
 With each iteration
 the number of tapers is adjusted 
 to the optimal number, based on the weighted
 spectral derivatives, following \citet{rs1995}.
 In general, spectral variance is reduced
-with sequential refinements, but is not necessarily quaranteed to converge.
+with sequential refinements\footnote{
+Messages given by \Rcmd{pspectrum} with
+``Ave. S.V.R."  
+are in reference to the 
+ average spectral-variance reduction, found from
+ double-differenced spectra for each stage relative
+ to the pilot estimate.
+}, but is not necessarily guaranteed to converge.
 Note that in the example
 the sampling frequency of both series
 is km$^{-1}$, so we need not change the sampling rate
@@ -134,28 +143,28 @@ within \Rcmd{stats}, including \Rcmd{plot.spec}.
 
 \begin{figure}[htbp!]
 \begin{center}
-%% magsat comparison
-<<eval=FALSE, fig=TRUE, echo=TRUE, label=fig_magsat>>=
-plot(psdc, log="dB")
-lines(psdr$freq, dB(psdr$spec), col="red")
-legend("bottomleft",c("magsat$raw","magsat$clean"),col=c("red","black"),lty=1,lwd=2)
+<<eval=TRUE, fig=TRUE, echo=TRUE, label=fig_magsat>>=
+plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
+       lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
+plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
+legend("bottomleft", c("Raw","Clean"), title="Series", lwd=3, cex=1.1, lty=c(1,4))
 @
+\caption{Power spectral density estimates for the raw and cleaned
+\Rcmd{MAGSAT} data included with \rlp{}.}
+\label{fig:pmag}
 \end{center}
-\caption{Comparison of power spectral densities for the \Rcmd{MAGSAT} data
-included with \rlp{}.}
-\label{fig:one}
 \end{figure}
 
-Figure \ref{fig:one} compares the spectra for the \Rcmd{raw} and \Rcmd{clean} 
+Figure \ref{fig:pmag} compares the spectra for the \Rcmd{raw} and \Rcmd{clean} 
 samples.  This plot shows a
 drastic improvement in shape between the two series,
 simply because the large outliers have been removed.
 The \Rcmd{clean} PSD shows the
 very red spectrum typical of geophysical processes \citep{agnew1992}.
 It also shows a rolloff in signal
-somewhere around the 20 kilometer wavelengths; whereas, the 
+for 10 kilometer wavelengths and longer; whereas, the 
 \Rcmd{raw} PSD looks highly unrealistic at higher wavelengths, and
-shows some curvature bias at low frequencies.
+shows some curvature bias.
 
 \section{Comparisons with other methods}
 
@@ -166,145 +175,20 @@ Assuming a sample is free of non-physical points, how do
 PSD estimates from \rlp{}
 compare with other methods?
 Unfortunately the suite of extensions with similar functionality
-is relatively limited; hopefully we have
-summarized the available functions in Table \ref{tbl:methods}.
+is relatively limited, but hopefully we have
+summarized most, if not all, the available functions in Table \ref{tbl:methods}.
 
-%\begin{table}[htbp!]
-%\centering
-%\caption{A comparison of functions comparable to \rlp{}, excluding
-%raw periodogram estimators.}
-%\begin{tabular}{r l c c l}
-%\hline
-%\SC{Function} & \SC{Namespace} & \SC{Sine m.t.?} & \SC{Adaptive?} & \SC{Reference} \\
-%\hline
-%\Rcmd{mtapspec} & \Rcmd{RSEIS} & \SCY{} & \SCN{} & \citet{lees1995} \\
-%\Rcmd{spectrum} & \Rcmd{stats} & \SCN{} & \SCN{} & \citet{rcore} \\
-%\Rcmd{spec.mtm} & \Rcmd{multitaper} & \SCY{} & \SCY{} & \citet{rahim2012} \\
-%\Rcmd{SDF} & \Rcmd{sapa} & \SCY{} & \SCN{} & \citet{percival1993} \\
-%\hline
-%\end{tabular}
-%\label{tbl:methods}
-%\end{table}
 \input{tbl_specprogs}
 
 We now perform some tests to get a sense of how the results of
-\rlp{} compare with the methods in Table \ref{tbl:methods}.
+\rlp{} compare with the methods in Table \ref{tbl:methods} for
+the same data, specifically the cleaned MAGSAT series.
 
-\subsection{\Rcmd{RSEIS::mtapspec}}
-%% RSEIS load
-For this comparison we will
-use a dataset contained in \Rcmd{RSEIS}
-representing $\delta$O$_{18}$ timeseries, namely \Rcmd{OH}.
-<<eval=TRUE, eval=TRUE, echo=TRUE>>=
-require(stats)
-require(RSEIS)
-data(OH)
-print(dt <- OH$dt[1]) # sampling interval, seconds
-a <- OH$JSTR[[1]]     # OH18 data
-@
-These data are shown in Figure \ref{fig:OH}.
-
-\begin{figure}[htbp!]
-\begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, height=7, width=7, label=OH_data>>=
-ats <- prewhiten(ts(a, deltat=dt)) # remove an Ax+B model by default
-@
-\label{fig:OH}
-\caption{Pre-processed $\delta$O$_{18}$ timeseries from the \Rcmd{RSEIS} package.}
-\end{center}
-\end{figure}
-
-For harmonic analysis
-we will follow, but modify slightly,
-the procedure outlined in the \Rcmd{RSEIS} vignette \Rcmd{rseis}
-\footnote{\url{http://cran.r-project.org/web/packages/RSEIS/vignettes/rseis.pdf}}
-and calculate the multitaper spectrum for the following parameters:
-
-%% RSEIS mtapspec
-%     /* choose normalization based on inorm flag  */
-%	anrm = 1.;
-%	switch (inorm) {
-%	case 0:
-%		anrm = 1.;
-%		break;
-%	case 1:
-%		anrm = npoints;
-%		break;
-%	case 2:
-%		anrm = 1 / dt;
-%		break;
-%	case 3:
-%		anrm = sqrt((double) npoints);
-%		break;
-%	default:
-%		anrm = 1.;
-%		break;
-% then
-%  norm = 1.0/(anrm*anrm);
-	
-<<eval=TRUE, echo=TRUE>>=
-Mspec <- mtapspec(a, dt, MTP=list(kind=1, nwin=5, npi=3, inorm = 3))
-str(Mspec)
-@
-where \Rcmd{nwin} is the number of tapers taken, and 
-\Rcmd{inorm} is he normalization flag.  Digging a bit into .
-%       a: vector time series
-%      dt: sample rate
-%    klen: length of fft
-%     MTP: MTM parameters, list:
-%          kind kind of taper average
-%          nwin number of windows
-%          npi number of Pi-prolate functions
-%          inorm normalization flag
-We obviously need to deal with the sampling information since it is not
-one (as assumed by default).  
-The information we have is that the 
-measurements are taken every 0.3 seconds.
-We can use account for the
-sampling interval (as opposed to sampling rate) easily
-by using a negative value for \Rcmd{X.frq}, which \Rcmd{psdcore}
-will interpret as
-an interval instead of a frequency. 
-An example highlights this:
-%% samp inv vs frq
-<<eval=TRUE, echo=TRUE>>=
-all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
-@
-
-Returning to the $\delta$O$_{18}$ data, we can now calculate the spectrum:
-%% adaptive OH PSD
-<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_rseis_OH>>=
-Aspec <- pspectrum(a, -dt, 5, niter=1, plot=FALSE)
-Pspec <- psdcore(a, -dt, 5)
-pltf <- Mspec$freq
-nt <- 1:Mspec$numfreqs
-# multiply by Nyquist
-nyq <- frequency(ats)/2
-pltp <- dB(Mspec$spec[nt] * nyq)
-Xspec <- spec.pgram(ts(a, frequency=1), pad=1, taper=0.2, detrend=TRUE, demean=TRUE, plot=FALSE)
-Xspec$freq <- Xspec$freq * 2 * nyq
-Xspec$spec <- nyq * Xspec$spec
-plot(Xspec, log="dB", col="dark grey")
-plot(Pspec, log="dB", add=TRUE)
-lines(pltf, pltp, col="dark red")
-plot(Aspec, log="dB", add=TRUE, col="dark blue", lwd=1.5)
-@
-
-This is a situation where the adaptive method can be overly aggressive
-in taper application. Remember, it all depends on the spectral shape.
-
-and enhance 
-instead with an adaptive procedure:
-%Pspec <- pspectrum(a, -dt, 5, verbose=FALSE, no.history=TRUE, plot=TRUE)
-
-%\begin{figure}[htbp!]
-%\begin{center}
-%\label{}
-%\caption{}
-%\end{center}
-%\end{figure}
-
+%%
+%% spectrum
+%%
 \subsection{\Rcmd{stats::spectrum}}
+
 Included in the core distribution of R is \Rcmd{stats::spectrum}, which
 accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
 parametric and non-parametric estimation, respectively.  
@@ -315,16 +199,16 @@ Included in \rlp{} is an option to compare the
 results with a \naive{} estimator--a 20\% tapered periodogram--from within the
 spectrum calculator, \Rcmd{psdcore}.
 In R this estimator is equivalent to running:
-%% pgram
+%
 <<eval=FALSE, echo=TRUE>>=
 spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=F)
 @
-However,
-the logical arguments \Rcmd{detrend} and \Rcmd{demean} to \Rcmd{psdcore}
-are passed to \Rcmd{spec.pgram}; they are,
+except that in \Rcmd{psdcore}
+the logical arguments \Rcmd{detrend} and \Rcmd{demean} 
+are passed to \Rcmd{spec.pgram} and are,
 by default, both \SC{True}.
 
-As a matter of bookkeeping, we must deal with the working environment
+As a matter of bookkeeping, we should deal with the working environment
 accessed by \rlp{} functions.
 Specifically, 
 we should ensure
@@ -335,61 +219,286 @@ re-calculate the multitaper PSD and the
 raw periodogram with \Rcmd{plotpsd=TRUE}.  
 The results are shown in Figure \ref{fig:two}.
 
-\begin{figure}[htbp!]
+\begin{figure}[htb!]
 \begin{center}
 %% magsat compare
-%<<eval=TRUE, echo=TRUE, fig=TRUE, width=8, height=6, label=fig_magsat_naive>>=
-<<eval=FALSE, echo=TRUE, fig=TRUE, label=fig_magsat_naive>>=
+<<eval=TRUE, echo=TRUE, fig=TRUE,  label=fig_magsat_naive>>=
 ntap <- psdc$taper
 psdcore(magsat$clean, ntaper=ntap, refresh=TRUE, plotpsd=TRUE)
 @
-%str(rlp_envStatus())
 \caption{Top: Comparison between \naive{} and multitaper PSD estimators for the 
 clean \Rcmd{MAGSAT} data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.
-Bottom: The spatial series used to estimate the PSDs.}
-\end{center}
+Middle: The number of tapers applied as a function of frequency from
+the \Rcmd{plot.tapers} method. 
+Bottom: The spatial series used to estimate the PSDs and a subset
+of the full autocorrelation function.}
 \label{fig:two}
+\end{center}
+\end{figure}
+
+%\pagebreak
+%%
+%% RSEIS
+%%
+\subsection{\Rcmd{RSEIS::mtapspec}}
+
+The main spectrum estimation tool is \Rcmd{mtapspec}, which
+calls the program of \citet{lees1995}.
+With this program
+there are many tuning parameters to set, including
+normalization and taper averaging flags.  For our
+purposes the correct normalization for \Rcmd{mtapspec} is found
+by using
+\Rcmd{MTP=list(kind=2, inorm=3)} and scaling the results by 2 (to convert
+double-sided spectra to single-sided spectra).
+
+Let's assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
+input series.  We can do this easily with the \Rcmd{prewhiten} methods\footnote{
+Although the name implies parametric fitting the
+default operation is to assume a linear model of the form 
+$f(x) = \alpha x + \beta + \epsilon$.
+}.
+<<eval=TRUE, echo=TRUE>>=
+require(RSEIS)
+dt=1 # km
+ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE) 
+@
+and if we set \Rcmd{AR.max} higher than zero, the program
+would've fit an auto-regressive (AR)
+model to the data.  In Figure \ref{fig:magd} we show the AR
+fitting method, and note that while we set \Rcmd{AR.max} relatively high,
+only and AR(6) model was fit significantly.
+
+\begin{figure}[htbp!]
+\begin{center}
+<<eval=TRUE, echo=TRUE, fig=TRUE, height=5, width=6.4, label=ARFIT>>=
+atsar<-prewhiten(ats, AR.max=100, verbose=FALSE)
+@
+<<eval=TRUE, echo=TRUE, fig=TRUE, height=3, width=6.4, label=ARPSD>>=
+plot(psdcore(atsar,ntaper=10), log="dB", main="PSD of MAGSAT innovations")
+@
+\caption{Top: Pre-whitening of a series assuming an AR model.
+Bottom: Power spectral density estimates of the innovations (model residuals):
+the spectrum is flat, as we would hope.}
+\label{fig:magd}
+\end{center}
+\end{figure}
+
+We didn't necessarily need to deal with the sampling information since it is just 1, 
+but suppose the sampling information was based on an interval.
+We can account for an interval 
+by using a negative value for \Rcmd{X.frq}, 
+with which \Rcmd{psdcore}
+will interpret as
+an interval (instead of a frequency). 
+A quick example highlights the equivalency:
+<<eval=TRUE, echo=TRUE>>=
+a <- rnorm(32)
+all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
+@
+
+Returning the the \Rcmd{RSEIS} comparison, we first 
+estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
+<<eval=TRUE, echo=TRUE>>=
+tapinit <- 10
+Mspec <- mtapspec(ats, deltat(ats), MTP=list(kind=2, inorm=3, nwin=tapinit, npi=0))
+str(Mspec)
+@
+where \Rcmd{nwin} is the number of tapers taken and
+\Rcmd{npi} is, from the documentation, the ``number of Pi-prolate functions" (we
+leave it out for the sake of comparison). 
+Note that the object returned
+is not of class \Rcmd{spec}.
+
+Then we calculate the comparative spectra
+from
+\begin{enumerate}
+  \item \Rcmd{spectrum} (20\% cosine taper),
+  \item \Rcmd{psdcore} (with fixed tapers), and
+  \item \Rcmd{pspectrum} (allowing adaptive taper refinement)
+\end{enumerate}
+We will need to correct for normalization factors, as necessary.
+
+<<eval=TRUE, echo=TRUE>>=
+Xspec <- spec.pgram(ats, pad=1, taper=0.2, detr=TRUE, dem=TRUE, plot=FALSE)
+Pspec <- psdcore(ats, dt, tapinit)
+Aspec <- pspectrum(ats, dt, tapinit, niter=2)
+# Correct for double-sidedness of spectrum and mtapspec results
+nt <- 1:Mspec$numfreqs
+mspec <- Mspec$spec[nt] * 2
+Xspec$spec <- 2 * Xspec$spec
+@
+
+An easy comparison is to plot them on the same scale, as shown in
+Figure \ref{fig:psdcomp}.
+
+\begin{figure}[htbp!]
+\begin{center}
+<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_rseis>>=
+require(RColorBrewer)
+cols <- c("dark grey", brewer.pal(8, "Set1")[c(5:4,2)])
+lwds <- c(1,2,2,5)
+plot(Xspec, log="dB", ylim=40*c(-0.4,1), ci.col=NA, 
+       col=cols[1], lwd=lwds[1], main="PSD comparisons") 
+pltf <- Mspec$freq
+lines(pltf, pltp <- dB(mspec), col=cols[2], lwd=lwds[2]) 
+plot(Pspec, log="dB",  add=TRUE, col=cols[3], lwd=lwds[3]) 
+plot(Aspec, log="dB", add=TRUE, col=cols[4], lwd=lwds[4]) 
+legend("topright", 
+            c("spec.pgram","mtapspec","psdcore","pspectrum"), 
+            title="Estimator", lwd=3, cex=1.1, col=cols)
+@
+\caption{Comparisons of power spectral density estimators.}
+\label{fig:psdcomp}
+\end{center}
+\end{figure}
+
+Because we did not specify the length of the FFT in \Rcmd{mtapspec}
+we end up with different length spectra.  So, to form some statistical measure
+of the results, we need to interpolate PSD levels onto the \rlp{}-based frequencies:
+<<eval=TRUE, echo=TRUE>>=
+require(signal)
+pltpi <- interp1(pltf, pltp, Pspec$freq)
+@
+We then regress the spectral values from \Rcmd{mtapspec} against
+the
+\Rcmd{psdcore} results, since they both produced uniformly tapered
+spectra.
+<<eval=TRUE, echo=TRUE>>=
+df <- data.frame(x=dB(Pspec$spec), y=pltpi, tap=unclass(Aspec$taper))
+summary(dflm <- lm(y ~ x + 0, df))
+df$res <- residuals(dflm)
+@
+We create \Rcmd{ggplot2} objects for plotting purposes:
+<<eval=TRUE, echo=TRUE>>=
+require(ggplot2)
+g1 <- ggplot(df, aes(x=x, y=y)) + 
+    geom_abline(intercept=0, slope=1, size=2, color="salmon")+
+    geom_point(aes(color=dB(y/x))) + 
+    geom_smooth(colour="black", formula = y ~ x + 0, method="lm", 
+                            se=TRUE, fullrange=TRUE) +
+    scale_colour_gradient2(mid="light grey") +
+    theme_bw() +
+    ggtitle("Regression of mtapspec against psdcore")
+g2 <- ggplot(df, aes(x=x, y=res)) + 
+    geom_abline(intercept=0, slope=0, size=2, color="salmon") +
+    geom_point(aes(color=tap)) +
+    theme_bw() +
+    ggtitle("Regression residuals, colored by optimized tapers")
+@
+The regression and residuals from these
+objects are shown in Figure \ref{fig:psdreg}.  
+The structure visible in the residuals
+at low power levels appears to be from curvature bias in
+the \Rcmd{mtapspec} results, which
+manifests at short wavelengths
+in Figure \ref{fig:psdcomp}.
+
+\begin{figure}[htbp!]
+\begin{center}
+<<eval=TRUE, echo=FALSE, fig=TRUE, width=7, height=6, label=fig_rseis_vsRLP1>>=
+print(g1)
+@
+<<eval=TRUE, echo=FALSE, fig=TRUE, width=7, height=3, label=fig_rseis_vsRLP2>>=
+print(g2)
+@
+\caption{Regression of \Rcmd{mtapspec} PSD against \Rcmd{psdcore} PSD.}
+\label{fig:psdreg}
+\end{center}
 \end{figure}
 
 \subsection{\Rcmd{multitaper::spec.mtm}}
-	Adaptive sine multitaper option has nearly identical functionality: 
-	it calls source code of a Fortran equivalent to rlp{}, 
-	also written by R.L. Parker.
-	By default it uses the
-	Discrete Prolate Spheroidal Sequences (dpss) of \citet{thomson1982},
-	so there can be	many more knobs to turn.\\
+The function with the highest similarity to \rlp{} is
+\Rcmd{spec.mtm} in the \Rcmd{multitaper} package.
+This is not surprising since it calls 
+source code of a Fortran equivalent to \rlp{}
+authored by R.L. Parker (\citeyear{parkerweb}).
+There are some notable differences, however.  
+By default it uses the Discrete Prolate Spheroidal Sequences (dpss) 
+of \citet{thomson1982},
+which demand bandwidth tuning
+there can be many more knobs to turn.
 
-Among the other functions included in \Rcmd{multitaper} is \Rcmd{spec.mtm}.
-
-In fact, this function calls portions of the Fortran equivalent of 
-\rlp{}
+%BSM data?
 
 \subsection{\Rcmd{SDF::sapa}}
-	As of this writing, the package has no maintainer; 
-	lest we discuss deprecated and archived functions,
-	we will not review its capabilities.\\
+As of this writing, the package has no maintainer; 
+lest we end up discussing deprecated and archived functions,
+we will not compare it to \rlp{}.
 
 \section{Assessing spectral properties}
-In a multitaper scheme,
-the computation of resolution and uncertainty (shown as blue lines
-in Figure \ref{fig:one} depends on the 
-the number of tapers; hence, the methods internal to \Rcmd{plot.spec}
-are not appropriate.
+It is important to place bounds on the uncertainties associated
+with a spectral estimate.
+In a multitaper algorithm the uncertainty and resolution vary with the
+number of tapers in which the number of tapers controls the
+effective degrees of freedom $\nu$ of a $\chi{}_\nu^2$ distribution.
+This goes approximately as
+$$\sqrt(10*K/12)^{-1}$$
+and can be calculated with \Rcmd{spectral\_properties}.  For example:
+<<eval=TRUE, echo=TRUE>>=
+spp <- spectral_properties(Pspec$taper)
+spa <- spectral_properties(Aspec$taper)
+str(spa)
+create_poly <- function(x, y, dy){
+  xx <- c(x, rev(x))
+  yy <- c(y*(1+dy), rev(y*(1-dy)))
+  return(list(xx=xx, yy=yy))
+}
+pspp <- create_poly(Pspec$freq, Pspec$spec, spp$stderr)
+pspa <- create_poly(Aspec$freq, Aspec$spec, spa$stderr)
+@
+
+% instead plot adaptive history! [ ]
+<<eval=TRUE, echo=TRUE, fig=TRUE, width=7, height=6, label=UNCERT>>=
+plot(Pspec$freq, 100*spp$stderr, type="h", col="grey", ylim=c(0,30))
+lines(Pspec$freq, 100*spp$stderr)
+lines(Aspec$freq, 100*spa$stderr, type="h", col="light grey")
+lines(Aspec$freq, 100*spa$stderr, col="red", lwd=2)
+@
+
+\begin{figure}[htbp!]
+\begin{center}
+<<eval=TRUE, echo=TRUE, fig=TRUE, width=7, height=6, label=POLY>>=
+plot(c(0,0.5),c(-8,35),col="white", 
+       main="MAGSAT Spectral Uncertainty (p > 0.95)",
+       ylab="", xlab="spatial frequency, 1/km", yaxt="n", frame.plot=FALSE)
+lines(c(2,1,1,2)*0.01,c(5,5,8.01,8.01)-8)
+text(.05, -1.4, "3.01 dB")
+polygon(pspp$xx, dB(pspp$yy), col="light grey", border="black")
+text(0.15, 6, "With adaptive\ntaper refinement", cex=1.2)
+polygon(pspa$xx, dB(pspa$yy)-8, col="light grey", border="red")
+text(0.35, 22, "Uniform tapering", cex=1.2)
+@
+\caption{Spectral uncertainties with and without adaptive taper optimization.}
+\label{fig:psderr}
+\end{center}
+\end{figure}
+
+So uncertainty is reduced as the number of tapers is increased.
+Even though a multitaper spectral estimate can have much lower uncertainty
+than a \naive{} estimator, the amount of bias introduced by
+tapers may not be trivial.  The approach of \citet{rs1995} is
+to find the number of tapers which minimizes any potential bias.
+
+% plot resolution: the opposite should be true [ ]
 
 %%
+\pagebreak
 \section{Call overview}
 
 \begin{figure}[htbp!]
  \centering
  \includegraphics[width=0.6\textwidth]{yuml_d.png}%%
  \includegraphics[width=0.4\textwidth]{yuml_n.png}
- \caption{Simplified call graph for \rlp{}. The dashed lines show the circuit
+ \caption{Simplified call graph for \rlp{}. The dashed lines show a
+ simplified circuit
  in which the spectra and its tapers make during the iterative process.}
  \label{fig:calls}
 \end{figure}
 
 %%
+\pagebreak
 \bibliographystyle{apalike} %plainnat}
 \bibliography{REFS}
 \end{document}

@@ -36,7 +36,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
     if (stage==0){
       stage <- paste(stage,"est. (pilot)")
     } else {
-      stage <- paste(stage, sprintf("est. (A.V.R. %.01f dB)", dB(dvar)))
+      stage <- paste(stage, sprintf("est. (Ave. S.V.R. %.01f dB)", dB(dvar)))
     }
     message(sprintf("Stage  %s ", stage))
   }
@@ -51,7 +51,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
       # --- pilot spec ---
       # normalization is there
       Pspec <- pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot)
-      dvar.o <- vardiff(Pspec$spec)
+      dvar.o <- vardiff(Pspec$spec, double.diff=TRUE)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
@@ -73,7 +73,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
     }
     ##print(plotpsd_)
     Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, plotpsd=plotpsd_, verbose=FALSE)
-    if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec)/dvar.o)
+    if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
     ## update history
     if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
   }

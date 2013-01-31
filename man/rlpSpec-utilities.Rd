@@ -17,6 +17,7 @@
 \alias{ones.default}
 \alias{rlpSpec-utilities}
 \alias{rowvec}
+\alias{varddiff}
 \alias{vardiff}
 \alias{vector_reshape}
 \alias{vector_reshape.default}
@@ -24,9 +25,12 @@
 \alias{zeros.default}
 \title{Various utility functions.}
 \usage{
-  vardiff(Xd)
+  vardiff(Xd, double.diff = FALSE)
 
-  dB(Rat, invert = FALSE, pos.only = TRUE)
+  varddiff(Xd)
+
+  dB(Rat, invert = FALSE, pos.only = TRUE,
+    is.power = FALSE)
 
   char2envir(envchar)
 
@@ -65,6 +69,9 @@
 \arguments{
   \item{Xd}{object to difference}
 
+  \item{double.diff}{logical; should the double difference
+  be used instead?}
+
   \item{Rat}{numeric; A ratio to convert to decibels
   (\code{dB}).}
 
@@ -73,6 +80,9 @@
 
   \item{pos.only}{logical; if \code{invert=FALSE}, sets
   negative or zero values to NA}
+
+  \item{is.power}{logical; should the factor of 2 be
+  included in the decibel calculation?}
 
   \item{envchar}{An object with class 'character'.}
 
@@ -96,6 +106,8 @@
   division}
 }
 \value{
+  numeric
+
   numeric
 
   numeric
@@ -162,7 +174,9 @@
   \code{mod} finds the modulo division of X and Y.
 }
 \details{
-  Decibels are defined as \deqn{10 \log{}_{10} x}.
+  Decibels are defined as \eqn{10 \log{}_{10}
+  \frac{X_1}{X_2}}, unless \code{is.power=TRUE} in which
+  \eqn{\mathrm{db} X^2 \equiv 20 \log{}_{10} X^2}
 
   \code{colvec, rowvec} are simple wrapper functions to
   \code{vector_reshape}.
@@ -186,6 +200,10 @@
 }
 \examples{
 dB(1) # signal is equal <--> zero dB
+sig <- 1e-10
+all.equal(sig, dB(dB(sig), invert=TRUE))
+pow <- sig**2
+all.equal(pow, dB(dB(sig, is.power=TRUE), invert=TRUE, is.power=TRUE))
 ##
 ## Evaluate character strings
 print(.rlpenv)

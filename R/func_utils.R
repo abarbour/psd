@@ -14,15 +14,28 @@ NULL
 #' @keywords utilities first-difference variance
 #' @seealso \code{\link{rlpSpec-package}}
 #' @param Xd object to difference
+#' @param double.diff logical; should the double difference be used instead?
 #' @return numeric
-vardiff <- function(Xd){stats::var(diff(Xd))}
+vardiff <- function(Xd, double.diff=FALSE){
+  dorder <- 1
+  if (double.diff) dorder <- 2
+  stats::var(diff(Xd, differences=dorder))
+}
+#' @rdname rlpSpec-utilities
+#' @export
+#' @keywords utilities first-difference variance
+#' @return numeric
+varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
 
 #' @description \code{dB} returns an object converted to decibels.
-#' @details Decibels are defined as \deqn{10 \log{}_{10} x}.
+#' @details 
+#' Decibels are defined as \eqn{10 \log{}_{10} \frac{X_1}{X_2}}, 
+#' unless \code{is.power=TRUE} in which \eqn{\mathrm{db} X^2 \equiv 20 \log{}_{10} X^2}
 #' @rdname rlpSpec-utilities
 #' @param Rat numeric; A ratio to convert to decibels (\code{dB}).
 #' @param invert logical; assumes \code{Rat} is already in decibels, so return ratio
 #' @param pos.only logical; if \code{invert=FALSE}, sets negative or zero values to NA
+#' @param is.power logical; should the factor of 2 be included in the decibel calculation?
 
 #' @return numeric
 #' @export
@@ -31,8 +44,13 @@ vardiff <- function(Xd){stats::var(diff(Xd))}
 #' @seealso \code{\link{rlpSpec-package}}
 #' @examples
 #' dB(1) # signal is equal <--> zero dB
-dB <- function(Rat, invert=FALSE, pos.only=TRUE){
+#' sig <- 1e-10
+#' all.equal(sig, dB(dB(sig), invert=TRUE))
+#' pow <- sig**2
+#' all.equal(pow, dB(dB(sig, is.power=TRUE), invert=TRUE, is.power=TRUE))
+dB <- function(Rat, invert=FALSE, pos.only=TRUE, is.power=FALSE){
   CC <- 10
+  if (is.power) CC <- CC * 2
   if (invert) {
     toret <- 10**(Rat/CC)
   } else {
