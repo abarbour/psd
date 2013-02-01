@@ -3,11 +3,11 @@
 \alias{pspectrum.default}
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
-  pspectrum(x, x.frqsamp = 1, ntap_pilot = 5, niter = 3,
+  pspectrum(x, x.frqsamp = 1, ntap_pilot = 5, niter = 4,
     verbose = TRUE, no.history = FALSE, plot = TRUE, ...)
 
   \method{pspectrum}{default} (x, x.frqsamp = 1,
-    ntap_pilot = 5, niter = 3, verbose = TRUE,
+    ntap_pilot = 5, niter = 4, verbose = TRUE,
     no.history = FALSE, plot = TRUE, ...)
 }
 \arguments{
