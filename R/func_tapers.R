@@ -64,9 +64,9 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   # number of tapered sections to average; hence, floor.
   # pmin/pmax.int are fast versions of
   x <- as.vector(unlist(x))
-  if (is.null(max_taper)) max_taper <- max(x)
-  #print(summary(unclass(x)))
-  stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper & !(is.character(x)))
+  stopifnot(!(is.character(x)))
+  if (is.null(max_taper)) max_taper <- ceiling(max(x))
+  stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper)
   x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(x))))
   #x[x < min_taper] <- min_taper
   #   > as.integer(as.matrix(data.frame(x=1:10,y=10:19)))
@@ -120,7 +120,7 @@ print.tapers <- function(x, ...){
   stopifnot(is.tapers(x))
   xh <- paste(as.character(head(x)), collapse=" ")
   xt <- paste(as.character(tail(x)), collapse=" ")
-  cat(sprintf("tapers object:\n\thead:  %s\n\t\t...\n\ttail:  %s\n",xh,xt))
+  cat(sprintf("'tapers' object: num. tapers applied by index\n\thead:  %s\n\t\t...\n\ttail:  %s\n",xh,xt))
 }
 
 #' @rdname tapers-methods
@@ -206,94 +206,6 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
   graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
   vl <- c(1, nt)
   graphics::abline(v=vl,lty=3,lwd=2,col="blue")
-}
-
-#' Calculate spectral properties such as standard error and resolution.
-#'
-#' Various spectral properties may be computed from the vector of tapers, and
-#' if necessary the sampling frequency.
-#'
-#' @section Parameter Details:
-#' \subsection{Uncertainty}{
-#' The errors are estimated in the simplest way, 
-#' from the number of degrees of freedom; a more 
-#' sophisticated (and complicated) approach is to
-#' estimate via jack-knifing (Prieto et al 2007)
-#' which is not yet available.
-#'
-#' Here the standard error \eqn{\delta S} is returned so \eqn{\delta S \cdot S} 
-#' represents spectral uncertainty.
-#' }
-#'
-#' \subsection{Resolution}{
-#' The frequency resolution depends on the number of tapers (\eqn{K}), and
-#' is found from 
-#' \deqn{\frac{K \cdot f_N}{N_f}} 
-#' where \eqn{f_N} is the Nyquist
-#' frequency and \eqn{N_f} is the 
-#' number of frequencies estimated.
-#' }
-#'
-#' \subsection{Degrees of Freedom}{
-#' There are two degrees of freedom for each taper.
-#' }
-#'
-#' \subsection{Bandwidth}{
-#' The bandwidth of a multitaper estimate depends on the number of
-#' tapers.
-#' Following Walden et al (1995) the effective bandwidth is \eqn{\approx 2W}
-#' where
-#' \deqn{W = \frac{K + 1}{2N}} 
-#(N+1)}}
-#' and \eqn{N} is the number of terms in the series, which makes \eqn{N \cdot W} the
-#' approximate time-bandwidth product.
-#' }
-#' 
-#' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @name spectral_properties
-#' @param tapvec object with class tapers
-#' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
-#' @param n.freq scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the tapers object is assumed to be the number)
-#' @param ... additional arguments (unused)
-#' @return A list with the following properties (and names):
-#' \itemize{
-#' \item{\code{taper}: The original taper vector.}
-#' \item{\code{stderr}: The standard error of the spectrum.}
-#' \item{\code{resolution}: The effective spectral resolution.}
-#' \item{\code{dof}: The number of degrees of freedom.}
-#' \item{\code{bw}: The effective bandwidth of the spectrum.}
-#' }
-#' @export
-#' @keywords properties tapers resolution uncertainty degrees-of-freedom bandwidth
-spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, ...) UseMethod("spectral_properties")
-#' @rdname spectral_properties
-#' @aliases spectral_properties.spec
-#' @method spectral_properties spec
-#' @S3method spectral_properties spec
-spectral_properties.spec <- function(tapvec, f.samp=1, n.freq=NULL, ...) .NotYetImplemented()
-#' @rdname spectral_properties
-#' @aliases spectral_properties.tapers
-#' @method spectral_properties tapers
-#' @S3method spectral_properties tapers
-spectral_properties.tapers <- function(tapvec, f.samp=1, n.freq=NULL, ...){
-  stopifnot(is.tapers(tapvec))
-  K <- unclass(tapvec)
-  Nyquist <- f.samp/2
-  if (is.null(n.freq)) n.freq <- length(tapvec)
-  ## Resolution
-  Resolu <- K * Nyquist / n.freq
-  ## Uncertainty
-  StdErr <- 1 / sqrt(K / 1.2)
-  #Var <- 10 / K / 12
-  ## Deg Freedom
-  Dof <- 2 * K
-  ## Bandwidth
-  # Walden et al
-  # half-width W = (K + 1)/{2(N + 1)}
-  # effective bandwidth ~ 2 W (accurate for many spectral windows)
-  BW <- K/n.freq
-  ##
-  return(data.frame(taper=K, stderr=StdErr, resolution=Resolu, dof=Dof, bw=BW))
 }
 
 ###

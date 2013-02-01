@@ -23,11 +23,11 @@
 #' @param ... Optional parameters passed to \code{\link{riedsid}}
 #' @return Object with class 'spec', invisibly.
 #' @example x_examp/pspec.R
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
   stopifnot(length(x)>1)
   xo <- rlpSpec:::rlp_envAssignGet("original_series", x)
   #
@@ -43,14 +43,20 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
   #
   niter <- abs(niter)
   plotpsd_ <- FALSE
+  normalize_ <- rlpSpec:::rlp_envAssignGet("is.normalized", TRUE)
   for (stage in 0:niter){
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
       rlp_initEnv(refresh=TRUE, verbose=verbose)
       # --- pilot spec ---
-      # normalization is there
-      Pspec <- pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot)
+      # ** normalization is here:
+      if (niter==0){
+        if (plot) plotpsd_ <- TRUE
+      }
+      print(normalize_)
+      Pspec <- pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot, 
+                          Nyquist.normalize=normalize_, plotpsd=plotpsd_)
       dvar.o <- vardiff(Pspec$spec, double.diff=TRUE)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
@@ -60,22 +66,25 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
         update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
       xo <- 0 # to prevent passing orig data back/forth
+      normalize_ <- FALSE # only do it once!
+    } else {
+      rverb <- ifelse(stage>0, FALSE, TRUE)
+      ## calculate optimal tapers
+      kopt <- riedsid(Pspec, verbose=rverb, ...)
+      stopifnot(exists('kopt'))
+      ## reapply to spectrum
+      if (stage==niter & plot){
+        plotpsd_ <- TRUE
+        xo <- x
+        rm(x)
+      }
+      Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt,
+                       Nyquist.normalize=normalize_,
+                       plotpsd=plotpsd_, verbose=FALSE)
+      if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
+      ## update history
+      if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
     }
-    rverb <- ifelse(stage>0, FALSE, TRUE)
-    ## calculate optimal tapers
-    kopt <- riedsid(Pspec, verbose=rverb, ...)
-    stopifnot(exists('kopt'))
-    ## reapply to spectrum
-    if (stage==niter & plot){
-      plotpsd_ <- TRUE
-      xo <- x
-      rm(x)
-    }
-    ##print(plotpsd_)
-    Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, plotpsd=plotpsd_, verbose=FALSE)
-    if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
-    ## update history
-    if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
   }
   return(invisible(Pspec))
 }
@@ -107,14 +116,15 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=3, verbose=TRU
 #' @param x vetor; the data series to find a pilot spectrum for
 #' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
 #' @param ntap scalar; the number of tapers to apply during spectrum estimation
+#' @param Nyquist.normalize  logical; should the units be returned based on Hz, rather than Nyquist?
 #' @param ... additional parameters passed to \code{\link{psdcore}}
 #' @return An object with class 'spec', invisibly.  It also assigns it to
 #' \code{"final_psd"} in the working environment.
-pilot_spec <- function(x, x.frequency=1, ntap=5, ...) UseMethod("pilot_spec")
+pilot_spec <- function(x, x.frequency=1, ntap=5, Nyquist.normalize=TRUE, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @method pilot_spec default
 #' @S3method pilot_spec default
-pilot_spec.default <- function(x, x.frequency=1, ntap=5, ...){
+pilot_spec.default <- function(x, x.frequency=1, ntap=5, Nyquist.normalize=TRUE, ...){
   stopifnot(length(ntap)==1)
   if (is.ts(x)) x.frequency <- stats::frequency(x)
   # initial spectrum:
@@ -122,7 +132,7 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=5, ...){
                    ndecimate=1L, 
                    demean=TRUE, detrend=TRUE, 
                    first.last=TRUE,
-                   Nyquist.normalize=TRUE,
+                   Nyquist.normalize=Nyquist.normalize,
                    as.spec=TRUE, 
                    refresh=TRUE, ...)
   num_frq <- length(Pspec$freq)

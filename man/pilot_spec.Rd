@@ -5,10 +5,11 @@
 \alias{spec.pilot}
 \title{Calculate the pilot power spectral densities.}
 \usage{
-  pilot_spec(x, x.frequency = 1, ntap = 5, ...)
+  pilot_spec(x, x.frequency = 1, ntap = 5,
+    Nyquist.normalize = TRUE, ...)
 
   \method{pilot_spec}{default} (x, x.frequency = 1,
-    ntap = 5, ...)
+    ntap = 5, Nyquist.normalize = TRUE, ...)
 }
 \arguments{
   \item{x}{vetor; the data series to find a pilot spectrum
@@ -19,6 +20,9 @@
 
   \item{ntap}{scalar; the number of tapers to apply during
   spectrum estimation}
+
+  \item{Nyquist.normalize}{logical; should the units be
+  returned based on Hz, rather than Nyquist?}
 
   \item{...}{additional parameters passed to
   \code{\link{psdcore}}}

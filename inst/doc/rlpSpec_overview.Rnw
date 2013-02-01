@@ -107,14 +107,14 @@ multitaper or otherwise.
 Setting aside any discussion regarding sample stationarity,
 we can find power spectral density (PSD)
 estimates for the two series quite simply:
-%% pspectrum
+%% pspectrum 4 iters
 <<eval=TRUE, echo=TRUE>>=
 psdr <- pspectrum(magsat$raw)
 psdc <- pspectrum(magsat$clean)
 @
 Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
 \Rcmd{niter}
-iterations of refinement (defaulting to 3).
+iterations of refinement.
 With each iteration
 the number of tapers is adjusted 
 to the optimal number, based on the weighted
@@ -150,7 +150,7 @@ plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 legend("bottomleft", c("Raw","Clean"), title="Series", lwd=3, cex=1.1, lty=c(1,4))
 @
 \caption{Power spectral density estimates for the raw and cleaned
-\Rcmd{MAGSAT} data included with \rlp{}.}
+             \Rcmd{MAGSAT} data included with \rlp{}.}
 \label{fig:pmag}
 \end{center}
 \end{figure}
@@ -323,7 +323,7 @@ We will need to correct for normalization factors, as necessary.
 <<eval=TRUE, echo=TRUE>>=
 Xspec <- spec.pgram(ats, pad=1, taper=0.2, detr=TRUE, dem=TRUE, plot=FALSE)
 Pspec <- psdcore(ats, dt, tapinit)
-Aspec <- pspectrum(ats, dt, tapinit, niter=2)
+Aspec <- pspectrum(ats, dt, tapinit, niter=3)
 # Correct for double-sidedness of spectrum and mtapspec results
 nt <- 1:Mspec$numfreqs
 mspec <- Mspec$spec[nt] * 2
@@ -362,9 +362,7 @@ require(signal)
 pltpi <- interp1(pltf, pltp, Pspec$freq)
 @
 We then regress the spectral values from \Rcmd{mtapspec} against
-the
-\Rcmd{psdcore} results, since they both produced uniformly tapered
-spectra.
+the \Rcmd{psdcore} results, since they both produced uniformly tapered spectra.
 <<eval=TRUE, echo=TRUE>>=
 df <- data.frame(x=dB(Pspec$spec), y=pltpi, tap=unclass(Aspec$taper))
 summary(dflm <- lm(y ~ x + 0, df))
@@ -430,12 +428,54 @@ we will not compare it to \rlp{}.
 \section{Assessing spectral properties}
 It is important to place bounds on the uncertainties associated
 with a spectral estimate.
-In a multitaper algorithm the uncertainty and resolution vary with the
-number of tapers in which the number of tapers controls the
-effective degrees of freedom $\nu$ of a $\chi{}_\nu^2$ distribution.
-This goes approximately as
-$$\sqrt(10*K/12)^{-1}$$
-and can be calculated with \Rcmd{spectral\_properties}.  For example:
+In a multitaper algorithm the uncertainty is distributed as
+a $\chi{}_{\nu}^2$ variate where $\nu$ is
+the number of degrees of freedom, which is twice the
+number of tapers applied.
+A proxy for this is simply $1/\sqrt{K}$, where $K$ is the number of
+tapers.  Using $\nu = 2*K$ we can estimate the distribution
+of uncertainties.  
+Among other calculations, \Rcmd{spectral\_properties} returns the 
+$\chi{}_{\nu}^2$ based uncertainties, as well as the
+approximate uncertainties.  To illustrate, we 
+plot the uncertainties for an integer sequence\footnote{
+Note the $\chi{}_{\nu}^2$ distribution is defined for non-negative,
+non-integer degrees of freedom, but we cannot apply
+fractions of tapers.} of tapers $[0, 50]$ in
+Figure \ref{fig:psderr}.  The benefits of having more than just
+a few tapers becomes obvious, though the spectral uncertainty
+is asymptotically decreasing with taper numbers.
+
+\begin{figure}[htbp!]
+\begin{center}
+<<eval=TRUE, echo=TRUE, fig=TRUE, label=SPECERR>>=
+sp <- spectral_properties(as.tapers(1:50), p=0.95)
+plot(stderr.chi.upper ~ taper, sp, type="s", 
+       ylim=(c(0, 1.4)), yaxs="i", xaxs="i",
+       xlab=expression("number of tapers ("* nu/2 *")"), ylab="Standard error",
+       main="Spectral uncertainties")
+lines(stderr.chi.lower ~ taper, sp, type="s")
+lines(stderr.chi.median ~ taper, sp, type="s", lwd=2)
+lines(stderr ~ taper, sp, type="s", col="red",lwd=2)
+legend("topright", c(expression("Based on "* chi^2 *"(p,"*nu*") and (1-p,"*nu*")"),
+                               expression(""* chi^2 *"(p=0.5,"*nu*")"), "approximation"),
+                               lwd=c(1,3,3), col=c("black","black","red"))
+@
+\caption{Spectral uncertainties by number of tapers, found
+by forming the $\chi{}_{\nu}^2$ distribution, where $\nu$ is
+the number of degrees of freedom (two per taper).  
+The black lines show uncertainties for a coverage probability of 0.95.
+The thick, red line shows an approximation to these uncertainties
+based on $1/\sqrt{K}$, which is accurate to within a few percent.
+}
+\label{fig:psderr}
+\end{center}
+\end{figure}
+
+Returning to the MAGSAT spectra, let us compare the \rlp{}
+spectra with spectral uncertainty as bounded polygons.
+
+First calculate the uncertainties:
 <<eval=TRUE, echo=TRUE>>=
 spp <- spectral_properties(Pspec$taper)
 spa <- spectral_properties(Aspec$taper)
@@ -447,14 +487,6 @@ create_poly <- function(x, y, dy){
 }
 pspp <- create_poly(Pspec$freq, Pspec$spec, spp$stderr)
 pspa <- create_poly(Aspec$freq, Aspec$spec, spa$stderr)
-@
-
-% instead plot adaptive history! [ ]
-<<eval=TRUE, echo=TRUE, fig=TRUE, width=7, height=6, label=UNCERT>>=
-plot(Pspec$freq, 100*spp$stderr, type="h", col="grey", ylim=c(0,30))
-lines(Pspec$freq, 100*spp$stderr)
-lines(Aspec$freq, 100*spa$stderr, type="h", col="light grey")
-lines(Aspec$freq, 100*spa$stderr, col="red", lwd=2)
 @
 
 \begin{figure}[htbp!]
@@ -471,15 +503,63 @@ polygon(pspa$xx, dB(pspa$yy)-8, col="light grey", border="red")
 text(0.35, 22, "Uniform tapering", cex=1.2)
 @
 \caption{Spectral uncertainties with and without adaptive taper optimization.}
-\label{fig:psderr}
+\label{fig:magerr}
 \end{center}
 \end{figure}
 
-So uncertainty is reduced as the number of tapers is increased.
-Even though a multitaper spectral estimate can have much lower uncertainty
-than a \naive{} estimator, the amount of bias introduced by
-tapers may not be trivial.  The approach of \citet{rs1995} is
-to find the number of tapers which minimizes any potential bias.
+%Even though a multitaper spectral estimate can have much lower uncertainty
+%than a \naive{} estimator, the amount of bias introduced by
+%tapers may not be trivial.  The approach of \citet{rs1995} is
+%to find the number of tapers which minimizes any potential bias.
+
+One might be curious to study how the
+uncertainties change with each iteration.
+\Rcmd{pspectrum}
+ saves an array of ``historical" data in its working environment.
+ Specifically, it saves the frequencies,
+ spectral values, and number of tapers at each stage of the adaptive
+ procedure, accessible with \Rcmd{get\_adapt\_history}.
+
+First we redo the spectral analysis to add a few more iterations to visualize,
+and then bring the stage history into \Rcmd{.GlobalEnv}.
+<<eval=TRUE, echo=TRUE>>=
+pspectrum(ats, niter=6)
+str(AH <- get_adapt_history())
+@
+
+% depending where the normalization occurs will determine
+% the normalization of these! fix [ ]
+
+<<eval=TRUE, echo=TRUE>>=
+#require(plyr)
+Freqs <- log10(AH$freq)
+Dat <- AH$stg_psd
+numit <- length(Dat)
+StgPsd <- dB(matrix(unlist(Dat), ncol=numit))
+Dat <- AH$stg_kopt
+StgTap <- matrix(unlist(Dat), ncol=numit)
+rm(Dat, AH)
+@
+
+% I think this is revealing a sequential normalization problem
+We can plot these easily with \Rcmd{matplot}, and have done so in
+Figure \ref{fig:psdhist}.
+
+\begin{figure}[htbp!]
+\begin{center}
+<<eval=TRUE, echo=FALSE, fig=TRUE, width=7, height=4, label=HIST1>>=
+lwds <- c(1,rep(2,numit-1))
+matplot(Freqs, StgPsd, type="l", lty=1, lwd=lwds, 
+             main="PSD estimation history")
+@
+<<eval=TRUE, echo=FALSE, fig=TRUE, width=7, height=4, label=HIST2>>=
+matplot(Freqs, StgTap, type="l", lty=1, lwd=lwds, 
+             main="Taper optimization history")
+@
+\caption{Adaptive history.}
+\label{fig:psdhist}
+\end{center}
+\end{figure}
 
 % plot resolution: the opposite should be true [ ]
 

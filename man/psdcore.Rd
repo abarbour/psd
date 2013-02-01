@@ -38,7 +38,7 @@
   Nyquist frequency estimates}
 
   \item{Nyquist.normalize}{logical; should the units be
-  returned in Hz, rather than Nyquist?}
+  returned on Hz, rather than Nyquist?}
 
   \item{plotpsd}{logical; should the estimate be shown
   compared to the \code{spec.pgram} estimate}

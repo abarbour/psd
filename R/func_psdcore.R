@@ -37,7 +37,7 @@
 #' @param detrend  logical; should \code{X.d} have a linear trend removed
 #' @param na.action  function dealing with \code{NA} values
 #' @param first.last  the extrapolates to give the zeroth and Nyquist frequency estimates
-#' @param Nyquist.normalize  logical; should the units be returned in Hz, rather than Nyquist?
+#' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
 #' @param as.spec  logical; should the object returned be of class 'spec'?
 #' @param refresh  logical; ensure a free environment prior to execution
@@ -85,7 +85,7 @@ psdcore.default <- function(X.d,
   } else {
     stop("bad sampling information")
   }
-  # samoling and nyquist
+  # sampling and nyquist
   X.frq <- stats::frequency(X.d)
   Nyq <- X.frq/2
   #   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
@@ -142,6 +142,7 @@ psdcore.default <- function(X.d,
     varx <- rlp_envGet("ser_even_var")
     fftz <- rlp_envGet("fft_even_demeaned_padded")
   }
+  #
   # if ntaper is a vector, this doesn't work [ ]
   ##
   # if the user wants a raw periodogram: by all meanss
@@ -245,7 +246,9 @@ psdcore.default <- function(X.d,
   psd.n <- psd * (2 * varx / (trap.area * bandwidth))
   frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
   #and (optionally) the Nyquist frequency so units will be in (units**2/Hz)
+  normalized <- rlpSpec:::rlp_envGet("is.normalized")
   if (Nyquist.normalize) {
+    message("NNORM!")
     frq <- frq * X.frq
     psd.n <- psd.n / X.frq
   }
@@ -268,12 +271,11 @@ psdcore.default <- function(X.d,
     fsamp <- frequency(Xser) # so we can normalize properly
     stopifnot(fsamp==X.frq)
     Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=demean, plot=FALSE)
-    if (nNyq) {
-      # frequencies are appropriate,
-      # but spectrum is normed for double-sided whereas rlpSpec single-sided; hence,
-      # factor of 2
-      Xpg$spec <- Xpg$spec * 2
-    }
+    # frequencies are appropriate,
+    # but spectrum is normed for double-sided whereas rlpSpec single-sided; hence,
+    # factor of 2
+    Xpg$spec <- Xpg$spec * 2
+    ##
     opar <- par(no.readonly = TRUE)
     par(mar=c(2, 3, 2.3, 1.2), oma=rep(2,4), las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
     #layout(matrix(c(1,2), ncol=1), c(1,2))
@@ -282,10 +284,10 @@ psdcore.default <- function(X.d,
     # rlp
     lfrq <- log10(frqs)
     rm(frqs)
-    db_psd <- 10*log10(psds)
+    db_psd <- dB(psds)
     rm(psds)
     # spec.pgram
-    db_pgram <- 10*log10(Xpg$spec)
+    db_pgram <- dB(Xpg$spec)
     lfrqp <- log10(Xpg$freq)
     rm(Xpg)
     r1 <- range(db_psd)
@@ -343,8 +345,7 @@ psdcore.default <- function(X.d,
                   detrend = detrend, 
                   demean = demean,
                   timebp=timebp,
-                  nyquist.frequency=Nyq,
-                  nyquist.normalized=Nyquist.normalize
+                  nyquist.frequency=Nyq
                   )
   if (as.spec){class(psd.out) <- "spec"}
   return(invisible(psd.out))

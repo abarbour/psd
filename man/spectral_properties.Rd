@@ -5,16 +5,16 @@
 \title{Calculate spectral properties such as standard error and resolution.}
 \usage{
   spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
-    ...)
+    p = 0.95, ...)
 
-  \method{spectral_properties}{spec} (tapvec, f.samp = 1,
-    n.freq = NULL, ...)
+  \method{spectral_properties}{spec} (tapvec, ...)
 
   \method{spectral_properties}{tapers} (tapvec, f.samp = 1,
-    n.freq = NULL, ...)
+    n.freq = NULL, p = 0.95, ...)
 }
 \arguments{
-  \item{tapvec}{object with class tapers}
+  \item{tapvec}{object with class \code{tapers} or
+  \code{spec}}
 
   \item{f.samp}{scalar; the sampling frequency (e.g. Hz) of
   the series the tapers are for}
@@ -23,12 +23,17 @@
   original spectrum (if \code{NULL} the length of the
   tapers object is assumed to be the number)}
 
+  \item{p}{numeric; the coverage probability, bound within
+  \eqn{[0,1)}}
+
   \item{...}{additional arguments (unused)}
 }
 \value{
   A list with the following properties (and names):
   \itemize{ \item{\code{taper}: The original taper vector.}
   \item{\code{stderr}: The standard error of the spectrum.}
+  \item{\code{stderr.chi, .upper, .lower, .median}:A data
+  frame with the results from \code{\link{spec_confint}}.}
   \item{\code{resolution}: The effective spectral
   resolution.} \item{\code{dof}: The number of degrees of
   freedom.} \item{\code{bw}: The effective bandwidth of the
@@ -67,6 +72,9 @@
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
+}
+\seealso{
+  \code{\link{spec_confint}}, \code{\link{rlpSpec-package}}
 }
 \keyword{bandwidth}
 \keyword{degrees-of-freedom}

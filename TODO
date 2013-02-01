@@ -1,7 +1,12 @@
 Miscellany
 ----------
-[ ] migrate examples in functions to ./examp/
 [ ] normalization function
+!!!
+*** check stage normalizations?
+*** remove Nyquist norm entirely?
+
+[ ] migrate examples in functions to ./examp/
+*** ensure
 [X] build --as-cran --no-multiarch --no-examples
 *** remove --no-examples and get to build [ ]
 *** *** why do they not build??
@@ -45,7 +50,8 @@ datasets
 `pspectrum`
 -----------
 [ ] example
-[ ] ensure normalization occurs only once!
+[X] ensure normalization occurs only once!
+*** in pilot spec or not?!  [ ]
 [X] option to show final with raw periodogram
 *** ensure Nyquist.normalize affects pgram too [X]
 [X] improve function documentation
