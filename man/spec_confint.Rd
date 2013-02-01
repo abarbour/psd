@@ -5,19 +5,25 @@
 \alias{spec_confint.tapers}
 \title{Calculate confidence intervals for a given number of degrees of freedom.}
 \usage{
-  spec_confint(dof, p = 0.95)
+  spec_confint(dof, p = 0.95, as.db = FALSE)
 
-  \method{spec_confint}{spec} (dof, p = 0.95)
+  \method{spec_confint}{spec} (dof, p = 0.95,
+    as.db = FALSE)
 
-  \method{spec_confint}{tapers} (dof, p = 0.95)
+  \method{spec_confint}{tapers} (dof, p = 0.95,
+    as.db = FALSE)
 
-  \method{spec_confint}{default} (dof, p = 0.95)
+  \method{spec_confint}{default} (dof, p = 0.95,
+    as.db = FALSE)
 }
 \arguments{
   \item{dof}{numeric; the degrees of freedom}
 
   \item{p}{numeric; the coverage probability, bound within
   \eqn{[0,1)}}
+
+  \item{as.db}{logical; should the values be returned as
+  decibels?}
 }
 \value{
   A \code{data.frame} with the following properties (and

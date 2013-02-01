@@ -5,12 +5,12 @@
 \title{Calculate spectral properties such as standard error and resolution.}
 \usage{
   spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
-    p = 0.95, ...)
+    p = 0.95, db.ci = FALSE, ...)
 
   \method{spectral_properties}{spec} (tapvec, ...)
 
   \method{spectral_properties}{tapers} (tapvec, f.samp = 1,
-    n.freq = NULL, p = 0.95, ...)
+    n.freq = NULL, p = 0.95, db.ci = FALSE, ...)
 }
 \arguments{
   \item{tapvec}{object with class \code{tapers} or
@@ -25,6 +25,9 @@
 
   \item{p}{numeric; the coverage probability, bound within
   \eqn{[0,1)}}
+
+  \item{db.ci}{logical; should the uncertainty confidence
+  intervals be returned as decibels?}
 
   \item{...}{additional arguments (unused)}
 }
