@@ -5,6 +5,7 @@ Creation date:	Tue Jan 29 20:59:57 PST 2013
 Notes:
 	* do not use \include (use \input)
 	(build creates aux files and CRAN checks NOTE/COMPLAIN)
+	* Sweave build removes saved pdfs!
 
 ##
 ## DFT benchmark vignette [DONE]
@@ -21,7 +22,7 @@ Notes:
 	normalization.pdf
 	tbl_norms.tex		normalization definitions
 ##
-## Overview benchmark vignette [ ]
+## Overview benchmark vignette [DONE]
 ##
 	rlpSpec_overview.Rnw
 	rlpSpec_overview.pdf

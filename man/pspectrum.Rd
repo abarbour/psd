@@ -4,11 +4,12 @@
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
   pspectrum(x, x.frqsamp = 1, ntap_pilot = 5, niter = 4,
-    verbose = TRUE, no.history = FALSE, plot = TRUE, ...)
+    Nyquist.normalize = TRUE, verbose = TRUE,
+    no.history = FALSE, plot = TRUE, ...)
 
   \method{pspectrum}{default} (x, x.frqsamp = 1,
-    ntap_pilot = 5, niter = 4, verbose = TRUE,
-    no.history = FALSE, plot = TRUE, ...)
+    ntap_pilot = 5, niter = 4, Nyquist.normalize = TRUE,
+    verbose = TRUE, no.history = FALSE, plot = TRUE, ...)
 }
 \arguments{
   \item{x}{vector; series to estimate PSD for.}
@@ -21,6 +22,9 @@
 
   \item{niter}{scalar; the number of adaptive iterations to
   execute after the pilot spectrum.}
+
+  \item{Nyquist.normalize}{logical; should the units be
+  returned on Hz, rather than Nyquist?}
 
   \item{verbose}{logical; Should messages be given?}
 

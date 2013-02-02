@@ -37,7 +37,6 @@
 #' @param detrend  logical; should \code{X.d} have a linear trend removed
 #' @param na.action  function dealing with \code{NA} values
 #' @param first.last  the extrapolates to give the zeroth and Nyquist frequency estimates
-#' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
 #' @param as.spec  logical; should the object returned be of class 'spec'?
 #' @param refresh  logical; ensure a free environment prior to execution
@@ -52,7 +51,7 @@
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
 # @example x_examp/psdcore.R
-psdcore <- function(X.d, X.frq=1, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, Nyquist.normalize=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, X.frq=1, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
 #' @S3method psdcore default
@@ -64,7 +63,6 @@ psdcore.default <- function(X.d,
                             detrend=TRUE,
                             na.action = stats::na.fail,
                             first.last=TRUE,
-                            Nyquist.normalize=TRUE,
                             plotpsd=FALSE,
                             as.spec=TRUE,
                             refresh=FALSE,
@@ -81,15 +79,12 @@ psdcore.default <- function(X.d,
   } else if (X.frq < 0){
     # value is sampling interval
     X.d <- na.action(stats::ts(X.d, deltat=abs(X.frq)))
-    
   } else {
     stop("bad sampling information")
   }
   # sampling and nyquist
   X.frq <- stats::frequency(X.d)
   Nyq <- X.frq/2
-  #   X.d <- na.action(stats::ts(X.d, frequency=X.frq))
-  #   Nyq <- stats::frequency(X.d)/2
   ##
   ###  When ntaper is a scalar, initialize
   ##
@@ -145,7 +140,7 @@ psdcore.default <- function(X.d,
   #
   # if ntaper is a vector, this doesn't work [ ]
   ##
-  # if the user wants a raw periodogram: by all meanss
+  # if the user wants a raw periodogram: by all means
   DOAS <- FALSE
   if (lt == 1){
     if (ntaper > 0) DOAS <- TRUE
@@ -153,7 +148,8 @@ psdcore.default <- function(X.d,
     if (!(is.tapers(ntap))) DOAS <- TRUE
   }
   if (DOAS) ntap <- as.tapers(ntap, setspan=TRUE)
-  ##
+  
+  ## interpolation
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
     stopifnot(!is.integer(ndecimate))
@@ -243,15 +239,10 @@ psdcore.default <- function(X.d,
   ## Normalize by variance, 
   trap.area <- sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
+  ## normalize to two sided spectrum
   psd.n <- psd * (2 * varx / (trap.area * bandwidth))
-  frq <- as.numeric(seq.int(0, 0.5, length.out=nfreq))
-  #and (optionally) the Nyquist frequency so units will be in (units**2/Hz)
-  normalized <- rlpSpec:::rlp_envGet("is.normalized")
-  if (Nyquist.normalize) {
-    message("NNORM!")
-    frq <- frq * X.frq
-    psd.n <- psd.n / X.frq
-  }
+  ## Nyquist frequencies
+  frq <- as.numeric(seq.int(0, Nyq, length.out=nfreq)) # was just 0.5
   ## timebp
   timebp <- as.numeric(ntap/2)
   ## bandwidth
@@ -266,15 +257,14 @@ psdcore.default <- function(X.d,
   indic <- 2:(nfreq-1)
   if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
-  pltpsd <- function(Xser, frqs, psds, taps, nyq, nNyq, detrend, demean, ...){
-    #Xser <- ts(Xser, frequency=X.frq) 
-    fsamp <- frequency(Xser) # so we can normalize properly
+  pltpsd <- function(Xser, frqs, psds, taps, nyq, detrend, demean, ...){
+    fsamp <- frequency(Xser)
     stopifnot(fsamp==X.frq)
     Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=demean, plot=FALSE)
     # frequencies are appropriate,
     # but spectrum is normed for double-sided whereas rlpSpec single-sided; hence,
     # factor of 2
-    Xpg$spec <- Xpg$spec * 2
+    Xpg <- normalize(Xpg, fsamp, "spectrum", verbose=FALSE)
     ##
     opar <- par(no.readonly = TRUE)
     par(mar=c(2, 3, 2.3, 1.2), oma=rep(2,4), las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
@@ -282,14 +272,12 @@ psdcore.default <- function(X.d,
     layout(matrix(c(1,1,2,2,3,4), 3, 2, byrow = TRUE))
     ## Prelims:
     # rlp
-    lfrq <- log10(frqs)
-    rm(frqs)
-    db_psd <- dB(psds)
-    rm(psds)
+    lfrq <- log10(frqs); rm(frqs)
+    db_psd <- dB(psds/fsamp); rm(psds) # quick normalization
     # spec.pgram
-    db_pgram <- dB(Xpg$spec)
     lfrqp <- log10(Xpg$freq)
-    rm(Xpg)
+    db_pgram <- dB(Xpg$spec); rm(Xpg)
+    # plotting
     r1 <- range(db_psd)
     r2 <- range(db_pgram)
     ## Spectra, in decibels
@@ -297,8 +285,8 @@ psdcore.default <- function(X.d,
          main="Naive and Multitaper PSD",
          xaxs="i", xlab="",
          ylab="dB, units^2 * delta",
-         ylim=c(min(r1,r2), max(r1,r2)))
-    mtext("frequency, log10 1 / delta", side=1, line=1.5)
+         ylim=c(min(r1, r2), max(r1, r2)))
+    mtext("frequency, log10 frequency", side=1, line=1.5)
     #mtext(, cex=0.6)
     abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
     lines(lfrq, db_psd, type="l")
@@ -320,10 +308,7 @@ psdcore.default <- function(X.d,
     par(opar)
   }
   ## Plot it
-  if (plotpsd) pltpsd(Xser=X, frqs=frq, 
-                      psds=psd.n, taps=ntap,
-                      nyq=Nyq, nNyq=Nyquist.normalize, 
-                      detrend=detrend, demean=demean, ...)
+  if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, taps=ntap, nyq=Nyq, detrend=detrend, demean=demean, ...)
   ##
   funcall<-paste(as.character(match.call()[]),collapse=" ") 
   psd.out <- list(freq = as.numeric(frq), 
@@ -341,7 +326,7 @@ psdcore.default <- function(X.d,
                   snames = colnames(X), 
                   method = sprintf("Adaptive Sine Multitaper (rlpSpec)\n%s",funcall), 
                   taper = ntap, 
-                  pad = 1, 
+                  pad = 1, # always!
                   detrend = detrend, 
                   demean = demean,
                   timebp=timebp,

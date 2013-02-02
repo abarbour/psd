@@ -1,6 +1,9 @@
 #' @title Normalization of the power spectral densities.
 #'
-#' @description Something
+#' @description Normalization is vitally important in spectral
+#' analyses.
+#' @section Assumtions:
+#' The normalizations performed here assume:
 #'
 #' @name rlpSpec-normalization
 #' @rdname rlpSpec-normalization
@@ -9,72 +12,67 @@
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #'
 #' @param Spec spectrum to normalize
-#' @param Fnyq nyquist frequency
+#' @param Fsamp sampling frequency
+#' @param src character string; the source of the spectrum estimator
 #' @param verbose logical; should messages be given?
 #' @param ... (unused) additional parameters
 #' @return original object, with values normalized accordingly
 #'
-#' @seealso \code{\link{psdcore}}
+#' @seealso \code{\link{psdcore}} \code{\link{spectral_properties}}
 NULL
  
 #' @rdname rlpSpec-normalization
-#' @aliases psdnorm
+#' @aliases normalize
 #' @export
-psdnorm <- function(Spec, Fnyq, verbose=TRUE, ...) UseMethod("nyqnorm")
+normalize <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...) UseMethod("normalize")
 #' @rdname rlpSpec-normalization
-#' @aliases psdnorm.default
-#' @method psdnorm default
-#' @S3method psdnorm default
-psdnorm.default <- function(Spec, Fnyq, verbose=TRUE, ...){
-  NULL
+#' @aliases normalize.default
+#' @method normalize default
+#' @S3method normalize default
+normalize.default <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
+  .NotYetImplemented()
 }
 #' @rdname rlpSpec-normalization
-#' @aliases psdnorm.spec
-#' @method psdnorm spec
-#' @S3method psdnorm spec
-psdnorm.spec <- function(Spec, Fnyq, verbose=TRUE, ...){
-  stopifnot(is.spec(Spec))
-  src <- "spec.pgram"
-  is.rlp <- exists("nyquist.normalized",where=Spec)
-  if (is.rlp) src <- "rlpSpec"
+#' @aliases normalize.list
+#' @method normalize list
+#' @S3method normalize list
+normalize.list <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
+  stopifnot(exists("freq", where=Spec) & exists("spec", where=Spec))
+  class(Spec) <- "spec"
+  Spec <- normalize(Spec, Fsamp, src, verbose, ...)
+  class(Spec) <- "list"
   return(Spec)
 }
-
-##
-## Nyquist normalization
-##
-
 #' @rdname rlpSpec-normalization
-#' @aliases nyqnorm
-#' @export
-nyqnorm <- function(Spec, Fnyq, verbose=TRUE, ...) UseMethod("nyqnorm")
-#' @rdname rlpSpec-normalization
-#' @aliases nyqnorm.default
-#' @method nyqnorm default
-#' @S3method nyqnorm default
-nyqnorm.default <- function(Spec, Fnyq, verbose=TRUE, ...){
-  NULL
-}
-#' @rdname rlpSpec-normalization
-#' @aliases nyqnorm.spec
-#' @method nyqnorm spec
-#' @S3method nyqnorm spec
-nyqnorm.spec <- function(Spec, Fnyq, verbose=TRUE, ...){
+#' @aliases normalize.spec
+#' @method normalize spec
+#' @S3method normalize spec
+normalize.spec <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   stopifnot(is.spec(Spec))
-  src <- "spec.pgram"
-  is.rlp <- exists("nyquist.normalized",where=Spec)
-  if (is.rlp) src <- "rlpSpec"
-  ##
-  if (is.rlp & !(Spec$nyquist.normalized)){
-    # is from psdcore, and hasn't been normalized
-    
-  } else if (!is.rlp) {
-    # it's from spectrum
-    Spec$freq <- Spec$freq * 2 * Fnyq
-    Spec$spec <- Spec$spec * Fnyq
+  #
+  if (Fsamp > 0){
+    # value represents sampling frequency
+    Fsamp <- Fsamp
+  } else if (Fsamp < 0){
+    # value is sampling interval
+    Fsamp <- abs(1/Fsamp)
   } else {
-    if (verbose) message("Spectrum is already normalized.")
+    stop("bad sampling information")
   }
-  if (verbose) message(sprintf("Normalized  %s PSD  for Nyquist  %s",src, Fnyq))
-  return(Spec)
+  #
+  # assume its from spectrum
+  rlp <- switch(src <- match.arg(src, c("spectrum","rlpspec")), 
+                rlpspec=TRUE, spectrum=FALSE)
+  if (rlp){
+    ptyp <- "single"
+    # spectrum is from rlpspec, and is single-sided
+    Spec$spec <- Spec$spec / Fsamp
+  } else {
+    ptyp <- "double"
+    # spectrum is from spectrum or others, double sided
+    Spec$spec <- Spec$spec * 2
+  }
+  if (verbose) message(sprintf("Normalized  %s-sided PSD  (%s)  to sampling-freq.  %s", ptyp, src, Fsamp))
+  return(invisible(Spec))
 }
+#

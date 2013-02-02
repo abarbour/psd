@@ -1,32 +1,31 @@
 \name{rlpSpec-normalization}
 \alias{normalization}
-\alias{nyqnorm}
-\alias{nyqnorm.default}
-\alias{nyqnorm.spec}
-\alias{psdnorm}
-\alias{psdnorm.default}
-\alias{psdnorm.spec}
+\alias{normalize}
+\alias{normalize.default}
+\alias{normalize.list}
+\alias{normalize.spec}
 \alias{rlpSpec-normalization}
 \title{Normalization of the power spectral densities.}
 \usage{
-  psdnorm(Spec, Fnyq, verbose = TRUE, ...)
-
-  \method{psdnorm}{default} (Spec, Fnyq, verbose = TRUE,
+  normalize(Spec, Fsamp = 1, src = NULL, verbose = TRUE,
     ...)
 
-  \method{psdnorm}{spec} (Spec, Fnyq, verbose = TRUE, ...)
+  \method{normalize}{default} (Spec, Fsamp = 1, src = NULL,
+    verbose = TRUE, ...)
 
-  nyqnorm(Spec, Fnyq, verbose = TRUE, ...)
+  \method{normalize}{list} (Spec, Fsamp = 1, src = NULL,
+    verbose = TRUE, ...)
 
-  \method{nyqnorm}{default} (Spec, Fnyq, verbose = TRUE,
-    ...)
-
-  \method{nyqnorm}{spec} (Spec, Fnyq, verbose = TRUE, ...)
+  \method{normalize}{spec} (Spec, Fsamp = 1, src = NULL,
+    verbose = TRUE, ...)
 }
 \arguments{
   \item{Spec}{spectrum to normalize}
 
-  \item{Fnyq}{nyquist frequency}
+  \item{Fsamp}{sampling frequency}
+
+  \item{src}{character string; the source of the spectrum
+  estimator}
 
   \item{verbose}{logical; should messages be given?}
 
@@ -36,13 +35,16 @@
   original object, with values normalized accordingly
 }
 \description{
-  Something
+  Normalization is vitally important in spectral analyses.
+}
+\section{Assumtions}{
+  The normalizations performed here assume:
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{psdcore}}
+  \code{\link{psdcore}} \code{\link{spectral_properties}}
 }
 \keyword{normalization}
 \keyword{prewhiten}

@@ -6,15 +6,14 @@
   psdcore(X.d, X.frq = 1, ntaper = as.tapers(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
-    Nyquist.normalize = TRUE, plotpsd = FALSE,
-    as.spec = TRUE, refresh = FALSE, verbose = FALSE, ...)
+    plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,
+    verbose = FALSE, ...)
 
   \method{psdcore}{default} (X.d, X.frq = 1,
     ntaper = as.tapers(1), ndecimate = 1L, demean = TRUE,
     detrend = TRUE, na.action = stats::na.fail,
-    first.last = TRUE, Nyquist.normalize = TRUE,
-    plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,
-    verbose = FALSE, ...)
+    first.last = TRUE, plotpsd = FALSE, as.spec = TRUE,
+    refresh = FALSE, verbose = FALSE, ...)
 }
 \arguments{
   \item{X.d}{the series to estimate a spectrum for}
@@ -36,9 +35,6 @@
 
   \item{first.last}{the extrapolates to give the zeroth and
   Nyquist frequency estimates}
-
-  \item{Nyquist.normalize}{logical; should the units be
-  returned on Hz, rather than Nyquist?}
 
   \item{plotpsd}{logical; should the estimate be shown
   compared to the \code{spec.pgram} estimate}

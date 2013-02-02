@@ -1,29 +1,19 @@
 Miscellany
 ----------
-[ ] normalization function
-!!!
-*** check stage normalizations?
-*** remove Nyquist norm entirely?
-
 [ ] migrate examples in functions to ./examp/
-*** ensure
-[X] build --as-cran --no-multiarch --no-examples
 *** remove --no-examples and get to build [ ]
-*** *** why do they not build??
+*** *** why do they not build?? [ ]
+[X] normalization function
+[X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
 
 vignettes
 ---------
-[ ] develop overview
 [ ] finish norm
+[X] develop overview
+*** check bith Bob regarding resolution [ ]
 
-demos
------
-[-] fix mag (now in vignette)
-*** remove demo file
-*** plotting adaptive history [ ] 
-
-tests
+tests (abandon? [ ])
 -----
 [ ] do they work?
 
@@ -36,11 +26,8 @@ datasets
 `spectral_properties`
 ---------------------
 [ ] check formulas for various quantities
-
-`riedsid`
----------
-[X] riedsid.spec method
-***  test it [ ]
+*** finish documentation
+*** consult Bob
 
 `psdcore`
 -----------
@@ -51,9 +38,20 @@ datasets
 -----------
 [ ] example
 [X] ensure normalization occurs only once!
-*** in pilot spec or not?!  [ ]
+*** in pilot spec or not?!  [X]
 [X] option to show final with raw periodogram
 *** ensure Nyquist.normalize affects pgram too [X]
 [X] improve function documentation
 [X] add option to change constraint method for riedsid
+
+`riedsid`
+---------
+[X] riedsid.spec method
+***  test it [X] (looks fine)
+
+demos
+-----
+[-] fix mag (now in vignette)
+*** remove demo file
+*** plotting adaptive history [X] (in overview vign)
 
