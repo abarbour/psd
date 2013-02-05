@@ -9,7 +9,9 @@
 \title{rlpSpec News}
 \encoding{UTF-8}
 \section{CHANGES IN rlpSpec 0.2-0}{
-  This is the first release to CRAN: \CRANpkg{rlpSpec}.
-  We have included three vignettes, one of which is an overview of
-  the general functionality of the program.
+  \itemize{
+    \item This is the first release to CRAN: \CRANpkg{rlpSpec}.
+          We have included three vignettes, one of which is an overview of
+          the general functionality of the program.
+  }
 }
