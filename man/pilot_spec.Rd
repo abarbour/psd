@@ -46,6 +46,11 @@
   The taper series of the returned spectrum is constrained
   using \code{as.tapers(..., minspan=TRUE)}.
 }
+\examples{
+#' dontrun{
+NULL
+#' }
+}
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
 }

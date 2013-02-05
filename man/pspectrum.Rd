@@ -52,16 +52,19 @@
   details regarding adaptive estimation.
 }
 \examples{
-\dontrun{
-## load MAGSAT data
+#' dontrun{
+##
+## Adaptive multitaper PSD estimation
+##
+# load MAGSAT data
 data(magsat)
-##
-##  use the defaults
+#
+#  use the defaults
 pspectrum(X<-magsat$clean)
-##
-## turn off normalization
+#
+# turn off normalization
 pspectrum(X, Nyquist.normalize=FALSE)
-}
+#' }
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by
