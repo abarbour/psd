@@ -6,11 +6,11 @@
 \newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
 \name{rlpSpec}
-\title{rlpSpec News}
+\title{News for packages 'rlpSpec'}
 \encoding{UTF-8}
-\section{CHANGES IN rlpSpec 0.2-0}{
+\section{CHANGES IN rlpSpec VERSION 0.2-0 (2013-02-04)}{
   \itemize{
-    \item This is the first release to CRAN: \CRANpkg{rlpSpec}.
+    \item This marks the first release to CRAN: \CRANpkg{rlpSpec}.
           We have included three vignettes, one of which is an overview of
           the general functionality of the program.
   }
