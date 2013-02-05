@@ -1,0 +1,14 @@
+#!/bin/sh
+# http://help.github.com/remotes/
+# init
+###pushd rsrc
+###git init
+###touch README
+###git add README
+###git commit -m 'first commit: rsrc or rlpspec'
+###git remote add origin git@github.com:abarbour/rlpSpec.git
+###git push -u origin master
+#
+# existing
+#git remote add origin git@github.com:abarbour/rlpSpec.git
+git push -u origin master

@@ -1,0 +1,46 @@
+
+R version 2.14.1 (2011-12-22)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> (owd<-getwd())
+[1] "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/data/mag"
+> #setwd("data")
+> mag.dir <- "."
+> mag <- cbind(
++ 	read.table(paste(mag.dir,"mag.raw",sep="/"),
++ 		colClasses="numeric", col.names="raw"),
++ 	read.table(paste(mag.dir,"mag.clean",sep="/"),
++ 		colClasses="numeric", col.names="clean")
++ 	)
+> mag$diff <- mag$clean - mag$raw
+> mag$diff[abs(mag$diff) < 1e-7 ] <- 0
+> plot(mag$raw, type="s", main="Magnetometer data")
+> text(200, 40, "raw series")
+> lines(mag$clean-50, type="s", col="red")
+> text(350, -100, "cleaned series (-50)", col="red")
+> save(mag, file = "mag.rda")
+> ###
+> setwd(owd)
+> getwd()
+[1] "/Users/abarbour/kook.processing/R/dev/packages/rlpSpec/data/mag"
+> ###
+> 
+> proc.time()
+   user  system elapsed 
+  0.637   0.065   0.737 
