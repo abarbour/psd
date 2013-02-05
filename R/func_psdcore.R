@@ -51,7 +51,7 @@
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
-#' @example x_examp/psdcore.ex
+#' @example inst/Examples/rdex_psdcore.R
 psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default

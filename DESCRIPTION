@@ -15,7 +15,7 @@ Description: Power spectral density estimates
 License: GPL (>= 2)
 URL: http://abarbour.github.com/rlpSpec/
 Depends:
-    R (>= 2.10.1),
+    R (>= 2.14.0),
     stats,
     utils,
     graphics,
@@ -27,9 +27,12 @@ Imports:
     signal (>= 0.7-2),
     zoo (>= 1.7-9)
 Suggests:
-    RSEIS (>= 3.0-9),
     ggplot2 (>= 0.9-3),
-    multitaper (>= 1.0-2)
+    multitaper (>= 1.0-2),
+    plyr (>= 1.8),
+    RSEIS (>= 3.0-9),
+    rbenchmark (>= 1.0.0)
+    reshape2 (>= 1.2.2)
 Collate:
     'rlpSpec-package.R'
     'func_pspectrum.R'

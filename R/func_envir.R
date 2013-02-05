@@ -34,7 +34,7 @@
 #' not from the \code{.GlobalEnv} or any other environment.
 #'
 #' @seealso \code{\link{rlpSpec-utilities}}, \code{\link{char2envir}}, \code{\link{pspectrum}}
-#' @example x_examp/rlpenv.ex
+#' @example inst/Examples/rdex_rlpenv.R
 NULL
 
 #' @description \code{rlp_initEnv} initializes the \code{.rlpenv} environment with

@@ -2,7 +2,7 @@
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
-%% \VignetteIndexEntry{rlpSpec Normalization Vignette}
+%% \VignetteIndexEntry{DFT benchmarks: fft vs fftw}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
 \usepackage[pdfborder={0 0 0}]{hyperref}

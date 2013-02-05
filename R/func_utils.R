@@ -7,7 +7,7 @@
 #' @rdname rlpSpec-utilities
 #' @name rlpSpec-utilities
 #' @seealso \code{\link{rlpSpec-package}}, \code{\link{as.tapers}}
-#' @example x_examp/utilities.ex
+#' @example inst/Examples/rdex_utilities.R
 NULL
 
 #' @description \code{vardiff} returns the variance of the first (or second) 
@@ -156,7 +156,7 @@ is.tapers <- function(Obj) inherits(Obj, "tapers")
 #' @export
 #' @keywords utilities spline-gradient numerical-derivative
 #' @seealso \code{smooth.spline}
-#' @example x_examp/splinegrad.R
+#' @example inst/Examples/rdex_splinegrad.R
 splineGrad <- function(dseq, dsig, plot.derivs=FALSE, ...) UseMethod("splineGrad")
 #' @rdname splineGrad
 #' @method splineGrad default

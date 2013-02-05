@@ -55,7 +55,7 @@
 #' @return Object with class 'tapers'.
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{smooth.spline}
-#' @example x_examp/riedsid.ex
+#' @example inst/Examples/rdex_riedsid.R
 riedsid <- function(psd, ntaper, 
                     tapseq=NULL, 
                     Deriv.method=c("local_qls","spg"),

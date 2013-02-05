@@ -53,7 +53,7 @@
 #' @return An object with its spectral values normalized accordingly.
 #'
 #' @seealso \code{\link{psdcore}}, \code{\link{spectral_properties}}
-#' @example x_examp/normalization.ex
+#' @example inst/Examples/rdex_normalization.R
 NULL
  
 #' @rdname rlpSpec-normalization
