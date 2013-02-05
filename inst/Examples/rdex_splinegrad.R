@@ -1,4 +1,4 @@
-# \dontrun{
+\dontrun{
 ##
 ## Spline gradient
 ##
@@ -15,4 +15,4 @@ splineGrad(x, y, TRUE, spar=0.2)
 splineGrad(x, y, TRUE, spar=0.6)
 splineGrad(x, y, TRUE, spar=1.0)
 ##
-# }
+}

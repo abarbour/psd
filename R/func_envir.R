@@ -37,6 +37,13 @@
 #' @example inst/Examples/rdex_rlpenv.R
 NULL
 
+# # @description \code{envParamSet} sets up pointers for the \code{.rlpenv} environment,
+# # in the \code{.GlobalEnv}.
+# # @rdname rlpSpec-environment
+# # @name rlp_envParamSet
+# # @export
+# rlp_envParamSet <- function() assign(".rlpenv", ".rlpSpecEnv", envir=.GlobalEnv)
+
 #' @description \code{rlp_initEnv} initializes the \code{.rlpenv} environment with
 #' an option to clear the contents (if the environment already exists).
 #' @note \code{rlp_initEnv} will not re-initialize the enviroment, unless told to 

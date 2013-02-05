@@ -12,15 +12,20 @@ Examples
 
 Miscellany
 ----------
-[X] migrate examples in functions to ./examp/
-*** remove --no-examples and get to build [ ]
-*** *** why do they not build?? [ ]
+[ ] rename? ... to 'psd'?
+[X] migrate examples in functions to ./inst/Examples/
+*** remove --no-examples and get to build [NA]
+*** *** why do they not build?? [X]
+*** *** because there's some environment thing going on: during example
+*** *** checking there is no pointer available to .rlpenv.
+*** *** Not worth the effort to track down, so just \dontrun{} stuff
 [X] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
 
 vignettes
 ---------
+[ ] create pdfs to replace <eval=TRUE> statements with <includegraphics>
 [ ] finish norm
 [X] develop overview
 *** check with Bob regarding resolution [ ]

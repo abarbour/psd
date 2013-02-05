@@ -15,24 +15,26 @@
 # }
 
 ##
+##
 .onLoad <- function(...) {
   ## DLL
   #library.dynam("rlpSpec", pkg, lib)
   # useDynLib(rlpSpec) in NAMESPACE though... any conflicts?
-  ## env pointer
-  assign(".rlpenv", ".rlpSpecEnv", envir=.GlobalEnv)
-}
-.onUnload <- function(libpath)
-{
-  if (exists(.rlpenv, envir=.GlobalEnv)) rm(.rlpenv, envir=.GlobalEnv)
-  library.dynam.unload("rlpSpec", libpath)
 }
 
+.onUnload <- function(libpath)
+{
+  library.dynam.unload("rlpSpec", libpath)
+}
 ##
 # executed after .onLoad is executed, once the namespace is visible to user
 .onAttach <- function(...) {
   ##
+  ## env pointer
+  assign(".rlpenv", ".rlpSpecEnv", envir=globalenv())
+  ## initialize it
   rlpSpec:::rlp_initEnv(envir=.rlpenv, refresh=TRUE, verbose=FALSE)
+  ## add some info
   .rlpSpecEnv$init <- paste(.rlpSpecEnv$init,"(upon attach)")
   ##
   packageStartupMessage(

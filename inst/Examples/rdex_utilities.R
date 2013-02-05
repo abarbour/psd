@@ -1,4 +1,7 @@
-# \dontrun{
+\dontrun{
+##
+## Various utilities
+##
 set.seed(1234)
 X <- rnorm(1e2)
 ##
@@ -65,4 +68,4 @@ all.equal(mc1a, mc1b) # TRUE
 all.equal(mc2a, mc2b) # "Mean absolute difference: 2"
 all.equal(mc2a, mc2c) # TRUE
 ##
-# }
+}

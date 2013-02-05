@@ -151,7 +151,7 @@
   of \code{stg_kopt} and \code{stg_psd}.} }
 }
 \examples{
-# \dontrun{
+\dontrun{
 ##
 ## rlpSpec working environment
 ##
@@ -166,7 +166,7 @@ print(x <- rlp_envGet("init"))
 #
 # pull the adaptive history into .GlobalEnv
 get_adapt_history()
-# }
+}
 }
 \seealso{
   \code{\link{rlpSpec-utilities}},

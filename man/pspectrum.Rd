@@ -52,7 +52,7 @@
   details regarding adaptive estimation.
 }
 \examples{
-# \dontrun{
+\dontrun{
 ##
 ## Adaptive multitaper PSD estimation
 ##
@@ -64,7 +64,7 @@ pspectrum(X<-magsat$clean)
 #
 # turn off normalization
 pspectrum(X, Nyquist.normalize=FALSE)
-# }
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by
