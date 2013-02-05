@@ -22,8 +22,9 @@
 #' @param no.history logical; Should the adaptive history \emph{not} be saved?
 #' @param plot logical; Should the results be plotted?
 #' @param ... Optional parameters passed to \code{\link{riedsid}}
-#' @return Object with class 'spec', invisibly.
-#' @example x_examp/pspec.R
+#' @return Object with class 'spec', invisibly. It also assigns the object to
+#' \code{"final_psd"} in the working environment.
+#' @example x_examp/pspectrum.ex
 pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
@@ -117,8 +118,8 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.nor
 #' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
 #' @param ntap scalar; the number of tapers to apply during spectrum estimation
 #' @param ... additional parameters passed to \code{\link{psdcore}}
-#' @return An object with class 'spec', invisibly.  It also assigns it to
-#' \code{"final_psd"} in the working environment.
+#' @return An object with class 'spec', invisibly.  It also assigns the object to
+#' \code{"pilot_psd"} in the working environment.
 pilot_spec <- function(x, x.frequency=1, ntap=5, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @method pilot_spec default

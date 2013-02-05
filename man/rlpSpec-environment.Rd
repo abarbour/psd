@@ -150,12 +150,26 @@
   vectors.} \item{\code{freq}}{The frequencies for each set
   of \code{stg_kopt} and \code{stg_psd}.} }
 }
+\examples{
+\dontrun{
+##
+## Get some status information about the .rlpenv environment
+rlp_envStatus()
+##
+## Get a list of all variables in .rlpenv
+rlp_envList()
+##
+## Pull the variable "init" into .GlobalEnv
+print(x <- rlp_envGet("init"))
+##
+## pull the adaptive history into .GlobalEnv
+get_adapt_history()
+}
+}
 \seealso{
   \code{\link{rlpSpec-utilities}},
   \code{\link{char2envir}}, \code{\link{pspectrum}}
 
   \code{new.env}, \code{baseenv}
-
-  \code{\link{rlp_initEnv}}
 }
 

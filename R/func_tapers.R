@@ -58,7 +58,7 @@
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.tapers}}
-#' @example x_examp/taper.R
+#' @example x_examp/tapers.ex
 as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   # taper should be non-zero integer, since it represents the
   # number of tapered sections to average; hence, floor.

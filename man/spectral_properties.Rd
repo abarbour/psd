@@ -2,7 +2,7 @@
 \alias{spectral_properties}
 \alias{spectral_properties.spec}
 \alias{spectral_properties.tapers}
-\title{Calculate spectral properties such as standard error and resolution.}
+\title{Calculate spectral properties.}
 \usage{
   spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
     p = 0.95, db.ci = FALSE, ...)
@@ -34,9 +34,8 @@
 \value{
   A list with the following properties (and names):
   \itemize{ \item{\code{taper}: The original taper vector.}
-  \item{\code{stderr}: The standard error of the spectrum.}
-  \item{\code{stderr.chi, .upper, .lower, .median}:A data
-  frame with the results from \code{\link{spec_confint}}.}
+  \item{\code{stderr.chi .upper, .lower, .median}: results
+  returned from \code{\link{spec_confint}}.}
   \item{\code{resolution}: The effective spectral
   resolution.} \item{\code{dof}: The number of degrees of
   freedom.} \item{\code{bw}: The effective bandwidth of the
@@ -48,14 +47,8 @@
   frequency.
 }
 \section{Parameter Details}{
-  \subsection{Uncertainty}{ The errors are estimated in the
-  simplest way, from the number of degrees of freedom; a
-  more sophisticated (and complicated) approach is to
-  estimate via jack-knifing (Prieto et al 2007) which is
-  not yet available.
-
-  Here the standard error \eqn{\delta S} is returned so
-  \eqn{\delta S \cdot S} represents spectral uncertainty. }
+  \subsection{Uncertainty}{ See \code{\link{spec_confint}}
+  for details. }
 
   \subsection{Resolution}{ The frequency resolution depends
   on the number of tapers (\eqn{K}), and is found from
@@ -64,12 +57,12 @@
   frequencies estimated. }
 
   \subsection{Degrees of Freedom}{ There are two degrees of
-  freedom for each taper. }
+  freedom for each taper \eqn{K}: \deqn{\nu = 2 K} }
 
   \subsection{Bandwidth}{ The bandwidth of a multitaper
   estimate depends on the number of tapers. Following
   Walden et al (1995) the effective bandwidth is
-  \eqn{\approx 2W} where \deqn{W = \frac{K + 1}{2N}} and
+  \eqn{\approx 2W} where \deqn{W = \frac{K + 1}{2 N}} and
   \eqn{N} is the number of terms in the series, which makes
   \eqn{N \cdot W} the approximate time-bandwidth product. }
 }

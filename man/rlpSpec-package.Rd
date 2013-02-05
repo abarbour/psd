@@ -19,12 +19,13 @@
   spectrum, then uses Riedel and Sidorenko's estimate of
   the MSE (minimum square error) value, which is based on
   an estimate of the second derivative of the PSD
-  (\eqn{S''}). The process is repeated \code{niter} times;
-  the default is \code{niter=4}. Further iteration may be
-  necessary to reach convergence, or an acceptably low
+  (\eqn{S''}). The process is repeated \code{niter} times
+  with a default of \code{niter=4}. Further iteration may
+  be necessary to reach convergence, or an acceptably low
   spectral variance. Although the term "acceptable" is
   rather subjective, one can usually detect an unconverged
-  state by a rather jagged appearence of the spectrum.
+  state by a rather jagged appearence of the spectrum; this
+  is rather uncommon in our experience.
 
   \subsection{Adaptive estimation}{ The adaptive process
   used is as follows. A quadratic fit to the logarithm of

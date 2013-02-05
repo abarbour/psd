@@ -25,7 +25,8 @@
 }
 \value{
   An object with class 'spec', invisibly.  It also assigns
-  it to \code{"final_psd"} in the working environment.
+  the object to \code{"pilot_psd"} in the working
+  environment.
 }
 \description{
   This PSD -- the pilot spectrum -- is used as the starting

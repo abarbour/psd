@@ -3,13 +3,13 @@
 \alias{psdcore.default}
 \title{Multitaper power spectral density estimates of a series.}
 \usage{
-  psdcore(X.d, X.frq = 1, ntaper = as.tapers(1),
+  psdcore(X.d, X.frq = NULL, ntaper = as.tapers(1),
     ndecimate = 1L, demean = TRUE, detrend = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,
     verbose = FALSE, ...)
 
-  \method{psdcore}{default} (X.d, X.frq = 1,
+  \method{psdcore}{default} (X.d, X.frq = NULL,
     ntaper = as.tapers(1), ndecimate = 1L, demean = TRUE,
     detrend = TRUE, na.action = stats::na.fail,
     first.last = TRUE, plotpsd = FALSE, as.spec = TRUE,
@@ -73,13 +73,34 @@
   \code{(1+n/2)/ndecimate}; other values are found via
   linear interpolation. }
 
-  \subsection{Sampling}{ If \code{X.frq > 0} it's assumed
-  the value represents \emph{frequency} (e.g. Hz).  If
-  \code{X.frq < 0} it's assumed the value represents
-  \emph{interval} (e.g. seconds). }
+  \subsection{Sampling}{ If \code{X.frq} is NULL, the value
+  is assumed to be 1, unless \code{X.d} is a 'ts' object.
+  If \code{X.frq > 0} it's assumed the value represents
+  \emph{frequency} (e.g. Hz).  If \code{X.frq < 0} it's
+  assumed the value represents \emph{interval} (e.g.
+  seconds). }
 }
 \section{Warning}{
   Decimation is not well tested as of this point.
+}
+\examples{
+\dontrun{
+##
+## Multitaper PSD estimation
+##
+set.seed(1234)
+X <- rnorm(1e3)
+#
+# use the defaults, and appeal to plot.spec
+plot(psdcore(X))
+#
+# use more tapers, compare to stats::spectrum, and clear 
+# env data from the previous calculation
+psdcore(X, ntapers=10, plotpsd=TRUE, refresh=TRUE)
+#
+# change the sampling frequency to 20
+psdcore(X, 20, 10, plotpsd=TRUE, refresh=TRUE) 
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by

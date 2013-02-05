@@ -1,21 +1,23 @@
 #' @title Various utility functions.
 #'
-#' @description Various utility functions are used:
+#' @description \emph{The various utility functions are:}
 #'
 #' @keywords methods S3methods utilities
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @rdname rlpSpec-utilities
 #' @name rlpSpec-utilities
+#' @seealso \code{\link{rlpSpec-package}}, \code{\link{as.tapers}}
+#' @example x_examp/utilities.ex
 NULL
 
-#' @description \code{vardiff} reeturns the variance of the first difference of the series.
+#' @description \code{vardiff} returns the variance of the first (or second) 
+#' difference of the series. \code{varddiff} is a convenience wrapper
+#' to return variance for the second difference.
 #' @rdname rlpSpec-utilities
 #' @export
 #' @keywords utilities first-difference variance
-#' @seealso \code{\link{rlpSpec-package}}
 #' @param Xd object to difference
 #' @param double.diff logical; should the double difference be used instead?
-#' @return numeric
 vardiff <- function(Xd, double.diff=FALSE){
   dorder <- 1
   if (double.diff) dorder <- 2
@@ -24,7 +26,6 @@ vardiff <- function(Xd, double.diff=FALSE){
 #' @rdname rlpSpec-utilities
 #' @export
 #' @keywords utilities first-difference variance
-#' @return numeric
 varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
 
 #' @description \code{dB} returns an object converted to decibels.
@@ -36,18 +37,9 @@ varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
 #' @param invert logical; assumes \code{Rat} is already in decibels, so return ratio
 #' @param pos.only logical; if \code{invert=FALSE}, sets negative or zero values to NA
 #' @param is.power logical; should the factor of 2 be included in the decibel calculation?
-
-#' @return numeric
 #' @export
 #' @aliases decibels db
 #' @keywords utilities normalization decibel
-#' @seealso \code{\link{rlpSpec-package}}
-#' @examples
-#' dB(1) # signal is equal <--> zero dB
-#' sig <- 1e-10
-#' all.equal(sig, dB(dB(sig), invert=TRUE))
-#' pow <- sig**2
-#' all.equal(pow, dB(dB(sig, is.power=TRUE), invert=TRUE, is.power=TRUE))
 dB <- function(Rat, invert=FALSE, pos.only=TRUE, is.power=FALSE){
   CC <- 10
   if (is.power) CC <- CC * 2
@@ -77,13 +69,6 @@ dB <- function(Rat, invert=FALSE, pos.only=TRUE, is.power=FALSE){
 #' @return \code{char2envir} returns the result of evaluating the object: an 
 #' environment object; \code{envir2char} returns the result of deparsing the 
 #' environment name: a character string.
-#' @seealso \code{\link{rlpSpec-package}}
-#' @examples
-#' ##
-#' ## Evaluate character strings
-#' print(.rlpenv)
-#' char2envir(.rlpenv)
-#' char2envir("some nonexistent environment") # error
 char2envir <- function(envchar){
   stopifnot(is.character(envchar))
   eval(as.name(envchar))
@@ -91,14 +76,6 @@ char2envir <- function(envchar){
 #' @rdname rlpSpec-utilities
 #' @export
 #' @keywords utilities environment
-#' @examples
-#' # and environment objects:
-#' print(.GlobalEnv)
-#' envir2char(.GlobalEnv)
-#' envir2char(.rlpSpecEnv)
-#' char2envir(some_nonexistent_environment) # error
-#' ##
-#' ##
 envir2char <- function(envir){
   stopifnot(is.environment(envir))
   deparse(substitute(envir))
@@ -148,18 +125,6 @@ rowvec <- function(x) vector_reshape(x, "horizontal")
 #' respectively
 #' @export
 #' @keywords utilities inherits is
-#' @examples
-#' ## Check for spec object:
-#' # quick power spectral density
-#' x <- rnorm(1e2, sd=10)
-#' psd <- spectrum(x, plot=FALSE)
-#' # return is class 'spec'
-#' is.spec(psd) # TRUE
-#' #
-#' # but the underlying structure is just a list
-#' psd <- unclass(psd)
-#' is.spec(psd) # FALSE
-#' ##
 is.spec <- function(Obj) inherits(Obj, "spec")
 
 #' @description \code{is.tapers} reports whether an object has S3 class 'tapers', as
@@ -167,12 +132,6 @@ is.spec <- function(Obj) inherits(Obj, "spec")
 #' @export
 #' @keywords utilities inherits is
 #' @rdname rlpSpec-utilities
-#' @seealso \code{\link{as.tapers}}
-#' @examples
-#' ## check for tapers
-#' is.tapers(x)
-#' is.tapers(as.tapers(x))
-#' ##
 is.tapers <- function(Obj) inherits(Obj, "tapers")
 
 #' Numerical derivatives of a series based on a weighted, smooth spline representation.
@@ -186,16 +145,6 @@ is.tapers <- function(Obj) inherits(Obj, "tapers")
 #' since spline curves are
 #' inherently (at least) twice differentiable. See the \strong{Examples} for
 #' an illustration of this.
-#' 
-#' How does the first derivative of the first derivative of the
-#' original series compare to the second derivative of the original series? 
-#' Apparently, there is no difference.  
-#'
-# Try something like this:
-# \code{smspl.alt <- stats::smooth.spline(dseq, fsigderiv, ...);
-#  SPLFUN.alt <- stats::splinefun(smspl.alt$x, smspl.alt$y);
-#  fsigderiv2.alt <- SPLFUN.alt(dseq, deriv=1);
-#  print(all.equal(fsigderiv2,fsigderiv2.alt));}
 #' 
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @name splineGrad
@@ -287,13 +236,6 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
          xaxs="i", yaxs="i",
          main="second derivative", xlab="x",
          col="blue", type="s", lwd=2.4, lty=3)
-    #lines(d2yd2x.alt ~ x, toret, col="blue", type="s", lwd=2.4, lty=3)
-    #     legend("topleft", 
-    #            paste(c("weighted cubic spline fit","first deriv", "second deriv"), #, "deriv of first deriv"), 
-    #                  sep=''), 
-    #            col = c("grey","red","blue"), #,"blue"), 
-    #            lty = c(rep(1,3)), #, 3),
-    #            cex=0.7)
   }
   return(invisible(toret))
 }
@@ -308,12 +250,6 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 #' \code{NA} values, the representation of which is set by \code{NA_real_}
 #' @export
 #' @keywords utilities vector-creation matrix-creation
-#' @examples
-#' ## matrix and vector creation:
-#' # NA matrix
-#' nd <- 5
-#' na_mat(nd)
-#' na_mat(nd,nd-1)
 na_mat <- function(nrow, ncol=1) UseMethod("na_mat")
 #' @rdname rlpSpec-utilities
 #' @method na_mat default
@@ -327,10 +263,6 @@ na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 # params described by na_mat
 #' @return For \code{zeros} or \code{ones} respectively, a matrix vector 
 #' with \code{nrow} zeros or ones.
-#' @examples
-#' # zeros
-#' zeros(nd)
-#' zeroes(nd)
 zeros <- function(nrow) UseMethod("zeros")
 #' @rdname rlpSpec-utilities
 #' @method zeros default
@@ -340,11 +272,6 @@ zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nro
 #' @rdname rlpSpec-utilities
 #' @export
 #' @keywords utilities vector-creation matrix-creation
-#' @examples
-#' # and ones
-#' ones(nd)
-#' ##
-#' ##
 ones <- function(nrow) UseMethod("ones")
 #' @rdname rlpSpec-utilities
 #' @method ones default
@@ -375,7 +302,6 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow
 #' @keywords utilities modulo-division arithmetic-operations
 #' @rdname rlpSpec-utilities
 #' @aliases modulo
-#' @example x_examp/mod.R
 mod <- function(X, Y) UseMethod("mod")
 #' @rdname rlpSpec-utilities
 #' @method mod default

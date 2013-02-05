@@ -12,10 +12,11 @@
 #' The program makes a pilot estimate of the spectrum, then uses
 #' Riedel and Sidorenko's estimate of the MSE (minimum square error) value, 
 #' which is based on an estimate of the second derivative of the PSD (\eqn{S''}). 
-#' The process is repeated \code{niter} times; the default is \code{niter=4}. 
+#' The process is repeated \code{niter} times with a default of \code{niter=4}. 
 #' Further iteration may be necessary to reach convergence, or an acceptably low
 #' spectral variance. Although the term "acceptable" is rather subjective, one can 
-#' usually detect an unconverged state by a rather jagged appearence of the spectrum.
+#' usually detect an unconverged state by a rather jagged appearence of the spectrum;
+#' this is rather uncommon in our experience.
 #'
 #' \subsection{Adaptive estimation}{
 #' The adaptive process used is as follows. A quadratic fit to the logarithm of the
@@ -95,7 +96,7 @@ NULL
 #' intensities (a very small subset of the full collection!).
 #'
 #' \subsection{Raw and Clean Sets}{
-#' There are many artificial data points in raw MAGSAT; these are true instrumental
+#' There are non-real data points in raw MAGSAT series; these are instrumental
 #' artefacts, and can severely affect
 #' power spectral density (PSD) estimates.  
 #' A clean series has been included
@@ -122,4 +123,7 @@ NULL
 # need login from outside browser?
 # @source Entire MAGSAT archive: \url{ftp://spdf.gsfc.nasa.gov/pub/data/magsat/}
 #' @keywords datasets magsat
+#' @examples
+#' data(magsat)
+#' summary(magsat)
 NULL

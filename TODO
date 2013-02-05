@@ -1,6 +1,18 @@
+Examples
+--------
+[ ] parabolic_weights
+[ ] prewhiten
+[ ] pilot_spec
+[X] rlpSpec-environment
+[X] rlpSpec-normalization
+[ ] spectral_properties
+[ ] spec_confint
+[X] psdcore
+[X] pspectrum
+
 Miscellany
 ----------
-[ ] migrate examples in functions to ./examp/
+[X] migrate examples in functions to ./examp/
 *** remove --no-examples and get to build [ ]
 *** *** why do they not build?? [ ]
 [X] normalization function
@@ -11,7 +23,7 @@ vignettes
 ---------
 [ ] finish norm
 [X] develop overview
-*** check bith Bob regarding resolution [ ]
+*** check with Bob regarding resolution [ ]
 
 tests (abandon? [ ])
 -----
@@ -31,12 +43,10 @@ datasets
 
 `psdcore`
 -----------
-[ ] example
 [X] option to prevent environment clashes
 
 `pspectrum`
 -----------
-[ ] example
 [X] ensure normalization occurs only once!
 *** in pilot spec or not?!  [X]
 [X] option to show final with raw periodogram

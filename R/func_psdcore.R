@@ -22,6 +22,7 @@
 #' }
 #'
 #' \subsection{Sampling}{
+#'  If \code{X.frq} is NULL, the value is assumed to be 1, unless \code{X.d} is a 'ts' object.
 #'  If \code{X.frq > 0} it's assumed the value represents \emph{frequency} (e.g. Hz).
 #'  If \code{X.frq < 0} it's assumed the value represents \emph{interval} (e.g. seconds).
 #' }
@@ -50,13 +51,13 @@
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
-# @example x_examp/psdcore.R
-psdcore <- function(X.d, X.frq=1, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
+#' @example x_examp/psdcore.ex
+psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
 #' @S3method psdcore default
 psdcore.default <- function(X.d, 
-                            X.frq=1, 
+                            X.frq=NULL, 
                             ntaper=as.tapers(1), 
                             ndecimate=1L,
                             demean=TRUE, 
@@ -73,7 +74,14 @@ psdcore.default <- function(X.d,
   if (refresh) rlpSpec:::rlp_envClear(verbose=verbose)
   #
   series <- deparse(substitute(X.d))
-  if (X.frq > 0){
+  if (is.null(X.frq)){
+    # make some assumptions about the sampling rate
+    X.frq <- 1
+    if (is.ts(X.d)){
+      X.frq <- stats::frequency(X.d)
+    }
+    if (verbose) message(sprintf("Sampling frequency assumed to be  %f", X.frq))
+  } else if (X.frq > 0){
     # value represents sampling frequency
     X.d <- na.action(stats::ts(X.d, frequency=X.frq))
   } else if (X.frq < 0){
@@ -153,7 +161,7 @@ psdcore.default <- function(X.d,
   ###  Select frequencies for PSD evaluation
   if  (lt > 1 && ndecimate > 1){
     stopifnot(!is.integer(ndecimate))
-    message("decim stage 1")
+    if (verbose) message("decim stage 1")
     # interp1 requires strict monotonicity (for solution stability)
     nsum <- base::cumsum(1/ntap)
     ns1 <- nsum[1]
@@ -215,7 +223,7 @@ psdcore.default <- function(X.d,
     # ** vapply is much faster than even lapply
     psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
-    message("zero taper result == raw periodogram")
+    if (verbose) message("zero taper result == raw periodogram")
     Xfft <- rlp_envGet("fft_even_demeaned_padded")
     ff <- Xfft[1:nfreq]
     N0 <- rlp_envGet("len_orig")
@@ -224,7 +232,7 @@ psdcore.default <- function(X.d,
   ##  Interpolate if necessary to uniform freq sampling
   if (lt > 1 && ndecimate > 1){
     ## check [ ]
-    message("decim stage 2")
+    if (verbose) message("decim stage 2")
     tmp.x <- f
     tmp.xi <- tmp.y
     tmp.y <- psd

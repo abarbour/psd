@@ -1,4 +1,3 @@
 ** well-tested decimation option
 ** logsmoo
-** splineGrad option for `riedsid`
-** reidsid spectral derivatives as .c
+** reidsid "local_qls" spectral derivatives as callable .c code

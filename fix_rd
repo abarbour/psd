@@ -1,0 +1,10 @@
+#!/bin/sh
+pushd man
+cat << XXX > /tmp/fix_rd
+s/\\\\dontrun/\\dontrun/g
+XXX
+grep -l '\\\\dontrun' *.Rd | awk '{
+  fi=$1
+  printf"mv %s tmprd\nsed -f /tmp/fix_rd tmprd > %s\n",fi,fi
+}' | sh
+popd

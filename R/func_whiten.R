@@ -51,10 +51,9 @@
 #' }
 #'
 #' @section NA values:
-#' \code{NA} values are allowed.  If present, the function in the package
-#' \code{zoo},
-#' \code{na.locf}, which stands for "Last Observation Carried Forward",
-#' is used to impute them with real numbers.
+#' \code{NA} values are allowed.  If present, the \code{na.locf} function in the package
+#' \code{zoo}, which stands for "Last Observation Carried Forward",
+#' is used to impute \code{NA} sections with real numbers.
 #'
 #' @name prewhiten
 #' @export

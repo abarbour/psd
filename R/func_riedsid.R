@@ -4,13 +4,40 @@
 #' optimal number of tapers at each frequency of
 #' given PSD, using a modified Riedel-Sidorenko MSE recipe (RS-RLP).
 #' 
+#' @details
 #' The optimization is as follows. First, weighted derivatives of the 
 #' input PSD are computed.
 #' Using those derivates the optimal number of tapers is found through the 
 #' RS-RLP formulation.
 #' Constraints are then placed on the practicable number of tapers.
 #'
-#' Set \code{constrained=FALSE} to turn off taper constraints.
+#' \subsection{Taper constraints}{
+#' The parameter \code{c.method} provides an option to change the method
+#' of taper constraints.  A description of each may be found in 
+#' the documentation for \code{\link{constrain_tapers}}.
+#'
+#' Once can use \code{constrained=FALSE} to turn off all taper constraints; this
+#' could lead to strange behavior though.
+#' }
+#'
+#' \subsection{Spectral derivatives}{
+#' The parameter \code{Deriv.method} determines which method is used
+#' to estimate derivatives.
+#' \itemize{
+#' \item{\code{"local_qls"}}{ (\strong{default}) uses quadratic weighting and
+#' local least-squares estimation; 
+#' then, \code{Local.loss} can alter slightly the weighting to make the derivatives more
+#' or less succeptible to changes in spectral values. Can be slower than \code{"spg"}.}
+#' \item{\code{"spg"}}{ uses \code{\link{splineGrad}}; then, additional arguments
+#' may be passed to
+#' control the smoothness of the derivatives
+#' (e.g \code{spar} in \code{smooth.spline}).}
+#' }
+#' }
+#'
+#' @section Warning:
+#' The \code{"spg"} can become numerically unstable, and it's not clean when it will
+#' be preferred to the \code{"local_qls"} method other than for efficiency's sake.
 #'
 #' @export
 #' @keywords tapers tapers-constraints riedel-sidorenko
@@ -27,11 +54,11 @@
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
 #' @return Object with class 'tapers'.
 #' 
-#' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}
-#' @example x_examp/ried.R
+#' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{smooth.spline}
+#' @example x_examp/riedsid.ex
 riedsid <- function(psd, ntaper, 
                     tapseq=NULL, 
-                    Deriv.method=c("local_ls","spg"),
+                    Deriv.method=c("local_qls","spg"),
                     Local.loss=c("Optim","Less","More"),
                     constrained=TRUE, c.method=NULL,
                     verbose=TRUE, ...) UseMethod("riedsid")
@@ -53,7 +80,7 @@ riedsid.spec <- function(psd, ...){
 #' @S3method riedsid default
 riedsid.default <- function(psd, ntaper, 
                             tapseq=NULL, 
-                            Deriv.method=c("qls","spg"),
+                            Deriv.method=c("local_qls","spg"),
                             Local.loss=c("Optim","Less","More"),
                             constrained=TRUE, c.method=NULL,
                             verbose=TRUE, ...) {
@@ -95,7 +122,8 @@ riedsid.default <- function(psd, ntaper,
   #
   # Smooth spectral derivatives
   #
-  lsmeth <- switch(match.arg(Deriv.method), qls=TRUE, spg=FALSE)
+  lsmeth <- switch(match.arg(Deriv.method), local_qls=TRUE, spg=FALSE)
+  stopifnot(exists("lsmeth"))
   if (lsmeth){
     dsens <- switch(match.arg(Local.loss), Optim=12, More=6, Less=24) # 12 is optim
     DFUN <- function(j, 

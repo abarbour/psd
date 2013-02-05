@@ -1,18 +1,11 @@
-#' Calculate spectral properties such as standard error and resolution.
+#' Calculate spectral properties.
 #'
 #' Various spectral properties may be computed from the vector of tapers, and
 #' if necessary the sampling frequency.
 #'
 #' @section Parameter Details:
 #' \subsection{Uncertainty}{
-#' The errors are estimated in the simplest way, 
-#' from the number of degrees of freedom; a more 
-#' sophisticated (and complicated) approach is to
-#' estimate via jack-knifing (Prieto et al 2007)
-#' which is not yet available.
-#'
-#' Here the standard error \eqn{\delta S} is returned so \eqn{\delta S \cdot S} 
-#' represents spectral uncertainty.
+#' See \code{\link{spec_confint}} for details.
 #' }
 #'
 #' \subsection{Resolution}{
@@ -25,7 +18,8 @@
 #' }
 #'
 #' \subsection{Degrees of Freedom}{
-#' There are two degrees of freedom for each taper.
+#' There are two degrees of freedom for each taper \eqn{K}:
+#' \deqn{\nu = 2 K}
 #' }
 #'
 #' \subsection{Bandwidth}{
@@ -33,7 +27,7 @@
 #' tapers.
 #' Following Walden et al (1995) the effective bandwidth is \eqn{\approx 2W}
 #' where
-#' \deqn{W = \frac{K + 1}{2N}} 
+#' \deqn{W = \frac{K + 1}{2 N}} 
 #(N+1)}}
 #' and \eqn{N} is the number of terms in the series, which makes \eqn{N \cdot W} the
 #' approximate time-bandwidth product.
@@ -54,8 +48,7 @@
 #' @return A list with the following properties (and names):
 #' \itemize{
 #' \item{\code{taper}: The original taper vector.}
-#' \item{\code{stderr}: The standard error of the spectrum.}
-#' \item{\code{stderr.chi, .upper, .lower, .median}:A data frame with the results from \code{\link{spec_confint}}.}
+#' \item{\code{stderr.chi .upper, .lower, .median}: results returned from \code{\link{spec_confint}}.}
 #' \item{\code{resolution}: The effective spectral resolution.}
 #' \item{\code{dof}: The number of degrees of freedom.}
 #' \item{\code{bw}: The effective bandwidth of the spectrum.}
@@ -103,26 +96,42 @@ spectral_properties.tapers <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db
   return(data.frame(taper=K, stderr.chi=StdErrCI, resolution=Resolu, dof=Dof, bw=BW))
 }
 
-#' Calculate confidence intervals for a given number of degrees of freedom.
+#' Multitaper PSD confidence intervals.
 #'
-#' In a multitaper scheme, the degrees of freedom is two per taper.
+#' @details
+#' The errors are estimated 
+#' from the number of degrees of freedom \eqn{\nu} by evaluating
+#' the \eqn{\chi_{p,\nu}^{2}(\nu,\nu)} distribution for an optional 
+#' coverage probability \eqn{p} (defaulting to \eqn{p=0.95}).  
+#' Additionally, the
+#' \eqn{p=0.5} values and an approximation from \eqn{1/\sqrt{\nu - 1}}
+#' are returned.
 #'
-#' @author A.J. Barbour <andy.barbour@@gmail.com> modified from the 
-#' \code{spec.ci} function inside
-#' \code{stats::plot.spec}.
+#' A more 
+#' sophisticated (and complicated) approach would be to
+#' estimate via jack-knifing (Prieto et al 2007), but this is not yet
+#' made available.
+#'
+#' Additive uncertainties \eqn{\delta S} are returned, such that 
+#' the spectrum with confidence interval is \eqn{S \pm \delta S}.
+#'
+#' @author A.J. Barbour <andy.barbour@@gmail.com>, modified from the 
+#' \code{spec.ci} function inside \code{stats::plot.spec}.
 #' @name spec_confint
 #' @export
-#' @seealso \code{\link{spectral_properties}}, \code{\link{rlpSpec-package}}, \code{plot.spec}
-#' @param dof numeric; the degrees of freedom
-#' @param p numeric; the coverage probability, bound within \eqn{[0,1)}
+#' @seealso \code{\link{spectral_properties}}, \code{\link{rlpSpec-package}}, \code{plot.spec}, \code{\link{dB}}
+#' @param dof numeric; the degrees of freedom \eqn{\nu}
+#' @param p numeric; the coverage probability \eqn{p}, bound within \eqn{[0,1)}
 #' @param as.db logical; should the values be returned as decibels?
 #' @return A \code{data.frame} with the following properties (and names):
 #' \itemize{
-#' \item{\code{upper}: The original taper vector.}
-#' \item{\code{lower}: The standard error of the spectrum.}
-#' \item{\code{median}: The standard error of the spectrum from \code{\link{spec_confint}}.}
+#' \item{\code{lower}: Based on upper tail probabilities (\eqn{p})}
+#' \item{\code{upper}: Based on lower tail probabilities (\eqn{1-p})}
+#' \item{\code{median}: Based on lower tail probabilities (\eqn{p=0.5})}
+#' \item{\code{approx}: Approximation based on \eqn{1/\sqrt(\nu - 1)}.}
 #' }
 #' @keywords properties tapers uncertainty degrees-of-freedom
+# example from vignette
 spec_confint <- function(dof, p = 0.95, as.db=FALSE) UseMethod("spec_confint")
 #' @rdname spec_confint
 #' @aliases spec_confint.spec
@@ -131,7 +140,7 @@ spec_confint <- function(dof, p = 0.95, as.db=FALSE) UseMethod("spec_confint")
 spec_confint.spec <- function(dof, p = 0.95, as.db=FALSE){
   stopifnot(is.spec(dof))
   dof <- dof$df
-  spec_confint(dof, p)
+  spec_confint(dof, p, as.db)
 }
 #' @rdname spec_confint
 #' @aliases spec_confint.tapers
@@ -141,7 +150,7 @@ spec_confint.tapers <- function(dof, p = 0.95, as.db=FALSE){
   stopifnot(is.tapers(dof))
   # two degrees of freedom per taper 
   dof <- 2 * unclass(dof)
-  spec_confint(dof, p)
+  spec_confint(dof, p, as.db)
 }
 #' @rdname spec_confint
 #' @aliases spec_confint.default
@@ -162,9 +171,9 @@ spec_confint.default <- function(dof, p = 0.95, as.db=FALSE) {
   ci.ul <- 1 / (qchisq(c(upper.qp, lower.qp, med.qp), dof)/dof)
   # dS = S*ci.ul/dof
   ## heuristically tuned to approximate the median distribution of Chi^2 uncertainties
-  approx <- 1+1/sqrt(dof-1)
-  ci <- data.frame(upper=ci.ul[1:ndof], 
-                   lower=ci.ul[(ndof+1):(2*ndof)], 
+  approx <- 1 + 1/sqrt(dof-1)
+  ci <- data.frame(lower=ci.ul[1:ndof], 
+                   upper=ci.ul[(ndof+1):(2*ndof)], 
                    median=ci.ul[(2*ndof+1):(3*ndof)],
                    approx=approx)
   if (as.db) ci <- dB(ci)

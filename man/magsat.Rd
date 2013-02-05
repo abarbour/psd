@@ -22,15 +22,19 @@
   full collection!).
 }
 \details{
-  \subsection{Raw and Clean Sets}{ There are many
-  artificial data points in raw MAGSAT; these are true
-  instrumental artefacts, and can severely affect power
-  spectral density (PSD) estimates. A clean series has been
-  included so that a comparison of PSDs may be made.
+  \subsection{Raw and Clean Sets}{ There are non-real data
+  points in raw MAGSAT series; these are instrumental
+  artefacts, and can severely affect power spectral density
+  (PSD) estimates. A clean series has been included so that
+  a comparison of PSDs may be made.
 
   Some command like \code{subset(magsat, abs(mdiff) > 0)}
   can be used to identify the rows where edits have been
   made. }
+}
+\examples{
+data(magsat)
+summary(magsat)
 }
 \references{
   Langel, R., G. Ousley, J. Berbert, J. Murphy, and M.

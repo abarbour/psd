@@ -34,6 +34,7 @@
 #' not from the \code{.GlobalEnv} or any other environment.
 #'
 #' @seealso \code{\link{rlpSpec-utilities}}, \code{\link{char2envir}}, \code{\link{pspectrum}}
+#' @example x_examp/rlpenv.ex
 NULL
 
 #' @description \code{rlp_initEnv} initializes the \code{.rlpenv} environment with
@@ -49,13 +50,14 @@ NULL
 rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
   # initialize the psd calculation environment
   if (exists(envir)){ new_env <- FALSE } else {new_env <- TRUE}
+  msg <- "no action"
   if( new_env | refresh ){
     assign(x=envir, 
            value=new.env(parent=globalenv(), ...),  #baseenv()
            envir=.GlobalEnv)
     msg <- "initialized"
+    if (refresh & !new_env){ msg <- "refreshed"}
     if (verbose) {
-      if (refresh & !new_env){ msg <- "refreshed"}
       message(sprintf("\tenvironment  ** %s **  %s", envir, msg))
     }
   } else if (!refresh) {
@@ -69,7 +71,6 @@ rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
 #' @note \code{rlp_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname rlpSpec-environment
 #' @name rlp_envClear
-#' @seealso \code{\link{rlp_initEnv}}
 rlp_envClear <- function(...) rlp_initEnv(refresh=TRUE, ...)
 
 #' @description \code{rlp_envStatus} returns a list of some information regarding

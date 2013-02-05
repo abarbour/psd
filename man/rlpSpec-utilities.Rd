@@ -106,12 +106,6 @@
   division}
 }
 \value{
-  numeric
-
-  numeric
-
-  numeric
-
   \code{char2envir} returns the result of evaluating the
   object: an environment object; \code{envir2char} returns
   the result of deparsing the environment name: a character
@@ -137,10 +131,12 @@
   is equivalent to \code{(X) \%\% (Y)}.
 }
 \description{
-  Various utility functions are used:
+  \emph{The various utility functions are:}
 
-  \code{vardiff} reeturns the variance of the first
-  difference of the series.
+  \code{vardiff} returns the variance of the first (or
+  second) difference of the series. \code{varddiff} is a
+  convenience wrapper to return variance for the second
+  difference.
 
   \code{dB} returns an object converted to decibels.
 
@@ -199,39 +195,12 @@
   slower for large numeric vectors.
 }
 \examples{
-dB(1) # signal is equal <--> zero dB
-sig <- 1e-10
-all.equal(sig, dB(dB(sig), invert=TRUE))
-pow <- sig**2
-all.equal(pow, dB(dB(sig, is.power=TRUE), invert=TRUE, is.power=TRUE))
+\dontrun{
+set.seed(1234)
+X <- rnorm(1e2)
 ##
-## Evaluate character strings
-print(.rlpenv)
-char2envir(.rlpenv)
-char2envir("some nonexistent environment") # error
-# and environment objects:
-print(.GlobalEnv)
-envir2char(.GlobalEnv)
-envir2char(.rlpSpecEnv)
-char2envir(some_nonexistent_environment) # error
+## Matrix and vector creation:
 ##
-##
-## Check for spec object:
-# quick power spectral density
-x <- rnorm(1e2, sd=10)
-psd <- spectrum(x, plot=FALSE)
-# return is class 'spec'
-is.spec(psd) # TRUE
-#
-# but the underlying structure is just a list
-psd <- unclass(psd)
-is.spec(psd) # FALSE
-##
-## check for tapers
-is.tapers(x)
-is.tapers(as.tapers(x))
-##
-## matrix and vector creation:
 # NA matrix
 nd <- 5
 na_mat(nd)
@@ -242,8 +211,44 @@ zeroes(nd)
 # and ones
 ones(nd)
 ##
+## Check for tapers object:
 ##
-# \\dontrun{
+is.tapers(X)
+is.tapers(as.tapers(X))
+##
+## Check for spec object:
+##
+psd <- spectrum(X, plot=FALSE)
+# return is class 'spec'
+is.spec(psd) # TRUE
+# but the underlying structure is just a list
+psd <- unclass(psd)
+is.spec(psd) # FALSE
+##
+## Environment character strings
+##
+print(.rlpenv)
+char2envir(.rlpenv)
+char2envir("some nonexistent environment") # error
+# and environment objects:
+print(.GlobalEnv)
+envir2char(.GlobalEnv)
+envir2char(.rlpSpecEnv)
+envir2char(some_nonexistent_environment) # error
+##
+## decibels
+##
+dB(1) # signal is equal <--> zero dB
+sig <- 1e-10
+all.equal(sig, dB(dB(sig), invert=TRUE))
+pow <- sig**2
+all.equal(pow, dB(dB(sig, is.power=TRUE), invert=TRUE, is.power=TRUE))
+## 
+## Variance of difference series
+##
+vardiff(X)
+varddiff(X)
+all.equal(vardiff(X, TRUE), varddiff(X))
 ##
 ## modulo division
 ##
@@ -257,7 +262,7 @@ all.equal(mc1a, mc1b) # TRUE
 all.equal(mc2a, mc2b) # "Mean absolute difference: 2"
 all.equal(mc2a, mc2c) # TRUE
 ##
-# }
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
@@ -269,13 +274,7 @@ all.equal(mc2a, mc2c) # TRUE
   \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
 }
 \seealso{
-  \code{\link{rlpSpec-package}}
-
-  \code{\link{rlpSpec-package}}
-
-  \code{\link{rlpSpec-package}}
-
-  \code{\link{as.tapers}}
+  \code{\link{rlpSpec-package}}, \code{\link{as.tapers}}
 }
 \keyword{S3methods}
 \keyword{arithmetic-operations}

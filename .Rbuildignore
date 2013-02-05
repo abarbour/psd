@@ -8,6 +8,7 @@
 .gitignore
 ^src/.gitignore$
 README.md
+fix_rd
 install_rlp
 data/.assemb_data
 inst/doc/.sweave

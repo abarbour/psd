@@ -1,9 +1,43 @@
-#' @title Normalization of the power spectral densities.
+#' Normalization of power spectral density estimates.
 #'
-#' @description Normalization is vitally important in spectral
-#' analyses.
-#' @section Assumtions:
-#' The normalizations performed here assume:
+#' Normalize power spectral densities from
+#' various estimators into single-sided spectra.
+#'
+#' Normalizations commonly encountered for power spectra 
+#' depend on it's assumed sidedness: whether the
+#' spectrum is either single- or double-sided.
+#' The normalizations performed here enforce single-sidedness, and correct
+#' as necessary.
+#'
+#' Frequencies are assumed to be based on the Nyquist frequency (half the 
+#' sampling rate).  For example: If a series \eqn{X} has sampling frequency \eqn{F_S},
+#' then the PSD frequencies will span \eqn{[0,F_S/2]}.
+#'
+#' For amplitudes, improper normalization can can introduce errant factors
+#' of either 1/2 or \eqn{F_S} into the estimates, depending on the assumed sidedness.  
+#' These factors can be accounted for with the \code{src}
+#' argument, which defaults to normalizing a double-sided spectrum.
+#' 
+#' @section Spectrum sidedness and the \code{src} argument:
+#' \subsection{\code{"double.sided"} or \code{"spectrum"}}{
+#'
+#' These spectra assume frequency range of \eqn{[-F_S/2,F_S/2]}, and so are normalized
+#' by scaling by a factor of two upwards.
+#' Some estimators producing double-sided spectra: 
+#' \itemize{
+#' \item{\code{stats::spectrum}}{}
+#' \item{\code{RSEIS::mtapspec}}{}
+#' }
+#' }
+#'
+#' \subsection{\code{"single.sided"} or \code{"rlpspec"}}{
+#'
+#' These spectra are scaled by the inverse of the sampling rate.
+#' Some estimators producing single-sided spectra: 
+#' \itemize{
+#' \item{\code{rlpSpec::\link{psdcore}}}{}
+#' }
+#' }
 #'
 #' @name rlpSpec-normalization
 #' @rdname rlpSpec-normalization
@@ -16,9 +50,10 @@
 #' @param src character string; the source of the spectrum estimator
 #' @param verbose logical; should messages be given?
 #' @param ... (unused) additional parameters
-#' @return original object, with values normalized accordingly
+#' @return An object with its spectral values normalized accordingly.
 #'
-#' @seealso \code{\link{psdcore}} \code{\link{spectral_properties}}
+#' @seealso \code{\link{psdcore}}, \code{\link{spectral_properties}}
+#' @example x_examp/normalization.ex
 NULL
  
 #' @rdname rlpSpec-normalization
@@ -61,7 +96,8 @@ normalize.spec <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   }
   #
   # assume its from spectrum
-  rlp <- switch(src <- match.arg(src, c("spectrum","rlpspec")), 
+  rlp <- switch(src <- match.arg(src, c("spectrum","double.sided","rlpspec","single.sided")), 
+                single.sided=TRUE, double.sided=FALSE,
                 rlpspec=TRUE, spectrum=FALSE)
   if (rlp){
     ptyp <- "single"

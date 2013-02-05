@@ -37,7 +37,8 @@
   \code{\link{riedsid}}}
 }
 \value{
-  Object with class 'spec', invisibly.
+  Object with class 'spec', invisibly. It also assigns the
+  object to \code{"final_psd"} in the working environment.
 }
 \description{
   This is the primary function to be used in this package,
@@ -51,9 +52,16 @@
   details regarding adaptive estimation.
 }
 \examples{
-# \\dontrun{
-NULL
-# }
+\dontrun{
+## load MAGSAT data
+data(magsat)
+##
+##  use the defaults
+pspectrum(X<-magsat$clean)
+##
+## turn off normalization
+pspectrum(X, Nyquist.normalize=FALSE)
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by
