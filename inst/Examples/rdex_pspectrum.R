@@ -1,4 +1,4 @@
-\dontrun{
+#RDEX#\dontrun{
 ##
 ## Adaptive multitaper PSD estimation
 ##
@@ -10,4 +10,4 @@ pspectrum(X<-magsat$clean)
 #
 # turn off normalization
 pspectrum(X, Nyquist.normalize=FALSE)
-}
+#RDEX#}

@@ -2,7 +2,7 @@
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
-%% \VignetteIndexEntry{rlpSpec Normalization}
+%% \VignetteIndexEntry{Normalization of power spectral densities.}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
 \usepackage[pdfborder={0 0 0}]{hyperref}
@@ -41,7 +41,7 @@
   \end{figure}                   %
 }
 \author{Andrew J. Barbour}
-\title{Normalization used in \rlp{}}
+\title{Normalization of Power Spectral Densities.}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -459,7 +459,7 @@ A proper DFT is normalized by the length of the series; however, most
 DFT calculators (including \Rcmd{stats::fft}) eschew this normalization for 
 efficiency's sake.
 }.
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Synthetic white noise and a DFT.">>=
 set.seed(1234)
 N <- 256
 x <- rnorm(N, mean = 0, sd = 1)
@@ -470,7 +470,7 @@ length(X)
 @
 
 We can easily find the amplitude and phase response:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Amplitude and phase spectra.">>=
 Sa <- Mod(X) # Amplitude spectrum
 Sp <- Arg(X) # Phase spectrum
 @
@@ -479,7 +479,7 @@ calculations\footnote{
 Note the equivalence
 between the complex conjugate based estimates.
 }
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Energy spectral densities.">>=
 XC <- Conj(X)
 all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 @
@@ -490,7 +490,7 @@ is defined as half the sampling rate\footnote{
 Although a white noise process is not strictly bandlimited,
 we will use it to demonstrate differences in normalization.
 }.
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Nyquist frequencies.">>=
 fsamp <- 1  # sampling freq, Hz
 fNyq <- fsamp/2   # nyquist
 Nf <- N/2
@@ -524,7 +524,7 @@ are approximately log-normally distributed; hence,
 a simple mean value is highly biased estimator.
 }, from which we can perform a variance--normalization
 test:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Test normalization.">>=
 test_norm <- function(sval, nyq, xvar){svar <- sval * nyq; return(svar/xvar)}
 print(xv_1 <- test_norm(mSn, fNyq, xv))
 xv_2 <- sum(S)/Nf * fNyq / xv  # an alternate test
@@ -538,7 +538,7 @@ and PSD
 with the sampling rate
 to obtain the properly-normalized spectra.
 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Apply correct normalization.">>=
 fsamp <- 20
 fNyq <- fsamp / 2
 freqs <- fsamp * nyfreqs 
@@ -588,7 +588,7 @@ for the input series is 1, and normalizes accordingly; however,
 sampling information used be included by creating a \Rcmd{ts}
 object from the series prior to spectrum estimation:
 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Change the sampling frequency.">>=
 fsamp <- 20
 xt <- ts(x, frequency=fsamp)
 pgram20 <- spec.pgram(xt, pad=1, taper=0, plot=FALSE)
@@ -598,14 +598,14 @@ pgram01 <- spec.pgram(ts(xt, frequency=1), pad=1, taper=0, plot=FALSE)
 A first order question is obviously whether these spectra pass our
  variance-normalization test: they do not, but only by a factor of two (too small):
 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Test the normalization again.">>=
 test_norm(mean(pgram01$spec), 0.5, xv)
 test_norm(mean(pgram20$spec), 10, xv)
 @
 
 \begin{figure}[h!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PGRAM>>=
+<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=NORMS>>=
 plot(pgram20, log="dB", ylim=36*c(-1,.3))
 plot(pgram01, log="dB", add=TRUE, col="red")
 abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))
@@ -621,7 +621,7 @@ But why?  The program assumes normalization for a
 by a factor of two.
 We can illustrate this with the following example:
 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Double sided PSD from spectrum.">>=
 psd1 <- spec.pgram(x, plot=FALSE)
 psd2 <- spec.pgram(xc<-complex(real=x, imag=x), plot=FALSE, demean=TRUE)
 mx <- mean(Mod(x))

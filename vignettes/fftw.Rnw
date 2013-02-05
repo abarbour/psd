@@ -2,7 +2,7 @@
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
-%% \VignetteIndexEntry{DFT benchmarks: fft vs fftw}
+%% \VignetteIndexEntry{DFT benchmarks: fft vs FFT.}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
 \usepackage[pdfborder={0 0 0}]{hyperref}
@@ -76,7 +76,7 @@ library(reshape2)
 library(ggplot2)
 @
 and create a benchmark function:
-<<eval=FALSE, echo=TRUE>>=
+<<eval=FALSE, echo=TRUE, label="Benchmark function">>=
 reps <- 10
 dftbm <- function(nd, repls=reps){
 	set.seed(1234)
@@ -95,14 +95,14 @@ This is the reason for the \Rcmd{stats::nextn} function.
 }, specifically multiples of (2,3,5).
 
 So, we create a vector of series lengths we wish to benchmark
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Num. terms to bench.">>=
 (nterms.even <- round(2**seq.int(from=4,to=20,by=1)))
 @
 and use it with \Rcmd{lapply} and the benchmark function
 previously defined.
 These data are further distilled into a usable format
 with \Rcmd{ldply}:
-<<eval=FALSE, echo=TRUE>>=
+<<eval=FALSE, echo=TRUE, label="Use lapply to do benching.">>=
 bench.even <- function(){
   benchdat.e <- plyr::ldply(lapply(X=nterms.even, FUN=dftbm))
   }
@@ -112,7 +112,7 @@ bench.even()
 In order to plot the results, we need to 
 perform some map/reduce operations on the data
 \citep{wickham2010}:
-<<eval=FALSE, echo=TRUE>>=
+<<eval=FALSE, echo=TRUE, label="Map/Reduce/Summarize etc">>=
 pltbench <- function(lentyp=c("even","odd")){
   benchdat <- switch(match.arg(lentyp), even=benchdat.e, odd=benchdat.o)
   stopifnot(exists("benchdat"))
@@ -164,7 +164,7 @@ pltbench <- function(lentyp=c("even","odd")){
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=FALSE, echo=TRUE, fig=TRUE, label=EVEN>>=
+<<eval=FALSE, echo=TRUE, fig=TRUE, label="Plot highly composite results.">>=
 pltbench("even")
 @
 \includegraphics[width=\textwidth]{fftw_bench_even}
@@ -184,12 +184,12 @@ DFT algorithms can have drastically reduced performance
 if the series length is not highly composite (NHC).
 We now test NHC series by adding one to the HC series-length
 vector (also restricting the total length for sanity's sake):
-<<eval=FALSE, echo=TRUE>>=
+<<eval=FALSE, echo=TRUE, label="Setup non highly composite lengths.">>=
 nterms.odd <- nterms.even + 1
 nterms.odd <- nterms.odd[nterms.odd < 50e3] # painfully long otherwise!
 @
 and performing the full set of benchmarks again:
-<<eval=FALSE, echo=TRUE>>=
+<<eval=FALSE, echo=TRUE, label="Do benching.">>=
 bench.odd <- function(){
   benchdat.o <- plyr::ldply(lapply(X=nterms.odd, FUN=dftbm))
   }
@@ -201,7 +201,7 @@ the HC summary curves:
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=FALSE, echo=TRUE, fig=TRUE, label=ODD>>=
+<<eval=FALSE, echo=TRUE, fig=TRUE,  label="Plot non highly composite results.">>=
 allmeds.prev <- allmeds
 pltbench("odd")
 @

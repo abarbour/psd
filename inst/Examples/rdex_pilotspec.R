@@ -1,3 +1,3 @@
-\dontrun{
+#RDEX#\dontrun{
 NULL
-}
+#RDEX#}

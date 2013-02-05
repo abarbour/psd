@@ -1,6 +1,7 @@
 #!/bin/sh
 pushd man
 cat << XXX > /tmp/fix_rd
+s/\#RDEX\#//g
 s/\\\\dontrun/\\dontrun/g
 XXX
 grep -l '\\\\dontrun' *.Rd | awk '{

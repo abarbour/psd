@@ -2,7 +2,7 @@
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
-%% \VignetteIndexEntry{rlpSpec Overview}
+%% \VignetteIndexEntry{An overview of rlpSpec.}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
 \usepackage[pdfborder={0 0 0}]{hyperref}
@@ -74,7 +74,7 @@
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
 %% libload
-<<eval=TRUE, eval=TRUE>>=
+<<eval=TRUE, eval=TRUE, label="Load library.">>=
 library(rlpSpec)
 @ 
 We need a series to analyze.
@@ -86,13 +86,13 @@ The sampling interval is
 once every kilometer (km), so the will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% magsat data
-<<eval=TRUE, eval=TRUE>>=
+<<eval=TRUE, eval=TRUE, label="Load MAGSAT data.">>=
 data(magsat)
 @ 
 The format of the data set is a \Rcmd{data.frame} with four
 sets of information:
 %%
-<<eval=TRUE, eval=TRUE>>=
+<<eval=TRUE, eval=TRUE, label="Show contents of MAGSAT.">>=
 names(magsat)
 @ 
 The \Rcmd{raw} and \Rcmd{clean} names represent raw
@@ -101,7 +101,7 @@ and edited intensities respectively, expressed in units of nanoTesla;
 The difference between them is a matter of just a few points
 attributable to instrumental malfunction. 
 %% edits
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Outliers.">>=
 subset(magsat, abs(mdiff)>0)
 @
 These deviations can,
@@ -112,7 +112,7 @@ Setting aside any discussion regarding sample stationarity,
 we can find power spectral density (PSD)
 estimates for the two series quite simply:
 %% pspectrum 4 iters
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Calculate PSDs.">>=
 psdr <- pspectrum(magsat$raw)
 psdc <- pspectrum(magsat$clean)
 @
@@ -158,7 +158,7 @@ PSD for the raw series looks somewhat unrealistic at higher wavelengths.
 %
 \begin{figure}[htbp!]
 \begin{center}
-<<eval=TRUE, fig=TRUE, echo=TRUE, label=fig_magsat>>=
+<<eval=TRUE, fig=TRUE, echo=TRUE, label=RAWvCLEAN>>=
 plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
        lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
 plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
@@ -206,7 +206,7 @@ results with a \naive{} estimator--a 20\% tapered periodogram--from within the
 spectrum calculator, \Rcmd{psdcore}.
 In R this estimator may be found with the following settings:
 %
-<<eval=FALSE, echo=TRUE>>=
+<<eval=FALSE, echo=TRUE, label="Naive spectrum estimation.">>=
 spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=F)
 @
 However, within \Rcmd{psdcore} the comparison is
@@ -230,7 +230,7 @@ results are shown in Figure \ref{fig:two}.
 \begin{figure}[htb!]
 \begin{center}
 %% magsat compare
-<<eval=TRUE, echo=TRUE, fig=TRUE,  label=fig_magsat_naive>>=
+<<eval=TRUE, echo=TRUE, fig=TRUE,  label=MAGSAT_NAIVE>>=
 ntap <- psdc$taper
 psdcore(magsat$clean, ntaper=ntap, refresh=TRUE, plotpsd=TRUE)
 @
@@ -268,7 +268,7 @@ default operation of  \Rcmd{prewhiten} is to assume a linear model of the form
 $f(x) = \alpha x + \beta + \epsilon$
 and fit using ordinary linear least squares.
 }.
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Load RSEIS package.">>=
 require(RSEIS)
 dt=1 # km
 ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE) 
@@ -302,14 +302,14 @@ with which \Rcmd{psdcore}
 would interpret as
 an interval (instead of a frequency). 
 A quick example highlights the equivalency:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Sampling rate versus interval.">>=
 a <- rnorm(32)
 all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
 @
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
 estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Compute PSD with mtapspec.">>=
 tapinit <- 10
 Mspec <- mtapspec(ats, deltat(ats), MTP=list(kind=2, inorm=3, nwin=tapinit, npi=0))
 @
@@ -334,7 +334,7 @@ and we will need to correct for normalization factors, as necessary, with
 set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Comparative spectra.">>=
 Xspec <- spec.pgram(ats, pad=1, taper=0.2, detr=TRUE, dem=TRUE, plot=FALSE)
 Pspec <- psdcore(ats, dt, tapinit)
 Aspec <- pspectrum(ats, dt, tapinit, niter=3)
@@ -351,7 +351,7 @@ Figure \ref{fig:psdcomp}.
 
 \begin{figure}[htbp!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, label=fig_rseis>>=
+<<eval=TRUE, echo=TRUE, fig=TRUE, label=RSEIS>>=
 require(RColorBrewer)
 cols <- c("dark grey", brewer.pal(8, "Set1")[c(5:4,2)])
 lwds <- c(1,2,2,5)
@@ -374,7 +374,7 @@ Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \rlp{}-based frequencies
 (or reciprocally): 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Interpolate results.">>=
 require(signal)
 pltpi <- interp1(pltf, pltp, Pspec$freq)
 @
@@ -382,13 +382,13 @@ We regress the spectral values from \Rcmd{mtapspec} against
 the \Rcmd{psdcore} results because we have used them to
 produce uniformly tapered spectra
 with an equal number of sine tapers.
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Summarize regression statistics.">>=
 df <- data.frame(x=dB(Pspec$spec), y=pltpi, tap=unclass(Aspec$taper))
 summary(dflm <- lm(y ~ x + 0, df))
 df$res <- residuals(dflm)
 @
 Create \Rcmd{ggplot2} objects for plotting purposes:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Create ggplot objects.">>=
 require(ggplot2)
 g1 <- ggplot(df, aes(x=x, y=y)) + 
     geom_abline(intercept=0, slope=1, size=2, color="salmon")+
@@ -515,7 +515,7 @@ based on $1/\sqrt{\nu-1}$, which is accurate to within a few percent in most cas
 Returning to the MAGSAT spectra, let us compare the \rlp{}
 spectra with spectral uncertainty as bounded polygons.
 First calculate the uncertainty polygon data:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Compute spectral properties.">>=
 spp <- spectral_properties(Pspec$taper, db.ci=TRUE)
 spa <- spectral_properties(Aspec$taper, db.ci=TRUE)
 str(spa)
@@ -594,12 +594,12 @@ uncertainties change with each iteration.
  add a few more iterations to visualize, 
 we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Get adaptive history.">>=
 pspectrum(ats, niter=6)
 str(AH <- get_adapt_history())
 @
 Followed by some trivial manipulation:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Some manipulation.">>=
 Freqs <- (AH$freq)
 Dat <- AH$stg_psd
 numd <- length(Freqs)

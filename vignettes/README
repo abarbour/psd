@@ -3,8 +3,13 @@ README
 Creation date:	Tue Jan 29 20:59:57 PST 2013
 
 Notes:
+	* another quirk to deal with:
+http://cran.r-project.org/web/packages/R.rsp/vignettes/NonSweaveVignettes.pdf	
+http://www.mail-archive.com/r-devel@r-project.org/msg26748.html
+
 	* do not use \include (use \input)
 	(build creates aux files and CRAN checks NOTE/COMPLAIN)
+
 	* Sweave build removes saved pdfs!
 
 ##
