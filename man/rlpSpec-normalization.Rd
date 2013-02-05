@@ -75,7 +75,7 @@
   \itemize{ \item{\code{rlpSpec::\link{psdcore}}}{} } }
 }
 \examples{
-#' dontrun{
+# \dontrun{
 ##
 ## Normalization
 ##
@@ -105,7 +105,7 @@ plot(psd, add=TRUE, col="red", log="dB")
 mean(pgram$spec)*max(pgram$freq)
 mean(psd$spec)*max(psd$freq)
 #
-#' }
+# }
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

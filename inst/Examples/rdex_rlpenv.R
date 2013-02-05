@@ -1,4 +1,4 @@
-#' dontrun{
+# \dontrun{
 ##
 ## rlpSpec working environment
 ##
@@ -13,4 +13,4 @@ print(x <- rlp_envGet("init"))
 #
 # pull the adaptive history into .GlobalEnv
 get_adapt_history()
-#' }
+# }

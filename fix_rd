@@ -6,5 +6,7 @@ XXX
 grep -l '\\\\dontrun' *.Rd | awk '{
   fi=$1
   printf"mv %s tmprd\nsed -f /tmp/fix_rd tmprd > %s\n",fi,fi
+}END{
+  printf"rm tmprd\n"
 }' | sh
 popd

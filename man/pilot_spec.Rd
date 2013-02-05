@@ -47,9 +47,9 @@
   using \code{as.tapers(..., minspan=TRUE)}.
 }
 \examples{
-#' dontrun{
+# \dontrun{
 NULL
-#' }
+# }
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

@@ -55,7 +55,7 @@
   vectors, although this could be quite desirable.
 }
 \examples{
-#' dontrun{
+# \dontrun{
 ##
 ## Objects with class 'taper'
 ##
@@ -67,7 +67,7 @@ as.taper(x<-data.frame(x=1:10,y=10:19))
 as.taper(x, min_taper=3, max_taper=10)
 # class 'character' is in-coercible; raise error
 try(as.taper(c("a","b")))
-#' }
+# }
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
