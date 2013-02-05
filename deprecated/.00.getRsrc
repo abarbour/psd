@@ -1,2 +1,0 @@
-cp /Users/abarbour/kook.processing/R/dev/matlab.port/psd/toport.rfiles/*.R rsrc/.
-cp /Users/abarbour/kook.processing/R/dev/matlab.port/psd/test.rfiles/testing.R rsrc/.demo.R

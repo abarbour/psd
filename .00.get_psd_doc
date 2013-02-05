@@ -1,2 +1,0 @@
-wget http://igppweb.ucsd.edu/~parker/Software/Docs/psd.pdf
-mv psd.pdf doc_psd_fortran.pdf
