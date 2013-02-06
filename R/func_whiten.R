@@ -120,6 +120,8 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, 
     tser.prew <- stats::ts(X, frequency=sps, start=tstart)
   }
   if (plot){
+    opar <- par(no.readonly = TRUE)
+    par(las=1,xpd=FALSE)
     if (exists("arfit")){
       ftyp <- sprintf("AR(%i) model", arfit$order)
     } else {
@@ -129,12 +131,14 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, 
       lines(x, col = col, bg = bg, pch = pch, type = type, ...)
       abline(h=c(0,mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
     }
-    mtxt <- sprintf("%s fit  (demean %s | detrend %s )", ftyp, demean, detrend)
-    plot(stats::ts.union(raw=tser, processed=tser.prew), 
+    plot(stats::ts.union(x=tser, x.p=tser.prew), 
          main="Raw and prewhitened series",
-         xlab="series units",
-         yaxs="i", xaxs="i", yax.flip=TRUE, panel=PANELFUN)
+         #xlab="series units",
+         cex.lab=0.7, cex.axis=0.7, xy.labels=FALSE,
+         xaxs="i", yax.flip=TRUE, panel=PANELFUN)
+    mtxt <- sprintf("%s fit  (demean %s | detrend %s )", ftyp, demean, detrend)
     mtext(mtxt, line=0.5)
+    par(opar)
   }
   return(invisible(tser.prew))
 }

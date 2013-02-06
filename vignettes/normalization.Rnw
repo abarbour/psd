@@ -18,6 +18,8 @@
 \usepackage{amssymb}
 \usepackage{float}
 \usepackage{natbib}
+\usepackage{geometry}
+\geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %%\usepackage{fullpage}
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
@@ -504,7 +506,7 @@ S <- Se[1:Nf] * 2 / N   # Finally, the PSD!
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD>>=
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=PSD>>=
 plot(nyfreqs, S, type="h", xlab="Nyquist frequency", ylab="units**2 / freq")
 print(c(mSn <- mean(S), mSm <- median(S)))
 abline(h=c(mSn,mSm), lwd=2, lty=c(2,3), col="red")
@@ -553,7 +555,7 @@ To compare the scalings it is helpful to instead show the spectral values
 in decibels (relative to 1 units$^2/$frequency).
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD2>>=
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=PSD2>>=
     # decibel function
 dB <- function(y) 10*log10(y)
     # and some plots...
@@ -609,7 +611,7 @@ test_norm(mean(pgram20$spec), 10, xv)
 
 \begin{figure}[h!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=NORMS>>=
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=NORMS>>=
 plot(pgram20, log="dB", ylim=36*c(-1,.3))
 plot(pgram01, log="dB", add=TRUE, col="red")
 abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))

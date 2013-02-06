@@ -294,7 +294,7 @@ psdcore.default <- function(X.d,
          xaxs="i", xlab="",
          ylab="dB, units^2 * delta",
          ylim=c(min(r1, r2), max(r1, r2)))
-    mtext("frequency, log10 frequency", side=1, line=1.5)
+    mtext("log10 frequency", side=1, line=1.6)
     #mtext(, cex=0.6)
     abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
     lines(lfrq, db_psd, type="l")
@@ -308,7 +308,7 @@ psdcore.default <- function(X.d,
     ## original series
     plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
     mtext("index", side=1, line=1.5)
-    mtext(sprintf("( dt:%s | dm:%s | f.l:%s )", demean, detrend, first.last), cex=0.6)
+    mtext(sprintf("( dt:%s | dm:%s | f.l:%s )", demean, detrend, first.last), cex=0.4)
     ## autocorrelation
     acf(Xser, main="")
     mtext("lag", side=1, line=1.5)

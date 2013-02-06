@@ -83,8 +83,11 @@
 
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
+<<eval=TRUE, echo=FALSE>>=
+par(las=1)
+@
 %% libload
-<<eval=TRUE, eval=TRUE, label="Load library.">>=
+<<eval=TRUE, echo=TRUE, label="Load library.">>=
 library(rlpSpec)
 @ 
 We need a series to analyze.
@@ -134,7 +137,16 @@ the number of tapers is adjusted
 based the proposed optimal number from \citet{rs1995}, which
 depends on spectral shape; we use 
 quadratically weighted spectral derivatives to estimate this shape.
-By default, summary plots of the results are displayed.
+By default, a multipanel summary plot of the final PSD compared
+to the raw periodogram estimate is shown after the final iterative stage.
+Note that if the user forgets to assign the results of
+\Rcmd{pspectrum} to the global environment, this can be
+done with the \Rcmd{rlp\_envGet} function:
+<<echo=TRUE, eval=TRUE>>=
+psdc_recovered <- rlp_envGet("final_psd")
+all.equal(psdc, psdc_recovered)
+@
+%stopifnot(!is.null("psdc"))
 
 In general, spectral variance is reduced
 with sequential refinements\footnote{
@@ -149,8 +161,9 @@ Note that in the example
 the sampling frequency of both series
 is 1 km$^{-1}$, the assumed value.
 
-Figure \ref{fig:pmag} compares the spectra for the \Rcmd{raw} and \Rcmd{clean} 
-samples\footnote{
+Figure \ref{fig:pmag} compares the 
+power spectra for the \Rcmd{raw} and \Rcmd{clean} 
+series\footnote{
 Note that \Rcmd{pspectrum} returns
 an object with class \Rcmd{spec}, so we have access to methods 
 within \Rcmd{stats}, including \Rcmd{plot.spec}.
@@ -165,11 +178,12 @@ very red spectrum typical of geophysical processes \citep{agnew1992},
 and
 a rolloff in signal
 for 10 kilometer wavelengths and longer; whereas, the 
-PSD for the raw series looks somewhat unrealistic at higher wavelengths.
+PSD for the raw series looks somewhat unrealistic at higher wavelengths--
+features which would be difficult to judge with \naive{} estimators.
 %
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, fig=TRUE, echo=TRUE, label=RAWvCLEAN>>=
+<<eval=TRUE, echo=TRUE, label=RAWvCLEAN>>=
 plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
        lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
 plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
@@ -215,12 +229,11 @@ Our method is non-parametric; hence, we will compare to the latter.
 Included in \rlp{} is an option to compare the 
 results with a \naive{} estimator--a 20\% tapered periodogram--from within the
 spectrum calculator, \Rcmd{psdcore}.
-In R this estimator may be found with the following settings:
-%
+In R this estimator may be found with the following command:
 <<eval=FALSE, echo=TRUE, label="Naive spectrum estimation.">>=
 spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=F)
 @
-However, within \Rcmd{psdcore} the comparison is
+Within \Rcmd{psdcore} the comparison is
 made with
 the logical arguments \Rcmd{detrend} and \Rcmd{demean} 
 passed to \Rcmd{spec.pgram}; they are,
@@ -241,7 +254,7 @@ results are shown in Figure \ref{fig:two}.
 \begin{figure}[htb!]
 \begin{center}
 %% magsat compare
-<<eval=TRUE, echo=TRUE, fig=TRUE,  label=MAGSATNAIVE>>=
+<<eval=TRUE, echo=TRUE,  label=MAGSATNAIVE>>=
 ntap <- psdc$taper
 psdcore(magsat$clean, ntaper=ntap, refresh=TRUE, plotpsd=TRUE)
 @
@@ -274,28 +287,32 @@ double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods\footnote{
-Although the name implies parametric fitting, the
-default operation of  \Rcmd{prewhiten} is to assume a linear model of the form 
+This name of this function, \Rcmd{prewhiten},
+suggests it produces only auto-regressive innovations:
+it can, but the
+default operation of  \Rcmd{prewhiten} is to fit a linear model of the form 
 $f(x) = \alpha x + \beta + \epsilon$
-and fit using ordinary linear least squares.
+using ordinary linear least squares.
 }.
 <<eval=TRUE, echo=TRUE, label="Load RSEIS package.">>=
 require(RSEIS)
 dt=1 # km
 ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE) 
 @
-and if we set \Rcmd{AR.max} higher than zero, the program
-would've fit an auto-regressive (AR)
-model to the data.  In Figure \ref{fig:magd} we show the AR
+Setting \Rcmd{AR.max} higher than zero
+causes the program to fit
+an auto-regressive (AR)
+model to the data using the Akaike infomation criterion (AIC).  
+In Figure \ref{fig:magd} we show the AR
 fitting method, and note that while we set \Rcmd{AR.max} relatively high,
-only and AR(6) model was fit significantly.
+only and AR(6) model was fit significantly following the AIC.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, fig.height=3.5, fig.width=6.5, label=ARFIT>>=
+<<eval=TRUE, echo=TRUE, fig.height=3.8, fig.width=6.5, label=ARFIT>>=
 atsar <- prewhiten(ats, AR.max=100, verbose=FALSE)
 @
-<<eval=TRUE, echo=TRUE, fig=TRUE, fig.height=3, fig.width=4.5, label=ARPSD>>=
+<<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
 plot(psdcore(atsar,ntaper=10), log="dB", main="PSD of MAGSAT innovations")
 @
 \caption{Top: Pre-whitening of a series assuming an AR model.
@@ -362,10 +379,11 @@ Figure \ref{fig:psdcomp}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, fig.width=6.0, fig.height=5.4, label=RSEIS>>=
+<<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=RSEIS>>=
 require(RColorBrewer)
 cols <- c("dark grey", brewer.pal(8, "Set1")[c(5:4,2)])
 lwds <- c(1,2,2,5)
+par(las=1)
 plot(Xspec, log="dB", ylim=40*c(-0.4,1), ci.col=NA, 
        col=cols[1], lwd=lwds[1], main="PSD Comparisons") 
 pltf <- Mspec$freq
@@ -421,11 +439,11 @@ in Figure \ref{fig:psdcomp}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=FALSE, fig=TRUE, fig.width=6, fig.height=5, label=RSEISvsRLP1>>=
+<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=5, label=RSEISvsRLP1>>=
 print(g1 + scale_colour_gradient2(mid="light grey") + theme_bw() + 
 	ggtitle("Regression of mtapspec against psdcore"))
 @
-<<eval=TRUE, echo=FALSE, fig=TRUE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
+<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
 print(g2 + theme_bw() +
 	ggtitle("Regression residuals, colored by optimized tapers"))
 @
@@ -493,8 +511,9 @@ only slight improvements with logarithmic number of tapers.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, fig.width=5, fig.height=4.5, label=SPECERR>>=
+<<eval=TRUE, echo=TRUE, fig.width=5, fig.height=4.5, label=SPECERR>>=
 sp <- spectral_properties(as.tapers(1:50), p=0.95, db.ci=TRUE)
+par(las=1)
 plot(stderr.chi.upper ~ taper, sp, type="s", 
        ylim=c(-10,20), yaxs="i", xaxs="i",
        xlab=expression("number of tapers ("* nu/2 *")"), ylab="dB",
@@ -544,7 +563,7 @@ and plot the comparison, shown in Figure \ref{fig:magerr}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, fig.width=6, fig.height=5.5, label=MAGERR>>=
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=5.5, label=MAGERR>>=
 plot(c(0,0.5),c(-8,35),col="white", 
        main="MAGSAT Spectral Uncertainty (p > 0.95)",
        ylab="", xlab="spatial frequency, 1/km", yaxt="n", frame.plot=FALSE)
@@ -575,20 +594,30 @@ are shown
 in Figure \ref{fig:magres}.
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig=TRUE, fig.width=7, fig.height=4, label=MAGRES>>=
+<<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4, label=MAGRES>>=
 frq <- Aspec$freq
-psd <- dB(Aspec$spec)
-kopt <- unclass(Aspec$taper)
-spres <- spa$resolution
-pltdf <- data.frame(frq=frq, p=psd, relp=psd + dB(spres * frq), col="light grey")
-pltdf$col[pltdf$relp<0] <- "light blue"
-plot(relp ~ frq, pltdf, type="h",ylim=18*c(-1,1), col=pltdf$col, 
-       xaxs="i", yaxs="i", main="MAGSAT Spectral Resolution",
-       ylab="dB", xlab="spatial frequency, 1/km")
-abline(h=0, lwd=1)
-lines(relp ~ frq, pltdf, lwd=2)
+relp <- dB(1/spa$resolution)
+par(las=1)
+plot(frq, relp,
+     col="light grey", 
+     ylim=dB(c(1,5)),
+     type="h", xaxs="i", yaxs="i", 
+     ylab="dB", xlab="frequency, 1/km",
+     main="MAGSAT Spectral Resolution and Uncertainty")
+lines(frq, relp)
+lines(frq, spp$stderr.chi.upper+relp, lwd=1.5, lty=3)
+lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
+abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 @
-\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=3} adapts).}
+\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=3} adapts) in
+decibels relative to the spectrum.
+The thick dashed line shows the 
+resolved uncertainties ($p=0.05$) in the adaptively refined
+spectrum; whereas, the thin dashed line
+shows the approximate RMS spectral variation.
+The dotted line shows the
+resolved uncertainties for the uniformly tapered result.
+}
 \label{fig:magres}
 \end{center}
 \end{figure}
@@ -626,7 +655,7 @@ Figure \ref{fig:psdhist}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=FALSE, fig=TRUE, fig.width=6, fig.height=4, label=HIST1>>=
+<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=4, label=HIST1>>=
 seqcols <- 1:numit
 itseq <- seqcols - 1
 toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
@@ -637,7 +666,7 @@ matplot(Freqs, StgPsd + (sc<-9)*toadd, type="l", lty=1, lwd=2, col="black",
 text(0.52, 1.05*sc*itseq, itseq)
 text(0.49, 1.1*sc*numit, "Stage:")
 @
-<<eval=TRUE, echo=FALSE, fig=TRUE, fig.width=6, fig.height=3.5, label=HIST2>>=
+<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3.5, label=HIST2>>=
 par(xpd=TRUE)
 Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=StgTap, cols=Cols){
@@ -669,24 +698,29 @@ Bottom: Filled polygons showing the number of tapers at each stage.
 
 It may be informative to investigate cross correlation
 coefficients between the stages.
-<<eval=TRUE, echo=TRUE, label=SYMCORR>>=
+<<eval=TRUE, echo=TRUE, label=SYMCORT>>=
 symnum( cT <- cor(StgTap) )
+@
+<<eval=TRUE, echo=TRUE, label=SYMCORP>>=
 symnum( cP <- cor(StgPsd) )
 @
 But in this case only the PSD estimates are significantly correlated.
 In Figure \ref{fig:histcorrel} we show the results of a hierarchic
 clustering
 algorithm applied to the cross correlation matrix.  This shows
-how the stages are closely related by family.
+the expected result that
+each stage is closely related to its parent, the pilot spectrum.
 
 %image(cP, col=rev(heat.colors(5)))
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=FALSE, fig=TRUE, fig.width=6, fig.height=6, label=XCORP>>=
+<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=6, label=XCORP>>=
 hP <- heatmap(cP, Rowv = FALSE, symm = TRUE, col = heat.colors(5),
 distfun = function(c) as.dist(1 - c), keep.dendro = TRUE)
 @
-\caption{Correlation coefficients.}
+\caption{Clustered correlation coefficients with associated dendrograms;
+deeper red colors indicate stronger family association.}
+% is that true?
 \label{fig:histcorrel}
 \end{center}
 \end{figure}

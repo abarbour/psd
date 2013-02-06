@@ -18,6 +18,8 @@
 \usepackage{amssymb}
 \usepackage{float}
 \usepackage{natbib}
+\usepackage{geometry}
+\geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %\usepackage{fullpage}
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
@@ -168,7 +170,7 @@ pltbench <- function(lentyp=c("even","odd")){
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=FALSE, echo=TRUE, fig=TRUE, label="Plot highly composite results.">>=
+<<eval=FALSE, echo=TRUE, label="Plot highly composite results.">>=
 pltbench("even")
 @
 \includegraphics[width=\textwidth]{fftw_bench_even}
@@ -205,7 +207,7 @@ the HC summary curves:
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=FALSE, echo=TRUE, fig=TRUE,  label="Plot non highly composite results.">>=
+<<eval=FALSE, echo=TRUE,  label="Plot non highly composite results.">>=
 allmeds.prev <- allmeds
 pltbench("odd")
 @

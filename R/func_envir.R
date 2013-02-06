@@ -119,6 +119,7 @@ rlp_envGet <- function(variable, envir=.rlpenv){
   stopifnot(is.character(variable) & is.character(envir))
   ENV <- char2envir(envir)
   if (!exists(variable, envir=ENV)){
+    warning(sprintf("Variable  '%s'  not found! Use rlp_envList()", variable))
     return(NULL)
   } else {
     return(get(variable, envir=ENV))
