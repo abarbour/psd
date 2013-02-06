@@ -77,7 +77,7 @@ prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, ver
 #' @S3method prewhiten default
 prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...){
   Xts <- stats::ts(tser, frequency=x.fsamp, start=x.start)
-  prewhiten(Xts, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE)
+  prewhiten(Xts, AR.max, detrend, demean, plot, verbose, ...)
 }
 #' @rdname prewhiten
 #' @aliases prewhiten.ts
@@ -98,7 +98,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, 
     # solves Yule-Walker equations
     #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
     arfit <- stats::ar.yw(tser, aic=TRUE, order.max=AR.max, demean=demean)
-    if (verbose) print(arfit)
+    if (verbose) print(str(arfit))
     # ar returns a TS object
     tser.prew <- stats::as.ts(zoo::na.locf(arfit$resid))
   }
@@ -119,7 +119,22 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, 
     }
     tser.prew <- stats::ts(X, frequency=sps, start=tstart)
   }
-  # optional plot
-  if (plot) plot(stats::ts.union(tser, tser.prew), yaxs="i", xaxs="i", yax.flip=TRUE)
+  if (plot){
+    if (exists("arfit")){
+      ftyp <- sprintf("AR(%i) model", arfit$order)
+    } else {
+      ftyp <- "linear"
+    }
+    PANELFUN <- function(x, col = col, bg = bg, pch = pch, type = type, ...){
+      lines(x, col = col, bg = bg, pch = pch, type = type, ...)
+      abline(h=c(0,mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
+    }
+    mtxt <- sprintf("%s fit  (demean %s | detrend %s )", ftyp, demean, detrend)
+    plot(stats::ts.union(raw=tser, processed=tser.prew), 
+         main="Raw and prewhitened series",
+         xlab="series units",
+         yaxs="i", xaxs="i", yax.flip=TRUE, panel=PANELFUN)
+    mtext(mtxt, line=0.5)
+  }
   return(invisible(tser.prew))
 }

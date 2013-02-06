@@ -1,8 +1,12 @@
 \documentclass[12pt]{article}
+% !Rnw weave = knitr
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
+
 %% \VignetteIndexEntry{DFT benchmarks: fft vs FFT.}
+%% \VignetteEngine{knitr}
+
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
 \usepackage[pdfborder={0 0 0}]{hyperref}
@@ -14,7 +18,7 @@
 \usepackage{amssymb}
 \usepackage{float}
 \usepackage{natbib}
-\usepackage{fullpage}
+%\usepackage{fullpage}
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index

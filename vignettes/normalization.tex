@@ -1,4 +1,59 @@
-\documentclass[12pt]{article}
+\documentclass[12pt]{article}\usepackage{graphicx, color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\definecolor{fgcolor}{rgb}{0.2, 0.2, 0.2}
+\newcommand{\hlnumber}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlfunctioncall}[1]{\textcolor[rgb]{0.501960784313725,0,0.329411764705882}{\textbf{#1}}}%
+\newcommand{\hlstring}[1]{\textcolor[rgb]{0.6,0.6,1}{#1}}%
+\newcommand{\hlkeyword}[1]{\textcolor[rgb]{0,0,0}{\textbf{#1}}}%
+\newcommand{\hlargument}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
+\newcommand{\hlcomment}[1]{\textcolor[rgb]{0.180392156862745,0.6,0.341176470588235}{#1}}%
+\newcommand{\hlroxygencomment}[1]{\textcolor[rgb]{0.43921568627451,0.47843137254902,0.701960784313725}{#1}}%
+\newcommand{\hlformalargs}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
+\newcommand{\hleqformalargs}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
+\newcommand{\hlassignement}[1]{\textcolor[rgb]{0,0,0}{\textbf{#1}}}%
+\newcommand{\hlpackage}[1]{\textcolor[rgb]{0.588235294117647,0.709803921568627,0.145098039215686}{#1}}%
+\newcommand{\hlslot}[1]{\textit{#1}}%
+\newcommand{\hlsymbol}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlprompt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 % !Rnw weave = knitr
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
@@ -463,30 +518,56 @@ A proper DFT is normalized by the length of the series; however, most
 DFT calculators (including \Rcmd{stats::fft}) eschew this normalization for 
 efficiency's sake.
 }.
-<<eval=TRUE, echo=TRUE, label="Synthetic white noise and a DFT.">>=
-set.seed(1234)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{set.seed}(1234)
 N <- 256
-x <- rnorm(N, mean = 0, sd = 1)
-xv <- var(x)
-X <- fft(x)
-class(X)
-length(X)
-@
+x <- \hlfunctioncall{rnorm}(N, mean = 0, sd = 1)
+xv <- \hlfunctioncall{var}(x)
+X <- \hlfunctioncall{fft}(x)
+\hlfunctioncall{class}(X)
+\end{alltt}
+\begin{verbatim}
+## [1] "complex"
+\end{verbatim}
+\begin{alltt}
+\hlfunctioncall{length}(X)
+\end{alltt}
+\begin{verbatim}
+## [1] 256
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
 We can easily find the amplitude and phase response:
-<<eval=TRUE, echo=TRUE, label="Amplitude and phase spectra.">>=
-Sa <- Mod(X) # Amplitude spectrum
-Sp <- Arg(X) # Phase spectrum
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+Sa <- \hlfunctioncall{Mod}(X)  \hlcomment{# Amplitude spectrum}
+Sp <- \hlfunctioncall{Arg}(X)  \hlcomment{# Phase spectrum}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 followed by equivalent \idx{energy spectral density}
 calculations\footnote{
 Note the equivalence
 between the complex conjugate based estimates.
 }
-<<eval=TRUE, echo=TRUE, label="Energy spectral densities.">>=
-XC <- Conj(X)
-all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+XC <- \hlfunctioncall{Conj}(X)
+\hlfunctioncall{all.equal}(Se <- Sa^2, Se_2 <- \hlfunctioncall{Mod}(XC * X), Se_2R <- \hlfunctioncall{Mod}(X * XC))
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
 The single-sided \idx{power spectral density} (PSD) estimates
 follow once the Nyquist frequency is set; this
@@ -494,21 +575,38 @@ is defined as half the sampling rate\footnote{
 Although a white noise process is not strictly bandlimited,
 we will use it to demonstrate differences in normalization.
 }.
-<<eval=TRUE, echo=TRUE, label="Nyquist frequencies.">>=
-fsamp <- 1  # sampling freq, Hz
-fNyq <- fsamp/2   # nyquist
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+fsamp <- 1  \hlcomment{# sampling freq, Hz}
+fNyq <- fsamp/2  \hlcomment{# nyquist}
 Nf <- N/2
-nyfreqs <- seq.int(from=0, to=fNyq, length.out=Nf)
-S <- Se[1:Nf] * 2 / N   # Finally, the PSD!
-@
+nyfreqs <- \hlfunctioncall{seq.int}(from = 0, to = fNyq, length.out = Nf)
+S <- Se[1:Nf] * 2/N  \hlcomment{# Finally, the PSD!}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD>>=
-plot(nyfreqs, S, type="h", xlab="Nyquist frequency", ylab="units**2 / freq")
-print(c(mSn <- mean(S), mSm <- median(S)))
-abline(h=c(mSn,mSm), lwd=2, lty=c(2,3), col="red")
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{plot}(nyfreqs, S, type = \hlstring{"h"}, xlab = \hlstring{"Nyquist frequency"}, ylab = \hlstring{"units**2 / freq"})
+\hlfunctioncall{print}(\hlfunctioncall{c}(mSn <- \hlfunctioncall{mean}(S), mSm <- \hlfunctioncall{median}(S)))
+\end{alltt}
+\begin{verbatim}
+## [1] 2.034 1.242
+\end{verbatim}
+\begin{alltt}
+\hlfunctioncall{abline}(h = \hlfunctioncall{c}(mSn, mSm), lwd = 2, lty = \hlfunctioncall{c}(2, 3), col = \hlstring{"red"})
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/PSD} 
+
+\end{knitrout}
+
 %polygon(c(0,fNyq,fNyq,0,0), c(0,0,mSn,mSn,0), lwd=2, lty=2, border="red")
 \label{fig:psdN}
 \caption{Power spectral density estimates for a single realization of a 
@@ -528,12 +626,28 @@ are approximately log-normally distributed; hence,
 a simple mean value is highly biased estimator.
 }, from which we can perform a variance--normalization
 test:
-<<eval=TRUE, echo=TRUE, label="Test normalization.">>=
-test_norm <- function(sval, nyq, xvar){svar <- sval * nyq; return(svar/xvar)}
-print(xv_1 <- test_norm(mSn, fNyq, xv))
-xv_2 <- sum(S)/Nf * fNyq / xv  # an alternate test
-all.equal(xv_1, xv_2)
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+test_norm <- \hlfunctioncall{function}(sval, nyq, xvar) \{
+    svar <- sval * nyq
+    \hlfunctioncall{return}(svar/xvar)
+\}
+\hlfunctioncall{print}(xv_1 <- \hlfunctioncall{test_norm}(mSn, fNyq, xv))
+\end{alltt}
+\begin{verbatim}
+## [1] 0.9933
+\end{verbatim}
+\begin{alltt}
+xv_2 <- \hlfunctioncall{sum}(S)/Nf * fNyq/xv  \hlcomment{# an alternate test}
+\hlfunctioncall{all.equal}(xv_1, xv_2)
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
 But what if the sampling frequency \texttt{fsamp} changes? An obvious change will be
 the actual Nyquist frequency, which means the variance--normalization test will
@@ -542,29 +656,46 @@ and PSD
 with the sampling rate
 to obtain the properly-normalized spectra.
 
-<<eval=TRUE, echo=TRUE, label="Apply correct normalization.">>=
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
 fsamp <- 20
-fNyq <- fsamp / 2
-freqs <- fsamp * nyfreqs 
-Snew <- S / fsamp
-@
+fNyq <- fsamp/2
+freqs <- fsamp * nyfreqs
+Snew <- S/fsamp
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 
 To compare the scalings it is helpful to instead show the spectral values
 in decibels (relative to 1 units$^2/$frequency).
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=PSD2>>=
-    # decibel function
-dB <- function(y) 10*log10(y)
-    # and some plots...
-plot(freqs, dB(S), type="h", xlab="Frequency", ylab="dB")
-lines(freqs, dB(Snew), col="blue", lwd=2)
-abline(h=dB(1/fNyq), col="grey", lwd=2)
-mSn <- mean(Snew)
-lines(c(0,fNyq), rep(dB(mSn),2), lwd=2, lty=2, col="red")
-    # finally, test variance.
-test_norm(mSn, fNyq, xv)
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcomment{# decibel function}
+dB <- \hlfunctioncall{function}(y) 10 * \hlfunctioncall{log10}(y)
+\hlcomment{# and some plots...}
+\hlfunctioncall{plot}(freqs, \hlfunctioncall{dB}(S), type = \hlstring{"h"}, xlab = \hlstring{"Frequency"}, ylab = \hlstring{"dB"})
+\hlfunctioncall{lines}(freqs, \hlfunctioncall{dB}(Snew), col = \hlstring{"blue"}, lwd = 2)
+\hlfunctioncall{abline}(h = \hlfunctioncall{dB}(1/fNyq), col = \hlstring{"grey"}, lwd = 2)
+mSn <- \hlfunctioncall{mean}(Snew)
+\hlfunctioncall{lines}(\hlfunctioncall{c}(0, fNyq), \hlfunctioncall{rep}(\hlfunctioncall{dB}(mSn), 2), lwd = 2, lty = 2, col = \hlstring{"red"})
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/PSD2} 
+\begin{kframe}\begin{alltt}
+\hlcomment{# finally, test variance.}
+\hlfunctioncall{test_norm}(mSn, fNyq, xv)
+\end{alltt}
+\begin{verbatim}
+## [1] 0.9933
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 \label{fig:psdsamp}
 \caption{Rescaled PSD estimates for a single realization of a 
 $\mathcal{N}(0,1)$ process with a sampling rate of 20 s$^{-1}$ rather
@@ -592,28 +723,53 @@ for the input series is 1, and normalizes accordingly; however,
 sampling information used be included by creating a \Rcmd{ts}
 object from the series prior to spectrum estimation:
 
-<<eval=TRUE, echo=TRUE, label="Change the sampling frequency.">>=
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
 fsamp <- 20
-xt <- ts(x, frequency=fsamp)
-pgram20 <- spec.pgram(xt, pad=1, taper=0, plot=FALSE)
-pgram01 <- spec.pgram(ts(xt, frequency=1), pad=1, taper=0, plot=FALSE)
-@
+xt <- \hlfunctioncall{ts}(x, frequency = fsamp)
+pgram20 <- \hlfunctioncall{spec.pgram}(xt, pad = 1, taper = 0, plot = FALSE)
+pgram01 <- \hlfunctioncall{spec.pgram}(\hlfunctioncall{ts}(xt, frequency = 1), pad = 1, taper = 0, plot = FALSE)
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 
 A first order question is obviously whether these spectra pass our
  variance-normalization test: they do not, but only by a factor of two (too small):
 
-<<eval=TRUE, echo=TRUE, label="Test the normalization again.">>=
-test_norm(mean(pgram01$spec), 0.5, xv)
-test_norm(mean(pgram20$spec), 10, xv)
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{test_norm}(\hlfunctioncall{mean}(pgram01$spec), 0.5, xv)
+\end{alltt}
+\begin{verbatim}
+## [1] 0.4845
+\end{verbatim}
+\begin{alltt}
+\hlfunctioncall{test_norm}(\hlfunctioncall{mean}(pgram20$spec), 10, xv)
+\end{alltt}
+\begin{verbatim}
+## [1] 0.4845
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
 \begin{figure}[h!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, width=6, height=3.5, fig=TRUE, label=NORMS>>=
-plot(pgram20, log="dB", ylim=36*c(-1,.3))
-plot(pgram01, log="dB", add=TRUE, col="red")
-abline(h=dB(c(1, 1/2/1, 1/2/20)), col=c("grey","red","black"))
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{plot}(pgram20, log = \hlstring{"dB"}, ylim = 36 * \hlfunctioncall{c}(-1, 0.3))
+\hlfunctioncall{plot}(pgram01, log = \hlstring{"dB"}, add = TRUE, col = \hlstring{"red"})
+\hlfunctioncall{abline}(h = \hlfunctioncall{dB}(\hlfunctioncall{c}(1, 1/2/1, 1/2/20)), col = \hlfunctioncall{c}(\hlstring{"grey"}, \hlstring{"red"}, \hlstring{"black"}))
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/NORMS} 
+
+\end{knitrout}
+
 \label{fig:pgram}
 \caption{\Rcmd{spec.pgram}}
 \end{center}
@@ -625,14 +781,27 @@ But why?  The program assumes normalization for a
 by a factor of two.
 We can illustrate this with the following example:
 
-<<eval=TRUE, echo=TRUE, label="Double sided PSD from spectrum.">>=
-psd1 <- spec.pgram(x, plot=FALSE)
-psd2 <- spec.pgram(xc<-complex(real=x, imag=x), plot=FALSE, demean=TRUE)
-mx <- mean(Mod(x))
-mxc <- mean(Mod(xc))
-(mxc/mx)**2
-mean((psd2$spec / psd1$spec))
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+psd1 <- \hlfunctioncall{spec.pgram}(x, plot = FALSE)
+psd2 <- \hlfunctioncall{spec.pgram}(xc <- \hlfunctioncall{complex}(real = x, imag = x), plot = FALSE, demean = TRUE)
+mx <- \hlfunctioncall{mean}(\hlfunctioncall{Mod}(x))
+mxc <- \hlfunctioncall{mean}(\hlfunctioncall{Mod}(xc))
+(mxc/mx)^2
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\begin{alltt}
+\hlfunctioncall{mean}((psd2$spec/psd1$spec))
+\end{alltt}
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
 This means that unless we are interested in analyzing complex
 timeseries, we need only multiply by two for properly normalized spectra 

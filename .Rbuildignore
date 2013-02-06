@@ -13,6 +13,8 @@ install_rlp
 data/.assemb_data
 inst/Examples/.norun.R
 vignettes/.sweave
+vignettes/.knitr$
+vignettes/.knitr2$
 ^.*/.gitignore$
 notes/
 x_S4/
