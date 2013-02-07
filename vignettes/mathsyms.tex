@@ -11,9 +11,9 @@
 \newcommand{\dmodF}[0]{\dmod{\dF{}}}
 \newcommand{\dargF}[0]{\enm{\mathrm{arg} \{\dF{}\}}}
 \newcommand{\ds}[0]{\enm{s}} %% spectrum
-\newcommand{\dS}[0]{\enm{S}} %% Spectrum
-\newcommand{\dsupsf}[1]{\enm{^{#1}\ds{}}} %% superscript spectrum front
-\newcommand{\dsupSf}[1]{\enm{^{#1}\dS{}}} %% superscript Spectrum front
+\newcommand{\dS}[0]{\enm{S(f)}} %% Spectrum
+\newcommand{\dsupsf}[1]{\enm{{}^{#1}\ds{}}} %% superscript spectrum front
+\newcommand{\dsupSf}[1]{\enm{{}^{#1}\dS{}}} %% superscript Spectrum front
 \newcommand{\dsupsb}[1]{\enm{\ds{}^{#1}}} %% superscript spectrum back
 \newcommand{\dsupSb}[1]{\enm{\dS{}^{#1}}} %% superscript Spectrum back
 \newcommand{\daS}[1]{\dsupsf{\mathrm{(A)}}} %% amplitude Spectrum
@@ -24,11 +24,15 @@
 \newcommand{\intone}{\enm{\int_{- \infty} ^{\infty}}}
 \newcommand{\Fo}{\enm{\mathcal{F}}}
 \newcommand{\Xfo}{\enm{\tilde{X}}}
-\newcommand{\rXfo}{\enm{\tilde{X}^R}}
-\newcommand{\iXfo}{\enm{\tilde{X}^I}}
+\newcommand{\rXfo}{\enm{\Xfo{}^R}}
+\newcommand{\iXfo}{\enm{\Xfo{}^I}}
 \newcommand{\Ex}{\enm{\mathcal{E}}}
 \newcommand{\slfrac}[2]{\left.#1\middle/#2\right.}
 \newcommand{\half}{\enm{\slfrac{1}{2}}}
 \newcommand{\Var}{\enm{\mathcal{V}}}
 \newcommand{\conv}{\ensuremath{\ast}}
+%%
+\newcommand{\dACV}[1]{\enm{\mathcal{R}(#1)}}
+\newcommand{\dXstoch}[0]{\enm{\mathcal{X}(t)}}
+\newcommand{\dXrealiz}[0]{\enm{X_T(t)}}
 %%

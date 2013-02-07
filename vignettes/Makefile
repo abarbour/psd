@@ -1,4 +1,5 @@
 # Makefile to use knitr for package vignettes
+# (modified from knitr package source)
 
 R_HOME = /usr
 

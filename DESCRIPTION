@@ -22,18 +22,18 @@ Depends:
     grDevices,
     fftw (>= 1.0-3)
 Imports:
-    Peaks (>= 0.2),
-    RColorBrewer (>= 1.0-5),
-    signal (>= 0.7-2),
-    zoo (>= 1.7-9)
+    Peaks,
+    RColorBrewer,
+    signal,
+    zoo
 Suggests:
-    ggplot2 (>= 0.9-3),
-    knitr (>= 1.0.5),
-    multitaper (>= 1.0-2),
-    plyr (>= 1.8),
-    RSEIS (>= 3.0-9),
-    rbenchmark (>= 1.0.0),
-    reshape2 (>= 1.2.2)
+    ggplot2 (>= 0.9),
+    knitr,
+    multitaper,
+    plyr,
+    RSEIS,
+    rbenchmark,
+    reshape2
 Collate:
     'rlpSpec-package.R'
     'func_pspectrum.R'

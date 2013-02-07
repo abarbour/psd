@@ -75,9 +75,10 @@
 \usepackage{natbib}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
-%%\usepackage{fullpage}
+%captions
+\usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+%
 \usepackage{makeidx} % for indexing
-%\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
 %%
 \input{mathsyms}
@@ -126,7 +127,11 @@
   R: \Rcmd{stats::spectrum}.
 \end{abstract}
 \tableofcontents
+%%
+%%
+%%
 \section{Background}
+
 There can often be confusion about the different quantities used
 in spectral analysis\footnote{
 A nice illustration of the type of
@@ -138,172 +143,116 @@ this thread on \Rcmd{R-help}:\\
 partly due to myriad nomenclature within the incredibly vast literature
 on the subject.
 Commonly one finds similarly sounding phrases, including ``amplitude spectrum",
-``energy spectral density", ``power", ``power spectra", and even "spectra".
+``energy spectral density", ``power", ``power spectra", and even ``spectra".
 These all mean \emph{something}, but are rarely equivalent, and can be used improperly.
 
-Let us, for the sake of brevity, assume we are in 
-the time domain, and we are considering a discrete stationary signal \df{}
-of length $N$,
-having a Discrete Fourier Transform \dFTp{f} represented by\dF{}.
-The \bidx{amplitude spectrum}
-of this transform pair is simply the 
-amplitude of \dF{}, or \dmodF{}, which we will denote this as \daS{}.
-This transform pair's corresponding \bidx{phase spectrum}
-is the phase angle of \dF{}, or \dargF{}, denoted by \dpS{}.
-
-How do we interpret the quantities 
-
-Table with equivalent expressions
-\input{tbl_norms}
-
-\section{DCA}
-To fix the first problem we define $X_T (t)$ as the process 
-$X (t)$ on the finite interval $(-T/2, \,T/2)$:
+To clarify these terms, we will walk through some background and
+definitions, without overly complicating the discussion with proofs.
+Let us first define a single realization
+of a stochastic process in the time domain, 
+\dXstoch{}, sampled over a finite interval of time
+$(-T/2, \,T/2)$, denoted by \dXrealiz{}.
+A realization of \dXstoch{} will have
+an ordinary 
+Fourier transform:
 %
-\[
-X_T (t) = \left \{
-\begin{array}{cc}
-X(t) & -T/2 \le t \le T/2\\
-0 & \mathrm{ otherwise.} \\
-\end{array}
-\right .
-\]
+\begin{equation}
+\Xfo_T (f) = \Fo \{ \dXrealiz{} \} = 
+\intone \dXrealiz{} e^{-2 \pi i ft} \, dt = 
+\int_{-T/2}^{T/2}  \dXstoch{} e^{-2 \pi i ft} \, dt
+\end{equation}
 %
-This is not stationary, but that is all right for now.
-Any particular realization of this process
-has a bounded 2-norm and thus has an ordinary Fourier transform:
-%
-\[
-\Xfo_T (f) = \Fo [ X_T (t)] = 
-\intone X_T (t) e^{-2 \pi i ft} \, dt = 
-\int_{-T/2}^{T/2}  X (t) e^{-2 \pi i ft} \, dt
-\]
-%
-But $\Xfo_T$ is still a random function of $f$;
-to remove this,
-we we find its squared magnitude and take the expected value:
-$\Ex [ | \Xfo_T (f) | ^ 2 ]$.
+The \bidx{amplitude spectrum} is the modulus
+of $\Xfo_T$ and the
+\bidx{phase spectrum} is the argument 
+of $\Xfo_T$, although these are generally not informative
+for physical applications, if ever.
+The \bidx{energy spectral density} is found from
+$\Xfo_T$ by finding the expectation of the
+squared magnitude:
+\begin{equation}
+\dESD{} = \Ex \{ | \Xfo_T (f) | ^ 2 \}
+\end{equation}
 
-We then let $T$ tend to infinity;
-but we can easily see that if we do this,
-this expected value would grow to infinity -- and
-so we divide it by the interval length $2T$ to tame the growth.
-Putting all this together gives us a function of frequency
+There is a problem though, in that as $T$ grows to infinity, 
+so too does \dESD{}.
+We divide it by the interval length $T$ to tame such growth,
+which gives us an expression for
+\bidx{power spectral density}:
 %
 \begin{equation}
 \label{eq-psddef1}
 \begin{split}
-S(f) & = \lim_{T \to \infty} \frac{1}{T}
-\Ex [ | \Xfo_T (f) | ^ 2 ] \\
-& = \lim_{T \to \infty} \Ex \left [ \frac{1}{T} \left | 
-\int_{-T/2}^{T/2}  X (t) e^{-2 \pi i ft} \, dt \right | ^ 2 \right ]
+\dS{} & = \lim_{T \to \infty} \dESD{}/T \\
+& = \lim_{T \to \infty} \Ex \left\{ \frac{1}{T} \left | 
+\int_{-T/2}^{T/2}  \dXstoch{} e^{-2 \pi i ft} \, dt \right | ^ 2 \right\}
 \end{split}
 \end{equation}
-
-Equation (\ref{eq-psddef1}) defines the power spectral density;
 \label{sy-psd}
-\index{Power spectral density!Fourier transform definition}
-it can be shown that $S(f)$ exists for all
-stationary processes $X$ with zero mean and a bounded variance.
-It is, obviously, real and non-negative.
+which is real, non-negative, and exists for all
+stationary processes \dXstoch{} with zero mean and finite variance.
 
-\subsection{norm}
-You should be aware that equation (\ref{eq-psddef1}) defines
-a particular normalization for the PSD: one that is not always used,
-and indeed is probably the less common one.
-Equation (\ref{eq-psddef1}) defines what is called
-the \textbf{two-sided} PSD,
-because in it we allow $f$ to run from $-\infty$ to $\infty$.
-As with the Fourier tranform of a real function,
-when $X$ is real the power spectrum $S(f)$ is even:
-we only need the values for $f \ge 0$.
-What is used in this case is usually the
-\textbf{one-sided} PSD,
-\index{Power spectral density!one-sided}
-which is given by $2 S(f)$ for $f \ge 0$;
-we explain the factor of two below.
-In using other people's spectra,
-you should be aware that the spectrum,
-unspecified, might be either the two-sided spectrum
-shown for positive $f$ only, or the one-sided spectrum -- and
-you should,
-even at the risk of being accused of pedantry,
-specify which one you have used.
+Here is an important point to note regarding normalization.
+Equation (\ref{eq-psddef1}) defines
+the \bidx{double-sided} PSD,
+because in it $f$ runs from $\pm\infty$.
+If \dXstoch{} is real the power spectrum \dS{} is even; hence,
+we only need estimates for $f \ge 0$.
+The \bidx{single-sided} PSD is thus given by $2 S(f)$ for $f \ge 0$.
+In many cases this sidedness distinction, as we will see, explains
+errant factors of two in PSD normalizations.
 
-Looking at (\ref{eq-psddef1}) we can observe that $S(f) $ at any particular $f$
-is obtained from products of $X$ with itself,
-so it is related only to the second order moment of $X$
--- no third order moments are involved.
-We already introduced a function
-involving second-order moments of $X$, namely
-the autocovariance $R(\tau$,
-defined in equations (\ref{eq-covarts}) and (\label{eq-covarco}).
-Does $S(f)$ provide independent information about $X$,
-or is there a connection between $R(\tau)$ and $S(f)$?
-Somewhat surprisingly the answer is that the
-functions $R(\tau)$ and $S(f)$
-contain \textit{exactly} the same information,
-because $S(f)$ is just the Fourier transform of $R(\tau)$
-\index{Power spectral density!autocovariance definition}
+\subsection{Connection to the autocovariance function}
+What is the connection between the PSD, defined in Equation (\ref{eq-psddef1}),
+and the autocovariance function \dACV{\tau}?
+
+From Equation (\ref{eq-psddef1}) we see that \dS{}
+is obtained from products of \dXstoch{} with itself at any particular $f$,
+so it is related to the second-order moment of \dXstoch{} only; so too does 
+the autocovariance \dACV{\tau}.
+It may be surprising to note as well that \dS{} is
+simply the Fourier transform of \dACV{\tau}:
 %
 \begin{equation}
 \label{eq-psddef2}
-S(f) = \Fo [ R(t) ] =
-\intone R(t) e ^ {-2 \pi i ft} \, dt
+\dS{} = \Fo \{ \dACV{t} \} =
+\intone \dACV{t} e ^ {-2 \pi i ft} \, dt
 \end{equation}
 %
-Equation (\ref{eq-psddef2}) is often used as an alternative definition
-of the PSD,
-not least because it is
-(as we will see)
-more useful than equation (\ref{eq-psddef1})
-for proving theorems about the PSD.
+So, the
+functions \dACV{\tau} and \dS{}
+can contain the same information.
+For real data, \dACV{\tau} is always even, and always real.
+This implies that \dS{} is also a real and even function in $f$,
+which, because $S(f) >= 0$, restricts the functions \dACV{t}
+could possibly represent.
+Put another way, there are many examples of even functions
+having non-positive Fourier transforms (see \citet{bracewell2000}).
 
-For real data, $R(\tau)$ is not just even (as it always is)
-but also real.
-In that case we can write
-%
-\begin{equation}
-\label{eq-psddef3}
-S(f) = \half \int_0^{\infty} R(t) \cos(-2 \pi ft) \, dt
-\end{equation}
-%
-where $S(f)$ is the two-sided spectrum;
-the $\half$ absorbs a factor of two
-produced when we change the limits of the integral.
-If we used the one-sided spectrum (as makes
-sense for a real series) we would omit
-the $\half$;
-for generality
-we will use the definition given by equation (\ref{eq-psddef2}).
+%Table with equivalent expressions
+%\input{tbl_norms}
 
-Before we establish the truth of (\ref{eq-psddef2}) we note a few
-consequences of it.
-Since $R(t)$ is a real even function of $t$, (\ref{eq-psddef2})
-implies that $S(f)$ is also a real and even function in $f$.
-But the fact that
-$S(f)$ must be non-negative puts severe restrictions on what
-functions $R(t)$ might be autocovariances; clearly
-not every even function
-with a Fourier transform will have a positive
-Fourier transform.
-
-The inverse transform of (\ref{eq-psddef2}) is
+\subsection{Testing normalization}
+We can use a property of the autocovariance function \dACV{\tau}
+to test whether or not a PSD is properly normalized.  To see this, we
+take the
+inverse Fourier transform of Equation (\ref{eq-psddef2}):
 %
 \begin{equation}
 \label{eq-psdinv}
-R(t) = \intone S(f) e ^ {2 \pi i ft} \, df
+\dACV{t} = \intone \dS{} e ^ {2 \pi i ft} \, df
 \end{equation}
 %
-and recall from the definition of $R(t)$ that
+and recall a property of the autocovariance of a zero-mean 
+process for zero lag:
 %
-\[
-R(0) = \Ex [X(t) X(t)] = \Var [X] = \sigma ^ 2
-\]
+\begin{equation}
+\label{eq-acvprop}
+\dACV{0} = \Ex \{ \dXstoch{} \dXstoch{} \} = \Var \{ \dXstoch{} \} = \sigma ^ 2
+\end{equation}
 %
-remembering that $X$ is a zero-mean process.
-Setting $t = 0$ in
-(\ref{eq-psddef2}) gives an important result:
+Using (\ref{eq-acvprop}) and setting $t = 0$ in
+(\ref{eq-psddef2}) gives the basis of our normalization test:
 %
 \begin{equation}
 \label{eq-psdnorm}
@@ -311,211 +260,26 @@ Setting $t = 0$ in
 \end{equation}
 %
 That is,
-\textit{the area under the power spectrum is the variance
-of the process.}
-It is to preserve this property that
-we double $S(f)$ if we use the one-sided PSD;
-then the integrated area is again the variance even though we
-we integrate $S(f)$ only over positive frequencies.
-
-Now we verify (\ref{eq-psddef2});
-the argument follows the lines of the one
-given in Section \ref{sec.chap.fourier.correl},
-except that here we are considering random functions,
-and there we were considering conventional functions.
-We start with the squared magnitude of the Fourier transform
-of the windowed function $X_T$:
-%
-\begin{equation}
-\label{eq-ftsq}
-| \Xfo_T | ^ 2 = \Xfo_T \Xfo_T ^ *
-\end{equation}
-%
-Recall that the Fourier transform of a convolution is the product of the
-Fourier transforms;
-and, since $X_T$ is real
-%
-\begin{equation}
-\label{eq-ftconj}
-\Xfo^*_T (f)
-= \intone X_T (t) e ^ {2 \pi i ft} \, dt 
-= \intone X_T (-t) e ^ {-2 \pi i ft} \, dt 
-= \Fo [ X_T (-t) ]
-\end{equation}
-%
-Combining the convolution theorem with (\ref{eq-ftconj})
-and (\ref{eq-ftsq}), we have
-%
-\begin{equation}
-\label{eq-ftsq2}
-| \Xfo_T | ^ 2 = \Fo [ X_T (t) \conv X_T (-t) ]
-= \Fo \left [ \intone X_T (s) X_T (s - t) \, ds \right ]
-\end{equation}
-%
-In (\ref{eq-psddef1}) we have normalized by the interval $T$,
-so we put that
-into the definition of another function:
-%
-\begin{equation}
-\label{eq-autofrmpsd}
-R_T (t) = \frac{1}{T} X_T (t) \conv X_T (-t)
-= \frac{1}{T} \intone X_T (s) X_T (s - t) \, ds 
-\end{equation}
-%
-Then by (\ref{eq-ftsq2}), the Fourier transform of $R_T$ is
-%
-\begin{equation}
-\label{eq-ftsq3}
-\Fo [ R_T ] = \intone e ^ {-2 \pi i ft} R_T (t) \, dt
-= \frac{1}{T}\Fo [ X_T (t) \conv X_T (-t) ] =
-\frac{| \Xfo_T | ^ 2}{T}
-\end{equation}
-%
-Our definition of the PSD is (\ref{eq-psddef1});
-let us plug (\ref{eq-ftsq3}) into that so that we get
-%
-\begin{equation}
-\label{eq-psdftsq}
-S(f) = 
-\lim_{T \to \infty} \Ex \left [
-\frac{| \Xfo_T | ^ 2}{T} \right ] = 
-\lim_{T \to \infty} 
-\intone e ^ {-2 \pi i ft } \Ex [ R_T (t) ] \, dt
-\end{equation}
-%
-From (\ref{eq-autofrmpsd}) we see that $R_T (t)$ is even in $t$,
-so we can always write $R_T (t) = R_T ( | t | )$;
-in the following we will assume 
-$t \ge 0$ and then replace $t$ by $| t |$ at the end.
-We know $X_T (s)$
-vanishes outside the interval $(-T/2, T/2)$ and therefore the integrand
-of (\ref{eq-autofrmpsd}) must vanish when $ s > T/2$ or when $| s - t | > T/2$;
-see Figure \ref{fig.chap.psd.integrand}.
-Therefore we can reduce the interval of integration in
-(\ref{eq-autofrmpsd}) to be over $(-T/2 + t, \,T/2)$ instead of the whole real line.
-Also observe that, once $t > T/2$,
-the nonzero sections cease to overlap,
-and the integrand is identically zero.
-
-These considerations lead to the result
-%
-\begin{equation}
-\label{eq-autofin}
-R_T (t) = 
-\left \{
-\begin{array}{cc}
-\frac{1}{T} \int_{-T/2+ t }^{T/2} X_T (s) X_T (s - t ) \, ds & 0 \le t < T/2 \\
-0 & t \ge T/2 \\
-\end{array}
-\right .
-\end{equation}
-%
-Further simplifications ensue when we take the expected value, as
-dictated by (\ref{eq-psdftsq}); for the segment $0 \le t < T/2$
-%
-\[
-\Ex [ R_T (t) ] = \frac{1}{T} \int_{-T/2+ t }^{T/2}
-\Ex [ X_T (s) X_T (s - t ) ] \, ds
-= \frac{1}{T} \int_{-T/2+ t }^{T/2} R(-t) \, ds
-\]
-%
-where we have, finally,
-introduced the actual autocovariance of the process, $R(t)$.
-Since $R(-t) = R(t)$, which is independent
-of $s$, we can evaluate the $s$ integral explicitly:
-%
-\begin{equation}
-\Ex [ R_T (t) ] = \frac{R(t)}{T} \int_{-T/2+ t }^{T/2}
-1 \cdot \, ds = R(t) \left [ 1 - \frac{t}{T} \right ]
-\qquad \mathrm{for} \quad 0 \le t \le T
-\end{equation}
-%
-From (\ref{eq-autofin}) $\Ex [ R_T (t) ] = 0$ when $t \ge T$.
-Recalling that $R_T$
-is even, we can write
-the negative $t$ behavior from $R_T (t) = R_T (-t)$,
-and obtain the following complete description for the
-expected value of $R_T$:
-%
-\begin{equation}
-\label{eq-expauto}
-\Ex [ R_T (t)] = R(t) \Lambda_T (t)
-\end{equation}
-%
-where
-%
-\[
-\Lambda_T (t) =
-\left \{
-\begin{array}{cc}
-1 - | t | / T & |t| \le T \\
-0 & | t | > T \\
-\end{array}
-\right \}
-\]
-%
-which is just a triangle function of unit height
-and width $2T$.
-
-Substituting (\ref{eq-expauto}) into
-(\ref{eq-psdftsq}) gives us the following
-very plausible expression for the PSD:
-%
-\begin{equation}
-\label{eq-psdfrmauto}
-S(f) = 
-\lim_{T \to \infty} 
-\Fo [ R(t) \Lambda_T (t) ] = 
-\lim_{T \to \infty} 
-\intone e ^ {-2 \pi i ft } R(t) \Lambda_T (t) \, dt
-\end{equation}
-
-If we can put the limit in (\ref{eq-psdfrmauto}) inside the integral,
-and since $ \Lambda_T (s) \to 1$ as $T \to \infty$,
-we then have the result we claimed:
-equation (\ref{eq-psddef2}).
-This last step is where some care is needed.
-\citet{Priestley81} (pp. ??)
-uses the Lebesgue Dominated Convergence Theorem, and the
-further condition that
-%
-\begin{equation}
-\label{eq-autorestr}
-\intone | R(t) | \, dt < \infty 
-\end{equation}
-%
-to prove that it is permitted to reverse the order of the limit 
-and the integral.
-Section \ref{sec.chap.psd.proof} contains
-a proof (by Parker)
-that makes a different set of assumptions about $R(t)$.
-
+the area under the power spectrum is the variance
+of the process.
+So, a straightforward way to test normalization 
+is to compute the PSD for a realization of \dXstoch{} with
+known variance and zero mean [e.g. $\mathcal{N}(0,\sigma^2)$], and 
+calculate the integrated spectrum.
+For example, the \idx{single-sided}
+PSD for a realization of a $\mathcal{N}(0, 1)$ process, 
+sampled at 1 Hz, 
+will be flat at 2 units$^2/$Hz 
+across the entire band $[0, \half]$,
+and will have
+an area equal to one.
 
 %%
 %%
 %%
 \section{A from-scratch example: White noise.}
-A straightforward way to understand normalization in spectral analysis
-is to analyze a real, stationary series which is normally distributed with
-known variance, $x=\mathcal{N}(\mu,\sigma^2)$.
-A fundamental result found in many texts on spectral analysis is
-%
-\begin{equation}
-\mathrm{var}\{x\} \equiv \sigma_x^2 
-= \int_{-1/2}^{1/2} {\dPSD{}} (f) df 
-= 2 \int_{0}^{1/2} {\dPSD{}} (f) df 
-\end{equation}
-%
-which says if we integrate the \idx{power spectral density}
-over all frequencies we can obtain the variance of the source process.
-If we have a $\mathcal{N}(0, 1)$ process, and assume the sampling
-interval is once per second, we should expect a
- flat spectrum of 2 units$^2/$Nyquist 
-across all frequencies $[0, 0.5]$ so that the area under the spectrum is
-equal to one.
-
-We can illustrate this with a few lines of code.
-First, generate a series, and then find its iscrete Fourier Transform (DFT)\footnote{
+First, generate a series, and then find its Discrete Fourier Transform 
+(DFT)\footnote{
 A proper DFT is normalized by the length of the series; however, most
 DFT calculators (including \Rcmd{stats::fft}) eschew this normalization for 
 efficiency's sake.
@@ -585,7 +349,11 @@ fNyq <- fsamp/2  \hlcomment{# nyquist}
 Nf <- N/2
 nyfreqs <- \hlfunctioncall{seq.int}(from = 0, to = fNyq, length.out = Nf)
 S <- Se[1:Nf] * 2/N  \hlcomment{# Finally, the PSD!}
+\hlfunctioncall{print}(\hlfunctioncall{c}(mSn <- \hlfunctioncall{mean}(S), mSm <- \hlfunctioncall{median}(S)))
 \end{alltt}
+\begin{verbatim}
+## [1] 2.034 1.242
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
@@ -593,39 +361,27 @@ S <- Se[1:Nf] * 2/N  \hlcomment{# Finally, the PSD!}
 \begin{figure}[htb!]
 \begin{center}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlfunctioncall{plot}(nyfreqs, S, type = \hlstring{"h"}, xlab = \hlstring{"Nyquist frequency"}, ylab = \hlstring{"units**2 / freq"})
-\hlfunctioncall{print}(\hlfunctioncall{c}(mSn <- \hlfunctioncall{mean}(S), mSm <- \hlfunctioncall{median}(S)))
-\end{alltt}
-\begin{verbatim}
-## [1] 2.034 1.242
-\end{verbatim}
-\begin{alltt}
-\hlfunctioncall{abline}(h = \hlfunctioncall{c}(mSn, mSm), lwd = 2, lty = \hlfunctioncall{c}(2, 3), col = \hlstring{"red"})
-\end{alltt}
-\end{kframe}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
 \includegraphics[width=\maxwidth]{figure/PSD} 
 
 \end{knitrout}
 
-%polygon(c(0,fNyq,fNyq,0,0), c(0,0,mSn,mSn,0), lwd=2, lty=2, border="red")
-\label{fig:psdN}
 \caption{Power spectral density estimates for a single realization of a 
-$\mathcal{N}(0,1)$ process in linear units.  
+$\mathcal{N}(0,1)$ process, in linear units.  
 The dashed line shows the mean spectral level and the dotted line
 shows the median spectral level; these can be
 used to find the integrated spectrum and test normalization.}
+\label{fig:psdN}
 \end{center}
 \end{figure}
 
 An estimate of the integrated spectrum
 should roughly equal the known variance.
-Figure \ref{fig:psdN} plots the PSD of our white noise series; it also shows
-the mean value of the PSD\footnote{
+Figure \ref{fig:psdN} plots the PSD of our white noise series and the 
+mean and median values\footnote{
 Estimates for the PSD of a white noise series
 are approximately log-normally distributed; hence,
-a simple mean value is highly biased estimator.
+a simple mean value tends to be highly biased estimator of expectation.
 }, from which we can perform a variance--normalization
 test:
 \begin{knitrout}
@@ -665,31 +421,8 @@ fsamp <- 20
 fNyq <- fsamp/2
 freqs <- fsamp * nyfreqs
 Snew <- S/fsamp
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-
-To compare the scalings it is helpful to instead show the spectral values
-in decibels (relative to 1 units$^2/$frequency).
-\begin{figure}[htb!]
-\begin{center}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcomment{# decibel function}
-dB <- \hlfunctioncall{function}(y) 10 * \hlfunctioncall{log10}(y)
-\hlcomment{# and some plots...}
-\hlfunctioncall{plot}(freqs, \hlfunctioncall{dB}(S), type = \hlstring{"h"}, xlab = \hlstring{"Frequency"}, ylab = \hlstring{"dB"})
-\hlfunctioncall{lines}(freqs, \hlfunctioncall{dB}(Snew), col = \hlstring{"blue"}, lwd = 2)
-\hlfunctioncall{abline}(h = \hlfunctioncall{dB}(1/fNyq), col = \hlstring{"grey"}, lwd = 2)
+\hlcomment{# Test variance crudely}
 mSn <- \hlfunctioncall{mean}(Snew)
-\hlfunctioncall{lines}(\hlfunctioncall{c}(0, fNyq), \hlfunctioncall{rep}(\hlfunctioncall{dB}(mSn), 2), lwd = 2, lty = 2, col = \hlstring{"red"})
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/PSD2} 
-\begin{kframe}\begin{alltt}
-\hlcomment{# finally, test variance.}
 \hlfunctioncall{test_norm}(mSn, fNyq, xv)
 \end{alltt}
 \begin{verbatim}
@@ -698,31 +431,54 @@ mSn <- \hlfunctioncall{mean}(Snew)
 \end{kframe}
 \end{knitrout}
 
-\label{fig:psdsamp}
+
+In Figure \ref{fig:psdsamp} we
+plot the PSD with new normalization, and compare it to
+the previous normalization.
+Spectral values are shown as
+decibels (relative to 1 units$^2/$frequency), using:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcomment{# decibel function}
+dB <- \hlfunctioncall{function}(y) 10 * \hlfunctioncall{log10}(y)
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{figure}[htb!]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/PSD2} 
+
+\end{knitrout}
+
 \caption{Rescaled PSD estimates for a single realization of a 
 $\mathcal{N}(0,1)$ process with a sampling rate of 20 s$^{-1}$ rather
 than 1 s$^{-1}$ as from before.  
-The dashed line shows the mean (rescaled) spectral level, and the
-grey line shows the predicted mean value from the Nyquist
+The thick red line shows the mean (rescaled) spectral level, and the
+blue line shows the predicted mean value based on twice the sampling
 frequency.}
+\label{fig:psdsamp}
 \end{center}
 \end{figure}
 
 \section{Normalization used in \Rcmd{stats::spectrum}}
-We wish to compare the normalizations used by other PSD estimation programs;
-these are summarized in \ref{tbl:methods}.
-\input{tbl_specprogs}
 
-\subsection{}
-Included in the core distribution of R is \Rcmd{stats::spectrum}, which
-accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
+The PSD estimator included in
+the core distribution of R is \Rcmd{stats::spectrum}, which
+calls either \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for 
+cases of
 parametric and non-parametric estimation, respectively.  
-The user can optionally apply a single cosine taper, and/or a smoothing kernel.
-For this discussion we compare to \Rcmd{spec.pgram}.
+For this discussion we compare to \Rcmd{spec.pgram};
+the user can, optionally, apply a single cosine taper, 
+and/or a smoothing kernel.
 
-\Rcmd{spec.pgram} assumes the sampling frequency
+By default \Rcmd{spec.pgram} assumes the sampling frequency
 for the input series is 1, and normalizes accordingly; however,
-sampling information used be included by creating a \Rcmd{ts}
+the sampling information may be specified by creating a \Rcmd{ts}
 object from the series prior to spectrum estimation:
 
 \begin{knitrout}
@@ -737,9 +493,47 @@ pgram01 <- \hlfunctioncall{spec.pgram}(\hlfunctioncall{ts}(xt, frequency = 1), p
 \end{knitrout}
 
 
-A first order question is obviously whether these spectra pass our
- variance-normalization test: they do not, but only by a factor of two (too small):
+We plot the two PSD estimates on the same scales, in Figure \ref{fig:rawpgram}, utilizing
+the plot method for \Rcmd{spec} objects: \Rcmd{plot.spec}.
+We also show horizontal lines corresponding to the inverse of twice
+the sampling rate, which puts the spectra about a factor of 2 too low:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+mSn/\hlfunctioncall{mean}(pgram20$spec)
+\end{alltt}
+\begin{verbatim}
+## [1] 2.05
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
+%## [1] 2.05
+
+\begin{figure}[h!]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/NORMS} 
+
+\end{knitrout}
+
+
+\caption{Power spectral densities from \Rcmd{spec.pgram} for the same
+data series.  The grey curves show the PSD for a sampling rate of 1; whereas,
+the black curves show the PSD for a sampling rate of 20.
+The horizontal lines show levels corresponding to the inverse of
+twice the sampling rate (black and grey), and 
+the expected spectral level for the 20 Hz sampling in blue.
+Vertical lines show the respective Nyquist frequencies.}
+\label{fig:rawpgram}
+\end{center}
+\end{figure}
+
+Because the frequencies are clearly correct, this factor of two likely means
+the spectra will fail our
+simple variance-normalization test. They do fail, by a factor of two,
+again too low:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -758,30 +552,15 @@ A first order question is obviously whether these spectra pass our
 \end{knitrout}
 
 
-\begin{figure}[h!]
-\begin{center}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlfunctioncall{plot}(pgram20, log = \hlstring{"dB"}, ylim = 36 * \hlfunctioncall{c}(-1, 0.3))
-\hlfunctioncall{plot}(pgram01, log = \hlstring{"dB"}, add = TRUE, col = \hlstring{"red"})
-\hlfunctioncall{abline}(h = \hlfunctioncall{dB}(\hlfunctioncall{c}(1, 1/2/1, 1/2/20)), col = \hlfunctioncall{c}(\hlstring{"grey"}, \hlstring{"red"}, \hlstring{"black"}))
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/NORMS} 
-
-\end{knitrout}
-
-\label{fig:pgram}
-\caption{\Rcmd{spec.pgram}}
-\end{center}
-\end{figure}
-
-But why?  The program assumes normalization for a 
-\bidx{double-sided spectrum}, which conflicts with our definition of the 
-\idx{one-sided} spectrum
-by a factor of two.
-We can illustrate this with the following example:
+But why?  This errant factor of two comes from
+the assumption of a
+\idx{double-sided} spectrum, which 
+is at odds with our definition of the 
+\idx{single-sided} spectrum
+by--you guessed it--a factor of two.
+We can illustrate this with the following example, where
+we compare the PSDs from \Rcmd{spec.pgram} for a real
+and complex series:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -796,7 +575,7 @@ mxc <- \hlfunctioncall{mean}(\hlfunctioncall{Mod}(xc))
 ## [1] 2
 \end{verbatim}
 \begin{alltt}
-\hlfunctioncall{mean}((psd2$spec/psd1$spec))
+\hlfunctioncall{mean}(psd2$spec/psd1$spec)
 \end{alltt}
 \begin{verbatim}
 ## [1] 2
@@ -805,14 +584,17 @@ mxc <- \hlfunctioncall{mean}(\hlfunctioncall{Mod}(xc))
 \end{knitrout}
 
 
+Again, a factor of two. 
 This means that unless we are interested in analyzing complex
-timeseries, we need only multiply by two for properly normalized spectra 
-using \Rcmd{spectrum}, assuming the sampling information is included in the series.
+timeseries, we need only multiply by two 
+to obtain properly normalized spectra
+from \Rcmd{spectrum}, 
+assuming the sampling information is included in the series.
 
 \section{Other PSD estimators}
-The suite of extensions to base R which have
-similar functionality
-is relatively limited; however, there are at least three with
+The suite of extensions having
+similar functionality to \rlp{}
+is relatively limited; however, there are at least three which
 can produce sophisticated PSD estimates.   We have
 summarized the available functions in Table \ref{tbl:methods}
 so far as we know\footnote{
@@ -822,6 +604,7 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 \input{tbl_specprogs}
 
 %% bib
+\pagebreak
 \bibliographystyle{apalike}
 \bibliography{REFS}
 
