@@ -21,6 +21,8 @@
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %\usepackage{fullpage}
+%captions
+\usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
