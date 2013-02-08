@@ -4,7 +4,7 @@
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
 
-%% \VignetteIndexEntry{Normalization of power spectral densities.}
+%% \VignetteIndexEntry{Normalization of power spectral density estimates.}
 %% \VignetteEngine{knitr}
 
 \usepackage[utf8]{inputenc}
@@ -48,7 +48,7 @@
   \end{figure}                   %
 }
 \author{Andrew J. Barbour}
-\title{Normalization of Power Spectral Densities.}
+\title{Normalization of Power Spectral Density estimates.}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -59,8 +59,9 @@
   fundamental concepts
   to the inexperienced practitioner.
   Appropriate interpretation of spectral analyses
-  depends crucially on the normalization used, and
-  here we outline
+  depends crucially on the normalization used, 
+  which is often this greatest source of confusion.
+  Here we outline
   the normalization used by \rlp{}, namely
   the \bidx{single-sided}
   \bidx{power spectral density} (PSD).
@@ -78,18 +79,19 @@
 \section{Background}
 
 There can often be confusion about the different quantities used
-in spectral analysis\footnote{
+in spectral analysis,
+partly due to myriad nomenclature within the incredibly vast literature
+on the subject\footnote{
 A nice illustration of the type of
 confusion common in spectral analyses
 of confusion is found in
-this thread on \Rcmd{R-help}:\\
+this thread on \Rcmd{R-help}:
 \url{http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html}
-},
-partly due to myriad nomenclature within the incredibly vast literature
-on the subject.
+}.
 Commonly one finds similarly sounding phrases, including ``amplitude spectrum",
 ``energy spectral density", ``power", ``power spectra", and even ``spectra".
-These all mean \emph{something}, but are rarely equivalent, and can be used improperly.
+These all mean \emph{something}, but are rarely equivalent, and are
+sometimes used improperly.
 
 To clarify these terms, we will walk through some background and
 definitions, without overly complicating the discussion with proofs.
@@ -98,10 +100,10 @@ of a stochastic process in the time domain,
 \dXstoch{}, sampled over a finite interval of time
 $(-T/2, \,T/2)$, denoted by \dXrealiz{}.
 A realization of \dXstoch{} will have
-an ordinary 
-Fourier transform:
+a Fourier transform:
 %
 \begin{equation}
+\label{eq-FT}
 \Xfo_T (f) = \Fo \{ \dXrealiz{} \} = 
 \intone \dXrealiz{} e^{-2 \pi i ft} \, dt = 
 \int_{-T/2}^{T/2}  \dXstoch{} e^{-2 \pi i ft} \, dt
@@ -114,33 +116,39 @@ of $\Xfo_T$, although these are generally not informative
 for physical applications, if ever.
 The \bidx{energy spectral density} is found from
 $\Xfo_T$ by finding the expectation of the
-squared magnitude:
+squared amplitude spectrum:
+%
 \begin{equation}
+\label{eq-ESD}
 \dESD{} = \Ex \{ | \Xfo_T (f) | ^ 2 \}
 \end{equation}
+%
 
 There is a problem though, in that as $T$ grows to infinity, 
 so too does \dESD{}.
-We divide it by the interval length $T$ to tame such growth,
+We divide it by the interval length $T$ to curb this growth,
 which gives us an expression for
 \bidx{power spectral density}:
 %
 \begin{equation}
 \label{eq-psddef1}
 \begin{split}
-\dS{} & = \lim_{T \to \infty} \dESD{}/T \\
+\dS{} & = \lim_{T \to \infty} T^{-1} \dESD{} \\
 & = \lim_{T \to \infty} \Ex \left\{ \frac{1}{T} \left | 
 \int_{-T/2}^{T/2}  \dXstoch{} e^{-2 \pi i ft} \, dt \right | ^ 2 \right\}
 \end{split}
 \end{equation}
-\label{sy-psd}
+%\label{sy-psd}
+%
 which is real, non-negative, and exists for all
-stationary processes \dXstoch{} with zero mean and finite variance.
+stationary processes 
+%\dXstoch{} 
+with zero mean and finite variance.
 
-Here is an important point to note regarding normalization.
+Here is an important point to note regarding normalization:
 Equation (\ref{eq-psddef1}) defines
 the \bidx{double-sided} PSD,
-because in it $f$ runs from $\pm\infty$.
+because in the limit of $T$, the limits of integration are $\pm\infty$.
 If \dXstoch{} is real the power spectrum \dS{} is even; hence,
 we only need estimates for $f \ge 0$.
 The \bidx{single-sided} PSD is thus given by $2 S(f)$ for $f \ge 0$.
@@ -154,19 +162,28 @@ and the autocovariance function \dACV{\tau}?
 From Equation (\ref{eq-psddef1}) we see that \dS{}
 is obtained from products of \dXstoch{} with itself at any particular $f$,
 so it is related to the second-order moment of \dXstoch{} only; so too does 
-the autocovariance \dACV{\tau}.
-It may be surprising to note as well that \dS{} is
+the \bidx{autocovariance} (ACV) \dACV{\tau}:
+%
+\begin{equation}
+\begin{split}
+\dACV{\tau} &= \Cov \left( \dXlag{}, \dXlag{} \right) \\
+         &= \Ex \left\{ \left( \dXlag{} - \Ex \{ \dXlag{} \} \right)^2 \right\}
+\end{split}
+\label{eq-acvdef}
+\end{equation}
+%
+It may be surprising to note, as well, that \dS{} is
 simply the Fourier transform of \dACV{\tau}:
 %
 \begin{equation}
 \label{eq-psddef2}
-\dS{} = \Fo \{ \dACV{t} \} =
-\intone \dACV{t} e ^ {-2 \pi i ft} \, dt
+\dS{} = \Fo \{ \dACV{\tau} \} =
+\intone \dACV{\tau} e ^ {-2 \pi i f \tau} \, d\tau
 \end{equation}
 %
 So, the
 functions \dACV{\tau} and \dS{}
-can contain the same information.
+exist as a transform pair.
 For real data, \dACV{\tau} is always even, and always real.
 This implies that \dS{} is also a real and even function in $f$,
 which, because $S(f) >= 0$, restricts the functions \dACV{t}
@@ -174,34 +191,31 @@ could possibly represent.
 Put another way, there are many examples of even functions
 having non-positive Fourier transforms (see \citet{bracewell2000}).
 
-%Table with equivalent expressions
-%\input{tbl_norms}
-
 \subsection{Testing normalization}
-We can use a property of the autocovariance function \dACV{\tau}
+We can use a property of the ACV function \dACV{\tau}
 to test whether or not a PSD is properly normalized.  To see this, we
 take the
-inverse Fourier transform of Equation (\ref{eq-psddef2}):
+inverse Fourier transform of (\ref{eq-psddef2}):
 %
 \begin{equation}
 \label{eq-psdinv}
 \dACV{t} = \intone \dS{} e ^ {2 \pi i ft} \, df
 \end{equation}
 %
-and recall a property of the autocovariance of a zero-mean 
-process for zero lag:
+and find the ACV of a zero-mean 
+process for zero lag.  From (\ref{eq-acvdef}) we have:
 %
 \begin{equation}
 \label{eq-acvprop}
-\dACV{0} = \Ex \{ \dXstoch{} \dXstoch{} \} = \Var \{ \dXstoch{} \} = \sigma ^ 2
+\dACV{0} = \Ex \{ \dXstoch{}^2 \} = \Var \{ \dXstoch{} \} = \sigma_\mathcal{X} ^ 2
 \end{equation}
 %
-Using (\ref{eq-acvprop}) and setting $t = 0$ in
-(\ref{eq-psddef2}) gives the basis of our normalization test:
+and by setting $t = 0$ in
+(\ref{eq-psdinv}) we have the basis of our normalization test:
 %
 \begin{equation}
 \label{eq-psdnorm}
-\sigma ^ 2 = \intone S (f) \, df
+\sigma_\mathcal{X} ^ 2 = \intone S (f) \, df
 \end{equation}
 %
 That is,
@@ -209,7 +223,7 @@ the area under the power spectrum is the variance
 of the process.
 So, a straightforward way to test normalization 
 is to compute the PSD for a realization of \dXstoch{} with
-known variance and zero mean [e.g. $\mathcal{N}(0,\sigma^2)$], and 
+known variance, and zero mean [e.g. $\mathcal{N}(0,\sigma^2)$]; and then
 calculate the integrated spectrum.
 For example, the \idx{single-sided}
 PSD for a realization of a $\mathcal{N}(0, 1)$ process, 
@@ -219,11 +233,25 @@ across the entire band $[0, \half]$,
 and will have
 an area equal to one.
 
+\subsection{Summary of nomenclature}
+
+In Table \ref{tbl:norm} we give a summary of some
+of the quantities we have reviewed.
+
+\input{tbl_norms}
+
 %%
 %%
 %%
 \section{A from-scratch example: White noise.}
-First, generate a series, and then find its Discrete Fourier Transform 
+Without using the tools in \rlp{} we will build up an example
+using R commands, in order to highlight the topic of normalization.
+
+First, generate a normally distributed series\footnote{
+Although a white noise process is not strictly bandlimited,
+we will use it to demonstrate differences in normalization.
+}, 
+and then find its Discrete Fourier Transform 
 (DFT)\footnote{
 A proper DFT is normalized by the length of the series; however, most
 DFT calculators (including \Rcmd{stats::fft}) eschew this normalization for 
@@ -231,7 +259,7 @@ efficiency's sake.
 }.
 <<eval=TRUE, echo=TRUE, label="Synthetic white noise and a DFT.">>=
 set.seed(1234)
-N <- 256
+N <- 1028
 x <- rnorm(N, mean = 0, sd = 1)
 xv <- var(x)
 X <- fft(x)
@@ -239,47 +267,88 @@ class(X)
 length(X)
 @
 
-We can easily find the amplitude and phase response:
+We can easily find the amplitude and phase response
 <<eval=TRUE, echo=TRUE, label="Amplitude and phase spectra.">>=
 Sa <- Mod(X) # Amplitude spectrum
 Sp <- Arg(X) # Phase spectrum
 @
 followed by equivalent \idx{energy spectral density}
-calculations\footnote{
+estimates\footnote{
 Note the equivalence
 between the complex conjugate based estimates.
-}
+}:
 <<eval=TRUE, echo=TRUE, label="Energy spectral densities.">>=
 XC <- Conj(X)
 all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 @
 
-The single-sided \idx{power spectral density} (PSD) estimates
-follow once the Nyquist frequency is set; this
-is defined as half the sampling rate\footnote{
-Although a white noise process is not strictly bandlimited,
-we will use it to demonstrate differences in normalization.
-}.
+The single-sided \idx{power spectral density} estimates
+follow once we have the Nyquist frequency,
+defined as half the sampling rate:
 <<eval=TRUE, echo=TRUE, label="Nyquist frequencies.">>=
-fsamp <- 1  # sampling freq, Hz
-fNyq <- fsamp/2   # nyquist
-Nf <- N/2
+fsamp <- 1  # sampling freq, e.g. Hz
+fNyq <- fsamp/2   # Nyquist freq
+Nf <- N/2  # number of freqs
 nyfreqs <- seq.int(from=0, to=fNyq, length.out=Nf)
 S <- Se[1:Nf] * 2 / N   # Finally, the PSD!
-print(c(mSn <- mean(S), mSm <- median(S)))
 @
+
+To approximate the integrated spectrum in the case of a ``flat" spectrum, we need
+an accurate measure of the first moment of the spectral values.  
+The \Rcmd{median} estimator
+produces a biased estimate because the distribution
+of spectral values roughly follows a $\chi^2_\nu$ distribution, where
+$\nu$ is the number of degrees of freedom and, for this distribution,
+the expectation of the first moment.  To find this value, we
+will use a conjugate gradient minimization procedure to find 
+the best-fitting $\chi^2$ distribution.  Our starting point will be the 
+estimated mean value.  We visualize the fit with
+a ``Q-Q" plot, which shows PSD quantiles values as a function of $\chi^2$ quantiles,
+using the optimized value of the number of degrees of freedom; this
+is shown in Figure \ref{fig:qqchi}.
+
+<<eval=TRUE, echo=TRUE, label=OPTIM>>=
+# 0) Setup optimization function for dof, using conjugate gradients\\
+#    min L1 |PSD - Chi^2(dof)|
+Chifit <- function(PSD){optim(list(df=mean(PSD)), function(dof){
+  sum(log(PSD)) - sum(log(dchisq(PSD, dof))) }, method="CG")}
+# 1) run optimization
+Schi <- Chifit(S)
+# Get 'df', the degrees of freedom
+print(dof <- Schi$par[[1]]) 
+# compare with the mean and median
+c(mSn <- mean(S), median(S))
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<eval=TRUE, echo=FALSE, fig.width=5, fig.height=5, label=QQFIT>>=
+par(pty="s", las=1)
+ttl <- expression("Q-Q plot for PSD and" ~~ chi^2 ~~ "fit")
+qqplot(log(qchisq(ppoints(N), df=dof)), log(S), main = ttl, ylab="Spectrum quantiles", xlab="Distribution quantiles")
+abline(0,1, col="red")
+@
+\caption{``Q-Q" plot of 
+quantiles of our example PSD
+ against
+ theoretical $\chi^2_\nu$ quantiles.  The distribution is calculated
+with a value for degrees of freedom ($\nu$) obtained from the
+$L_1$-norm minimization procedure.}
+\label{fig:qqchi}
+\end{center}
+\end{figure}
 
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3.5, label=PSD>>=
 par(las=1)
 plot(nyfreqs, S, type="h", xlab="Nyquist frequency", ylab="units^2 / freq")
-abline(h=c(mSn,mSm), lwd=2, lty=c(2,3), col="red")
+abline(h=dof, lwd=2, col="red")
 @
 \caption{Power spectral density estimates for a single realization of a 
 $\mathcal{N}(0,1)$ process, in linear units.  
-The dashed line shows the mean spectral level and the dotted line
-shows the median spectral level; these can be
+The horizontal line shows the expectation of the spectral 
+from the $\chi^2$ fit; this can be
 used to find the integrated spectrum and test normalization.}
 \label{fig:psdN}
 \end{center}
@@ -287,14 +356,12 @@ used to find the integrated spectrum and test normalization.}
 
 An estimate of the integrated spectrum
 should roughly equal the known variance.
-Figure \ref{fig:psdN} plots the PSD of our white noise series and the 
-mean and median values\footnote{
-Estimates for the PSD of a white noise series
-are approximately log-normally distributed; hence,
-a simple mean value tends to be highly biased estimator of expectation.
-}, from which we can perform a variance--normalization
+Figure \ref{fig:psdN} plots the PSD of our white noise series with
+the value of $\nu$ from the optimization, 
+with which we can perform a variance--normalization
 test:
 <<eval=TRUE, echo=TRUE, label="Test normalization.">>=
+mSn <- dof
 test_norm <- function(sval, nyq, xvar){svar <- sval * nyq; return(svar/xvar)}
 print(xv_1 <- test_norm(mSn, fNyq, xv))
 xv_2 <- sum(S)/Nf * fNyq / xv  # an alternate test
@@ -332,10 +399,10 @@ dB <- function(y) 10*log10(y)
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3.8, label=PSD2>>=
 par(las=1)
-plot(freqs, dB(S), type="h", xlab="Frequency", ylab="dB")
+plot(freqs, dB(S), type="h", col="dark grey", xlab="Frequency", ylab="dB")
 lines(freqs, dB(Snew), lwd=1.3)
-abline(h=dB(1/fNyq), col="blue")
 lines(c(0,fNyq), rep(dB(mSn),2), lwd=3, col="red")
+abline(h=dB(1/fNyq), col="blue")
 @
 \caption{Rescaled PSD estimates for a single realization of a 
 $\mathcal{N}(0,1)$ process with a sampling rate of 20 s$^{-1}$ rather
@@ -355,7 +422,7 @@ calls either \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for
 cases of
 parametric and non-parametric estimation, respectively.  
 For this discussion we compare to \Rcmd{spec.pgram};
-the user can, optionally, apply a single cosine taper, 
+the user can optionally apply a single cosine taper, 
 and/or a smoothing kernel.
 
 By default \Rcmd{spec.pgram} assumes the sampling frequency
@@ -377,14 +444,13 @@ the sampling rate, which puts the spectra about a factor of 2 too low:
 <<eval=TRUE, echo=TRUE>>=
 mSn/mean(pgram20$spec)
 @
-%## [1] 2.05
 
 \begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3.5, label=NORMS>>=
 par(las=1)
-plot(pgram20, log="dB", ylim=36*c(-1,.3), main="")
-plot(pgram01, log="dB", add=TRUE, col="dark grey")
+plot(pgram01, log="dB", xlim=c(0,10), ylim=36*c(-1,.3), main="", col="dark grey")
+plot(pgram20, log="dB", add=TRUE)
 abline(h=-dB(c(1, 20)*2), col=c("dark grey","black"))
 abline(v=.5*c(1,20), lty=3)
 #lines(c(0,fNyq), rep(dB(mSn),2), lwd=1.5, col="red")
@@ -396,7 +462,7 @@ data series.  The grey curves show the PSD for a sampling rate of 1; whereas,
 the black curves show the PSD for a sampling rate of 20.
 The horizontal lines show levels corresponding to the inverse of
 twice the sampling rate (black and grey), and 
-the expected spectral level for the 20 Hz sampling in blue.
+the expected spectral level for the 20 Hz sampling (blue).
 Vertical lines show the respective Nyquist frequencies.}
 \label{fig:rawpgram}
 \end{center}

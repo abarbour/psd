@@ -8,18 +8,19 @@
 \newcommand{\df}[0]{\enm{x}} %% stationary signal f
 \newcommand{\dF}[0]{\enm{X}} %% FT{f}
 \newcommand{\dmod}[1]{\enm{\mathrm{mod} \{#1\}}}
-\newcommand{\dmodF}[0]{\dmod{\dF{}}}
-\newcommand{\dargF}[0]{\enm{\mathrm{arg} \{\dF{}\}}}
+\newcommand{\dmodF}[0]{\dmod{\Xfo_T{}}}
+\newcommand{\dargF}[0]{\enm{\mathrm{arg} \{ \Xfo_T{} \}}}
 \newcommand{\ds}[0]{\enm{s}} %% spectrum
 \newcommand{\dS}[0]{\enm{S(f)}} %% Spectrum
 \newcommand{\dsupsf}[1]{\enm{{}^{#1}\ds{}}} %% superscript spectrum front
 \newcommand{\dsupSf}[1]{\enm{{}^{#1}\dS{}}} %% superscript Spectrum front
 \newcommand{\dsupsb}[1]{\enm{\ds{}^{#1}}} %% superscript spectrum back
 \newcommand{\dsupSb}[1]{\enm{\dS{}^{#1}}} %% superscript Spectrum back
-\newcommand{\daS}[1]{\dsupsf{\mathrm{(A)}}} %% amplitude Spectrum
-\newcommand{\dpS}[1]{\dsupsf{\mathrm{(\phi)}}} %% phase Spectrum
-\newcommand{\dESD}[1]{\dsupSf{\mathrm{(E)}}} %% energy Spectral density
-\newcommand{\dPSD}[1]{\dsupSf{\mathrm{(P)}}} %% power Spectral density
+\newcommand{\daF}[0]{\enm{| \Xfo_T |}} %% amplitude Spectrum
+\newcommand{\daS}[0]{\enm{\sqrt{\Re^2 + \Im^2}}} %% amplitude Spectrum
+\newcommand{\dpS}[0]{\enm{\tan^{-1}\left(\Im / \Re \right)}} %% phase Spectrum
+\newcommand{\dESD}[0]{\enm{E(f)}} %\dsupSf{\mathrm{(E)}}} %% energy Spectral density
+\newcommand{\dPSD}[0]{\dsupSf{\mathrm{(P)}}} %% power Spectral density
 %%
 \newcommand{\intone}{\enm{\int_{- \infty} ^{\infty}}}
 \newcommand{\Fo}{\enm{\mathcal{F}}}
@@ -30,9 +31,12 @@
 \newcommand{\slfrac}[2]{\left.#1\middle/#2\right.}
 \newcommand{\half}{\enm{\slfrac{1}{2}}}
 \newcommand{\Var}{\enm{\mathcal{V}}}
+\newcommand{\Cov}{\enm{\mathrm{Cov}}}
 \newcommand{\conv}{\ensuremath{\ast}}
 %%
 \newcommand{\dACV}[1]{\enm{\mathcal{R}(#1)}}
-\newcommand{\dXstoch}[0]{\enm{\mathcal{X}(t)}}
+\newcommand{\dX}[1]{\enm{\mathcal{X}(#1)}}
+\newcommand{\dXstoch}[0]{\dX{t}}
+\newcommand{\dXlag}[0]{\dX{\tau}}
 \newcommand{\dXrealiz}[0]{\enm{X_T(t)}}
 %%
