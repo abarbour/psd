@@ -408,11 +408,7 @@ minspan.tapers <- function(tapvec, ...){
 #' \emph{Nucl. Instrum. Meth. A}, \strong{376} 451,
 #' \url{http://arxiv.org/abs/hep-ex/9506013}
 #'
-#' @examples
-#' \dontrun{
-#' ## compare all the methods:
-#' demo("ctap")
-#' }
+#' @example inst/Examples/rdex_constraintapers.R
 constrain_tapers <- function(tapvec, tapseq=NULL,
                              constraint.method=c("simple.slope",
                                                  "markov.chain",
