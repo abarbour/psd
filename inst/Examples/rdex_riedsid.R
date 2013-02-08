@@ -28,6 +28,6 @@ plot(rtap2, log="y")
 # constrained (red curve): much better behaved
 lines(rtap) 
 # original tapers:
-lines(as.taper(rep.int(ntap,nd)), col="blue")
+lines(as.tapers(rep.int(ntap,nd)), col="blue")
 par(op)
 #RDEX#}

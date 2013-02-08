@@ -87,7 +87,7 @@ riedsid.default <- function(psd, ntaper,
   ## spectral values
   psd <- as.vector(psd)
   # num freqs
-  nf <- rlp_envAssignGet("num_freqs", length(psd))
+  nf <- rlpSpec:::rlp_envAssignGet("num_freqs", length(psd))
   # prelims
   eps <- .Machine$double.eps #**2 # was: 1e-78  #  A small number to protect against zeros
   Ones <- ones(nf) # was rowvec, now col 

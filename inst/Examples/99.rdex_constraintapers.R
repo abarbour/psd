@@ -2,26 +2,21 @@
 ##
 ## Constrain tapers
 ##
-data(bsm)
-##load("data/bsm/bsm.rda")
-X <- bsm$pinyon_dat$CH0[1:5e3]
+library(rlpSpec)
+data(magsat)
+X <- magsat$clean
 ##
 ##
-## spectrum
-ntap <- 10
-psd0 <- psdcore(X, ntaper=ntap, plotpsd=TRUE)
-Xpsd <- psd0$spec
-Xtap <- psd0$taper
-#
-kopt.slope <- riedsid(Xpsd, ntaper=Xtap, restrict.deriv="slope")
-kopt.loess <- riedsid(Xpsd, ntaper=Xtap, restrict.deriv="loess")
-kopt.super <- riedsid(Xpsd, ntaper=Xtap, restrict.deriv="friedman.super")
-kopt       <- riedsid(Xpsd, ntaper=Xtap, restrict.deriv="none")
+## spectrum, then riedsid
+kopt <- riedsid(psd <- psdcore(X, ntaper=10, refresh=TRUE))
+kopt.loess  <- riedsid(psd, c.method="loess.smooth")
+kopt.super  <- riedsid(psd, c.method="friedman.smooth")
+kopt.markov <- riedsid(psd, c.method="markov.chain")
 #
 plot(kopt, log="y")
-lines(kopt.super, col="blue", lwd=3)
-lines(kopt.loess, col="dark green", lwd=3)
-lines(kopt.slope, col="black")
+lines(kopt.super, log="y", col="red")
+lines(kopt.loess, log="y", col="green")
+lines(kopt.markov, log="y", col="orange")
 ##
 ##
 # }

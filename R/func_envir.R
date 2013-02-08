@@ -70,15 +70,15 @@ rlp_initEnv <- function(envir=.rlpenv, refresh=FALSE, verbose=TRUE, ...) {
   } else if (!refresh) {
     if (verbose) message(sprintf("\t** %s ** is already initialized: try 'refresh=TRUE' to clear", envir))
   }
-  rlp_envAssign("init", sprintf("%s at %s", msg, Sys.time()))
-  return(invisible(rlp_envStatus(envir)))
+  rlpSpec:::rlp_envAssign("init", sprintf("%s at %s", msg, Sys.time()))
+  return(invisible(rlpSpec:::rlp_envStatus(envir)))
 }
 
 #' @description \code{rlp_envClear} clears the contents of the environment.
 #' @note \code{rlp_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname rlpSpec-environment
 #' @name rlp_envClear
-rlp_envClear <- function(...) rlp_initEnv(refresh=TRUE, ...)
+rlp_envClear <- function(...) rlpSpec:::rlp_initEnv(refresh=TRUE, ...)
 
 #' @description \code{rlp_envStatus} returns a list of some information regarding
 #' the status of the environment.
@@ -91,8 +91,8 @@ rlp_envStatus <- function(envir=.rlpenv){
   #is_init <- ifelse(exists(envir))
   return(list(env_name=envir, 
               obviously_exists=exists(envir), 
-              listing=rlp_envList(envir),
-              env_init=rlp_envGet("init"),
+              listing=rlpSpec:::rlp_envList(envir),
+              env_init=rlpSpec:::rlp_envGet("init"),
               env_status_stamp=Sys.time() ))
   
 }
@@ -144,8 +144,8 @@ rlp_envAssign <- function(variable, value, envir=.rlpenv){
 #' @param ... For \code{rlp_envClear}: arguments passed to \code{rlp_initEnv}. For \code{rlp_initEnv}: arguments passed to \code{new.env}
 rlp_envAssignGet <- function(variable, value, envir=.rlpenv){
   ## set contents of envir::variable to value
-  rlp_envAssign(variable, value, envir=envir)
-  rlp_envGet(variable, envir=envir)
+  rlpSpec:::rlp_envAssign(variable, value, envir=envir)
+  rlpSpec:::rlp_envGet(variable, envir=envir)
 }
 
 #' @description \code{new_adapt_history} initializes a nested-list object to store the 
@@ -167,12 +167,12 @@ new_adapt_history <- function(adapt_stages){
   names(histlist) <- c("freq", "stg_kopt", "stg_psd")
   num_pos <- 1 + adapt_stages # pilot + adapts
   histlist[[2]] <- histlist[[3]] <- vector("list", adapt_stages+1)
-  rlp_envAssignGet("histlist", histlist)
+  rlpSpec:::rlp_envAssignGet("histlist", histlist)
 }
 
 #' @export
 #' @rdname rlpSpec-environment
-get_adapt_history <- function() rlp_envGet("histlist")
+get_adapt_history <- function() rlpSpec:::rlp_envGet("histlist")
 
 #' @description \code{update_adapt_history} Updates the adaptive estimation history list.
 #' @rdname rlpSpec-environment
@@ -189,5 +189,5 @@ update_adapt_history <- function(stage, ntap, psd, freq=NULL){
   histlist$stg_kopt[[stg_ind]] <- ntap
   histlist$stg_psd[[stg_ind]] <- psd
   if (is.null(histlist$freq) & stage>0) warning("freqs absent despite non-pilot stage update")
-  rlp_envAssignGet("histlist",histlist)
+  rlpSpec:::rlp_envAssignGet("histlist",histlist)
 }

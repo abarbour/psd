@@ -99,10 +99,10 @@ psdcore.default <- function(X.d,
   # only one taper: usually means a first run
   lt <- length(ntaper)
   # onle one variable in the env (init): it hasn't been added to yet
-  nenvar <- length(rlp_envStatus()$listing)
+  nenvar <- length(rlpSpec:::rlp_envStatus()$listing)
   if (lt == 1 | nenvar == 1 | refresh){
     # original series length
-    n.o <- rlp_envAssignGet("len_orig", length(X.d))
+    n.o <- rlpSpec:::rlp_envAssignGet("len_orig", length(X.d))
     #
     X <- prewhiten(X.d, 
                    AR.max=0L, 
@@ -113,14 +113,14 @@ psdcore.default <- function(X.d,
     #
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
-    n.e <- rlp_envAssignGet("len_even", n.o - n.o%%2 )
+    n.e <- rlpSpec:::rlp_envAssignGet("len_even", n.o - n.o%%2 )
     X.even <- as.matrix(X[1:n.e])
-    rlp_envAssign("ser_orig", X)
-    rlp_envAssign("ser_orig_even", X.even)
+    rlpSpec:::rlp_envAssign("ser_orig", X)
+    rlpSpec:::rlp_envAssign("ser_orig_even", X.even)
     # half length of even series
-    nhalf <- rlp_envAssignGet("len_even_half", n.e/2)
+    nhalf <- rlpSpec:::rlp_envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <- rlp_envAssignGet("ser_even_var", drop(stats::var(X.even)))
+    varx <- rlpSpec:::rlp_envAssignGet("ser_even_var", drop(stats::var(X.even)))
     # create uniform tapers
     nt <- nhalf + 1
     if (lt < nt) {
@@ -135,15 +135,15 @@ psdcore.default <- function(X.d,
     #fftz <- stats::mvfft(matrix(X.dem, ncol=1))
     # but fftw is faster (apparent for long series)
     fftz <- fftw::FFT(as.numeric(X.dem))
-    fftz <- rlp_envAssignGet("fft_even_demeaned_padded", fftz)
+    fftz <- rlpSpec:::rlp_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
     X <- X.d
     ntap <- ntaper
     #stopifnot(length(X)==length(ntap))
-    n.e <- rlp_envGet("len_even")
-    nhalf <- rlp_envGet("len_even_half")
-    varx <- rlp_envGet("ser_even_var")
-    fftz <- rlp_envGet("fft_even_demeaned_padded")
+    n.e <- rlpSpec:::rlp_envGet("len_even")
+    nhalf <- rlpSpec:::rlp_envGet("len_even_half")
+    varx <- rlpSpec:::rlp_envGet("ser_even_var")
+    fftz <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
   }
   #
   # if ntaper is a vector, this doesn't work [ ]
@@ -224,9 +224,9 @@ psdcore.default <- function(X.d,
     psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     if (verbose) message("zero taper result == raw periodogram")
-    Xfft <- rlp_envGet("fft_even_demeaned_padded")
+    Xfft <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
     ff <- Xfft[1:nfreq]
-    N0 <- rlp_envGet("len_orig")
+    N0 <- rlpSpec:::rlp_envGet("len_orig")
     psd <- abs(ff * Conj(ff)) / N0
   }
   ##  Interpolate if necessary to uniform freq sampling
@@ -328,8 +328,8 @@ psdcore.default <- function(X.d,
                   # Percival and Walden eqn (370b)
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
-                  n.used = rlp_envGet("len_even"), 
-                  orig.n = rlp_envGet("len_orig"), 
+                  n.used = rlpSpec:::rlp_envGet("len_even"), 
+                  orig.n = rlpSpec:::rlp_envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
                   method = sprintf("Adaptive Sine Multitaper (rlpSpec)\n%s",funcall), 

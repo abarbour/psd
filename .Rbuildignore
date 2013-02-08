@@ -11,12 +11,13 @@ README.md
 fix_rd
 install_rlp
 data/.assemb_data
-inst/Examples/.norun.R
+inst/Examples/.test
+inst/Examples/test_results_rdex
+inst/Examples/Makefile
 vignettes/.sweave
 vignettes/.knitr$
 vignettes/.knitr2$
 ^.*/.gitignore$
-notes/
 x_S4/
 x_data_prep/
 x_demo/
