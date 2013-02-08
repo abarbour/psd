@@ -1,3 +1,8 @@
-** well-tested decimation option
-** logsmoo
-** reidsid "local_qls" spectral derivatives as callable .c code
+# Sorted by desirability
+
+[ ] reidsid "local_qls" spectral derivatives as callable .c code
+*** This is likely the bottleneck of the entire operation, besides the FFT
+
+[ ] logsmoo
+
+[ ] A well-tested decimation option.

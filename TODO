@@ -13,6 +13,8 @@ Examples
 Miscellany
 ----------
 [ ] rename? ... to 'psd'?
+[ ] Once rename + examples done, bump to 0.2-0
+[ ] Once bump, final packaging and CRAN submit
 [X] migrate examples in functions to ./inst/Examples/
 *** remove --no-examples and get to build [NA]
 *** *** why do they not build?? [X]
@@ -25,25 +27,22 @@ Miscellany
 
 vignettes
 ---------
-[ ] create pdfs to replace <eval=TRUE> statements with <includegraphics>
-[ ] finish norm
+[-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
+[X] finish norm
 [X] develop overview
-*** check with Bob regarding resolution [ ]
-
-tests (abandon? [ ])
------
-[ ] do they work?
 
 datasets
 --------
-[ ] scarb
-[ ] bsm
+[-] scarb
+*** should no include <- proprietary?
+[ ] bsm + pp
+*** find large teleseism: list with ambient and seismic times
 [X] magsat
 
 `spectral_properties`
 ---------------------
 [ ] check formulas for various quantities
-*** finish documentation
+*** finish documentation [ ]
 *** consult Bob
 
 `psdcore`
