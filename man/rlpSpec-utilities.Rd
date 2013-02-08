@@ -199,6 +199,7 @@
 ##
 ## Various utilities
 ##
+library(rlpSpec)
 set.seed(1234)
 X <- rnorm(1e2)
 ##
@@ -210,7 +211,6 @@ na_mat(nd)
 na_mat(nd,nd-1)
 # zeros
 zeros(nd)
-zeroes(nd)
 # and ones
 ones(nd)
 ##
@@ -232,12 +232,12 @@ is.spec(psd) # FALSE
 ##
 print(.rlpenv)
 char2envir(.rlpenv)
-char2envir("some nonexistent environment") # error
+try(char2envir("some nonexistent environment"), silent=TRUE) # error
 # and environment objects:
 print(.GlobalEnv)
 envir2char(.GlobalEnv)
 envir2char(.rlpSpecEnv)
-envir2char(some_nonexistent_environment) # error
+try(envir2char(some_nonexistent_environment), silent=TRUE) # error
 ##
 ## decibels
 ##

@@ -71,7 +71,8 @@ riedsid.spec <- function(psd, ...){
   stopifnot(is.spec(psd))
   Psd <- psd$spec
   Ntap <- psd$taper
-  riedsid(psd=Psd, ntaper=Ntap, ...)
+  Tapseq <- psd$freq
+  riedsid(psd=Psd, ntaper=Ntap, tapseq=Tapseq, ...)
   #.NotYetImplemented()
 }
 
@@ -90,11 +91,10 @@ riedsid.default <- function(psd, ntaper,
   nf <- rlpSpec:::rlp_envAssignGet("num_freqs", length(psd))
   # prelims
   eps <- .Machine$double.eps #**2 # was: 1e-78  #  A small number to protect against zeros
-  Ones <- ones(nf) # was rowvec, now col 
-  Zeros <- zeros(nf) # was rowvec, now col
   # vectorize initial estimate
+  Zeros <- zeros(nf)
   if (length(ntaper)==1){
-    ntap <- ntaper*Ones
+    ntap <- ntaper + Zeros
   } else {
     ntap <- ntaper
   }
@@ -112,10 +112,7 @@ riedsid.default <- function(psd, ntaper,
   dY <- d2Y <- Zeros
   #
   if (is.null(tapseq) | (length(tapseq) != length(psd))){
-    #kseq <- seq.int(from=1, to=nf, by=1)
-    xfreq <- frequency(psd) #1 # frequency(x) <==> sps, Hz
-    Nspec <- floor(nf/2)
-    kseq <- seq.int(from = xfreq/nf, by = xfreq/nf, length.out = Nspec)
+    kseq <- seq.int(from=0, to=frequency(psd)/2, length.out=length(psd))
   } else {
     kseq <- tapseq # sort?
   }
@@ -214,6 +211,7 @@ riedsid.default <- function(psd, ntaper,
   #print(all.equal(kopt_old,kopt)) # TRUE!
   ##
   ## Constrain tapers
+  stopifnot(diff(length(kopt),length(kseq))==0)
   if (constrained) kopt <- constrain_tapers(tapvec=kopt, 
                                             tapseq=kseq, 
                                             constraint.method=c.method, 
