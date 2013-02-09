@@ -1,8 +1,7 @@
 #RDEX#\dontrun{
 ##
-## title
+## Using prewhiten to improve spectral estimates
 ##
-library(rlpSpec)
 data(magsat)
 dt <- 1
 mts <- ts(magsat$clean, deltat=dt)

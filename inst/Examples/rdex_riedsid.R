@@ -2,8 +2,6 @@
 ##
 ## Riedel-Sidorenko--Parker taper optimization
 ##
-library(rlpSpec)
-
 set.seed(1234)
 # some params
 nd <- 512 # num data
