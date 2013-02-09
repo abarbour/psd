@@ -199,7 +199,6 @@
 ##
 ## Various utilities
 ##
-library(rlpSpec)
 set.seed(1234)
 X <- rnorm(1e2)
 ##
