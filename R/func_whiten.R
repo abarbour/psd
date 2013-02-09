@@ -71,6 +71,7 @@
 #' @param x.start start time of observations (for non \code{ts} objects)
 #' @param ... variables passed to \code{prewhiten.ts} (for non \code{ts} objects)
 #'
+#' @example inst/Examples/rdex_prewhiten.R
 prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
 #' @rdname prewhiten
 #' @method prewhiten default

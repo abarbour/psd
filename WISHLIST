@@ -3,6 +3,10 @@
 [ ] reidsid "local_qls" spectral derivatives as callable .c code
 *** This is likely the bottleneck of the entire operation, besides the FFT
 
+[ ] zero pad or predict for AR > 0 in prewhiten
+
+[ ] option for prewhitening in pilot_spec and thus pspectrum
+
 [ ] logsmoo
 
 [ ] A well-tested decimation option.

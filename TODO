@@ -2,12 +2,12 @@ Examples
 --------
 [X] constrain_tapers
 [ ] parabolic_weights
-[ ] prewhiten
+[X] prewhiten
 [ ] pilot_spec
 [X] rlpSpec-environment
 [X] rlpSpec-normalization
 [ ] spectral_properties
-[ ] spec_confint
+[X] spec_confint
 [X] psdcore
 [ ] pspectrum (improve)
 

@@ -1,12 +1,5 @@
 #RDEX#\dontrun{
 ##
-## title
-##
-set.seed(1234)
-##
-#RDEX#}
-#RDEX#\dontrun{
-##
 ## Confidence intervals from taper numbers
 ##
 sp <- spectral_properties(as.tapers(1:50), p=0.95, db.ci=TRUE)

@@ -131,7 +131,7 @@ spectral_properties.tapers <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db
 #' \item{\code{approx}: Approximation based on \eqn{1/\sqrt(\nu - 1)}.}
 #' }
 #' @keywords properties tapers uncertainty degrees-of-freedom
-# example from vignette
+#' @example inst/Examples/rdex_confint.R
 spec_confint <- function(dof, p = 0.95, as.db=FALSE) UseMethod("spec_confint")
 #' @rdname spec_confint
 #' @aliases spec_confint.spec
