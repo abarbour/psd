@@ -3,4 +3,4 @@ all:
 	.test
 
 clean:
-	rm -f results.rdex_*.Rout g.c.test .RData
+	rm -f *.Rout g.c.test .RData plots.rdex_*.R.pdf

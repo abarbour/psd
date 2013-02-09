@@ -10,7 +10,7 @@ awk '{
 	printf"echo \"%s\"\n",$1
 	printf"rr /tmp/tmptorun\n"
 	printf"mv tmptorun.Rout results.%sout\n",$1
-
+	printf"mv Rplots.pdf plots.%s.pdf\n",$1
 }END{
 	printf"cat results.rdex_*.Rout > test_results_rdex\n"
 	printf"grep Error test_results_rdex\n"
