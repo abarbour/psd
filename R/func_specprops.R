@@ -53,6 +53,8 @@
 #' \item{\code{dof}: The number of degrees of freedom.}
 #' \item{\code{bw}: The effective bandwidth of the spectrum.}
 #' }
+#'
+#' @example inst/Examples/rdex_spectralproperties.R
 spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...) UseMethod("spectral_properties")
 #' @rdname spectral_properties
 #' @aliases spectral_properties.spec

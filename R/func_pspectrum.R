@@ -10,13 +10,14 @@
 #' @name pspectrum
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
-#' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}, \code{\link{rlpSpec-package}}
+#' @seealso \code{\link{psdcore}}, \code{\link{pilot_spec}}, \code{\link{riedsid}}, \code{\link{prewhiten}}
 #' @keywords spectrum-estimation riedel-sidorenko tapers tapers-constraints tapers-weighting numerical-derivative
 #' 
 #' @param x vector; series to estimate PSD for.
 #' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}.
 #' @param ntap_pilot scalar; the number of sine tapers to use in the pilot spectrum estimation.
 #' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum.
+#' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
 #' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param verbose logical; Should messages be given?
 #' @param no.history logical; Should the adaptive history \emph{not} be saved?
@@ -26,11 +27,11 @@
 #' \code{"final_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pspectrum.R
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
   stopifnot(length(x)>1)
   xo <- rlpSpec:::rlp_envAssignGet("original_series", x)
   #
@@ -57,7 +58,9 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.nor
         if (plot) plotpsd_ <- TRUE
       }
       ##
-      pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot, plotpsd=plotpsd_)
+      ordAR <- ifelse(AR, 100, 0)
+      pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot, 
+                 remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       # ensure it's in the environment
       Pspec <- rlpSpec:::rlp_envGet("pilot_psd")
       dvar.o <- vardiff(Pspec$spec, double.diff=TRUE)
@@ -65,8 +68,8 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.nor
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
       if (save_hist){
-        new_adapt_history(niter)
-        update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
+        rlpSpec:::new_adapt_history(niter)
+        rlpSpec:::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
       xo <- 0 # to prevent passing orig data back/forth
     } else {
@@ -84,7 +87,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.nor
       Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, plotpsd=plotpsd_, verbose=FALSE)
       if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
       ## update history
-      if (save_hist) update_adapt_history(stage, Pspec$taper, Pspec$spec)
+      if (save_hist) rlpSpec:::update_adapt_history(stage, Pspec$taper, Pspec$spec)
     }
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "rlp", verbose=verbose)
@@ -102,41 +105,78 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, Nyquist.nor
 #' of this spectrum; hence, changes in the number of tapers can affect
 #' how many adaptive stages may be needed (though there are no formal convergence
 #' criteria to speak of).
-#' 
-#' A mean value and linear trend are removed from the series prior to
-#' estimation, and no decimation is performed.
 #'
 #' The taper series of the returned spectrum is constrained using
 #' \code{as.tapers(..., minspan=TRUE)}.
+#'
+#' The default behaviour (\code{remove.AR <= 0}) is to remove the standard linear 
+#' model \eqn{[f(x) = \alpha x + \beta]} from the data; however,
+#' the user can remove the effect of an autoregressive process by specifiying
+#' \code{remove.AR}.
+#'
+#' @section Removing an AR effect from the spectrum:
+#' If \code{remove.AR > 0} the argument is used as \code{AR.max} in 
+#' \code{\link{prewhiten}}, from which an AR spectrum is calculated using
+#' the best fitting model; this is removed from the spectrum calculated
+#' with the full data.
+#'
+#' If the value of \code{remove.AR} is too low the spectrum could become distorted,
+#' so use with care.
+#' Note, however, that the 
+#' value of \code{remove.AR} will be restricted to within the range \eqn{[1,100]}.
+#' If the AR order is much larger than this, it's unclear how \code{\link{prewhiten}}
+#' will perform.
 #'
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{psdcore}}, \code{\link{as.tapers}}, \code{\link{minspan}}
+#' @seealso \code{\link{psdcore}}, \code{\link{prewhiten}}
 #'
-#' @param x vetor; the data series to find a pilot spectrum for
-#' @param x.frequency scalar; the sampling frequency (e.g. Hz) of the series
-#' @param ntap scalar; the number of tapers to apply during spectrum estimation
-#' @param ... additional parameters passed to \code{\link{psdcore}}
+#' @param x  vector; the data series to find a pilot spectrum for
+#' @param x.frequency  scalar; the sampling frequency (e.g. Hz) of the series
+#' @param ntap  scalar; the number of tapers to apply during spectrum estimation
+#' @param remove.AR  scalar; the max AR model to be removed from the data.
+#' @param plot  logical; should a plot be created?
+#' @param verbose  logical; should messages be given?
+#' @param ...  additional parameters passed to \code{\link{psdcore}}
 #' @return An object with class 'spec', invisibly.  It also assigns the object to
 #' \code{"pilot_psd"} in the working environment.
+#'
 #' @example inst/Examples/rdex_pilotspec.R
-pilot_spec <- function(x, x.frequency=1, ntap=5, ...) UseMethod("pilot_spec")
+pilot_spec <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @method pilot_spec default
 #' @S3method pilot_spec default
-pilot_spec.default <- function(x, x.frequency=1, ntap=5, ...){
+pilot_spec.default <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
   stopifnot(length(ntap)==1)
   if (is.ts(x)) x.frequency <- stats::frequency(x)
-  # initial spectrum:
-  Pspec <- psdcore(X.d=x, X.frq=x.frequency, ntaper=ntap, 
-                   ndecimate=1L, 
-                   demean=TRUE, detrend=TRUE, 
-                   first.last=TRUE,
-                   Nyquist.normalize=FALSE, # remove this!
-                   as.spec=TRUE, 
-                   refresh=TRUE, ...)
+  # setup a universal calculator
+  PSD <- function(X, Xf, Xk, AR=FALSE){
+    toret <- psdcore(X.d=X, X.frq=Xf, ntaper=Xk, 
+                     ndecimate=1L, demean=TRUE, detrend=TRUE, 
+                     first.last=TRUE, as.spec=TRUE, refresh=TRUE)
+    return(toret)
+  }
+  xprew <- prewhiten(x, AR.max=remove.AR, plot=FALSE, verbose=verbose)
+  REMAR <- FALSE
+  if (remove.AR > 0){
+    # restrict to within [1,100]
+    remove.AR <- max(1, min(100, remove.AR))
+    REMAR <- TRUE
+    lx <- length(xprew$prew.lin)
+    stopifnot(length(remove.AR)==1)
+    # AR fit
+    ordAR <- xprew$dfit$order
+    xar <- xprew$prew.ar
+    # zero padding to deal with truncation
+    xar <- c(xar, zeros(lx - length(xar))) # Remove when padding option in prewhiten is ready!
+    # PSD of the AR fit
+    Pspec_ar <- PSD(xar, x.frequency, ntap, AR=TRUE)
+    Pspec_ar$spec <- Pspec_ar$spec / mean(Pspec_ar$spec)
+  }
+  # Initial spectrum:
+  Pspec <- PSD(xprew$prew.lin, x.frequency, ntap, AR=FALSE)
   num_frq <- length(Pspec$freq)
   num_tap <- length(Pspec$taper)
   stopifnot(num_tap <= num_frq)
@@ -145,5 +185,30 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=5, ...){
   if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
   # return tapers object
   Pspec$taper <- as.tapers(Ptap, setspan=TRUE)
+  ##
+  ## remove the spectrum of the AR process
+  if (REMAR){
+    stopifnot(exists("Pspec_ar"))
+    if (verbose) message(sprintf("Removing AR(%s) effects from spectrum", ordAR))
+    Ospec <- Pspec
+    Pspec$spec <- Pspec$spec / Pspec_ar$spec
+    #plot(Pspec_ar, col="blue", add=TRUE)
+    #plot(Pspec, col="red", add=TRUE)
+    rlpSpec:::rlp_envAssignGet("AR_psd", Pspec_ar)
+  }
+  if (plot){
+    #if (verbose) message("plotting at pilot stage")
+    if (REMAR){
+      plot(Ospec, log="dB", col="red")
+      Pspec_ar$spec <- Pspec_ar$spec * (mPsd <- mean(Pspec$spec))
+      plot(Pspec_ar, log="dB", col="blue", add=TRUE)
+      plot(Pspec, log="dB", add=TRUE, lwd=2)
+      legend("bottomleft", 
+             c("original PSD",sprintf("AR-effects PSD (+ %.01f dB)", dB(mPsd)),"AR-corrected PSD"), lwd=2,
+             col=c("red","blue","black"))
+    } else {
+      plot(Pspec, log="dB")
+    }
+  }
   return(invisible(rlpSpec:::rlp_envAssignGet("pilot_psd", Pspec)))
 }

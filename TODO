@@ -1,15 +1,15 @@
 Examples
 --------
 [X] constrain_tapers
-[ ] parabolic_weights
+[X] parabolic_weights
 [X] prewhiten
 [ ] pilot_spec
 [X] rlpSpec-environment
 [X] rlpSpec-normalization
-[ ] spectral_properties
+[X] spectral_properties
 [X] spec_confint
 [X] psdcore
-[ ] pspectrum (improve)
+[X] pspectrum (improve)
 
 Miscellany
 ----------
@@ -35,7 +35,7 @@ vignettes
 datasets
 --------
 [-] scarb
-*** should no include <- proprietary?
+*** should not include? <- proprietary?
 [ ] bsm + pp
 *** find large teleseism: list with ambient and seismic times
 [X] magsat

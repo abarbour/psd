@@ -101,15 +101,14 @@ psdcore.default <- function(X.d,
   # onle one variable in the env (init): it hasn't been added to yet
   nenvar <- length(rlpSpec:::rlp_envStatus()$listing)
   if (lt == 1 | nenvar == 1 | refresh){
+    ZEROSTG <- TRUE
     # original series length
     n.o <- rlpSpec:::rlp_envAssignGet("len_orig", length(X.d))
     #
-    X <- prewhiten(X.d, 
-                   AR.max=0L, 
-                   detrend=detrend, 
-                   demean=demean,
-                   plot=FALSE,
-                   verbose=FALSE)
+    X <- prewhiten(X.d, AR.max=0L, 
+                   detrend=detrend, demean=demean, 
+                   plot=FALSE, verbose=verbose)
+    X <- X$prew.lin
     #
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
@@ -124,10 +123,11 @@ psdcore.default <- function(X.d,
     # create uniform tapers
     nt <- nhalf + 1
     if (lt < nt) {
-      ntap <- ntaper*ones(nt) 
+      ntap <- ntaper * ones(nt) 
     } else {
       ntap <- ntaper[1:nt]
     }
+    #print(max(ntap))
     ##  Remove mean & pad with zeros
     X.dem <- c(X.even, zeros(n.e))
     ##  Take double-length fft
@@ -137,6 +137,8 @@ psdcore.default <- function(X.d,
     fftz <- fftw::FFT(as.numeric(X.dem))
     fftz <- rlpSpec:::rlp_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
+    ZEROSTG <- FALSE
+    if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
     X <- X.d
     ntap <- ntaper
     #stopifnot(length(X)==length(ntap))
@@ -146,7 +148,7 @@ psdcore.default <- function(X.d,
     fftz <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
   }
   #
-  # if ntaper is a vector, this doesn't work [ ]
+  # if ntaper is a vector, this doesn't work [ ] ?
   ##
   # if the user wants a raw periodogram: by all means
   DOAS <- FALSE
@@ -155,6 +157,7 @@ psdcore.default <- function(X.d,
   } else {
     if (!(is.tapers(ntap))) DOAS <- TRUE
   }
+  ##TMP <<- ntap
   if (DOAS) ntap <- as.tapers(ntap, setspan=TRUE)
   
   ## interpolation
@@ -177,42 +180,34 @@ psdcore.default <- function(X.d,
     f <- seq.int(0, nhalf, by=1)
   }
   ##
-  lt2 <- length(drop(ntap))
-  ##
   ###  Calculate the psd by averaging over tapered estimates
   nfreq <- length(f)
+  NF <- seq_len(nfreq) # faster or slower than 1:nfreq?
   ##
   if (sum(ntap) > 0) {
-    psd <- zeros(nfreq)
-    n2e <- 2*n.e
+    psd <- 0 * NF
+    n2e <- 2 * n.e
     # get a set of all possible weights for the current taper-vector
     # then the function need only subset the master set
     # faster? YES
     KPWM <- parabolic_weights_fast(max(ntap))
     PSDFUN <- function(fj, n2.e=n2e, KPW=KPWM, ntaps=ntap, Xfft=fftz){
-      # parabolic weights, index m+1, column vec out
-      #print(c(fj,fj2,n2.e))
-      ##NT <- ntaps[fj+1]
-      #KPW <- parabolic_weights(ntaps, tap.index=(fj+1), vec.out="horizontal")
-      ##KPW <- parabolic_weights_fast(NT)
-      #
-      # num tapers (for subsetting)
-      NT <- ntaps[fj+1]
+      # number tapers (for subsetting)
+      NT <- base::seq_len(ntaps[fj+1])
       # sequence
-      Kseq <- KPW$taper_seq[1:NT]
+      Kseq <- KPW$taper_seq[NT]
       # weights
-      Kwgt <- KPW$taper_weights[1:NT]
-      #
+      Kwgt <- KPW$taper_weights[NT]
+      # Resampling weighted spectral values:
       fj2 <- 2*fj
-      m1. <- fj2 + n2.e - Kseq #KPW$taper_seq
+      m1. <- fj2 + n2.e - Kseq
       j1 <- m1. %% n2.e
-      m1. <- fj2 + Kseq #KPW$taper_seq
+      m1. <- fj2 + Kseq
       j2 <- m1. %% n2.e
       f1 <- Xfft[j1+1]
       f2 <- Xfft[j2+1]
       af12. <- f1 - f2
-      af122. <- af12. * af12. # will be complex, but Mod == abs
-      #psdv <- KPW$taper_weights %*% matrix(af122., ncol=1)
+      af122. <- af12. * af12. # will be complex, so use abs:
       psdv <- Kwgt %*% matrix(abs(af122.), ncol=1)
       return(psdv)
     }
@@ -221,13 +216,13 @@ psdcore.default <- function(X.d,
     # ** foreach is easier to follow, but foreach solution is actually slower :(
     #     psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
-    psd <- vapply(X=f[1:nfreq], FUN=PSDFUN, FUN.VALUE=double(1))
+    psd <- vapply(X=f[NF], FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     if (verbose) message("zero taper result == raw periodogram")
     Xfft <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
-    ff <- Xfft[1:nfreq]
-    N0 <- rlpSpec:::rlp_envGet("len_orig")
-    psd <- abs(ff * Conj(ff)) / N0
+    ff <- Xfft[NF]
+    N0. <- rlpSpec:::rlp_envGet("len_orig")
+    psd <- abs(ff * Conj(ff)) / N0.
   }
   ##  Interpolate if necessary to uniform freq sampling
   if (lt > 1 && ndecimate > 1){
@@ -262,7 +257,8 @@ psdcore.default <- function(X.d,
   #
   # BUG: there seems to be an issue with f==0, & f[length(psd)]
   # so just extrapolate from the prev point
-  indic <- 2:(nfreq-1)
+  indic <- seq_len(nfreq - 2) + 1 
+  #2:(nfreq-1)
   if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
   pltpsd <- function(Xser, frqs, psds, taps, nyq, detrend, demean, ...){
@@ -286,24 +282,27 @@ psdcore.default <- function(X.d,
     lfrqp <- log10(Xpg$freq)
     db_pgram <- dB(Xpg$spec); rm(Xpg)
     # plotting
-    r1 <- range(db_psd)
-    r2 <- range(db_pgram)
+    r1 <- range(db_psd, na.rm=TRUE, finite=TRUE)
+    r2 <- range(db_pgram, na.rm=TRUE, finite=TRUE)
+    ylims <- round(c(min(r1, r2), max(r1, r2)), 1)
+    r1 <- range(lfrqp, na.rm=TRUE, finite=TRUE)
+    r2 <- range(lfrq, na.rm=TRUE, finite=TRUE)
+    xlims <- round(c(min(r1, r2), max(r1, r2)), 1) + .1*c(-1,1)
     ## Spectra, in decibels
     plot(lfrqp, db_pgram, col="red", type="l", 
          main="Naive and Multitaper PSD",
-         xaxs="i", xlab="",
-         ylab="dB, units^2 * delta",
-         ylim=c(min(r1, r2), max(r1, r2)))
+         xaxs="i", xlab="", xlim=xlims,
+         ylab="dB, units^2 * delta", ylim=ylims)
     mtext("log10 frequency", side=1, line=1.6)
     #mtext(, cex=0.6)
     abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
     lines(lfrq, db_psd, type="l")
-    legend("bottomleft",c("20% cosine","rlpSpec"), col=c("red","black"), lty=1, lwd=2, cex=0.9)
+    legend("bottomleft",c("spec.pgram (20% cosine taper)",sprintf("psdcore (max %i tapers)",max(taps))), col=c("red","black"), lty=1, lwd=2, cex=0.9)
     ## tapers
     if (is.tapers(taps)){
-      plot(taps, lfrq)
+      plot(taps, lfrq, xlim=xlims, xaxs="i")
     } else {
-      plot(lfrq, taps, type="h")
+      plot(lfrq, taps, type="h", xlim=xlims, xaxs="i")
     }
     ## original series
     plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
@@ -318,21 +317,22 @@ psdcore.default <- function(X.d,
   ## Plot it
   if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, taps=ntap, nyq=Nyq, detrend=detrend, demean=demean, ...)
   ##
-  funcall<-paste(as.character(match.call()[]),collapse=" ") 
+  funcall <- sprintf("psdcore (dem. %s detr. %s f.l. %s refr. %s)", demean, detrend, first.last, refresh) 
+  ## paste(as.character(match.call()[]),collapse=" ") 
   psd.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(psd.n), 
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NULL, 
-                  df = 2*mtap, #mtap-1, # must be a scalar for plot.spec to give conf ints:
-                  # Percival and Walden eqn (370b)
+                  # must be a scalar for plot.spec to give conf ints:
+                  df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
                   n.used = rlpSpec:::rlp_envGet("len_even"), 
                   orig.n = rlpSpec:::rlp_envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
-                  method = sprintf("Adaptive Sine Multitaper (rlpSpec)\n%s",funcall), 
+                  method = sprintf("Sine multitaper\n%s",funcall), 
                   taper = ntap, 
                   pad = 1, # always!
                   detrend = detrend, 

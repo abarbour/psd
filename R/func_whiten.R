@@ -18,7 +18,6 @@
 #' }
 #' In the second case,
 #' the time series is 
-# first
 #' filtered in the time domain with a finite-impluse-response 
 #' filter of \code{AR.max} terms. The filter is found by solving the Yule-Walker 
 #' equations for 
@@ -70,6 +69,7 @@
 #' @param x.fsamp sampling frequency (for non \code{ts} objects)
 #' @param x.start start time of observations (for non \code{ts} objects)
 #' @param ... variables passed to \code{prewhiten.ts} (for non \code{ts} objects)
+#' @return A list with the model fit and the prewhitened timeseries
 #'
 #' @example inst/Examples/rdex_prewhiten.R
 prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
@@ -93,53 +93,62 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, 
   tstart <- stats::start(tser)
   n.o <- length(tser)
   ttime <- sps*n.o
-  if (AR.max > 0) {
-    AR.max <- as.integer(max(1, AR.max))
-    if (verbose) message("autoregressive model fit (returning innovations)")
-    # solves Yule-Walker equations
-    #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
-    arfit <- stats::ar.yw(tser, aic=TRUE, order.max=AR.max, demean=demean)
-    if (verbose) print(str(arfit))
-    # ar returns a TS object
-    tser.prew <- stats::as.ts(zoo::na.locf(arfit$resid))
-  }
+  dfit <- NULL
   # data.frame with fit params
-  if (AR.max < 1){
-    fit.df <- data.frame(xr=seq.int(from=1, to=n.o, by=1), 
+  if (AR.max >= 0){
+    fit.df <- data.frame(xr=seq_len(n.o), 
                          xc=rep.int(1, n.o), 
                          y=tser)
     if (detrend){
       if (verbose) message("detrending (and demeaning)")
-      X <- as.matrix(stats::residuals( stats::lm(y ~ xr, fit.df)))
+      X <- as.matrix(stats::residuals( dfit <- stats::lm(y ~ xr, fit.df)))
     } else if (demean) {
       if (verbose) message("demeaning")
-      X <- as.matrix(stats::residuals( stats::lm(y ~ xc, fit.df)))
+      X <- as.matrix(stats::residuals( dfit <- stats::lm(y ~ xc, fit.df)))
     } else {
       X <- tser
       if (verbose) warning("nothing was done to the timeseries object")
     }
-    tser.prew <- stats::ts(X, frequency=sps, start=tstart)
+    tser.prew.lin <- stats::ts(X, frequency=sps, start=tstart)
+    tser.prew.ar <- NULL
+  }
+  if (AR.max > 0) {
+    #message(AR.max)
+    AR.max <- as.integer(max(1, AR.max))
+    if (verbose) message("autoregressive model fit (returning innovations)")
+    # solves Yule-Walker equations
+    #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
+    dfit <- stats::ar.yw(tser.prew.lin, aic=TRUE, order.max=AR.max, demean=demean)
+    #if (verbose) print(str(arfit))
+    # ar returns a TS object
+    tser.prew.ar <- stats::as.ts(zoo::na.locf(zoo::as.zoo(dfit$resid)))
   }
   if (plot){
     opar <- par(no.readonly = TRUE)
     par(las=1,xpd=FALSE)
-    if (exists("arfit")){
-      ftyp <- sprintf("AR(%i) model", arfit$order)
+    if (class(dfit)=="ar"){
+      ftyp <- sprintf("AR(%i) model fit", dfit$order)
+      pltprew <- stats::ts.union(x=tser, x.p=tser.prew.ar)
+    } else if (is.null(dfit)) {
+      ftyp <- ""
+      pltprew <- tser
     } else {
-      ftyp <- "linear"
+      ftyp <- "linear fit"
+      pltprew <- stats::ts.union(x=tser, x.p=tser.prew.lin)
     }
     PANELFUN <- function(x, col = col, bg = bg, pch = pch, type = type, ...){
       lines(x, col = col, bg = bg, pch = pch, type = type, ...)
       abline(h=c(0,mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
     }
-    plot(stats::ts.union(x=tser, x.p=tser.prew), 
+    plot(pltprew, 
          main="Raw and prewhitened series",
          #xlab="series units",
          cex.lab=0.7, cex.axis=0.7, xy.labels=FALSE,
          xaxs="i", yax.flip=TRUE, panel=PANELFUN)
-    mtxt <- sprintf("%s fit  (demean %s | detrend %s )", ftyp, demean, detrend)
+    mtxt <- sprintf("%s  (demean %s | detrend %s )", ftyp, demean, detrend)
     mtext(mtxt, line=0.5)
     par(opar)
   }
-  return(invisible(tser.prew))
+  toret <- list(dfit=dfit, prew.lin=tser.prew.lin, prew.ar=tser.prew.ar)
+  return(invisible(toret))
 }

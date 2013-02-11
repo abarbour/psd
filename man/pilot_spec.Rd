@@ -5,13 +5,15 @@
 \alias{spec.pilot}
 \title{Calculate the pilot power spectral densities.}
 \usage{
-  pilot_spec(x, x.frequency = 1, ntap = 5, ...)
+  pilot_spec(x, x.frequency = 1, ntap = 5, remove.AR = 0,
+    plot = FALSE, verbose = FALSE, ...)
 
   \method{pilot_spec}{default} (x, x.frequency = 1,
-    ntap = 5, ...)
+    ntap = 5, remove.AR = 0, plot = FALSE, verbose = FALSE,
+    ...)
 }
 \arguments{
-  \item{x}{vetor; the data series to find a pilot spectrum
+  \item{x}{vector; the data series to find a pilot spectrum
   for}
 
   \item{x.frequency}{scalar; the sampling frequency (e.g.
@@ -19,6 +21,13 @@
 
   \item{ntap}{scalar; the number of tapers to apply during
   spectrum estimation}
+
+  \item{remove.AR}{scalar; the max AR model to be removed
+  from the data.}
+
+  \item{plot}{logical; should a plot be created?}
+
+  \item{verbose}{logical; should messages be given?}
 
   \item{...}{additional parameters passed to
   \code{\link{psdcore}}}
@@ -40,11 +49,28 @@
   can affect how many adaptive stages may be needed (though
   there are no formal convergence criteria to speak of).
 
-  A mean value and linear trend are removed from the series
-  prior to estimation, and no decimation is performed.
-
   The taper series of the returned spectrum is constrained
   using \code{as.tapers(..., minspan=TRUE)}.
+
+  The default behaviour (\code{remove.AR <= 0}) is to
+  remove the standard linear model \eqn{[f(x) = \alpha x +
+  \beta]} from the data; however, the user can remove the
+  effect of an autoregressive process by specifiying
+  \code{remove.AR}.
+}
+\section{Removing an AR effect from the spectrum}{
+  If \code{remove.AR > 0} the argument is used as
+  \code{AR.max} in \code{\link{prewhiten}}, from which an
+  AR spectrum is calculated using the best fitting model;
+  this is removed from the spectrum calculated with the
+  full data.
+
+  If the value of \code{remove.AR} is too low the spectrum
+  could become distorted, so use with care. Note, however,
+  that the value of \code{remove.AR} will be restricted to
+  within the range \eqn{[1,100]}. If the AR order is much
+  larger than this, it's unclear how
+  \code{\link{prewhiten}} will perform.
 }
 \examples{
 \dontrun{
@@ -55,7 +81,6 @@ NULL
   A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{psdcore}}, \code{\link{as.tapers}},
-  \code{\link{minspan}}
+  \code{\link{psdcore}}, \code{\link{prewhiten}}
 }
 

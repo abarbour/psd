@@ -217,6 +217,11 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' The resampled spectrum involves summing weighted tapers; this produces
 #' the weighting factors.
 #'
+#' If one has a \code{tapers} object, specify the \code{taper.index} to
+#' produce a sequence of weights up to the value at that index.  This
+#' may seem counter-intuitive, but the user is not likely to ever need
+#' to use this function.
+#'
 #' Weighting factors are calculated as follows:
 #' \deqn{W_N \equiv n_T^2 - \frac{3  K_N^2}{2 n_T (n_T - 1/4) (n_T + 1)}}
 #' where \eqn{n_T} is the total number of tapers, and 
@@ -229,9 +234,11 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
 #'
 #' @param tapvec 'tapers' object; the number of tapers at each frequency
-#' @param tap.index integer; the index of \code{tapvec} from which to find weights
+#' @param tap.index integer; the index of \code{tapvec} from which to produce a sequence of weights for
 #' @param ntap integer; the number of tapers to provide weightings for.
 #' @return A list with taper indices, and the weights \eqn{W_N}.
+#'
+#' @example inst/Examples/rdex_parabolicweights.R
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
 #' @rdname parabolic_weights
 #' @aliases parabolic_weights.tapers
@@ -285,10 +292,14 @@ NULL
 #' may have, which is necessary because it would be nonsense to
 #' have more tapers than the length of the series. 
 #' 
-#' @details \code{\link{minspan}} bounds the number of tapers between
-#' the minimum of the half-length of the series, and 7/5 times
-#' the tapers.  In code this would look something like: 
-#' \code{min(length(tapvec)/2, 7*tapvec/5)}
+#' @details \code{\link{minspan}} bounds the number of tapers to within
+#' the minimum of
+#' either the maximum number of tapers found in the object, 
+#' or the half-length of the series.
+#'
+### the minimum of the half-length of the series, and 7/5 times
+### the tapers.  In code this would look something like: 
+### \code{min(length(tapvec)/2, 7*tapvec/5)}
 #'
 #' @rdname tapers-constraints
 #' @title minspan
@@ -308,7 +319,9 @@ minspan <- function(tapvec, ...) UseMethod("minspan")
 #' @S3method minspan tapers
 minspan.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
-  nspan <- as.tapers(7*tapvec/5, max_taper=length(tapvec)/2)
+  ##tapvec <- 7*tapvec/5
+  maxtap <- min(max(tapvec), length(tapvec)/2)
+  nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
   return(nspan)
 }
 

@@ -299,7 +299,7 @@ using ordinary linear least squares.
 <<eval=TRUE, echo=TRUE, label="Load RSEIS package.">>=
 require(RSEIS)
 dt=1 # km
-ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE) 
+ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew.lin
 @
 Setting \Rcmd{AR.max} higher than zero
 causes the program to fit
@@ -312,7 +312,7 @@ only and AR(6) model was fit significantly following the AIC.
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.height=3.8, fig.width=6.5, label=ARFIT>>=
-atsar <- prewhiten(ats, AR.max=100, verbose=FALSE)
+atsar <- prewhiten(ats, AR.max=100, verbose=FALSE)$prew.ar
 @
 <<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
 plot(psdcore(atsar,ntaper=10), log="dB", main="PSD of MAGSAT innovations")

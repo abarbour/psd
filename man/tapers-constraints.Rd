@@ -119,10 +119,9 @@
   \item \code{'none'} returns unbounded tapers. }
 }
 \details{
-  \code{\link{minspan}} bounds the number of tapers between
-  the minimum of the half-length of the series, and 7/5
-  times the tapers.  In code this would look something
-  like: \code{min(length(tapvec)/2, 7*tapvec/5)}
+  \code{\link{minspan}} bounds the number of tapers to
+  within the minimum of either the maximum number of tapers
+  found in the object, or the half-length of the series.
 }
 \section{Details of Constraint Methods}{
   \subsection{via first differencing (default)}{
