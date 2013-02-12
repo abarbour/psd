@@ -27,11 +27,11 @@
 #' \code{"final_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pspectrum.R
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
   adapt_message <- function(stage, dvar=NULL){
@@ -148,11 +148,11 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, N
 #' \code{"pilot_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pilotspec.R
-pilot_spec <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
+pilot_spec <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @method pilot_spec default
 #' @S3method pilot_spec default
-pilot_spec.default <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
+pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
   stopifnot(length(ntap)==1)
   stopifnot(length(remove.AR)==1)
   if (is.ts(x)) x.frequency <- stats::frequency(x)
@@ -176,7 +176,7 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE
     xar <- xprew$prew_ar
     # PSD of the AR fit
     Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)
-    Pspec_ar$spec <- Pspec_ar$spec #/ mean(Pspec_ar$spec)
+    Pspec_ar$spec <- Pspec_ar$spec / mean(Pspec_ar$spec)
   }
   #
   #rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE)

@@ -212,50 +212,46 @@ multitaper or otherwise.
 Setting aside any discussion regarding sample stationarity,
 we can find power spectral density (PSD)
 estimates for the two series quite simply:
-%% pspectrum 4 iters
+%% pspectrum 5 iters
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-psdr <- \hlfunctioncall{pspectrum}(magsat$raw, plot = FALSE, AR = TRUE)
+psdr <- \hlfunctioncall{pspectrum}(magsat$raw)
 \end{alltt}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .rlpSpecEnv **\ \ refreshed}}
-
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -4.1 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Removing AR(2) effects from spectrum}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -12.7 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. 7.4 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -18.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -1.1 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -25.0 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -4.8 dB)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -11.6 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -35.1 dB)}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
-psdc <- \hlfunctioncall{pspectrum}(magsat$clean, plot = FALSE)
+psdc <- \hlfunctioncall{pspectrum}(magsat$clean)
 \end{alltt}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .rlpSpecEnv **\ \ refreshed}}
-
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -7.5 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -3.9 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -18.4 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -14.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -28.8 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -22.0 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -34.8 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -28.5 dB)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\end{kframe}
 \end{knitrout}
@@ -320,34 +316,9 @@ for 10 kilometer wavelengths and longer; whereas, the
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which would be difficult to judge with \naive{} estimators.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-psdc_ar <- \hlfunctioncall{pspectrum}(magsat$clean, AR = TRUE, plot = FALSE)
-\end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .rlpSpecEnv **\ \ refreshed}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Removing AR(6) effects from spectrum}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. 4.7 dB)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -5.6 dB)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -6.9 dB)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -16.3 dB)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\end{kframe}
-\end{knitrout}
-
+%<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
+%#psdc_ar <- pspectrum(magsat$clean, AR=TRUE, plot=FALSE)
+%@
 %
 \begin{figure}[htb!]
 \begin{center}
@@ -356,7 +327,7 @@ psdc_ar <- \hlfunctioncall{pspectrum}(magsat$clean, AR = TRUE, plot = FALSE)
 \begin{alltt}
 \hlfunctioncall{plot}(psdc, log = \hlstring{"dB"}, main = \hlstring{"Raw and Clean MAGSAT power spectral density"}, 
     lwd = 3, ci.col = NA, ylim = \hlfunctioncall{c}(0, 32), yaxs = \hlstring{"i"})
-\hlfunctioncall{plot}(psdc_ar, log = \hlstring{"dB"}, add = TRUE, lwd = 3, col = \hlstring{"red"})
+\hlcomment{# plot(psdc_ar, log='dB', add=TRUE, lwd=3, col='red')}
 \hlfunctioncall{plot}(psdr, log = \hlstring{"dB"}, add = TRUE, lwd = 3, lty = 5)
 \hlfunctioncall{text}(\hlfunctioncall{c}(0.25, 0.34), \hlfunctioncall{c}(11, 24), \hlfunctioncall{c}(\hlstring{"Clean"}, \hlstring{"Raw"}), cex = 1)
 \end{alltt}
@@ -499,49 +470,94 @@ using ordinary linear least squares.
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  kernel}}\begin{alltt}
 dt = 1  \hlcomment{# km}
-ats <- \hlfunctioncall{prewhiten}(\hlfunctioncall{ts}(magsat$clean, deltat = dt), plot = FALSE)$prew.lin
+\hlfunctioncall{summary}(\hlfunctioncall{prewhiten}(mc <- \hlfunctioncall{ts}(magsat$clean, deltat = dt) + \hlfunctioncall{seq_along}(magsat$clean), 
+    plot = FALSE))
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}\begin{verbatim}
+##         Length Class  Mode   
+## lmdfit    12   lm     list   
+## ardfit     0   -none- NULL   
+## prew_lm 2048   ts     numeric
+## prew_ar    0   -none- NULL   
+## imputed    1   -none- logical
+\end{verbatim}
+\begin{alltt}
+\hlfunctioncall{summary}(atsar <- \hlfunctioncall{prewhiten}(mc, AR.max = 100, plot = FALSE))
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}\begin{verbatim}
+##         Length Class  Mode   
+## lmdfit    12   lm     list   
+## ardfit    14   ar     list   
+## prew_lm 2048   ts     numeric
+## prew_ar 2048   ts     numeric
+## imputed    1   -none- logical
+\end{verbatim}
+\begin{alltt}
+ats_lm <- atsar$prew_lm
+ats_ar <- atsar$prew_ar
+\end{alltt}
+\end{kframe}
 \end{knitrout}
+
 
 Setting \Rcmd{AR.max} higher than zero
 causes the program to fit
 an auto-regressive (AR)
 model to the data using the Akaike infomation criterion (AIC).  
-In Figure \ref{fig:magd} we show the AR
+Figure \ref{fig:magd} plots the innovations from the AR
 fitting method, and note that while we set \Rcmd{AR.max} relatively high,
-only and AR(6) model was fit significantly following the AIC.
+only and AR(6) model was fit significantly following the AIC. 
+Also note that
+the linear trend fitting is removed from the series prior to AR estimation; 
+this fit is also returned.
 
 \begin{figure}[htb!]
 \begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-atsar <- \hlfunctioncall{prewhiten}(ats, AR.max = 100, verbose = FALSE)$prew.ar
+\hlfunctioncall{plot}(\hlfunctioncall{ts.union}(orig.plus.trend = mc, linear = ats_lm, ar = ats_ar), yax.flip = TRUE, 
+    main = \hlfunctioncall{sprintf}(\hlstring{"Prewhitened MAGSAT series: linear and linear+\hlfunctioncall{AR}(%s)"}, atsar$ardfit$order))
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/ARFIT} 
+\includegraphics[width=\maxwidth]{figure/ARFITPLT} 
 
 \end{knitrout}
+
+%<<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
+%plot(psdcore(atsar$prew_ar, ntaper=10), log="dB", main="PSD of MAGSAT innovations")
+%@
+\caption{Pre-whitening of the MAGSAT series (with a
+synthetic trend superimposed on it) assuming linear and linear-with-AR models.
+%Bottom: Power spectral density estimates of the innovations (model residuals):
+%the spectrum is relatively flat, as expected.
+}
+\label{fig:magd}
+\end{center}
+\end{figure}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{plot}(\hlfunctioncall{psdcore}(atsar, ntaper = 10), log = \hlstring{"dB"}, main = \hlstring{"PSD of MAGSAT innovations"})
+\hlfunctioncall{summary}(atsar)
 \end{alltt}
+\begin{verbatim}
+##         Length Class  Mode   
+## lmdfit    12   lm     list   
+## ardfit    14   ar     list   
+## prew_lm 2048   ts     numeric
+## prew_ar 2048   ts     numeric
+## imputed    1   -none- logical
+\end{verbatim}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/ARPSD} 
-
 \end{knitrout}
 
-\caption{Top: Pre-whitening of a series assuming an AR model.
-Bottom: Power spectral density estimates of the innovations (model residuals):
-the spectrum is relatively flat, as expected.}
-\label{fig:magd}
-\end{center}
-\end{figure}
 
 We didn't necessarily need to deal with the sampling information since it is just 1 per km;
 but, supposing the sampling information was based on an interval, we
@@ -570,7 +586,7 @@ estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 tapinit <- 10
-Mspec <- \hlfunctioncall{mtapspec}(ats, \hlfunctioncall{deltat}(ats), MTP = \hlfunctioncall{list}(kind = 2, inorm = 3, nwin = tapinit, 
+Mspec <- \hlfunctioncall{mtapspec}(ats_lm, \hlfunctioncall{deltat}(ats_lm), MTP = \hlfunctioncall{list}(kind = 2, inorm = 3, nwin = tapinit, 
     npi = 0))
 \end{alltt}
 \end{kframe}
@@ -628,15 +644,13 @@ is finished.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-Xspec <- \hlfunctioncall{spec.pgram}(ats, pad = 1, taper = 0.2, detr = TRUE, dem = TRUE, plot = FALSE)
-Pspec <- \hlfunctioncall{psdcore}(ats, dt, tapinit)
-Aspec <- \hlfunctioncall{pspectrum}(ats, dt, tapinit, niter = 3, plot = FALSE)
+Xspec <- \hlfunctioncall{spec.pgram}(ats_lm, pad = 1, taper = 0.2, detr = TRUE, dem = TRUE, plot = FALSE)
+Pspec <- \hlfunctioncall{psdcore}(ats_lm, dt, tapinit)
+Aspec <- \hlfunctioncall{pspectrum}(ats_lm, dt, tapinit, plot = FALSE)
 \end{alltt}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .rlpSpecEnv **\ \ refreshed}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
@@ -645,6 +659,10 @@ Aspec <- \hlfunctioncall{pspectrum}(ats, dt, tapinit, niter = 3, plot = FALSE)
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -8.8 dB)}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -16.3 dB)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -18.1 dB)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -23.6 dB)}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
 \hlcomment{# Correct for double-sidedness of spectrum and mtapspec results}
@@ -846,6 +864,44 @@ As of this writing, the package has no maintainer;
 lest we end up discussing deprecated and archived functions,
 we will not compare it to \rlp{}.
 
+\section{Can AR prewhitening improve the spectrum?}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+psdc_ar <- \hlfunctioncall{pspectrum}(magsat$clean, AR = TRUE, niter = 0, plot = TRUE)
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Removing AR(6) effects from spectrum}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/MAGPSDAR} 
+
+\end{knitrout}
+
+
+%\begin{figure}[htb!]
+%\begin{center}
+%<<eval=TRUE, echo=TRUE, label=PREWPSD>>=
+%plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
+%     lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
+%plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
+%plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
+%text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
+%@
+%\caption{Power spectral density estimates for the raw and cleaned
+%   \Rcmd{MAGSAT}, with and without auto-regressive (AR) prewhitening.}
+%\label{fig:arpsd}
+%\end{center}
+%\end{figure}
+
 \section{Assessing spectral properties}
 \subsection{Spectral uncertainties}
 It is important to place bounds on the uncertainties associated
@@ -922,14 +978,14 @@ spa <- \hlfunctioncall{spectral_properties}(Aspec$taper, db.ci = TRUE)
 \end{alltt}
 \begin{verbatim}
 ## 'data.frame':	1025 obs. of  8 variables:
-##  $ taper            : int  172 173 173 174 174 174 175 175 174 174 ...
-##  $ stderr.chi.lower : num  -0.628 -0.626 -0.626 -0.625 -0.625 ...
-##  $ stderr.chi.upper : num  0.672 0.67 0.67 0.668 0.668 ...
-##  $ stderr.chi.median: num  0.229 0.228 0.228 0.227 0.227 ...
-##  $ stderr.chi.approx: num  0.228 0.228 0.228 0.227 0.227 ...
-##  $ resolution       : num  0.338 0.34 0.34 0.341 0.341 ...
-##  $ dof              : num  344 346 346 348 348 348 350 350 348 348 ...
-##  $ bw               : num  0.169 0.17 0.17 0.171 0.171 ...
+##  $ taper            : int  235 235 235 235 235 235 235 235 235 235 ...
+##  $ stderr.chi.lower : num  -0.54 -0.54 -0.54 -0.54 -0.54 ...
+##  $ stderr.chi.upper : num  0.572 0.572 0.572 0.572 0.572 ...
+##  $ stderr.chi.median: num  0.195 0.195 0.195 0.195 0.195 ...
+##  $ stderr.chi.approx: num  0.196 0.196 0.196 0.196 0.196 ...
+##  $ resolution       : num  0.46 0.46 0.46 0.46 0.46 ...
+##  $ dof              : num  470 470 470 470 470 470 470 470 470 470 ...
+##  $ bw               : num  0.23 0.23 0.23 0.23 0.23 ...
 \end{verbatim}
 \begin{alltt}
 create_poly <- \hlfunctioncall{function}(x, y, dy) \{
@@ -1004,8 +1060,8 @@ relp <- \hlfunctioncall{dB}(1/spa$resolution)
 
 \end{knitrout}
 
-\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=3} adapts) in
-decibels relative to the spectrum.
+\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=5} adapts--the default) 
+in decibels relative to the spectrum.
 The thick dashed line shows the 
 resolved uncertainties ($p=0.05$) in the adaptively refined
 spectrum; whereas, the thin dashed line
@@ -1032,27 +1088,25 @@ and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{pspectrum}(ats, niter = 6, plot = FALSE)
+\hlfunctioncall{pspectrum}(ats_lm, niter = 6, plot = FALSE)
 \end{alltt}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .rlpSpecEnv **\ \ refreshed}}
-
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -7.5 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -3.9 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -18.4 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -14.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -28.8 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -22.0 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -34.8 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -28.5 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -39.1 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 6 est. (Ave. S.V.R. -41.9 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 6 est. (Ave. S.V.R. -35.7 dB)}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
 \hlfunctioncall{str}(AH <- \hlfunctioncall{get_adapt_history}())
@@ -1061,21 +1115,21 @@ and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 ## List of 3
 ##  $ freq    : num [1:1025] 0 0.000488 0.000977 0.001465 0.001953 ...
 ##  $ stg_kopt:List of 7
-##   ..$ :Class 'tapers'  int [1:1025] 5 5 5 5 5 5 5 5 5 5 ...
-##   ..$ :Class 'tapers'  int [1:1025] 18 17 16 15 15 15 14 13 12 12 ...
-##   ..$ :Class 'tapers'  int [1:1025] 50 49 48 47 46 45 44 43 42 41 ...
-##   ..$ :Class 'tapers'  int [1:1025] 186 185 184 183 182 181 180 179 178 177 ...
-##   ..$ :Class 'tapers'  int [1:1025] 226 226 225 225 225 225 224 224 224 223 ...
-##   ..$ :Class 'tapers'  int [1:1025] 261 261 261 261 261 261 262 262 262 262 ...
-##   ..$ :Class 'tapers'  int [1:1025] 286 286 286 286 286 286 286 286 287 287 ...
+##   ..$ :Class 'tapers'  int [1:1025] 7 7 7 7 7 7 7 7 7 7 ...
+##   ..$ :Class 'tapers'  int [1:1025] 22 22 23 24 25 24 23 22 21 22 ...
+##   ..$ :Class 'tapers'  int [1:1025] 79 78 77 76 77 78 77 76 75 76 ...
+##   ..$ :Class 'tapers'  int [1:1025] 202 201 200 199 198 197 196 195 194 193 ...
+##   ..$ :Class 'tapers'  int [1:1025] 223 223 223 223 223 223 223 223 222 222 ...
+##   ..$ :Class 'tapers'  int [1:1025] 264 264 264 264 264 264 264 264 265 265 ...
+##   ..$ :Class 'tapers'  int [1:1025] 306 306 306 306 306 306 306 306 306 306 ...
 ##  $ stg_psd :List of 7
-##   ..$ : num [1:1025] 619 972 1527 1743 1599 ...
-##   ..$ : num [1:1025] 1196 1138 1083 1100 994 ...
-##   ..$ : num [1:1025] 1234 1255 1275 1261 1219 ...
-##   ..$ : num [1:1025] 1469 1468 1468 1467 1465 ...
-##   ..$ : num [1:1025] 1081 1081 1081 1085 1088 ...
-##   ..$ : num [1:1025] 1010 1011 1011 1010 1011 ...
-##   ..$ : num [1:1025] 952 953 953 951 949 ...
+##   ..$ : num [1:1025] 1144 1228 1318 1363 1377 ...
+##   ..$ : num [1:1025] 1085 1121 1158 1225 1331 ...
+##   ..$ : num [1:1025] 1526 1523 1521 1502 1499 ...
+##   ..$ : num [1:1025] 1559 1555 1551 1549 1548 ...
+##   ..$ : num [1:1025] 1068 1069 1071 1072 1072 ...
+##   ..$ : num [1:1025] 969 970 970 969 973 ...
+##   ..$ : num [1:1025] 974 975 976 977 979 ...
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1137,10 +1191,10 @@ coefficients between the stages.
 ## [1,] 1            
 ## [2,] ? 1          
 ## [3,] ? . 1        
-## [4,] ?   . 1      
-## [5,] ?       1    
-## [6,] ?       , 1  
-## [7,] ?         , 1
+## [4,] ?   , 1      
+## [5,] ?   . . 1    
+## [6,] ?       . 1  
+## [7,] ?     .   + 1
 ## attr(,"legend")
 ## [1] 0 ' ' 0.3 '.' 0.6 ',' 0.8 '+' 0.9 '*' 0.95 'B' 1 \t    ## NA: '?'
 \end{verbatim}

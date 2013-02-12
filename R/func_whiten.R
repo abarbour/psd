@@ -108,7 +108,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     if (NA %in% tso){
       stats::as.ts(
         zoo::na.locf(
-          zoo::na.locf(zoo::as.zoo(tser), na.rm=FALSE),
+          zoo::na.locf(zoo::as.zoo(tso), na.rm=FALSE),
           fromLast=TRUE, na.rm=FALSE))
     } else {
       tso
@@ -116,7 +116,10 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   }
   tser <- NAFUN(tser)
   ##
-  lmdfit <- ardfit <- tser_prew_lin <- tser_prew_ar <- NULL
+  lmdfit <- NULL
+  ardfit <- NULL
+  tser_prew_lm <- NULL
+  tser_prew_ar <- NULL
   ##
   ## Mean and Trend
   if (AR.max >= 0){
@@ -134,7 +137,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
       X <- tser
       if (verbose){warning("nothing was done to the timeseries object")}
     }
-    tser_prew_lin <- stats::ts(X, frequency=sps, start=tstart)
+    tser_prew_lm <- stats::ts(X, frequency=sps, start=tstart)
   }
   
   ## AR innovations
@@ -144,7 +147,8 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     if (verbose){message("autoregressive model fit (returning innovations)")}
     # solves Yule-Walker equations
     #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
-    ardfit <- stats::ar.yw(tser_prew_lin, aic=TRUE, order.max=AR.max, demean=FALSE)
+    #stats::ts(X, frequency=sps)
+    ardfit <- stats::ar.yw(tser_prew_lm, aic=TRUE, order.max=AR.max, demean=TRUE)
     #if (verbose) print(str(arfit))
     # ar returns a TS object
     tser_prew_ar <- ardfit$resid
@@ -156,13 +160,13 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     par(las=1, xpd=FALSE)
     if (!is.null(ardfit)){
       ftyp <- sprintf("AR(%i) model fit", ardfit$order)
-      pltprew <- stats::ts.union(x=tser, x.p=tser_prew_ar)
+      pltprew <- stats::ts.union(x=tser, x_lm=tser_prew_lm, x_ar=tser_prew_ar)
     } else if (is.null(lmdfit)) {
       ftyp <- ""
       pltprew <- tser
     } else {
       ftyp <- "linear fit"
-      pltprew <- stats::ts.union(x=tser, x.p=tser_prew_lin)
+      pltprew <- stats::ts.union(x=tser, x_lm=tser_prew_lm)
     }
     PANELFUN <- function(x, col = col, bg = bg, pch = pch, type = type, ...){
       lines(x, col = col, bg = bg, pch = pch, type = type, ...)
@@ -176,6 +180,6 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     mtext(mtxt, line=0.5)
     par(opar)
   }
-  toret <- list(lmdfit=lmdfit, ardfit=ardfit, prew_lm=tser_prew_lin, prew_ar=tser_prew_ar, imputed=impute)
+  toret <- list(lmdfit=lmdfit, ardfit=ardfit, prew_lm=tser_prew_lm, prew_ar=tser_prew_ar, imputed=impute)
   return(invisible(toret))
 }

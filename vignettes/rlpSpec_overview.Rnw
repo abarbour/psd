@@ -126,10 +126,10 @@ multitaper or otherwise.
 Setting aside any discussion regarding sample stationarity,
 we can find power spectral density (PSD)
 estimates for the two series quite simply:
-%% pspectrum 4 iters
+%% pspectrum 5 iters
 <<eval=TRUE, echo=TRUE, label=MAGPSDS>>=
-psdr <- pspectrum(magsat$raw, plot=FALSE)
-psdc <- pspectrum(magsat$clean, plot=FALSE)
+psdr <- pspectrum(magsat$raw)
+psdc <- pspectrum(magsat$clean)
 @
 Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
 \Rcmd{niter}
@@ -183,16 +183,16 @@ for 10 kilometer wavelengths and longer; whereas, the
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which would be difficult to judge with \naive{} estimators.
 
-<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
-psdc_ar <- pspectrum(magsat$clean, AR=TRUE, plot=FALSE)
-@
+%<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
+%#psdc_ar <- pspectrum(magsat$clean, AR=TRUE, plot=FALSE)
+%@
 %
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, label=RAWvCLEAN>>=
 plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
        lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
-plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
+#plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
 plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 @
@@ -304,30 +304,45 @@ using ordinary linear least squares.
 <<eval=TRUE, echo=TRUE, label="Load RSEIS package.">>=
 require(RSEIS)
 dt=1 # km
-ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew_lm
+summary(prewhiten(mc <- ts(magsat$clean, deltat=dt)+seq_along(magsat$clean), plot=FALSE))
+summary(atsar <- prewhiten(mc, AR.max=100, plot=FALSE))
+ats_lm <- atsar$prew_lm
+ats_ar <- atsar$prew_ar
 @
+
 Setting \Rcmd{AR.max} higher than zero
 causes the program to fit
 an auto-regressive (AR)
 model to the data using the Akaike infomation criterion (AIC).  
-In Figure \ref{fig:magd} we show the AR
+Figure \ref{fig:magd} plots the innovations from the AR
 fitting method, and note that while we set \Rcmd{AR.max} relatively high,
-only and AR(6) model was fit significantly following the AIC.
+only and AR(6) model was fit significantly following the AIC. 
+Also note that
+the linear trend fitting is removed from the series prior to AR estimation; 
+this fit is also returned.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig.height=3.8, fig.width=6.5, label=ARFIT>>=
-atsar <- prewhiten(ats, AR.max=100, verbose=FALSE)$prew_ar
+<<eval=TRUE, echo=TRUE, fig.height=5, fig.width=5.5, label=ARFITPLT>>=
+plot(ts.union(orig.plus.trend=mc, linear=ats_lm, ar=ats_ar), yax.flip=TRUE, 
+     main=sprintf("Prewhitened MAGSAT series: linear and linear+AR(%s)", atsar$ardfit$order))
 @
-<<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
-plot(psdcore(atsar,ntaper=10), log="dB", main="PSD of MAGSAT innovations")
-@
-\caption{Top: Pre-whitening of a series assuming an AR model.
-Bottom: Power spectral density estimates of the innovations (model residuals):
-the spectrum is relatively flat, as expected.}
+%<<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
+%plot(psdcore(atsar$prew_ar, ntaper=10), log="dB", main="PSD of MAGSAT innovations")
+%@
+\caption{Pre-whitening of the MAGSAT series (with a
+synthetic trend superimposed on it) assuming linear and linear-with-AR models.
+%Bottom: Power spectral density estimates of the innovations (model residuals):
+%the spectrum is relatively flat, as expected.
+}
 \label{fig:magd}
 \end{center}
 \end{figure}
+
+<<eval=TRUE, echo=TRUE, label=ARFIT>>=
+summary(atsar)
+
+@
 
 We didn't necessarily need to deal with the sampling information since it is just 1 per km;
 but, supposing the sampling information was based on an interval, we
@@ -346,7 +361,7 @@ Returning the the \Rcmd{RSEIS} comparison, we first
 estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
 <<eval=TRUE, echo=TRUE, label="Compute PSD with mtapspec.">>=
 tapinit <- 10
-Mspec <- mtapspec(ats, deltat(ats), MTP=list(kind=2, inorm=3, nwin=tapinit, npi=0))
+Mspec <- mtapspec(ats_lm, deltat(ats_lm), MTP=list(kind=2, inorm=3, nwin=tapinit, npi=0))
 @
 where \Rcmd{nwin} is the number of tapers taken and
 \Rcmd{npi} is, from the documentation, the ``number of Pi-prolate functions" (we
@@ -370,9 +385,9 @@ set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
 <<eval=TRUE, echo=TRUE, label="Comparative spectra.">>=
-Xspec <- spec.pgram(ats, pad=1, taper=0.2, detr=TRUE, dem=TRUE, plot=FALSE)
-Pspec <- psdcore(ats, dt, tapinit)
-Aspec <- pspectrum(ats, dt, tapinit, niter=3, plot=FALSE)
+Xspec <- spec.pgram(ats_lm, pad=1, taper=0.2, detr=TRUE, dem=TRUE, plot=FALSE)
+Pspec <- psdcore(ats_lm, dt, tapinit)
+Aspec <- pspectrum(ats_lm, dt, tapinit, plot=FALSE)
 # Correct for double-sidedness of spectrum and mtapspec results
 class(Mspec)
 Mspec <- normalize(Mspec, dt, "spectrum")
@@ -488,6 +503,27 @@ to having many more knobs to turn.
 As of this writing, the package has no maintainer; 
 lest we end up discussing deprecated and archived functions,
 we will not compare it to \rlp{}.
+
+\section{Can AR prewhitening improve the spectrum?}
+
+<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
+psdc_ar <- pspectrum(magsat$clean, AR=TRUE, niter=0, plot=TRUE)
+@
+
+%\begin{figure}[htb!]
+%\begin{center}
+%<<eval=TRUE, echo=TRUE, label=PREWPSD>>=
+%plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
+%     lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
+%plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
+%plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
+%text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
+%@
+%\caption{Power spectral density estimates for the raw and cleaned
+%   \Rcmd{MAGSAT}, with and without auto-regressive (AR) prewhitening.}
+%\label{fig:arpsd}
+%\end{center}
+%\end{figure}
 
 \section{Assessing spectral properties}
 \subsection{Spectral uncertainties}
@@ -616,8 +652,8 @@ lines(frq, spp$stderr.chi.upper+relp, lwd=1.5, lty=3)
 lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
 abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 @
-\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=3} adapts) in
-decibels relative to the spectrum.
+\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=5} adapts--the default) 
+in decibels relative to the spectrum.
 The thick dashed line shows the 
 resolved uncertainties ($p=0.05$) in the adaptively refined
 spectrum; whereas, the thin dashed line
@@ -642,7 +678,7 @@ uncertainties change with each iteration.
 we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 <<eval=TRUE, echo=TRUE, label="Get adaptive history.">>=
-pspectrum(ats, niter=6, plot=FALSE)
+pspectrum(ats_lm, niter=6, plot=FALSE)
 str(AH <- get_adapt_history())
 @
 Followed by some trivial manipulation:
@@ -663,7 +699,7 @@ Figure \ref{fig:psdhist}.
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=6, fig.height=4, label=HIST1>>=
-seqcols <- 1:numit
+seqcols <- seq_len(numit)
 itseq <- seqcols - 1
 toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
 par(xpd=TRUE)
