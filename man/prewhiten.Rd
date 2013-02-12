@@ -5,16 +5,18 @@
 \title{Prewhiten a series.}
 \usage{
   prewhiten(tser, AR.max = 0L, detrend = TRUE,
-    demean = TRUE, plot = TRUE, verbose = TRUE,
-    x.fsamp = 1, x.start = c(1, 1), ...)
-
-  \method{prewhiten}{default} (tser, AR.max = 0L,
-    detrend = TRUE, demean = TRUE, plot = TRUE,
+    demean = TRUE, impute = TRUE, plot = TRUE,
     verbose = TRUE, x.fsamp = 1, x.start = c(1, 1), ...)
 
+  \method{prewhiten}{default} (tser, AR.max = 0L,
+    detrend = TRUE, demean = TRUE, impute = TRUE,
+    plot = TRUE, verbose = TRUE, x.fsamp = 1,
+    x.start = c(1, 1), ...)
+
   \method{prewhiten}{ts} (tser, AR.max = 0L,
-    detrend = TRUE, demean = TRUE, plot = TRUE,
-    verbose = TRUE, x.fsamp = NA, x.start = NA, ...)
+    detrend = TRUE, demean = TRUE, impute = TRUE,
+    plot = TRUE, verbose = TRUE, x.fsamp = NA,
+    x.start = NA, ...)
 }
 \arguments{
   \item{tser}{vector; An object to prewhiten.}
@@ -25,6 +27,8 @@
   removed?}
 
   \item{demean}{logical; Should a mean value be removed?}
+
+  \item{impute}{logical; Should NA values be imputed?}
 
   \item{plot}{logical; Should the results be plotted?}
 
@@ -91,13 +95,16 @@
 
   A quick way to determine whether this may be needed for
   the series is to run \code{acf} on it, and see if
-  significant auto-correlations are found. }
+  significant auto-correlations are found.
+
+  }
 }
 \section{NA values}{
   \code{NA} values are allowed.  If present, the
   \code{na.locf} function in the package \code{zoo}, which
   stands for "Last Observation Carried Forward", is used to
-  impute \code{NA} sections with real numbers.
+  impute \code{NA} sections with real numbers. Use
+  \code{impute=TRUE} to enable imputation.
 }
 \examples{
 \dontrun{
@@ -105,17 +112,16 @@
 ## Using prewhiten to improve spectral estimates
 ##
 data(magsat)
-dt <- 1
-mts <- ts(magsat$clean, deltat=dt)
+dx <- 1
+mts <- ts(magsat$clean, frequency=dx)
 mts.slope <- mts + seq_along(mts)
 # mean + trend
-mts.p <- prewhiten(mts.slope)$prew.lin
-l0 <- length(mts.p)
-# AR model
-mts.par <- prewhiten(mts,  AR.max=10)$prew.ar
-l2 <- length(mts.par)
-# AR fit truncates the series by a few terms, so zero pad
-mts.par <- c(mts.par, zeros(abs(l2-l0)))
+# Prewhiten by removing mean+trend, and
+# AR model; fit truncates the series by 
+# a few terms, so zero pad
+mts <- prewhiten(mts.slope,  AR.max=10, zero.pad="rear")
+mts.p <- mts$prew_lm
+mts.par <- mts$prew_ar
 #
 ntap <- 20
 ylog <- "dB"

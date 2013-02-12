@@ -255,8 +255,10 @@ na_mat <- function(nrow, ncol=1) UseMethod("na_mat")
 #' @method na_mat default
 #' @S3method na_mat default
 na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
+
 #' @description \code{zeros} populate a column-wise matrix with zeros; whereas,
-#' \code{ones} populates a column-wise matrix with ones
+#' \code{ones} populates a column-wise matrix with ones.  \emph{Note that 
+#' \code{nrow} is enforced to be at least 1 for both functions.}
 #' @rdname rlpSpec-utilities
 #' @export 
 #' @keywords utilities vector-creation matrix-creation
@@ -267,7 +269,7 @@ zeros <- function(nrow) UseMethod("zeros")
 #' @rdname rlpSpec-utilities
 #' @method zeros default
 #' @S3method zeros default
-zeros.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
+zeros.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
 
 #' @rdname rlpSpec-utilities
 #' @export
@@ -276,7 +278,7 @@ ones <- function(nrow) UseMethod("ones")
 #' @rdname rlpSpec-utilities
 #' @method ones default
 #' @S3method ones default
-ones.default <- function(nrow){stopifnot(!is.null(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
+ones.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
 
 #' @description \code{mod} finds the modulo division of X and Y.
 #' 

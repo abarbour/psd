@@ -27,13 +27,12 @@
 #' \code{"final_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pspectrum.R
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=TRUE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
-  xo <- rlpSpec:::rlp_envAssignGet("original_series", x)
   #
   adapt_message <- function(stage, dvar=NULL){
     stopifnot(stage>=0)
@@ -51,7 +50,8 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, N
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=verbose)
+      if (!exists(".rlpenv")) assign(".rlpenv", value=".NEW_RLP_ENV", envir=globalenv())
+      rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE, envir=.rlpenv)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){
@@ -59,11 +59,13 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, N
       }
       ##
       ordAR <- ifelse(AR, 100, 0)
-      pilot_spec(x=xo, x.frequency=x.frqsamp, ntap=ntap_pilot, 
+      pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap_pilot, 
                  remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       # ensure it's in the environment
       Pspec <- rlpSpec:::rlp_envGet("pilot_psd")
-      dvar.o <- vardiff(Pspec$spec, double.diff=TRUE)
+      xo <- rlpSpec:::rlp_envAssignGet("original_series", x)
+      # starting spec variance
+      dvar.o <- varddiff(Pspec$spec)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
@@ -71,7 +73,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, N
         rlpSpec:::new_adapt_history(niter)
         rlpSpec:::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
-      xo <- 0 # to prevent passing orig data back/forth
+      #xo <- 0 # to prevent passing orig data back/forth
     } else {
       # enforce no verbosity
       rverb <- ifelse(stage > 0, FALSE, TRUE)
@@ -81,10 +83,12 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=5, niter=4, AR=FALSE, N
       ## reapply to spectrum
       if (stage==niter & plot){
         plotpsd_ <- TRUE
-        xo <- x
-        rm(x)
+        #xo <- x
+        #rm(x)
       }
-      Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, plotpsd=plotpsd_, verbose=FALSE)
+      # preproc done in pilot_spec
+      Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, 
+                       preproc=FALSE, plotpsd=plotpsd_, verbose=FALSE)
       if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
       ## update history
       if (save_hist) rlpSpec:::update_adapt_history(stage, Pspec$taper, Pspec$spec)
@@ -150,33 +154,34 @@ pilot_spec <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE, verbos
 #' @S3method pilot_spec default
 pilot_spec.default <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
   stopifnot(length(ntap)==1)
+  stopifnot(length(remove.AR)==1)
   if (is.ts(x)) x.frequency <- stats::frequency(x)
   # setup a universal calculator
-  PSD <- function(X, Xf, Xk, AR=FALSE){
-    toret <- psdcore(X.d=X, X.frq=Xf, ntaper=Xk, 
-                     ndecimate=1L, demean=TRUE, detrend=TRUE, 
+  PSDFUN <- function(X.., Xf.., Xk.., AR=FALSE){
+    toret <- psdcore(X.., Xf.., Xk.., preproc=FALSE, 
                      first.last=TRUE, as.spec=TRUE, refresh=TRUE)
     return(toret)
   }
-  xprew <- prewhiten(x, AR.max=remove.AR, plot=FALSE, verbose=verbose)
+  # preprocess
+  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, 
+                     impute=TRUE, plot=FALSE, verbose=verbose)
   REMAR <- FALSE
   if (remove.AR > 0){
     # restrict to within [1,100]
     remove.AR <- max(1, min(100, remove.AR))
     REMAR <- TRUE
-    lx <- length(xprew$prew.lin)
-    stopifnot(length(remove.AR)==1)
+    lx <- length(xprew$prew_lm)
     # AR fit
-    ordAR <- xprew$dfit$order
-    xar <- xprew$prew.ar
-    # zero padding to deal with truncation
-    xar <- c(xar, zeros(lx - length(xar))) # Remove when padding option in prewhiten is ready!
+    ordAR <- xprew$ardfit$order
+    xar <- xprew$prew_ar
     # PSD of the AR fit
-    Pspec_ar <- PSD(xar, x.frequency, ntap, AR=TRUE)
-    Pspec_ar$spec <- Pspec_ar$spec / mean(Pspec_ar$spec)
+    Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)
+    Pspec_ar$spec <- Pspec_ar$spec #/ mean(Pspec_ar$spec)
   }
+  #
+  #rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE)
   # Initial spectrum:
-  Pspec <- PSD(xprew$prew.lin, x.frequency, ntap, AR=FALSE)
+  Pspec <- PSDFUN(xprew$prew_lm, x.frequency, ntap, AR=FALSE)
   num_frq <- length(Pspec$freq)
   num_tap <- length(Pspec$taper)
   stopifnot(num_tap <= num_frq)
@@ -194,6 +199,7 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=5, remove.AR=0, plot=FALSE
     Pspec$spec <- Pspec$spec / Pspec_ar$spec
     #plot(Pspec_ar, col="blue", add=TRUE)
     #plot(Pspec, col="red", add=TRUE)
+    # reup the spectrum
     rlpSpec:::rlp_envAssignGet("AR_psd", Pspec_ar)
   }
   if (plot){

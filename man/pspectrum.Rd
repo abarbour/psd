@@ -5,12 +5,12 @@
 \usage{
   pspectrum(x, x.frqsamp = 1, ntap_pilot = 5, niter = 4,
     AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
-    no.history = FALSE, plot = TRUE, ...)
+    no.history = FALSE, plot = FALSE, ...)
 
   \method{pspectrum}{default} (x, x.frqsamp = 1,
     ntap_pilot = 5, niter = 4, AR = FALSE,
     Nyquist.normalize = TRUE, verbose = TRUE,
-    no.history = FALSE, plot = TRUE, ...)
+    no.history = FALSE, plot = FALSE, ...)
 }
 \arguments{
   \item{x}{vector; series to estimate PSD for.}

@@ -3,17 +3,16 @@
 ## Using prewhiten to improve spectral estimates
 ##
 data(magsat)
-dt <- 1
-mts <- ts(magsat$clean, deltat=dt)
+dx <- 1
+mts <- ts(magsat$clean, frequency=dx)
 mts.slope <- mts + seq_along(mts)
 # mean + trend
-mts.p <- prewhiten(mts.slope)$prew.lin
-l0 <- length(mts.p)
-# AR model
-mts.par <- prewhiten(mts,  AR.max=10)$prew.ar
-l2 <- length(mts.par)
-# AR fit truncates the series by a few terms, so zero pad
-mts.par <- c(mts.par, zeros(abs(l2-l0)))
+# Prewhiten by removing mean+trend, and
+# AR model; fit truncates the series by 
+# a few terms, so zero pad
+mts <- prewhiten(mts.slope,  AR.max=10, zero.pad="rear")
+mts.p <- mts$prew_lm
+mts.par <- mts$prew_ar
 #
 ntap <- 20
 ylog <- "dB"

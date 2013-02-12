@@ -93,7 +93,8 @@ riedsid.default <- function(psd, ntaper,
   eps <- .Machine$double.eps #**2 # was: 1e-78  #  A small number to protect against zeros
   # vectorize initial estimate
   Zeros <- zeros(nf)
-  if (length(ntaper)==1){
+  nt <- length(ntaper)
+  if (nt==1){
     ntap <- ntaper + Zeros
   } else {
     ntap <- ntaper
@@ -111,10 +112,10 @@ riedsid.default <- function(psd, ntaper,
   lY <- log10(Y) # log in matlab is log_10
   dY <- d2Y <- Zeros
   #
-  if (is.null(tapseq) | (length(tapseq) != length(psd))){
-    kseq <- seq.int(from=0, to=frequency(psd)/2, length.out=length(psd))
+  if (is.null(tapseq) | (length(tapseq) != nf)){
+    kseq <- seq.int(from=0, to=1/2, length.out=length(psd))
   } else {
-    kseq <- tapseq # sort?
+    kseq <- tapseq
   }
   #
   # Smooth spectral derivatives
@@ -144,7 +145,7 @@ riedsid.default <- function(psd, ntaper,
       d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2-4)
       return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))
     }
-    DX <- 1:nf
+    DX <- seq_len(nf) #1:nf
     RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
     attr(RSS, which="lsderiv") <- lsmeth
     RSS <- rlpSpec:::rlp_envAssignGet("spectral_derivatives.ls", RSS)
@@ -155,7 +156,7 @@ riedsid.default <- function(psd, ntaper,
     #[ ,3] fdEps
     msg <- "local quadratic regression"
   } else {
-    RSS <- splineGrad(dseq=log10(1+seq.int(0,.5,length.out=length(psd))), 
+    RSS <- splineGrad(dseq=log10(0.5+kseq), #seq.int(0,.5,length.out=length(psd))), 
                       dsig=log10(psd),
                       plot.derivs=FALSE, ...) #, spar=1)
     attr(RSS, which="lsderiv") <- lsmeth

@@ -165,7 +165,8 @@
 
   \code{zeros} populate a column-wise matrix with zeros;
   whereas, \code{ones} populates a column-wise matrix with
-  ones
+  ones.  \emph{Note that \code{nrow} is enforced to be at
+  least 1 for both functions.}
 
   \code{mod} finds the modulo division of X and Y.
 }

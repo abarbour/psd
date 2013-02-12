@@ -4,16 +4,16 @@
 \title{Multitaper power spectral density estimates of a series.}
 \usage{
   psdcore(X.d, X.frq = NULL, ntaper = as.tapers(1),
-    ndecimate = 1L, demean = TRUE, detrend = TRUE,
+    ndecimate = 1L, preproc = TRUE,
     na.action = stats::na.fail, first.last = TRUE,
     plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,
     verbose = FALSE, ...)
 
   \method{psdcore}{default} (X.d, X.frq = NULL,
-    ntaper = as.tapers(1), ndecimate = 1L, demean = TRUE,
-    detrend = TRUE, na.action = stats::na.fail,
-    first.last = TRUE, plotpsd = FALSE, as.spec = TRUE,
-    refresh = FALSE, verbose = FALSE, ...)
+    ntaper = as.tapers(1), ndecimate = 1L, preproc = TRUE,
+    na.action = stats::na.fail, first.last = TRUE,
+    plotpsd = FALSE, as.spec = TRUE, refresh = FALSE,
+    verbose = FALSE, ...)
 }
 \arguments{
   \item{X.d}{the series to estimate a spectrum for}
@@ -25,13 +25,11 @@
 
   \item{ndecimate}{scalar; decimation factor}
 
-  \item{demean}{logical; should \code{X.d} be centered
-  about the mean}
+  \item{preproc}{logical; should \code{X.d} have a linear
+  trend removed?}
 
-  \item{detrend}{logical; should \code{X.d} have a linear
-  trend removed}
-
-  \item{na.action}{function dealing with \code{NA} values}
+  \item{na.action}{the function to deal with \code{NA}
+  values}
 
   \item{first.last}{the extrapolates to give the zeroth and
   Nyquist frequency estimates}

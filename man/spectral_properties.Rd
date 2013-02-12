@@ -102,7 +102,7 @@ tapinit <- 15 # tapers
 dt <- 1 # 1/km
 
 # remove mean/trend (not really necessary but good practice; also, done internally)
-ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew.lin
+ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew_lm
 
 # normal and adaptive multitaper spectra
 Pspec <- psdcore(ats, dt, tapinit)

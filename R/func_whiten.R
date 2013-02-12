@@ -47,12 +47,14 @@
 #'
 #' A quick way to determine whether this may be needed for the series is to run \code{acf} on
 #' it, and see if significant auto-correlations are found.
+#'
 #' }
 #'
 #' @section NA values:
 #' \code{NA} values are allowed.  If present, the \code{na.locf} function in the package
 #' \code{zoo}, which stands for "Last Observation Carried Forward",
-#' is used to impute \code{NA} sections with real numbers.
+#' is used to impute \code{NA} sections with real numbers. Use \code{impute=TRUE}
+#' to enable imputation.
 #'
 #' @name prewhiten
 #' @export
@@ -64,6 +66,7 @@
 #' @param AR.max numeric; the maximum AR order to fit.
 #' @param detrend  logical; Should a trend (and mean) be removed?
 #' @param demean  logical; Should a mean value be removed?
+#' @param impute  logical; Should NA values be imputed?
 #' @param plot  logical; Should the results be plotted?
 #' @param verbose  logical; Should messages be printed?
 #' @param x.fsamp sampling frequency (for non \code{ts} objects)
@@ -72,19 +75,24 @@
 #' @return A list with the model fit and the prewhitened timeseries
 #'
 #' @example inst/Examples/rdex_prewhiten.R
-prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
+prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
 #' @rdname prewhiten
 #' @method prewhiten default
 #' @S3method prewhiten default
-prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...){
+prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...){
   Xts <- stats::ts(tser, frequency=x.fsamp, start=x.start)
-  prewhiten(Xts, AR.max, detrend, demean, plot, verbose, ...)
+  prewhiten(Xts, AR.max=AR.max, 
+            detrend=detrend, 
+            demean=demean, 
+            impute=impute, 
+            plot=plot, 
+            verbose=verbose, ...)
 }
 #' @rdname prewhiten
 #' @aliases prewhiten.ts
 #' @method prewhiten ts
 #' @S3method prewhiten ts
-prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=NA, x.start=NA, ...){
+prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=NA, x.start=NA, ...){
   # prelims
   stopifnot(stats::is.ts(tser))
   #requires zoo
@@ -93,62 +101,81 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, plot=TRUE, 
   tstart <- stats::start(tser)
   n.o <- length(tser)
   ttime <- sps*n.o
-  dfit <- NULL
-  # data.frame with fit params
+  # NA action on input series
+  NAFUN <- function(tso){
+    stopifnot(is.ts(tso))
+    # twice, to catch leading or trailing NA
+    if (NA %in% tso){
+      stats::as.ts(
+        zoo::na.locf(
+          zoo::na.locf(zoo::as.zoo(tser), na.rm=FALSE),
+          fromLast=TRUE, na.rm=FALSE))
+    } else {
+      tso
+    }
+  }
+  tser <- NAFUN(tser)
+  ##
+  lmdfit <- ardfit <- tser_prew_lin <- tser_prew_ar <- NULL
+  ##
+  ## Mean and Trend
   if (AR.max >= 0){
-    fit.df <- data.frame(xr=seq_len(n.o), 
-                         xc=rep.int(1, n.o), 
+    # data.frame with fit params
+    fit.df <- data.frame(xr=base::seq_len(n.o), 
+                         xc=base::rep.int(1, n.o), 
                          y=tser)
     if (detrend){
-      if (verbose) message("detrending (and demeaning)")
-      X <- as.matrix(stats::residuals( dfit <- stats::lm(y ~ xr, fit.df)))
+      if (verbose){message("detrending (and demeaning)")}
+      X <- as.matrix(stats::residuals( lmdfit <- stats::lm(y ~ xr, fit.df)))
     } else if (demean) {
-      if (verbose) message("demeaning")
-      X <- as.matrix(stats::residuals( dfit <- stats::lm(y ~ xc, fit.df)))
+      if (verbose){message("demeaning")}
+      X <- as.matrix(stats::residuals( lmdfit <- stats::lm(y ~ xc, fit.df)))
     } else {
       X <- tser
-      if (verbose) warning("nothing was done to the timeseries object")
+      if (verbose){warning("nothing was done to the timeseries object")}
     }
-    tser.prew.lin <- stats::ts(X, frequency=sps, start=tstart)
-    tser.prew.ar <- NULL
+    tser_prew_lin <- stats::ts(X, frequency=sps, start=tstart)
   }
-  if (AR.max > 0) {
+  
+  ## AR innovations
+  if (AR.max >= 1) {
     #message(AR.max)
     AR.max <- as.integer(max(1, AR.max))
-    if (verbose) message("autoregressive model fit (returning innovations)")
+    if (verbose){message("autoregressive model fit (returning innovations)")}
     # solves Yule-Walker equations
     #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
-    dfit <- stats::ar.yw(tser.prew.lin, aic=TRUE, order.max=AR.max, demean=demean)
+    ardfit <- stats::ar.yw(tser_prew_lin, aic=TRUE, order.max=AR.max, demean=FALSE)
     #if (verbose) print(str(arfit))
     # ar returns a TS object
-    tser.prew.ar <- stats::as.ts(zoo::na.locf(zoo::as.zoo(dfit$resid)))
+    tser_prew_ar <- ardfit$resid
+    if (impute) tser_prew_ar <- NAFUN(tser_prew_ar)
   }
+  
   if (plot){
     opar <- par(no.readonly = TRUE)
-    par(las=1,xpd=FALSE)
-    if (class(dfit)=="ar"){
-      ftyp <- sprintf("AR(%i) model fit", dfit$order)
-      pltprew <- stats::ts.union(x=tser, x.p=tser.prew.ar)
-    } else if (is.null(dfit)) {
+    par(las=1, xpd=FALSE)
+    if (!is.null(ardfit)){
+      ftyp <- sprintf("AR(%i) model fit", ardfit$order)
+      pltprew <- stats::ts.union(x=tser, x.p=tser_prew_ar)
+    } else if (is.null(lmdfit)) {
       ftyp <- ""
       pltprew <- tser
     } else {
       ftyp <- "linear fit"
-      pltprew <- stats::ts.union(x=tser, x.p=tser.prew.lin)
+      pltprew <- stats::ts.union(x=tser, x.p=tser_prew_lin)
     }
     PANELFUN <- function(x, col = col, bg = bg, pch = pch, type = type, ...){
       lines(x, col = col, bg = bg, pch = pch, type = type, ...)
-      abline(h=c(0,mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
+      abline(h=c(0, mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
     }
     plot(pltprew, 
          main="Raw and prewhitened series",
-         #xlab="series units",
          cex.lab=0.7, cex.axis=0.7, xy.labels=FALSE,
          xaxs="i", yax.flip=TRUE, panel=PANELFUN)
     mtxt <- sprintf("%s  (demean %s | detrend %s )", ftyp, demean, detrend)
     mtext(mtxt, line=0.5)
     par(opar)
   }
-  toret <- list(dfit=dfit, prew.lin=tser.prew.lin, prew.ar=tser.prew.ar)
+  toret <- list(lmdfit=lmdfit, ardfit=ardfit, prew_lm=tser_prew_lin, prew_ar=tser_prew_ar, imputed=impute)
   return(invisible(toret))
 }

@@ -128,8 +128,8 @@ we can find power spectral density (PSD)
 estimates for the two series quite simply:
 %% pspectrum 4 iters
 <<eval=TRUE, echo=TRUE, label=MAGPSDS>>=
-psdr <- pspectrum(magsat$raw)
-psdc <- pspectrum(magsat$clean)
+psdr <- pspectrum(magsat$raw, plot=FALSE)
+psdc <- pspectrum(magsat$clean, plot=FALSE)
 @
 Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
 \Rcmd{niter}
@@ -182,12 +182,17 @@ a rolloff in signal
 for 10 kilometer wavelengths and longer; whereas, the 
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which would be difficult to judge with \naive{} estimators.
+
+<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
+psdc_ar <- pspectrum(magsat$clean, AR=TRUE, plot=FALSE)
+@
 %
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, label=RAWvCLEAN>>=
 plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
        lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
+plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
 plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 @
@@ -299,7 +304,7 @@ using ordinary linear least squares.
 <<eval=TRUE, echo=TRUE, label="Load RSEIS package.">>=
 require(RSEIS)
 dt=1 # km
-ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew.lin
+ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew_lm
 @
 Setting \Rcmd{AR.max} higher than zero
 causes the program to fit
@@ -312,7 +317,7 @@ only and AR(6) model was fit significantly following the AIC.
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.height=3.8, fig.width=6.5, label=ARFIT>>=
-atsar <- prewhiten(ats, AR.max=100, verbose=FALSE)$prew.ar
+atsar <- prewhiten(ats, AR.max=100, verbose=FALSE)$prew_ar
 @
 <<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
 plot(psdcore(atsar,ntaper=10), log="dB", main="PSD of MAGSAT innovations")

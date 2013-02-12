@@ -34,9 +34,8 @@
 #' @param X.frq  scalar; the sampling information (see section Sampling)
 #' @param ntaper  scalar, or vector; the number of tapers
 #' @param ndecimate  scalar; decimation factor
-#' @param demean  logical; should \code{X.d} be centered about the mean
-#' @param detrend  logical; should \code{X.d} have a linear trend removed
-#' @param na.action  function dealing with \code{NA} values
+#' @param preproc  logical; should \code{X.d} have a linear trend removed?
+#' @param na.action  the function to deal with \code{NA} values
 #' @param first.last  the extrapolates to give the zeroth and Nyquist frequency estimates
 #' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
 #' @param as.spec  logical; should the object returned be of class 'spec'?
@@ -52,7 +51,7 @@
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
 #'
 #' @example inst/Examples/rdex_psdcore.R
-psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, demean=TRUE, detrend=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, preproc=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
 #' @S3method psdcore default
@@ -60,8 +59,7 @@ psdcore.default <- function(X.d,
                             X.frq=NULL, 
                             ntaper=as.tapers(1), 
                             ndecimate=1L,
-                            demean=TRUE, 
-                            detrend=TRUE,
+                            preproc=TRUE,
                             na.action = stats::na.fail,
                             first.last=TRUE,
                             plotpsd=FALSE,
@@ -101,19 +99,16 @@ psdcore.default <- function(X.d,
   # onle one variable in the env (init): it hasn't been added to yet
   nenvar <- length(rlpSpec:::rlp_envStatus()$listing)
   if (lt == 1 | nenvar == 1 | refresh){
-    ZEROSTG <- TRUE
     # original series length
     n.o <- rlpSpec:::rlp_envAssignGet("len_orig", length(X.d))
     #
-    X <- prewhiten(X.d, AR.max=0L, 
-                   detrend=detrend, demean=demean, 
-                   plot=FALSE, verbose=verbose)
-    X <- X$prew.lin
+    X <- X.d
+    if (preproc) X <- prewhiten(X, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
     #
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
-    n.e <- rlpSpec:::rlp_envAssignGet("len_even", n.o - n.o%%2 )
-    X.even <- as.matrix(X[1:n.e])
+    n.e <- rlpSpec:::rlp_envAssignGet("len_even", n.o - n.o %% 2 )
+    X.even <- as.matrix(X[seq_len(n.e)]) #1:n.e])
     rlpSpec:::rlp_envAssign("ser_orig", X)
     rlpSpec:::rlp_envAssign("ser_orig_even", X.even)
     # half length of even series
@@ -125,20 +120,14 @@ psdcore.default <- function(X.d,
     if (lt < nt) {
       ntap <- ntaper * ones(nt) 
     } else {
-      ntap <- ntaper[1:nt]
+      ntap <- ntaper[seq_len(nt)] #1:nt]
     }
-    #print(max(ntap))
-    ##  Remove mean & pad with zeros
-    X.dem <- c(X.even, zeros(n.e))
-    ##  Take double-length fft
-    # mvfft takes matrix (also multicolumn)
-    #fftz <- stats::mvfft(matrix(X.dem, ncol=1))
-    # but fftw is faster (apparent for long series)
-    fftz <- fftw::FFT(as.numeric(X.dem))
+    ## zero pad and take double-length fft
+    # fftw is faster (becomes apparent for long series)
+    fftz <- fftw::FFT(as.numeric(c(X.even, zeros(n.e))))
     fftz <- rlpSpec:::rlp_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
-    ZEROSTG <- FALSE
-    if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
+    if (verbose){warning("Working environment *not* refreshed. Results may be bogus.")}
     X <- X.d
     ntap <- ntaper
     #stopifnot(length(X)==length(ntap))
@@ -177,7 +166,7 @@ psdcore.default <- function(X.d,
     #iuniq <- 1 + which(diff(f) > 0)
     f <- unique(c(0, f))   #  Remove repeat frequencies in the list
   } else {
-    f <- seq.int(0, nhalf, by=1)
+    f <- base::seq.int(0, nhalf, by=1)
   }
   ##
   ###  Calculate the psd by averaging over tapered estimates
@@ -186,7 +175,7 @@ psdcore.default <- function(X.d,
   ##
   if (sum(ntap) > 0) {
     psd <- 0 * NF
-    n2e <- 2 * n.e
+    n2e <- n.e * 2
     # get a set of all possible weights for the current taper-vector
     # then the function need only subset the master set
     # faster? YES
@@ -197,18 +186,18 @@ psdcore.default <- function(X.d,
       # sequence
       Kseq <- KPW$taper_seq[NT]
       # weights
-      Kwgt <- KPW$taper_weights[NT]
+      #Kwgt <- KPW$taper_weights[NT]
       # Resampling weighted spectral values:
-      fj2 <- 2*fj
-      m1. <- fj2 + n2.e - Kseq
-      j1 <- m1. %% n2.e
-      m1. <- fj2 + Kseq
-      j2 <- m1. %% n2.e
-      f1 <- Xfft[j1+1]
-      f2 <- Xfft[j2+1]
-      af12. <- f1 - f2
+      fj2 <- fj * 2
+      #m1. <- fj2 + n2.e - Kseq
+      j1 <- (fj2 + n2.e - Kseq) %% n2.e
+      #m1. <- fj2 + Kseq
+      j2 <- (fj2 + Kseq) %% n2.e
+      #f1 <- Xfft[j1+1]
+      #f2 <- Xfft[j2+1]
+      af12. <- Xfft[j1+1] - Xfft[j2+1]
       af122. <- af12. * af12. # will be complex, so use abs:
-      psdv <- Kwgt %*% matrix(abs(af122.), ncol=1)
+      psdv <- KPW$taper_weights[NT] %*% base::matrix(base::abs(af122.), ncol=1)
       return(psdv)
     }
     # ** compiled code doesn't appear to help speed
@@ -222,7 +211,7 @@ psdcore.default <- function(X.d,
     Xfft <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
     ff <- Xfft[NF]
     N0. <- rlpSpec:::rlp_envGet("len_orig")
-    psd <- abs(ff * Conj(ff)) / N0.
+    psd <- base::abs(ff * base::Conj(ff)) / N0.
   }
   ##  Interpolate if necessary to uniform freq sampling
   if (lt > 1 && ndecimate > 1){
@@ -240,12 +229,12 @@ psdcore.default <- function(X.d,
   stopifnot(!is.complex(psd))
   #psd <- as.rowvec(psd)
   ## Normalize by variance, 
-  trap.area <- sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
+  trap.area <- base::sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
   ## normalize to two sided spectrum
   psd.n <- psd * (2 * varx / (trap.area * bandwidth))
   ## Nyquist frequencies
-  frq <- as.numeric(seq.int(0, Nyq, length.out=nfreq)) # was just 0.5
+  frq <- as.numeric(base::seq.int(0, Nyq, length.out=nfreq)) # was just 0.5
   ## timebp
   timebp <- as.numeric(ntap/2)
   ## bandwidth
@@ -257,14 +246,14 @@ psdcore.default <- function(X.d,
   #
   # BUG: there seems to be an issue with f==0, & f[length(psd)]
   # so just extrapolate from the prev point
-  indic <- seq_len(nfreq - 2) + 1 
+  indic <- base::seq_len(nfreq - 2) + 1 
   #2:(nfreq-1)
-  if (first.last) psd.n <- exp(signal::interp1(frq[indic], log(psd.n[indic]), frq, method='linear', extrap=TRUE))
+  if (first.last) psd.n <- base::exp(signal::interp1(frq[indic], base::log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
   pltpsd <- function(Xser, frqs, psds, taps, nyq, detrend, demean, ...){
     fsamp <- frequency(Xser)
     stopifnot(fsamp==X.frq)
-    Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=demean, plot=FALSE)
+    Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=detrend, plot=FALSE)
     # frequencies are appropriate,
     # but spectrum is normed for double-sided whereas rlpSpec single-sided; hence,
     # factor of 2
@@ -307,7 +296,7 @@ psdcore.default <- function(X.d,
     ## original series
     plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
     mtext("index", side=1, line=1.5)
-    mtext(sprintf("( dt:%s | dm:%s | f.l:%s )", demean, detrend, first.last), cex=0.4)
+    mtext(sprintf("( dt+dm: %s | f.l: %s )", preproc, first.last), cex=0.4)
     ## autocorrelation
     acf(Xser, main="")
     mtext("lag", side=1, line=1.5)
@@ -315,9 +304,9 @@ psdcore.default <- function(X.d,
     par(opar)
   }
   ## Plot it
-  if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, taps=ntap, nyq=Nyq, detrend=detrend, demean=demean, ...)
+  if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, taps=ntap, nyq=Nyq, detrend=preproc, demean=preproc, ...)
   ##
-  funcall <- sprintf("psdcore (dem. %s detr. %s f.l. %s refr. %s)", demean, detrend, first.last, refresh) 
+  funcall <- sprintf("psdcore (dem.+detr. %s f.l. %s refr. %s)", preproc, first.last, refresh) 
   ## paste(as.character(match.call()[]),collapse=" ") 
   psd.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(psd.n), 
@@ -335,8 +324,8 @@ psdcore.default <- function(X.d,
                   method = sprintf("Sine multitaper\n%s",funcall), 
                   taper = ntap, 
                   pad = 1, # always!
-                  detrend = detrend, 
-                  demean = demean,
+                  detrend = preproc, 
+                  demean = preproc,
                   timebp=timebp,
                   nyquist.frequency=Nyq
                   )
