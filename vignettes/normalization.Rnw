@@ -515,10 +515,18 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 
 \input{tbl_specprogs}
 
-%% bib
+\section{Session Info}
+<<eval=TRUE, echo=TRUE, label=SI>>=
+sessionInfo()
+@
+
+%% bib and index
+
 \pagebreak
 \bibliographystyle{apalike}
 \bibliography{REFS}
 
 \printindex
+
+
 \end{document}

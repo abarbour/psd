@@ -38,7 +38,7 @@ datasets
 *** should not include? <- proprietary?
 [ ] bsm + pp
 *** find large teleseism: list with ambient and seismic times
-[X] magsat
+[X] magnet
 
 `spectral_properties`
 ---------------------

@@ -236,7 +236,14 @@ drastically increased computation times; hence, zero padding should be
 done to ensure the length does not adversely
 affect the efficiency of the DFT calculator.
 
-%% bib
+\input{tbl_specprogs}
+
+\section{Session Info}
+<<eval=TRUE, echo=TRUE, label=SI>>=
+sessionInfo()
+@
+
+%% bib and index
 \bibliographystyle{apalike}
 \bibliography{REFS}
 

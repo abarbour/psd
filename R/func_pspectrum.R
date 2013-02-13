@@ -176,7 +176,8 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     xar <- xprew$prew_ar
     # PSD of the AR fit
     Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)
-    Pspec_ar$spec <- Pspec_ar$spec / mean(Pspec_ar$spec)
+    arvar <- var(Pspec_ar$spec)
+    Pspec_ar$spec <- Pspec_ar$spec / (mARs <- mean(Pspec_ar$spec))
   }
   #
   #rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE)
@@ -197,23 +198,24 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     if (verbose) message(sprintf("Removing AR(%s) effects from spectrum", ordAR))
     Ospec <- Pspec
     Pspec$spec <- Pspec$spec / Pspec_ar$spec
-    #plot(Pspec_ar, col="blue", add=TRUE)
-    #plot(Pspec, col="red", add=TRUE)
     # reup the spectrum
     rlpSpec:::rlp_envAssignGet("AR_psd", Pspec_ar)
   }
   if (plot){
-    #if (verbose) message("plotting at pilot stage")
     if (REMAR){
-      plot(Ospec, log="dB", col="red")
-      Pspec_ar$spec <- Pspec_ar$spec * (mPsd <- mean(Pspec$spec))
+      par(las=1)
+      plot(Ospec, log="dB", col="red", main="Pilot spectrum estimation")
+      mtext(sprintf("(with AR(%s) correction)", ordAR), line=0.4)
+      Pspec_ar$spec <- Pspec_ar$spec * mARs
       plot(Pspec_ar, log="dB", col="blue", add=TRUE)
       plot(Pspec, log="dB", add=TRUE, lwd=2)
       legend("bottomleft", 
-             c("original PSD",sprintf("AR-effects PSD (+ %.01f dB)", dB(mPsd)),"AR-corrected PSD"), lwd=2,
-             col=c("red","blue","black"))
+             c("original PSD",
+               sprintf("AR-innovations PSD\n(mean %.01f +- %.01f dB)", dB(mARs), dB(sqrt(arvar))/4),
+               "AR-corrected PSD"), 
+             lwd=2, col=c("red","blue","black"))
     } else {
-      plot(Pspec, log="dB")
+      plot(Pspec, log="dB", main="Pilot spectrum estimation")
     }
   }
   return(invisible(rlpSpec:::rlp_envAssignGet("pilot_psd", Pspec)))

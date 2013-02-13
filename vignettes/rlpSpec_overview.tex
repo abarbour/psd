@@ -103,7 +103,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  The purpose of this vignette is to provide an overview of some of the
+  This vignette provides an overview of some of the
   features included in \rlp{}, designed to
   compute estimates of power spectral
   density (PSD) for a univariate series in a sophisticated manner,
@@ -114,11 +114,11 @@
   The adaptive procedure
   iteratively refines the optimal number of tapers at each frequency
   based on the spectra from the previous iteration.
-  Assuming the adaptive procedure is convergent, 
-  this method produces power spectra
+  Assuming the adaptive procedure converges, 
+  this produces power spectra
   with significantly
   lower spectral variance 
-  relative to results from \naive{} estimators.
+  relative to results from less-sophisticated estimators.
   Sine tapers exhibit excellent
   leakage suppression characteristics, so bias effects
   are also reduced.
@@ -130,9 +130,9 @@
   which can badly distort important features without careful tuning
   (e.g. the Daniell kernel in \Rcmd{stats::spectrum}).
   In this regards
-  \rlp{} is best suited for data having a mix of
-   large dynamic range and strong features, such
-   as power spectra of ambient seismometer records.
+  \rlp{} is best suited for data having 
+   large dynamic range and some mix of narrow and wide-band structure,
+   features typically found in geophysical datasets.
 \end{abstract}
 
 \tableofcontents
@@ -150,24 +150,26 @@ First, we load the package into the namespace:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: fftw}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: fftw}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded rlpSpec (0.1.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loaded rlpSpec (0.1.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
 \end{knitrout}
 
-We need a series to analyze.
-Among the datasets included in \rlp{} is a subset of
-the Magnetic Satellite (MAGSAT) mission \citep{langel1982}.
-Specifically, we have included along-track measurements
+For a series to analyze, we can use \Rcmd{magnet}, included in \rlp{},
+which represents along-track measurements
 of horizontal magnetic-field strength from a gimbaled, airborne magnetometer.
+These data are a small subset of the full Project MAGNET series \citep{coleman1992},
+which has provided insight into
+the history of the Earth's oceanic crust 
+\citep{parker1997, obrien1999, korte2002}.
 The sampling interval is
 once every kilometer (km), so the will represent
 crustal magnetization with wavelengths longer than 2 km.
-%% magsat data
+%% Project MAGNET data
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{data}(magsat)
+\hlfunctioncall{data}(magnet)
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -178,7 +180,7 @@ sets of information:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{names}(magsat)
+\hlfunctioncall{names}(magnet)
 \end{alltt}
 \begin{verbatim}
 ## [1] "km"    "raw"   "clean" "mdiff"
@@ -187,7 +189,7 @@ sets of information:
 \end{knitrout}
 
 The \Rcmd{raw} and \Rcmd{clean} names represent raw
-and edited intensities respectively, expressed in units of nanoTesla; 
+and edited intensities respectively, expressed in units of nanotesla; 
 \Rcmd{mdiff} is the difference between them.
 The difference between them is a matter of just a few points
 attributable to instrumental malfunction. 
@@ -195,7 +197,7 @@ attributable to instrumental malfunction.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{subset}(magsat, \hlfunctioncall{abs}(mdiff) > 0)
+\hlfunctioncall{subset}(magnet, \hlfunctioncall{abs}(mdiff) > 0)
 \end{alltt}
 \begin{verbatim}
 ##     km    raw  clean  mdiff
@@ -216,44 +218,44 @@ estimates for the two series quite simply:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-psdr <- \hlfunctioncall{pspectrum}(magsat$raw)
+psdr <- \hlfunctioncall{pspectrum}(magnet$raw)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -4.1 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -4.1 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -12.7 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -12.7 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -18.6 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -18.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -25.0 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -25.0 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -35.1 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -35.1 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
-psdc <- \hlfunctioncall{pspectrum}(magsat$clean)
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (rlpspec)  to sampling-freq.  1}}\begin{alltt}
+psdc <- \hlfunctioncall{pspectrum}(magnet$clean)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -3.9 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -3.9 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -14.6 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -14.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -22.0 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -22.0 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -28.5 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -28.5 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -34.4 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\end{kframe}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (rlpspec)  to sampling-freq.  1}}\end{kframe}
 \end{knitrout}
 
 Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
@@ -303,21 +305,20 @@ Note that \Rcmd{pspectrum} returns
 an object with class \Rcmd{spec}, so we have access to methods 
 within \Rcmd{stats}, including \Rcmd{plot.spec}.
 }.  
-We expect the MAGSAT data to be linear in the space of
+We expect the Project MAGNET data to be linear in the space of
 linear-frequencies and logarithmic-power;
 we see a clear
 improvement in spectral shape between the two series,
 simply because the large outliers have been removed.
 The PSD of the clean series shows a
-very red spectrum typical of geophysical processes \citep{agnew1992},
-and
-a rolloff in signal
+very ``red" spectrum typical of geophysical processes \citep{agnew1992},
+and a rolloff in signal
 for 10 kilometer wavelengths and longer; whereas, the 
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
-features which would be difficult to judge with \naive{} estimators.
+features which could be difficult to judge if the spectral variance was higher.
 
 %<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
-%#psdc_ar <- pspectrum(magsat$clean, AR=TRUE, plot=FALSE)
+%#psdc_ar <- pspectrum(magnet$clean, AR=TRUE, plot=FALSE)
 %@
 %
 \begin{figure}[htb!]
@@ -325,7 +326,7 @@ features which would be difficult to judge with \naive{} estimators.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{plot}(psdc, log = \hlstring{"dB"}, main = \hlstring{"Raw and Clean MAGSAT power spectral density"}, 
+\hlfunctioncall{plot}(psdc, log = \hlstring{"dB"}, main = \hlstring{"Raw and Clean Project MAGNET power spectral density"}, 
     lwd = 3, ci.col = NA, ylim = \hlfunctioncall{c}(0, 32), yaxs = \hlstring{"i"})
 \hlcomment{# plot(psdc_ar, log='dB', add=TRUE, lwd=3, col='red')}
 \hlfunctioncall{plot}(psdr, log = \hlstring{"dB"}, add = TRUE, lwd = 3, lty = 5)
@@ -337,7 +338,7 @@ features which would be difficult to judge with \naive{} estimators.
 \end{knitrout}
 
 \caption{Power spectral density estimates for the raw and cleaned
-             \Rcmd{MAGSAT} data bundled with \rlp{}. Note that
+             \Rcmd{Project MAGNET} data bundled with \rlp{}. Note that
              because the class is \Rcmd{'spec'} we have
              utilized  existing methods in the \Rcmd{stats} namespace.}
 \label{fig:pmag}
@@ -346,7 +347,7 @@ features which would be difficult to judge with \naive{} estimators.
 
 \section{Comparisons with other methods}
 
-As we have shown in the MAGSAT example, 
+As we have shown in the Project MAGNET example, 
 improved understanding of the physics behind the signals in the data
 is of great concern.
 Assuming a sample is free of non-physical points, how do
@@ -360,7 +361,7 @@ summarized most, if not all, the available functions in Table \ref{tbl:methods}.
 
 We compare results from
 \rlp{} with those from a few of the methods in Table \ref{tbl:methods},
-using the same data: the cleaned MAGSAT series.
+using the same data: the cleaned Project MAGNET series.
 
 %%
 %% spectrum
@@ -373,10 +374,9 @@ parametric and non-parametric estimation, respectively.
 The user can optionally apply a single cosine taper, and/or a smoothing kernel.
 Our method is non-parametric; hence, we will compare to the latter.
 
-Included in \rlp{} is an option to compare the 
-results with a \naive{} estimator--a 20\% tapered periodogram--from within the
-spectrum calculator, \Rcmd{psdcore}.
-In R this estimator may be found with the following command:
+Included in \Rcmd{psdcore} is an option to compare the 
+results with a 20\% tapered periodogram.
+The cosine estimator is found with the following command:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -387,9 +387,8 @@ In R this estimator may be found with the following command:
 
 Within \Rcmd{psdcore} the comparison is
 made with
-the logical arguments \Rcmd{detrend} and \Rcmd{demean} 
-passed to \Rcmd{spec.pgram}; they are,
-by default, both \SC{True}.
+the logical argument in \Rcmd{preproc} 
+passed to \Rcmd{spec.pgram}, which is \SC{True} by default.
 
 As a matter of bookkeeping and good practice, 
 we should consider the working environment
@@ -405,20 +404,20 @@ results are shown in Figure \ref{fig:two}.
 %
 \begin{figure}[htb!]
 \begin{center}
-%% magsat compare
+%% Project MAGNET compare
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 ntap <- psdc$taper
-\hlfunctioncall{psdcore}(magsat$clean, ntaper = ntap, refresh = TRUE, plotpsd = TRUE)
+\hlfunctioncall{psdcore}(magnet$clean, ntaper = ntap, refresh = TRUE, plotpsd = TRUE)
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/MAGSATNAIVE} 
+\includegraphics[width=\maxwidth]{figure/MAGNETNAIVE} 
 
 \end{knitrout}
 
-\caption{Top: Comparison between \naive{} and multitaper PSD estimators for the 
-clean \Rcmd{MAGSAT} data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
+\caption{Top: Comparison between PSD estimators for the 
+clean Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.
 Middle: The number of tapers applied as a function of frequency from
 the \Rcmd{plot.tapers} method. 
@@ -445,14 +444,7 @@ by using
 double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
-input series.  We can do this easily with the \Rcmd{prewhiten} methods\footnote{
-This name of this function, \Rcmd{prewhiten},
-suggests it produces only auto-regressive innovations:
-it can, but the
-default operation of  \Rcmd{prewhiten} is to fit a linear model of the form 
-$f(x) = \alpha x + \beta + \epsilon$
-using ordinary linear least squares.
-}.
+input series.  We can do this easily with the \Rcmd{prewhiten} methods:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -460,22 +452,23 @@ using ordinary linear least squares.
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RSEIS}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: RSEIS}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RPMG}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: RPMG}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: Rwave}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: Rwave}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'Rwave'}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# \\\#\# Attaching package: 'Rwave'}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  kernel}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#     kernel}}\begin{alltt}
 dt = 1  \hlcomment{# km}
-\hlfunctioncall{summary}(\hlfunctioncall{prewhiten}(mc <- \hlfunctioncall{ts}(magsat$clean, deltat = dt) + \hlfunctioncall{seq_along}(magsat$clean), 
+\hlcomment{# prewhiten the data after adding a linear trend + offset}
+\hlfunctioncall{summary}(\hlfunctioncall{prewhiten}(mc <- (\hlfunctioncall{ts}(magnet$clean + 1000, deltat = dt) + \hlfunctioncall{seq_along}(magnet$clean)), 
     plot = FALSE))
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}\begin{verbatim}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}\begin{verbatim}
 ##         Length Class  Mode   
 ## lmdfit    12   lm     list   
 ## ardfit     0   -none- NULL   
@@ -483,20 +476,52 @@ dt = 1  \hlcomment{# km}
 ## prew_ar    0   -none- NULL   
 ## imputed    1   -none- logical
 \end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+Although the 
+default operation of  \Rcmd{prewhiten} is to fit a linear model of the form 
+$f(x) = \alpha x + \beta + \epsilon$
+using ordinary linear least squares,
+setting \Rcmd{AR.max} higher than zero
+to fit an auto-regressive (AR) model to the data\footnote{Note that 
+the linear trend fitting is removed from the series prior to AR estimation,
+and the residuals from this fit are also returned.
+}.  
+This fit uses the Akaike infomation criterion (AIC) to select
+the highest order appropriate for the data.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlfunctioncall{summary}(atsar <- \hlfunctioncall{prewhiten}(mc, AR.max = 100, plot = FALSE))
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}\begin{verbatim}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# autoregressive model fit (returning innovations)}}\begin{verbatim}
 ##         Length Class  Mode   
 ## lmdfit    12   lm     list   
 ## ardfit    14   ar     list   
 ## prew_lm 2048   ts     numeric
 ## prew_ar 2048   ts     numeric
 ## imputed    1   -none- logical
+\end{verbatim}
+\begin{alltt}
+\hlfunctioncall{print}(atsar$ardfit)
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## ar.yw.default(x = tser_prew_lm, aic = TRUE, order.max = AR.max,     demean = TRUE)
+## 
+## Coefficients:
+##      1       2       3       4       5       6  
+##  1.513  -1.104   0.672  -0.388   0.211  -0.079  
+## 
+## Order selected 6  sigma^2 estimated as  19.5
 \end{verbatim}
 \begin{alltt}
 ats_lm <- atsar$prew_lm
@@ -505,17 +530,7 @@ ats_ar <- atsar$prew_ar
 \end{kframe}
 \end{knitrout}
 
-
-Setting \Rcmd{AR.max} higher than zero
-causes the program to fit
-an auto-regressive (AR)
-model to the data using the Akaike infomation criterion (AIC).  
-Figure \ref{fig:magd} plots the innovations from the AR
-fitting method, and note that while we set \Rcmd{AR.max} relatively high,
-only and AR(6) model was fit significantly following the AIC. 
-Also note that
-the linear trend fitting is removed from the series prior to AR estimation; 
-this fit is also returned.
+\label{sxn:prew}
 
 \begin{figure}[htb!]
 \begin{center}
@@ -523,41 +538,20 @@ this fit is also returned.
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlfunctioncall{plot}(\hlfunctioncall{ts.union}(orig.plus.trend = mc, linear = ats_lm, ar = ats_ar), yax.flip = TRUE, 
-    main = \hlfunctioncall{sprintf}(\hlstring{"Prewhitened MAGSAT series: linear and linear+\hlfunctioncall{AR}(%s)"}, atsar$ardfit$order))
+    main = \hlfunctioncall{sprintf}(\hlstring{"Prewhitened Project MAGNET series"}))
+\hlfunctioncall{mtext}(\hlfunctioncall{sprintf}(\hlstring{"linear and linear+\hlfunctioncall{AR}(%s)"}, atsar$ardfit$order), line = 1.1)
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/ARFITPLT} 
 
 \end{knitrout}
 
-%<<eval=TRUE, echo=TRUE, fig.height=2.75, fig.width=4.5, label=ARPSD>>=
-%plot(psdcore(atsar$prew_ar, ntaper=10), log="dB", main="PSD of MAGSAT innovations")
-%@
-\caption{Pre-whitening of the MAGSAT series (with a
-synthetic trend superimposed on it) assuming linear and linear-with-AR models.
-%Bottom: Power spectral density estimates of the innovations (model residuals):
-%the spectrum is relatively flat, as expected.
+\caption{Pre-whitening of the Project MAGNET series (with a
+synthetic linear model superimposed on it) assuming linear and linear-with-AR models.
 }
 \label{fig:magd}
 \end{center}
 \end{figure}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlfunctioncall{summary}(atsar)
-\end{alltt}
-\begin{verbatim}
-##         Length Class  Mode   
-## lmdfit    12   lm     list   
-## ardfit    14   ar     list   
-## prew_lm 2048   ts     numeric
-## prew_ar 2048   ts     numeric
-## imputed    1   -none- logical
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
 
 We didn't necessarily need to deal with the sampling information since it is just 1 per km;
 but, supposing the sampling information was based on an interval, we
@@ -650,21 +644,21 @@ Aspec <- \hlfunctioncall{pspectrum}(ats_lm, dt, tapinit, plot = FALSE)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -1.5 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -1.5 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -8.8 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -8.8 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -16.3 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -16.3 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -18.1 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -18.1 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -23.6 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -23.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (rlpspec)  to sampling-freq.  1}}\begin{alltt}
 \hlcomment{# Correct for double-sidedness of spectrum and mtapspec results}
 \hlfunctioncall{class}(Mspec)
 \end{alltt}
@@ -676,7 +670,7 @@ Mspec <- \hlfunctioncall{normalize}(Mspec, dt, \hlstring{"spectrum"})
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (spectrum)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  double-sided PSD  (spectrum)  to sampling-freq.  1}}\begin{alltt}
 nt <- 1:Mspec$numfreqs
 mspec <- Mspec$spec[nt]
 \hlfunctioncall{class}(Xspec)
@@ -689,7 +683,7 @@ Xspec <- \hlfunctioncall{normalize}(Xspec, dt, \hlstring{"spectrum"})
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (spectrum)\ \ to sampling-freq.\ \ 1}}\end{kframe}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  double-sided PSD  (spectrum)  to sampling-freq.  1}}\end{kframe}
 \end{knitrout}
 
 These estimates are shown on the same scale in
@@ -704,7 +698,7 @@ Figure \ref{fig:psdcomp}.
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RColorBrewer}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: RColorBrewer}}\begin{alltt}
 cols <- \hlfunctioncall{c}(\hlstring{"dark grey"}, \hlfunctioncall{brewer.pal}(8, \hlstring{"Set1"})[\hlfunctioncall{c}(5:4, 2)])
 lwds <- \hlfunctioncall{c}(1, 2, 2, 5)
 \hlfunctioncall{par}(las = 1)
@@ -722,7 +716,7 @@ pltf <- Mspec$freq
 
 \end{knitrout}
 
-\caption{Comparisons of estimations of MAGSAT power spectral densities.}
+\caption{Comparisons of estimations of Project MAGNET power spectral densities.}
 \label{fig:psdcomp}
 \end{center}
 \end{figure}
@@ -738,13 +732,13 @@ of the results, we can interpolate PSD levels onto the \rlp{}-based frequencies
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: signal}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: signal}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: MASS}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: MASS}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#     filter, poly}}\begin{alltt}
 pltpi <- \hlfunctioncall{interp1}(pltf, pltp, Pspec$freq)
 \end{alltt}
 \end{kframe}
@@ -793,7 +787,7 @@ Create \Rcmd{ggplot2} objects for plotting purposes:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: ggplot2}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: ggplot2}}\begin{alltt}
 \hlcomment{# data and regression}
 g <- \hlfunctioncall{ggplot}(df, \hlfunctioncall{aes}(x = x, y = y))
 g1 <- g + \hlfunctioncall{geom_abline}(intercept = 0, slope = 1, size = 2, color = \hlstring{"salmon"}) + 
@@ -829,7 +823,7 @@ in Figure \ref{fig:psdcomp}.
 
 \end{knitrout}
 
-\caption{Regression of  MAGSAT PSD estimates: 
+\caption{Regression of  Project MAGNET PSD estimates: 
 \Rcmd{mtapspec} against \Rcmd{psdcore}.}
 \label{fig:psdreg}
 \end{center}
@@ -866,38 +860,77 @@ we will not compare it to \rlp{}.
 
 \section{Can AR prewhitening improve the spectrum?}
 
+This question must be addressed on a case-by-base basis; but, if there
+is significant auto-regressive structure in the series then
+the answer is likely \SC{Yes}.
+The MAGNET dataset is an example where removing the spectrum
+of the innovations from the AR prewhitening procedure can
+reduce spectral variance considerably.
+
+Recall the results of the prewhitening in Section \ref{sxn:prew}.
+While \Rcmd{AR.max} was set relatively high,
+only an AR(6) model was fit significantly, according to the AIC requirements. 
+The estimated variance of the innovations is about $~20$ nT$^2$.
+If the innovation spectrum
+is flat (as we expect), this variance translates to power levels
+of about $~16$ decibels
+for a 1 km sampling interval.  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-psdc_ar <- \hlfunctioncall{pspectrum}(magsat$clean, AR = TRUE, niter = 0, plot = TRUE)
+ntap <- 7
+psd_ar <- \hlfunctioncall{psdcore}(ats_ar, ntaper = ntap, refresh = TRUE)
+\hlfunctioncall{dB}(\hlfunctioncall{mean}(psd_ar$spec))
 \end{alltt}
+\begin{verbatim}
+## [1] 15.82
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
+An example of this potential variance-reduction is shown in Figure \ref{fig:arspecvar},
+which we have used \Rcmd{pilot\_spec} to remove the AR spectrum
+internally.  The AR component adds approximately $\pm 3$ dB to the original spectrum,
+and removing it will give a considerably smoother spectrum without the 
+need for adaptive 
+taper optimization.
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Removing AR(6) effects from spectrum}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\end{kframe}
+\begin{figure}[htb!]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{pilot_spec}(ats_lm, ntap = ntap, remove.AR = 100, plot = TRUE)
+\hlfunctioncall{plot}(Aspec, log = \hlstring{"dB"}, add = TRUE, col = \hlstring{"grey"}, lwd = 4)
+\hlfunctioncall{plot}(Aspec, log = \hlstring{"dB"}, add = TRUE, lwd = 3, lty = 3)
+\end{alltt}
+\end{kframe}
 \includegraphics[width=\maxwidth]{figure/MAGPSDAR} 
 
 \end{knitrout}
+
+\caption{Spectral variance may be reduced by removing the effect
+on an AR process, as is shown for the MAGNET data using
+\Rcmd{pilot\_spec}.  The dotted line is the adaptively estimated spectrum
+from Figure \ref{fig:psdcomp}.}
+\label{fig:arspecvar}
+\end{center}
+\end{figure}
 
 
 %\begin{figure}[htb!]
 %\begin{center}
 %<<eval=TRUE, echo=TRUE, label=PREWPSD>>=
-%plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density", 
+%plot(psdc, log="dB", main="Raw and Clean Project MAGNET power spectral density", 
 %     lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
 %plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
 %plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 %text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 %@
 %\caption{Power spectral density estimates for the raw and cleaned
-%   \Rcmd{MAGSAT}, with and without auto-regressive (AR) prewhitening.}
+%   \Rcmd{Project MAGNET}, with and without auto-regressive (AR) prewhitening.}
 %\label{fig:arpsd}
 %\end{center}
 %\end{figure}
@@ -966,7 +999,7 @@ based on $1/\sqrt{\nu-1}$, which is accurate to within a few percent in most cas
 \end{center}
 \end{figure}
 
-Returning to the MAGSAT spectra, let us compare the \rlp{}
+Returning to the Project MAGNET spectra, let us compare the \rlp{}
 spectra with spectral uncertainty as bounded polygons.
 First calculate the uncertainty polygon data:
 \begin{knitrout}
@@ -1008,7 +1041,7 @@ and plot the comparison, shown in Figure \ref{fig:magerr}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{plot}(\hlfunctioncall{c}(0, 0.5), \hlfunctioncall{c}(-8, 35), col = \hlstring{"white"}, main = \hlstring{"MAGSAT Spectral \hlfunctioncall{Uncertainty} (p > 0.95)"}, 
+\hlfunctioncall{plot}(\hlfunctioncall{c}(0, 0.5), \hlfunctioncall{c}(-8, 35), col = \hlstring{"white"}, main = \hlstring{"Project MAGNET Spectral \hlfunctioncall{Uncertainty} (p > 0.95)"}, 
     ylab = \hlstring{""}, xlab = \hlstring{"spatial frequency, 1/km"}, yaxt = \hlstring{"n"}, frame.plot = FALSE)
 \hlfunctioncall{lines}(\hlfunctioncall{c}(2, 1, 1, 2) * 0.01, \hlfunctioncall{c}(5, 5, 8.01, 8.01) - 8)
 \hlfunctioncall{text}(0.05, -1.4, \hlstring{"3.01 dB"})
@@ -1024,7 +1057,7 @@ and plot the comparison, shown in Figure \ref{fig:magerr}.
 
 \end{knitrout}
 
-\caption{MAGSAT Spectral uncertainties with and without adaptive taper optimization.
+\caption{Project MAGNET Spectral uncertainties with and without adaptive taper optimization.
 The filled regions encompass the upper limit and approximate values of 
 spectral uncertainty .}
 \label{fig:magerr}
@@ -1037,7 +1070,7 @@ applied and the spectral resolution (effectively, the spectral bandwidth).
 In general, the greater the number of tapers applied, the lower the spectral resolution.
 We can use the information returned from \Rcmd{spectral\_properties}
 to visualize the actual 
-differences in resolution for the MAGSAT PSD estimates; these
+differences in resolution for the Project MAGNET PSD estimates; these
 are shown
 in Figure \ref{fig:magres}.
 \begin{figure}[htb!]
@@ -1049,7 +1082,7 @@ frq <- Aspec$freq
 relp <- \hlfunctioncall{dB}(1/spa$resolution)
 \hlfunctioncall{par}(las = 1)
 \hlfunctioncall{plot}(frq, relp, col = \hlstring{"light grey"}, ylim = \hlfunctioncall{dB}(\hlfunctioncall{c}(1, 5)), type = \hlstring{"h"}, xaxs = \hlstring{"i"}, 
-    yaxs = \hlstring{"i"}, ylab = \hlstring{"dB"}, xlab = \hlstring{"frequency, 1/km"}, main = \hlstring{"MAGSAT Spectral Resolution and Uncertainty"})
+    yaxs = \hlstring{"i"}, ylab = \hlstring{"dB"}, xlab = \hlstring{"frequency, 1/km"}, main = \hlstring{"Project MAGNET Spectral Resolution and Uncertainty"})
 \hlfunctioncall{lines}(frq, relp)
 \hlfunctioncall{lines}(frq, spp$stderr.chi.upper + relp, lwd = 1.5, lty = 3)
 \hlfunctioncall{lines}(frq, spa$stderr.chi.upper + relp, lwd = 3, lty = 2)
@@ -1060,7 +1093,7 @@ relp <- \hlfunctioncall{dB}(1/spa$resolution)
 
 \end{knitrout}
 
-\caption{Resolution limits for MAGSAT PSD (\Rcmd{niter=5} adapts--the default) 
+\caption{Resolution limits for Project MAGNET PSD (\Rcmd{niter=5} adapts--the default) 
 in decibels relative to the spectrum.
 The thick dashed line shows the 
 resolved uncertainties ($p=0.05$) in the adaptively refined
@@ -1092,23 +1125,23 @@ and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -3.9 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -3.9 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -14.6 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -14.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -22.0 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -22.0 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -28.5 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -28.5 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -34.4 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 6 est. (Ave. S.V.R. -35.7 dB)}}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  6 est. (Ave. S.V.R. -35.7 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (rlpspec)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (rlpspec)  to sampling-freq.  1}}\begin{alltt}
 \hlfunctioncall{str}(AH <- \hlfunctioncall{get_adapt_history}())
 \end{alltt}
 \begin{verbatim}
@@ -1178,7 +1211,7 @@ Bottom: Filled polygons showing the number of tapers at each stage.
 \end{figure}
 
 It may be informative to investigate cross correlation
-coefficients between the stages.
+coefficients between the stages:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1186,7 +1219,7 @@ coefficients between the stages.
 \end{alltt}
 
 
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning: the standard deviation is zero}}\begin{verbatim}
+{\ttfamily\noindent\textcolor{warningcolor}{\#\# Warning: the standard deviation is zero}}\begin{verbatim}
 ##                   
 ## [1,] 1            
 ## [2,] ? 1          
@@ -1221,28 +1254,27 @@ coefficients between the stages.
 \end{kframe}
 \end{knitrout}
 
-But in this case only the PSD estimates are significantly correlated.
-In Figure \ref{fig:histcorrel} we show the results of a hierarchic
-clustering
-algorithm applied to the cross correlation matrix.  This shows
-the expected result that
-each stage is closely related to its parent, the pilot spectrum.
+But, in this case, only the PSD estimates are significantly correlated.
 
-%image(cP, col=rev(heat.colors(5)))
-\begin{figure}[htb!]
-\begin{center}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/XCORP} 
-
-\end{knitrout}
-
-\caption{Clustered correlation coefficients with associated dendrograms;
-deeper red colors indicate stronger family association.}
-% is that true?
-\label{fig:histcorrel}
-\end{center}
-\end{figure}
+%In Figure \ref{fig:histcorrel} we show the results of a hierarchic
+%clustering
+%algorithm applied to the cross correlation matrix.  This shows
+%the expected result that
+%each stage is closely related to its parent, the pilot spectrum.
+%
+%%image(cP, col=rev(heat.colors(5)))
+%\begin{figure}[htb!]
+%\begin{center}
+%<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=6, label=XCORP>>=
+%hP <- heatmap(cP, Rowv = FALSE, symm = TRUE, col = heat.colors(5),
+%distfun = function(c) as.dist(1 - c), keep.dendro = TRUE)
+%@
+%\caption{Clustered correlation coefficients with associated dendrograms;
+%deeper red colors indicate stronger family association.}
+%% is that true?
+%\label{fig:histcorrel}
+%\end{center}
+%\end{figure}
 
 %%
 %\pagebreak
@@ -1266,6 +1298,39 @@ process. The primary function is \Rcmd{pspectrum}.
 \end{figure}
 
 %\section{Acknowledgements}
+
+\section{Session Info}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{sessionInfo}()
+\end{alltt}
+\begin{verbatim}
+## R version 2.15.2 (2012-10-26)
+## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## 
+## locale:
+## [1] C
+## 
+## attached base packages:
+##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
+##  [8] utils     methods   base     
+## 
+## other attached packages:
+##  [1] ggplot2_0.9.3      signal_0.7-2       MASS_7.3-22       
+##  [4] RColorBrewer_1.0-5 RSEIS_3.0-9        Rwave_2.0         
+##  [7] RPMG_2.1-4         rlpSpec_0.1-0      fftw_1.0-3        
+## [10] knitr_0.9         
+## 
+## loaded via a namespace (and not attached):
+##  [1] Peaks_0.2        colorspace_1.2-0 dichromat_1.2-4  digest_0.6.0    
+##  [5] evaluate_0.4.3   formatR_0.7      gtable_0.1.2     labeling_0.1    
+##  [9] lattice_0.20-10  munsell_0.4      plyr_1.8         proto_0.3-10    
+## [13] reshape2_1.2.2   scales_0.2.3     stringr_0.6.2    zoo_1.7-9
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
 %%
 %\pagebreak

@@ -2,9 +2,9 @@
 ##
 ## Using prewhiten to improve spectral estimates
 ##
-data(magsat)
+data(magnet)
 dx <- 1
-mts <- ts(magsat$clean, frequency=dx)
+mts <- ts(magnet$clean, frequency=dx)
 mts.slope <- mts + seq_along(mts)
 # mean + trend
 # Prewhiten by removing mean+trend, and

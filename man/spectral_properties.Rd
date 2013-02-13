@@ -95,14 +95,14 @@ legend("topright",
 lwd=c(1,3,3), col=c("black","black","red"), bg="white")
 
 ##
-## An example using the MAGSAT dataset
+## An example using the Project MAGNET dataset
 ##
-data(magsat)
+data(magnet)
 tapinit <- 15 # tapers
 dt <- 1 # 1/km
 
 # remove mean/trend (not really necessary but good practice; also, done internally)
-ats <- prewhiten(ts(magsat$clean, deltat=dt), plot=FALSE)$prew_lm
+ats <- prewhiten(ts(magnet$clean, deltat=dt), plot=FALSE)$prew_lm
 
 # normal and adaptive multitaper spectra
 Pspec <- psdcore(ats, dt, tapinit)
@@ -124,10 +124,10 @@ pspa <- create_poly(Aspec$freq, dB(Aspec$spec), spa$stderr.chi.approx)
 pspau <- create_poly(Aspec$freq, dB(Aspec$spec), spa$stderr.chi.upper)
 
 ##
-## MAGSAT uncertainties
+## Project MAGNET uncertainties
 ##
 plot(c(0,0.5),c(-8,35),col="white",
-       main="MAGSAT Spectral Uncertainty (p > 0.95)",
+       main="Project MAGNET Spectral Uncertainty (p > 0.95)",
        ylab="", xlab="spatial frequency, 1/km", yaxt="n", frame.plot=FALSE)
 lines(c(2,1,1,2)*0.01,c(5,5,8.01,8.01)-8)
 text(.05, -1.4, "3.01 dB")
@@ -139,7 +139,7 @@ polygon(pspa$xx, (pspa$yy)-10, col="dark grey", border=NA)
 text(0.35, 22, "Uniform tapering", cex=1.2)
 
 ##
-## MAGSAT resolution
+## Project MAGNET resolution
 ##
 frq <- Aspec$freq
 relp <- dB(1/spa$resolution)
@@ -149,7 +149,7 @@ plot(frq, relp,
      ylim=dB(c(1,5)),
      type="h", xaxs="i", yaxs="i",
      ylab="dB", xlab="frequency, 1/km",
-     main="MAGSAT Spectral Resolution and Uncertainty")
+     main="Project MAGNET Spectral Resolution and Uncertainty")
 lines(frq, relp)
 lines(frq, spp$stderr.chi.upper+relp, lwd=1.5, lty=3)
 lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)

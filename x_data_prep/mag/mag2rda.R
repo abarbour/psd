@@ -18,8 +18,8 @@ mag <- data.frame(km=km, raw=mr, clean=mc, mdiff=mdiff)
 #mag$edit[abs(mag$diff) > 0] <- TRUE
 
 ## Rdata
-magsat <- mag
-save(magsat, file = "magsat.rda")
+magnet <- mag
+save(magnet, file = "magnet.rda")
 ##
 setwd(owd)
 getwd()

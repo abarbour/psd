@@ -2,8 +2,8 @@
 ##
 ## Taper constraint procedures
 ##
-data(magsat)
-X <- magsat$clean
+data(magnet)
+X <- magnet$clean
 ##
 ## spectrum, then riedsid
 kopt <- riedsid(psd <- psdcore(X, ntaper=10, refresh=TRUE))

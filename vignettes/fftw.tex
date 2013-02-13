@@ -76,6 +76,8 @@
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %\usepackage{fullpage}
+%captions
+\usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
@@ -339,7 +341,36 @@ drastically increased computation times; hence, zero padding should be
 done to ensure the length does not adversely
 affect the efficiency of the DFT calculator.
 
-%% bib
+\input{tbl_specprogs}
+
+\section{Session Info}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{sessionInfo}()
+\end{alltt}
+\begin{verbatim}
+## R version 2.15.2 (2012-10-26)
+## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## 
+## locale:
+## [1] C
+## 
+## attached base packages:
+##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
+##  [8] utils     methods   base     
+## 
+## other attached packages:
+## [1] knitr_0.9
+## 
+## loaded via a namespace (and not attached):
+## [1] digest_0.6.0   evaluate_0.4.3 formatR_0.7    stringr_0.6.2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+%% bib and index
 \bibliographystyle{apalike}
 \bibliography{REFS}
 

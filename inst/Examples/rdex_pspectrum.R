@@ -5,13 +5,13 @@
 ##
 require(RColorBrewer)
 ##
-## adaptive estimation for the MAGSAT dataset
-data(magsat)
+## adaptive estimation for the Project MAGNET dataset
+data(magnet)
 # adaptive psd estimation (turn off diagnostic plot)
-psdr <- pspectrum(Xr <- magsat$raw, plot=FALSE)
-psdc <- pspectrum(Xc <- magsat$clean, plot=FALSE)
+psdr <- pspectrum(Xr <- magnet$raw, plot=FALSE)
+psdc <- pspectrum(Xc <- magnet$clean, plot=FALSE)
 # plot them on the same scale
-plot(psdc, log="dB", main="Raw and Clean MAGSAT power spectral density",
+plot(psdc, log="dB", main="Raw and Clean Project MAGNET power spectral density",
      lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
 plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
