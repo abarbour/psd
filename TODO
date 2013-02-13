@@ -13,6 +13,13 @@ Examples
 
 Miscellany
 ----------
+[ ] remove magsat documentation? where?? during build:
+	Undocumented data sets:
+	‘magsat’
+	All user-level objects in a package should have documentation entries.
+	See the chapter ‘Writing R documentation files’ in the ‘Writing R
+	Extensions’ manual.
+
 [ ] rename? ... to 'psd'?
 [ ] Once rename + examples done, bump to 0.2-0
 [ ] Once bump, final packaging and CRAN submit
