@@ -31,11 +31,11 @@
 .onAttach <- function(...) {
   ##
   ## env pointer
-  assign(".rlpenv", ".rlpSpecEnv", envir=globalenv())
+  rlpSpec:::rlp_envGlobals()
   ## initialize it
-  rlpSpec:::rlp_initEnv(envir=.rlpenv, refresh=TRUE, verbose=FALSE)
+  rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE)
   ## add some info
-  .rlpSpecEnv$init <- paste(.rlpSpecEnv$init,"(upon attach)")
+  rlpSpec:::rlp_envAssign("init", paste(rlpSpec:::rlp_envGet("init"), "(upon attach)"))
   ##
   packageStartupMessage(
     sprintf("Loaded rlpSpec (%s) -- Adaptive multitaper spectrum estimation.",

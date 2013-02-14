@@ -50,8 +50,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      if (!exists(".rlpenv")) assign(".rlpenv", value=".NEW_RLP_ENV", envir=globalenv())
-      rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE, envir=.rlpenv)
+      rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=verbose)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){

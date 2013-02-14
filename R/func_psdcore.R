@@ -7,18 +7,21 @@
 #' \subsection{Tapering}{
 #' The parameter \code{ntaper} specifies the number of sine tapers to be used 
 #' at each frequency: equal tapers at each frequency for a scalar; 
-#' otherwise, use \code{ntaper(j)} sine tapers at \code{frequency(j)}.
+#' otherwise, use \code{ntaper[j]} sine tapers at \code{frequency[j]}.
 #' }
 #'
 #' \subsection{Truncation}{
-#' The series length \code{N} is truncated, if necessary, so that \code{1+N/2} evenly 
-#' spaced frequencies are returned. 
+#' The series, with length \eqn{N}, is necessarily truncated so that \eqn{1+N/2} evenly 
+#' spaced frequencies are returned.  This truncation makes the series length ``highly composite",
+#' which the discrete Fourier transform (DFT) is most efficient.
+#' The vignette "fftw" (accessed with \code{vignette("fftw",package="rlpSpec")}) shows
+#' how the performance of a DFT can be affected by series length.
 #' }
 #'
 #' \subsection{Decimation}{
-#' The parameter \code{ndecimate} determines the PSDs actually 
-#' computed, defined as \code{(1+n/2)/ndecimate}; other
-#' values are found via linear interpolation.
+#' The parameter \code{ndecimate} determines the number of PSD estimates actually 
+#' computed.  This number is defined as a fraction of the truncated length, \eqn{(1+N/2)/n_d}.
+#' Linear interpolation is used.
 #' }
 #'
 #' \subsection{Sampling}{
@@ -29,6 +32,13 @@
 #'
 #' @section Warning:
 #' Decimation is not well tested as of this point.
+#' 
+#' The \code{first.last} parameter is a workaround for potential bug (under investigation), 
+#' which causes
+#' the power at the zero and Nyquist frequencies to have anomalously low values.  
+#' This argument enables using
+#' linear \emph{extrapolation} to correct these values.
+#' \strong{The feature will be deprecated if the supposed bug is both identified and fixed.}
 #'
 #' @param X.d  the series to estimate a spectrum for 
 #' @param X.frq  scalar; the sampling information (see section Sampling)
@@ -42,7 +52,9 @@
 #' @param refresh  logical; ensure a free environment prior to execution
 #' @param verbose logical; should messages be given?
 #' @param ...  (unused) Optional parameters
-#' @return An list object, invibibly.  If \code{as.spec=TRUE} then an object with class 'spec'.
+#' @return An list object, invisibly.  If \code{as.spec=TRUE} then an object with class \code{spec};
+#' otherwise the list object will have information similar to a \code{spec} object, but with 
+#' a few additional fields.
 #'
 #' @name psdcore
 #' @export
@@ -244,11 +256,13 @@ psdcore.default <- function(X.d,
   mtap <- max(ntap)
   bandwidth <- bandwidth * (mtap + 1) 
   #
-  # BUG: there seems to be an issue with f==0, & f[length(psd)]
-  # so just extrapolate from the prev point
-  indic <- base::seq_len(nfreq - 2) + 1 
-  #2:(nfreq-1)
-  #if (first.last) psd.n <- base::exp(signal::interp1(frq[indic], base::log(psd.n[indic]), frq, method='linear', extrap=TRUE))
+  if (first.last){ 
+    # BUG: there may be an issue with f==0, & f[length(psd)]
+    # so just extrapolate from the prev point
+    indic <- base::seq_len(nfreq - 2) + 1 
+    psd.n <- base::exp(signal::interp1(frq[indic], base::log(psd.n[indic]), frq, method='linear', extrap=TRUE))
+    if (verbose) message("first.last=TRUE: Zero and Nyquist frequencies were extrapolated")
+  }
   ##
   pltpsd <- function(Xser, frqs, psds, taps, nyq, detrend, demean, ...){
     fsamp <- frequency(Xser)

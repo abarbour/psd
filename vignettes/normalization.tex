@@ -112,10 +112,10 @@
   analysis; wading through it can
   obscure even the most
   fundamental concepts
-  to the inexperienced practitioner.
+  from the inexperienced practitioner.
   Appropriate interpretation of spectral analyses
   depends crucially on the normalization used, 
-  which is often this greatest source of confusion.
+  which is often the greatest source of confusion.
   Here we outline
   the normalization used by \rlp{}, namely
   the \bidx{single-sided}
@@ -385,9 +385,11 @@ The \Rcmd{median} estimator
 produces a biased estimate because the distribution
 of spectral values roughly follows a $\chi^2_\nu$ distribution, where
 $\nu$ is the number of degrees of freedom and, for this distribution,
-the expectation of the first moment.  To find this value, we
-will use a conjugate gradient minimization procedure to find 
-the best-fitting $\chi^2$ distribution.  Our starting point will be the 
+the expectation of the first moment.  To find this value
+we perform a
+conjugate gradient based minimization of
+the best-fitting $\chi^2$ distribution, and compare this
+with the value returned by \Rcmd{mean}.  Our starting point will be the 
 estimated mean value.  We visualize the fit with
 a ``Q-Q" plot, which shows PSD quantiles values as a function of $\chi^2$ quantiles,
 using the optimized value of the number of degrees of freedom; this
@@ -411,6 +413,14 @@ Schi <- \hlfunctioncall{Chifit}(S)
 \begin{verbatim}
 ## [1] 2.005
 \end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+While the optimal degrees of freedom is very nearly two, the
+value produced by \Rcmd{mean} is different by merely one percent--certainly
+an acceptable bias.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlcomment{# compare with the mean and median}
 \hlfunctioncall{c}(mSn <- \hlfunctioncall{mean}(S), \hlfunctioncall{median}(S))
@@ -538,6 +548,8 @@ dB <- \hlfunctioncall{function}(y) 10 * \hlfunctioncall{log10}(y)
 \caption{Rescaled PSD estimates for a single realization of a 
 $\mathcal{N}(0,1)$ process with a sampling rate of 20 s$^{-1}$ rather
 than 1 s$^{-1}$ as from before.  
+The original spectrum (grey) is scaled to the appropriate level
+(black).
 The thick red line shows the mean (rescaled) spectral level, and the
 blue line shows the predicted mean value based on twice the sampling
 frequency.}
@@ -682,7 +694,8 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 
 \input{tbl_specprogs}
 
-\section{Session Info}
+\pagebreak
+\section*{Session Info}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -711,7 +724,7 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 
 %% bib and index
 
-\pagebreak
+%\pagebreak
 \bibliographystyle{apalike}
 \bibliography{REFS}
 

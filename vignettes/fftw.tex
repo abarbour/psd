@@ -197,9 +197,48 @@ bench.even <- \hlfunctioncall{function}() \{
 \end{knitrout}
 
 
+\section{Non highly composite (NHC) series}
+DFT algorithms can have drastically reduced performance
+if the series length is not highly composite (NHC).
+We now test NHC series by adding one to the HC series-length
+vector (also restricting the total length for sanity's sake):
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+nterms.odd <- nterms.even + 1
+nterms.odd <- nterms.odd[nterms.odd < 50000]  \hlcomment{# painfully long otherwise!}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+and performing the full set of benchmarks again:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+bench.odd <- \hlfunctioncall{function}() \{
+    benchdat.o <- plyr::\hlfunctioncall{ldply}(\hlfunctioncall{lapply}(X = nterms.odd, FUN = dftbm))
+\}
+\hlfunctioncall{bench.odd}()  \hlcomment{# FAIR WARNING: this can take a while!!}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\section{Visualization}
 In order to plot the results, we need to 
 perform some map/reduce operations on the data
-\citep{wickham2010}:
+\citep{wickham2010}. We intend to show faceted \Rcmd{ggplot2}-based
+figures with row-wise summary information\footnote{
+Based on this post:\\
+{\small
+\url{http://geokook.wordpress.com/2012/12/29/row-wise-summary-curves-in-faceted-ggplot2-figures/}
+}
+} so we can easily intercompare the benchmark data.
+The benchmark data we will show
+are \Rcmd{user.self}, \Rcmd{sys.self}, \Rcmd{elapsed}, and \Rcmd{relative}.
+The results are shown
+in Figure \ref{fig:results}.
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -255,80 +294,36 @@ pltbench <- \hlfunctioncall{function}(lentyp=\hlfunctioncall{c}(\hlstring{"even"
 \end{knitrout}
 
 
-\begin{figure}[htb!]
-\begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlfunctioncall{pltbench}(\hlstring{"even"})
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-\includegraphics[width=\textwidth]{fftw_bench_even}
-\label{fig:even}
-\caption{DFT benchmark results for HC series lengths.}
-\end{center}
-\end{figure}
-For each row of the figure we plot summary curves\footnote{
-Based on this post:\\
-{\small
-\url{http://geokook.wordpress.com/2012/12/29/row-wise-summary-curves-in-faceted-ggplot2-figures/}
-}
-} so we can easily inter-compare the benchmark data.
-
-\section{Non highly composite (NHC) series}
-DFT algorithms can have drastically reduced performance
-if the series length is not highly composite (NHC).
-We now test NHC series by adding one to the HC series-length
-vector (also restricting the total length for sanity's sake):
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-nterms.odd <- nterms.even + 1
-nterms.odd <- nterms.odd[nterms.odd < 50000]  \hlcomment{# painfully long otherwise!}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-and performing the full set of benchmarks again:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-bench.odd <- \hlfunctioncall{function}() \{
-    benchdat.o <- plyr::\hlfunctioncall{ldply}(\hlfunctioncall{lapply}(X = nterms.odd, FUN = dftbm))
-\}
-\hlfunctioncall{bench.odd}()  \hlcomment{# FAIR WARNING: this can take a while!!}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-
-We can now visualize the results, with the addition of
-the HC summary curves:
-
-\begin{figure}[htb!]
-\begin{center}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
 allmeds.prev <- allmeds
 \hlfunctioncall{pltbench}(\hlstring{"odd"})
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-\includegraphics[width=\textwidth]{fftw_bench_odd}
-\label{fig:odd}
-\caption{DFT benchmark results for NHC series lengths.
-We also show the summary curves for the HC results
+
+\begin{figure}[htb!]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{fftw_bench_even}%
+\includegraphics[width=0.5\textwidth]{fftw_bench_odd}
+\caption{ DFT benchmark results for HC series lengths (left),
+and NHC series lengths (right) as a function of logarithmic
+series length.  In each figure, the left
+facet-column is for results from \Rcmd{fftw::FFT} and the right
+column is for \Rcmd{stats::fft}.
+We also show the summary curves from the HC results
+in the NHC frames (thick grey curve)
 to highlight the drastic degradation in performance.}
+\label{fig:results}
 \end{center}
 \end{figure}
 
 \section{Conclusion}
 
-Figures \ref{fig:even} and \ref{fig:odd} compare the DFT
+Figure \ref{fig:results} compares the DFT
 calculations for HC and NHC length series.
 For univariate DFT computations,
 the methods are nearly equivalent with two exceptions which
@@ -341,9 +336,9 @@ drastically increased computation times; hence, zero padding should be
 done to ensure the length does not adversely
 affect the efficiency of the DFT calculator.
 
-\input{tbl_specprogs}
+\pagebreak
 
-\section{Session Info}
+\section*{Session Info}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}

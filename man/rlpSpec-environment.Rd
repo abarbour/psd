@@ -1,32 +1,41 @@
 \docType{methods}
 \name{rlpSpec-environment}
 \alias{get_adapt_history}
+\alias{get_rlp_env_name}
+\alias{get_rlp_env_pointer}
 \alias{new_adapt_history}
 \alias{rlpSpec-environment}
 \alias{rlp_envAssign}
 \alias{rlp_envAssignGet}
 \alias{rlp_envClear}
 \alias{rlp_envGet}
+\alias{rlp_envGlobals}
 \alias{rlp_envList}
 \alias{rlp_envStatus}
 \alias{rlp_initEnv}
 \alias{update_adapt_history}
 \title{Various environment manipulation functions.}
 \usage{
-  rlp_initEnv(envir = .rlpenv, refresh = FALSE,
-    verbose = TRUE, ...)
+  rlp_envGlobals(envpoint = ".rlpenv",
+    envname = ".rlpSpecEnv")
+
+  get_rlp_env_pointer()
+
+  get_rlp_env_name()
+
+  rlp_initEnv(refresh = FALSE, verbose = TRUE, ...)
 
   rlp_envClear(...)
 
-  rlp_envStatus(envir = .rlpenv)
+  rlp_envStatus()
 
-  rlp_envList(envir = .rlpenv)
+  rlp_envList()
 
-  rlp_envGet(variable, envir = .rlpenv)
+  rlp_envGet(variable)
 
-  rlp_envAssign(variable, value, envir = .rlpenv)
+  rlp_envAssign(variable, value)
 
-  rlp_envAssignGet(variable, value, envir = .rlpenv)
+  rlp_envAssignGet(variable, value)
 
   new_adapt_history(adapt_stages)
 
@@ -35,8 +44,10 @@
   update_adapt_history(stage, ntap, psd, freq = NULL)
 }
 \arguments{
-  \item{envir}{character string for the environment used.
-  See section \strong{Defaults}}
+  \item{envpoint}{character; the pointer to the
+  environment}
+
+  \item{envname}{character; the name of the environment}
 
   \item{refresh}{logical; should the contents of the
   environment be trashed?}
@@ -80,12 +91,21 @@
   separation from the \code{.GlobalEnv} environment so that
   no innocent variable is destroyed in the process of
   iteratively computing spectra. \strong{The user should
-  generally not be using the \emph{setters}; hence, only
-  the \emph{getters} exist in the namespace.}
+  generally not be using the \emph{setters} even though all
+  functions exist in the namespace.}
 
-  \code{rlp_initEnv} initializes the \code{.rlpenv}
-  environment with an option to clear the contents (if the
-  environment already exists).
+  \code{rlp_envGlobals} sets up the environment's pointer,
+  and name strings in the \code{.GlobalEnv}.
+
+  \code{get_rlp_env_pointer} is a convenience wrapper to
+  get the environment pointer.
+
+  \code{get_rlp_env_name} is a convenience wrapper to get
+  the environment name.
+
+  \code{rlp_initEnv} initializes the environment with an
+  option to clear the contents (if the environment already
+  exists).
 
   \code{rlp_envClear} clears the contents of the
   environment.
@@ -116,19 +136,18 @@
   environment--simply the assignments within it.
 }
 \section{Defaults and Initialization}{
-  By default, these functions all use \code{envir=.rlpenv}
-  to set the enviroment-name string; \code{.rlpenv} is set
-  when attaching the package.
+  By default, these functions all use the global pointer
+  and name set by \code{rlp_envGlobals}. One can use
+  \code{get_rlp_env_pointer()} and
+  \code{get_rlp_env_name()} to access them if needed.
 
   If the environment has not yet been initialized (it
-  should never need to be prior to running
-  \code{pspectrum}) \code{rlp_initEnv} should be used. If a
-  fresh environment is desired, and the environment already
-  exists, \code{rlp_envClear} (which is really just an
-  alias for \code{rlp_initEnv(refresh=TRUE)}) can be used.
-
-  One could set \code{.rlpenv} to another string, if a
-  different environment is desired.
+  should never need to be prior to running \code{pspectrum}
+  unless it was destroyed) \code{rlp_initEnv} should be
+  used. If a fresh environment is desired, and the
+  environment already exists, \code{rlp_envClear} (which is
+  really just an alias for
+  \code{rlp_initEnv(refresh=TRUE)}) can be used.
 }
 
 \section{Assigning and Retieving}{
@@ -139,6 +158,31 @@
   performed at the same time.  This ensures the assignment
   has succeeded, and the returned value is not from the
   \code{.GlobalEnv} or any other environment.
+}
+
+\section{Getters and Setters}{
+  The functions here can be classified whether the get, or
+  set variables in the environment (noted if in the global
+  environment); some do both. Others make no modifications
+  to the environment.
+
+  \subsection{Getter}{ \itemize{
+  \item{\code{get_adapt_history}}{}
+  \item{\code{get_rlp_env_name}}{global}
+  \item{\code{get_rlp_env_pointer}}{global}
+  \item{\code{rlp_envGet}}{} \item{\code{rlp_envList}}{}
+  \item{\code{rlp_envStatus}}{both} } }
+
+  \subsection{Setter}{ \itemize{
+  \item{\code{new_adapt_history}}{} #S
+  \item{\code{rlp_envAssign}}{}
+  \item{\code{rlp_envGlobals}}{global} } }
+
+  \subsection{Getter and Setter}{ \itemize{
+  \item{\code{rlp_envAssignGet}}{}
+  \item{\code{rlp_envClear}}{both}
+  \item{\code{rlp_initEnv}}{both}
+  \item{\code{update_adapt_history}}{} } }
 }
 
 \section{Adaptive History}{

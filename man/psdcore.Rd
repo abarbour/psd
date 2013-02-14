@@ -48,8 +48,10 @@
   \item{...}{(unused) Optional parameters}
 }
 \value{
-  An list object, invibibly.  If \code{as.spec=TRUE} then
-  an object with class 'spec'.
+  An list object, invisibly.  If \code{as.spec=TRUE} then
+  an object with class \code{spec}; otherwise the list
+  object will have information similar to a \code{spec}
+  object, but with a few additional fields.
 }
 \description{
   Compute power spectral density (PSD) estimates for the
@@ -59,17 +61,23 @@
   \subsection{Tapering}{ The parameter \code{ntaper}
   specifies the number of sine tapers to be used at each
   frequency: equal tapers at each frequency for a scalar;
-  otherwise, use \code{ntaper(j)} sine tapers at
-  \code{frequency(j)}. }
+  otherwise, use \code{ntaper[j]} sine tapers at
+  \code{frequency[j]}. }
 
-  \subsection{Truncation}{ The series length \code{N} is
-  truncated, if necessary, so that \code{1+N/2} evenly
-  spaced frequencies are returned. }
+  \subsection{Truncation}{ The series, with length \eqn{N},
+  is necessarily truncated so that \eqn{1+N/2} evenly
+  spaced frequencies are returned.  This truncation makes
+  the series length ``highly composite", which the discrete
+  Fourier transform (DFT) is most efficient. The vignette
+  "fftw" (accessed with
+  \code{vignette("fftw",package="rlpSpec")}) shows how the
+  performance of a DFT can be affected by series length. }
 
   \subsection{Decimation}{ The parameter \code{ndecimate}
-  determines the PSDs actually computed, defined as
-  \code{(1+n/2)/ndecimate}; other values are found via
-  linear interpolation. }
+  determines the number of PSD estimates actually computed.
+  This number is defined as a fraction of the truncated
+  length, \eqn{(1+N/2)/n_d}. Linear interpolation is used.
+  }
 
   \subsection{Sampling}{ If \code{X.frq} is NULL, the value
   is assumed to be 1, unless \code{X.d} is a 'ts' object.
@@ -80,6 +88,14 @@
 }
 \section{Warning}{
   Decimation is not well tested as of this point.
+
+  The \code{first.last} parameter is a workaround for
+  potential bug (under investigation), which causes the
+  power at the zero and Nyquist frequencies to have
+  anomalously low values. This argument enables using
+  linear \emph{extrapolation} to correct these values.
+  \strong{The feature will be deprecated if the supposed
+  bug is both identified and fixed.}
 }
 \examples{
 \dontrun{

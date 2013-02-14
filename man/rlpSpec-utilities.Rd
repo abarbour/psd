@@ -230,13 +230,13 @@ is.spec(psd) # FALSE
 ##
 ## Environment character strings
 ##
-print(.rlpenv)
-char2envir(.rlpenv)
+print(envname <- get_rlp_env_name())
+print(envir <- char2envir(envname))
 try(char2envir("some nonexistent environment"), silent=TRUE) # error
 # and environment objects:
 print(.GlobalEnv)
 envir2char(.GlobalEnv)
-envir2char(.rlpSpecEnv)
+envir2char(envir)
 try(envir2char(some_nonexistent_environment), silent=TRUE) # error
 ##
 ## decibels

@@ -48,7 +48,7 @@ plot(dB(X2) ~ log10(X1), DfU, type="s", xlim=c(0, log10(maxx)+0.2),
      xlab="log10 taper sequence", 
      ylab="dB")
 TFUN(DfU)
-invisible(lapply(lxseq, FUN=WFUN))
+invisible(lapply(round(10**xseq), FUN=WFUN))
 WFUN(maxx)
 
 ##
