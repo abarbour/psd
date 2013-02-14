@@ -1,16 +1,10 @@
-Examples
---------
-[ ] test examples
-[X] constrain_tapers
-[X] parabolic_weights
-[X] prewhiten
-[X] pilot_spec
-[X] rlpSpec-environment
-[X] rlpSpec-normalization
-[X] spectral_properties
-[X] spec_confint
-[X] psdcore
-[X] pspectrum (improve)
+vignettes
+---------
+[ ] revise overview with DCAs suggestions
+[ ] revise normalization with RLPs suggestions
+[-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
+[X] finish norm
+[X] develop overview
 
 Miscellany
 ----------
@@ -34,20 +28,12 @@ Miscellany
 [X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
 
-vignettes
----------
-[ ] revise overview with DCAs suggestions
-[ ] revise normalization with RLPs suggestions
-[-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
-[X] finish norm
-[X] develop overview
-
 datasets
 --------
-[-] scarb
-*** should not include? <- proprietary?
 [ ] bsm + pp
 *** find large teleseism: list with ambient and seismic times
+[-] scarb
+*** should not include? <- proprietary?
 [X] magnet
 
 `spectral_properties`
@@ -55,6 +41,20 @@ datasets
 [ ] check formulas for various quantities
 *** finish documentation [ ]
 *** consult Bob
+
+Examples
+--------
+[X] test examples
+[X] constrain_tapers
+[X] parabolic_weights
+[X] prewhiten
+[X] pilot_spec
+[X] rlpSpec-environment
+[X] rlpSpec-normalization
+[X] spectral_properties
+[X] spec_confint
+[X] psdcore
+[X] pspectrum (improve)
 
 `psdcore`
 -----------
