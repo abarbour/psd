@@ -108,7 +108,7 @@ psdcore.default <- function(X.d,
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
     n.e <- rlpSpec:::rlp_envAssignGet("len_even", n.o - n.o %% 2 )
-    X.even <- as.matrix(X[seq_len(n.e)]) #1:n.e])
+    X.even <- as.matrix(X[seq_len(n.e)])
     rlpSpec:::rlp_envAssign("ser_orig", X)
     rlpSpec:::rlp_envAssign("ser_orig_even", X.even)
     # half length of even series
@@ -248,7 +248,7 @@ psdcore.default <- function(X.d,
   # so just extrapolate from the prev point
   indic <- base::seq_len(nfreq - 2) + 1 
   #2:(nfreq-1)
-  if (first.last) psd.n <- base::exp(signal::interp1(frq[indic], base::log(psd.n[indic]), frq, method='linear', extrap=TRUE))
+  #if (first.last) psd.n <- base::exp(signal::interp1(frq[indic], base::log(psd.n[indic]), frq, method='linear', extrap=TRUE))
   ##
   pltpsd <- function(Xser, frqs, psds, taps, nyq, detrend, demean, ...){
     fsamp <- frequency(Xser)

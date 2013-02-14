@@ -66,10 +66,10 @@
   full data.
 
   If the value of \code{remove.AR} is too low the spectrum
-  could become distorted, so use with care. Note, however,
-  that the value of \code{remove.AR} will be restricted to
-  within the range \eqn{[1,100]}. If the AR order is much
-  larger than this, it's unclear how
+  could become distorted, so use with care. \emph{Note,
+  however, that the value of \code{remove.AR} will be
+  restricted to within the range \eqn{[1,100]}.} If the AR
+  order is much larger than this, it's unclear how
   \code{\link{prewhiten}} will perform.
 }
 \examples{

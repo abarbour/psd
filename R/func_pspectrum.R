@@ -124,10 +124,12 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
 #' the best fitting model; this is removed from the spectrum calculated
 #' with the full data.
 #'
-#' If the value of \code{remove.AR} is too low the spectrum could become distorted,
+#' If the value of \code{remove.AR} is too low the spectrum 
+#' could become distorted,
 #' so use with care.
-#' Note, however, that the 
-#' value of \code{remove.AR} will be restricted to within the range \eqn{[1,100]}.
+#' \emph{Note, however, that the 
+#' value of \code{remove.AR} will be restricted to within the 
+#' range \eqn{[1,100]}.}
 #' If the AR order is much larger than this, it's unclear how \code{\link{prewhiten}}
 #' will perform.
 #'
@@ -158,21 +160,31 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
   if (is.ts(x)) x.frequency <- stats::frequency(x)
   # setup a universal calculator
   PSDFUN <- function(X.., Xf.., Xk.., AR=FALSE){
-    toret <- psdcore(X.., Xf.., Xk.., preproc=FALSE, 
-                     first.last=TRUE, as.spec=TRUE, refresh=TRUE)
+    toret <- psdcore(X.., Xf.., Xk.., 
+                     preproc=FALSE, 
+                     first.last=!AR, 
+                     as.spec=TRUE, 
+                     refresh=TRUE, 
+                     verbose=FALSE)
     return(toret)
   }
   # preprocess
-  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, 
-                     impute=TRUE, plot=FALSE, verbose=verbose)
   REMAR <- FALSE
   if (remove.AR > 0){
-    # restrict to within [1,100]
-    remove.AR <- max(1, min(100, remove.AR))
     REMAR <- TRUE
-    lx <- length(xprew$prew_lm)
+    # restrict to within [1,100]
+    remove.AR <- max(1, min(100, abs(remove.AR)))
+  }
+  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, 
+                     impute=TRUE, plot=FALSE, verbose=verbose)
+  if (REMAR){
     # AR fit
     ordAR <- xprew$ardfit$order
+    if (ordAR==0){
+      warning("AR(0) was the highest model found!\n\t\tConsider fitting a linear model instead ( remove.AR = 0 ).")
+    } else {
+      if (verbose) message(sprintf("removed AR(%s) effects from the spectrum", ordAR))
+    }
     xar <- xprew$prew_ar
     # PSD of the AR fit
     Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)

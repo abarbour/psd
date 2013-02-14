@@ -218,9 +218,8 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' the weighting factors.
 #'
 #' If one has a \code{tapers} object, specify the \code{taper.index} to
-#' produce a sequence of weights up to the value at that index.  This
-#' may seem counter-intuitive, but the user is not likely to ever need
-#' to use this function.
+#' produce a sequence of weights up to the value at that index; the user
+#' is likely to never need to use this function.
 #'
 #' Weighting factors are calculated as follows:
 #' \deqn{W_N \equiv n_T^2 - \frac{3  K_N^2}{2 n_T (n_T - 1/4) (n_T + 1)}}

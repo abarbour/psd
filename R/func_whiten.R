@@ -11,9 +11,10 @@
 #' Prewhitening can ameliorate the problem, at least for red spectra 
 #' [see Chapter 9, Percival and Walden (1993)]. 
 #'
-#' This function has essentially two modes of operation (detailed below):
+#' The value of the \code{AR.max} argument is made absolute, after which
+#' this function has essentially two modes of operation (detailed below):
 #' \describe{
-#' \item{\code{AR.max} < 1}{Remove (optionally) a mean and/or linear trend.}
+#' \item{\code{AR.max} == 0}{Remove (optionally) a mean and/or linear trend.}
 #' \item{\code{AR.max} > 0}{Remove an autoregressive model}
 #' }
 #' In the second case,
@@ -27,7 +28,8 @@
 # Finally, the effect of the filter is removed by dividing out the spectrum of the 
 # autoregressive process.
 #
-#' \subsection{Mean and trend (\code{AR.max < 1})}{
+#' \subsection{Mean and trend (\code{AR.max == 0})}{
+#'
 #' Power spectral density estimates can become badly biased
 #' (especially at lower frequencies) if a signal of the form
 #' \eqn{f(x) = A x + B} is not removed from the series.  
@@ -35,8 +37,11 @@
 #' linear least-squares estimator; in this case a mean value is removed
 #' regardless of the logical state of \code{demean}.
 #' To remove \emph{only} a mean value, set \code{detrend=FALSE} and (obviously) \code{demean=TRUE}.
+#' 
 #' }
+#'
 #' \subsection{Auto Regressive (AR) innovations (\code{AR.max > 0})}{
+#'
 #' When an autoregressive model is removed from a non-stationary series, the residuals
 #' are known as 'innovations', and may be stationary (or very-nearly stationary).  
 #' This function fits an AR model [order at least 1, but up to and including AR(\code{AR.max})] to the series 
@@ -45,16 +50,32 @@
 #' The resulting innovations can be used to better estimate the stationary component
 #' of the original signal, and possibly in an interactive editing method.
 #'
-#' A quick way to determine whether this may be needed for the series is to run \code{acf} on
-#' it, and see if significant auto-correlations are found.
+#' Note that the method used here--solving the Yule-Walker equations--is 
+#' not a true maximum likelihood estimator; hence the AIC is calculated
+#' based on the variance estimate (no determinant). From \code{?ar}:
+#' \emph{In \code{ar.yw} the variance matrix of the innovations is 
+#' computed from the fitted coefficients and the autocovariance of \code{x}.}
+#'
+#' A quick way to determine whether this may be needed for the series is to run
+#' \code{acf} on the series, and see if significant non-zero lag correlations
+#' are found.  A warning is produced if the fit returns an AR(0) fit, indicating
+#' that AR prewhitening most likely inappropriate for the series, which
+#' is apparently stationary (or very nearly so).  (The innovations could end up
+#' having \emph{higher} variance than the input series in such a case.)
+#'
+#' \emph{Note that \code{AR.max} is restricted to the range \eqn{[1,N-1]} where
+#' \eqn{N} is the series length.}
 #'
 #' }
 #'
 #' @section NA values:
-#' \code{NA} values are allowed.  If present, the \code{na.locf} function in the package
-#' \code{zoo}, which stands for "Last Observation Carried Forward",
-#' is used to impute \code{NA} sections with real numbers. Use \code{impute=TRUE}
-#' to enable imputation.
+#'
+#' \code{NA} values are allowed.  If present, and \code{impute=TRUE}, 
+#' the \code{na.locf} function in the package
+#' \code{zoo} is used twice (with and without \code{fromLast} so that lead and
+#' trailing \code{NA} values are also imputed).  The function name is an
+#' acronym for "Last Observation Carried Forward", a very crude method
+#' of imputation. 
 #'
 #' @name prewhiten
 #' @export
@@ -72,7 +93,12 @@
 #' @param x.fsamp sampling frequency (for non \code{ts} objects)
 #' @param x.start start time of observations (for non \code{ts} objects)
 #' @param ... variables passed to \code{prewhiten.ts} (for non \code{ts} objects)
-#' @return A list with the model fit and the prewhitened timeseries
+#' @return A list with the model fits (\code{lm} and \code{ar} objects),
+#' the linear and AR prewhitened series (\code{ts} objects), and a logical
+#' flag indicating whether the I/O has been imputed. The names
+#' in the list are:
+#' \code{"lmdfit"}, \code{"ardfit"}, \code{"prew_lm"}, \code{"prew_ar"}, and \code{"imputed"}
+#' @return \emph{Note that if \code{AR.max=0} the AR information will exist as \code{NULL}.}
 #'
 #' @example inst/Examples/rdex_prewhiten.R
 prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
@@ -95,7 +121,6 @@ prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute
 prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=NA, x.start=NA, ...){
   # prelims
   stopifnot(stats::is.ts(tser))
-  #requires zoo
   # some other info... needed?
   sps <- stats::frequency(tser)
   tstart <- stats::start(tser)
@@ -107,9 +132,11 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     # twice, to catch leading or trailing NA
     if (NA %in% tso){
       stats::as.ts(
-        zoo::na.locf(
-          zoo::na.locf(zoo::as.zoo(tso), na.rm=FALSE),
-          fromLast=TRUE, na.rm=FALSE))
+        zoo::na.locf( 
+            zoo::na.locf(zoo::as.zoo(tso), 
+                         na.rm=FALSE), # forward na.locf
+            fromLast=TRUE, na.rm=FALSE) # reverse na.locf
+        ) # bach to TS object
     } else {
       tso
     }
@@ -122,6 +149,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   tser_prew_ar <- NULL
   ##
   ## Mean and Trend
+  AR.max <- abs(AR.max)
   if (AR.max >= 0){
     # data.frame with fit params
     fit.df <- data.frame(xr=base::seq_len(n.o), 
@@ -143,8 +171,9 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   ## AR innovations
   if (AR.max >= 1) {
     #message(AR.max)
-    AR.max <- as.integer(max(1, AR.max))
-    if (verbose){message("autoregressive model fit (returning innovations)")}
+    # AR.max cannot be greater than N-1 in length
+    AR.max <- as.integer(max(1, min(n.o-1, AR.max)))
+    if (verbose){ message("autoregressive model fit (returning innovations)") }
     # solves Yule-Walker equations
     #http://svn.r-project.org/R/trunk/src/library/stats/R/ar.R
     #stats::ts(X, frequency=sps)
@@ -159,8 +188,9 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     opar <- par(no.readonly = TRUE)
     par(las=1, xpd=FALSE)
     if (!is.null(ardfit)){
-      ftyp <- sprintf("AR(%i) model fit", ardfit$order)
+      ftyp <- sprintf("AR(%i) model fit", nAR <- ardfit$order)
       pltprew <- stats::ts.union(x=tser, x_lm=tser_prew_lm, x_ar=tser_prew_ar)
+      if (nAR==0) warning("AR(0) was the highest model found!")
     } else if (is.null(lmdfit)) {
       ftyp <- ""
       pltprew <- tser
