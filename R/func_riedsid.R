@@ -43,9 +43,9 @@
 #' @keywords tapers tapers-constraints riedel-sidorenko
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' 
-#' @param psd vector or class 'spec'; the spectral values used to optimize taper numbers
+#' @param PSD vector or class 'spec'; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
-#' @param tapseq vector; representing positions or frequencies (same length as psd)
+#' @param tapseq vector; representing positions or frequencies (same length as \code{PSD})
 #' @param Deriv.method character string; choice of gradient estimation method 
 #' @param Local.loss string; sets how sensitive the spectral derivatives are
 #' @param constrained logical; should the taper constraints be applied to the optimum tapers?
@@ -56,7 +56,7 @@
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{smooth.spline}
 #' @example inst/Examples/rdex_riedsid.R
-riedsid <- function(psd, ntaper, 
+riedsid <- function(PSD, ntaper, 
                     tapseq=NULL, 
                     Deriv.method=c("local_qls","spg"),
                     Local.loss=c("Optim","Less","More"),
@@ -67,28 +67,28 @@ riedsid <- function(psd, ntaper,
 #' @aliases riedsid.spec
 #' @method riedsid spec
 #' @S3method riedsid spec
-riedsid.spec <- function(psd, ...){
-  stopifnot(is.spec(psd))
-  Psd <- psd$spec
-  Ntap <- psd$taper
-  Tapseq <- psd$freq
-  riedsid(psd=Psd, ntaper=Ntap, tapseq=Tapseq, ...)
+riedsid.spec <- function(PSD, ...){
+  stopifnot(is.spec(PSD))
+  Pspec <- PSD$spec
+  Ntap <- PSD$taper
+  Tapseq <- PSD$freq
+  riedsid(PSD=Pspec, ntaper=Ntap, tapseq=Tapseq, ...)
   #.NotYetImplemented()
 }
 
 #' @rdname riedsid
 #' @method riedsid default
 #' @S3method riedsid default
-riedsid.default <- function(psd, ntaper, 
+riedsid.default <- function(PSD, ntaper, 
                             tapseq=NULL, 
                             Deriv.method=c("local_qls","spg"),
                             Local.loss=c("Optim","Less","More"),
                             constrained=TRUE, c.method=NULL,
                             verbose=TRUE, ...) {
   ## spectral values
-  psd <- as.vector(psd)
+  PSD <- as.vector(PSD)
   # num freqs
-  nf <- rlpSpec:::rlp_envAssignGet("num_freqs", length(psd))
+  nf <- psd:::psd_envAssignGet("num_freqs", length(PSD))
   # prelims
   eps <- .Machine$double.eps #**2 # was: 1e-78  #  A small number to protect against zeros
   # vectorize initial estimate
@@ -107,13 +107,13 @@ riedsid.default <- function(psd, ntaper,
   # The spectral gradients should be in log-space, so
   # create a log spec, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
-  Y <- c(psd[nadd:2], psd, psd[(nf-1):(nf-nadd)])
+  Y <- c(PSD[nadd:2], PSD, PSD[(nf-1):(nf-nadd)])
   Y[Y <= 0] <- eps
   lY <- log10(Y) # log in matlab is log_10
   dY <- d2Y <- Zeros
   #
   if (is.null(tapseq) | (length(tapseq) != nf)){
-    kseq <- seq.int(from=0, to=1/2, length.out=length(psd))
+    kseq <- seq.int(from=0, to=1/2, length.out=length(PSD))
   } else {
     kseq <- tapseq
   }
@@ -148,7 +148,7 @@ riedsid.default <- function(psd, ntaper,
     DX <- seq_len(nf) #1:nf
     RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
     attr(RSS, which="lsderiv") <- lsmeth
-    RSS <- rlpSpec:::rlp_envAssignGet("spectral_derivatives.ls", RSS)
+    RSS <- psd:::psd_envAssignGet("spectral_derivatives.ls", RSS)
     RSS <- abs(colSums(RSS))
     # sums:
     #[ ,1] fdY2
@@ -156,11 +156,11 @@ riedsid.default <- function(psd, ntaper,
     #[ ,3] fdEps
     msg <- "local quadratic regression"
   } else {
-    RSS <- splineGrad(dseq=log10(0.5+kseq), #seq.int(0,.5,length.out=length(psd))), 
-                      dsig=log10(psd),
+    RSS <- splineGrad(dseq=log10(0.5+kseq), #seq.int(0,.5,length.out=length(PSD))), 
+                      dsig=log10(PSD),
                       plot.derivs=FALSE, ...) #, spar=1)
     attr(RSS, which="lsderiv") <- lsmeth
-    RSS <- rlpSpec:::rlp_envAssignGet("spectral_derivatives", RSS) 
+    RSS <- psd:::psd_envAssignGet("spectral_derivatives", RSS) 
     #returns log
     RSS[,2:4] <- 10**RSS[,2:4]
     RSS <- abs(eps + RSS[,4] + RSS[,3]**2)
@@ -171,8 +171,8 @@ riedsid.default <- function(psd, ntaper,
   # (480)^0.2 == 3.437544
   KC <- 3.437544
   ##
-  #(480)^0.2*abs(psd./d2psd)^0.4
-  # Original form:  kopt = 3.428*abs(psd ./ d2psd).^0.4;
+  #(480)^0.2*abs(PSD/d2psd)^0.4
+  # Original form:  kopt = 3.428*abs(PSD ./ d2psd).^0.4;
   # kopt = round( 3.428 ./ abs(eps + d2Y + dY.^2).^0.4 );
   ##
   stopifnot(exists("RSS"))
@@ -198,13 +198,13 @@ riedsid.default <- function(psd, ntaper,
   #     d2Y[j] <- (u2 - uzero) %*% lY[jr] * 360 / LL2L / (L2-4)
   #   }
   #   #
-  #   #  R <- psd"/psd <- Y" + (Y')^2  2nd form preferred for consistent smoothing
+  #   #  R <- PSD"/PSD <- Y" + (Y')^2  2nd form preferred for consistent smoothing
   #   #
   #   #  Riedel-Sidorenko recipe (eq 13): 
-  #   #       kopt <- (12*abs(psd ./ d2psd)).^0.4 
+  #   #       kopt <- (12*abs(PSD ./ d2psd)).^0.4 
   #   #  but parabolic weighting in psdcore requires: 
-  #   #               (480)^0.2*abs(psd ./ d2psd).^0.4
-  #   #  Original form:  kopt <- 3.428*abs(psd ./ d2psd).^0.4
+  #   #               (480)^0.2*abs(PSD ./ d2psd).^0.4
+  #   #  Original form:  kopt <- 3.428*abs(PSD ./ d2psd).^0.4
   #   #
   #   # the optimal number of tapers (in an MSE sense):
   #   kopt_old <- as.tapers( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 ) 

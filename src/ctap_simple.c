@@ -1,5 +1,5 @@
 /*
-#   rlpSpec: 
+#   psd: 
 #
 #   Copyright (C) 2013  Andrew J. Barbour andy.barbour @ gmail.com
 #

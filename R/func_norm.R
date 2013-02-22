@@ -30,17 +30,17 @@
 #' }
 #' }
 #'
-#' \subsection{\code{"single.sided"} or \code{"rlpspec"}}{
+#' \subsection{\code{"single.sided"} or \code{"psd"}}{
 #'
 #' These spectra are scaled by the inverse of the sampling rate.
 #' Some estimators producing single-sided spectra: 
 #' \itemize{
-#' \item{\code{rlpSpec::\link{psdcore}}}{}
+#' \item{\code{psd::\link{psdcore}}}{}
 #' }
 #' }
 #'
-#' @name rlpSpec-normalization
-#' @rdname rlpSpec-normalization
+#' @name psd-normalization
+#' @rdname psd-normalization
 #' @aliases normalization
 #' @keywords spectrum-estimation normalization prewhiten
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
@@ -56,18 +56,18 @@
 #' @example inst/Examples/rdex_normalization.R
 NULL
  
-#' @rdname rlpSpec-normalization
+#' @rdname psd-normalization
 #' @aliases normalize
 #' @export
 normalize <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...) UseMethod("normalize")
-#' @rdname rlpSpec-normalization
+#' @rdname psd-normalization
 #' @aliases normalize.default
 #' @method normalize default
 #' @S3method normalize default
 normalize.default <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   .NotYetImplemented()
 }
-#' @rdname rlpSpec-normalization
+#' @rdname psd-normalization
 #' @aliases normalize.list
 #' @method normalize list
 #' @S3method normalize list
@@ -78,7 +78,7 @@ normalize.list <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   class(Spec) <- "list"
   return(Spec)
 }
-#' @rdname rlpSpec-normalization
+#' @rdname psd-normalization
 #' @aliases normalize.spec
 #' @method normalize spec
 #' @S3method normalize spec
@@ -96,12 +96,15 @@ normalize.spec <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   }
   #
   # assume its from spectrum
-  rlp <- switch(src <- match.arg(src, c("spectrum","double.sided","rlpspec","single.sided")), 
-                single.sided=TRUE, double.sided=FALSE,
-                rlpspec=TRUE, spectrum=FALSE)
-  if (rlp){
+  PSD <- switch(src <- toupper(match.arg(src,
+			  c("spectrum","double.sided","psd","single.sided"))), 
+                SINGLE.SIDED=TRUE, 
+		DOUBLE.SIDED=FALSE,
+                PSD=TRUE,
+		SPECTRUM=FALSE)
+  if (PSD){
     ptyp <- "single"
-    # spectrum is from rlpspec, and is single-sided
+    # spectrum is from psd, and is single-sided
     Spec$spec <- Spec$spec / Fsamp
   } else {
     ptyp <- "double"

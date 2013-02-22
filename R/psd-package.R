@@ -44,15 +44,15 @@
 #' }
 #'
 #' @docType package
-#' @name rlpSpec-package
-#' @aliases rlpSpec spec.rlp
+#' @name psd-package
+#' @aliases psd spec.psd
 #' @title Adaptively estimate power spectral densities of an optimally tapered series.
 #' 
 #' @author Robert L. Parker and Andrew J. Barbour <andy.barbour@@gmail.com> 
 #' 
 #' @import Peaks RColorBrewer signal zoo
 # not needed since specified in DESCRIPTION:DEPENDS stats utils graphics grDevices
-#' @useDynLib rlpSpec
+#' @useDynLib psd
 #'
 #' @references Parker, R. L., \emph{PSD}, Program documentation. \emph{Maintained Software}, N.p. 11 Nov. 2011,
 #' Web. 17 Jan. 2013, <\url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}>.

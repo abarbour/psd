@@ -1,8 +1,8 @@
-Package: rlpSpec
+Package: psd
 Type: Package
 Title: Adaptive, sine-multitaper power spectral density estimation
-Version: 0.1-0
-Date: 2013-02-04
+Version: 0.2-0
+Date: 2013-02-22
 Author: Robert L. Parker and Andrew J. Barbour
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
@@ -13,7 +13,7 @@ Description: Power spectral density estimates
     smoothing that varies with frequency to minimize the sum
     of variance and bias at each point.
 License: GPL (>= 2)
-URL: http://abarbour.github.com/rlpSpec/
+URL: http://abarbour.github.com/psd/
 Depends:
     R (>= 2.14.1),
     stats,
@@ -35,7 +35,7 @@ Suggests:
     rbenchmark,
     reshape2
 Collate:
-    'rlpSpec-package.R'
+    'psd-package.R'
     'func_pspectrum.R'
     'func_psdcore.R'
     'func_riedsid.R'

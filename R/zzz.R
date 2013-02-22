@@ -11,35 +11,35 @@
 # ##
 ## .First.lib is a defunct(ion)
 # .First.lib <- function(lib, pkg) {
-#   library.dynam("rlpSpec", pkg, lib)
+#   library.dynam("psd", pkg, lib)
 # }
 
 ##
 ##
 .onLoad <- function(...) {
   ## DLL
-  #library.dynam("rlpSpec", pkg, lib)
-  # useDynLib(rlpSpec) in NAMESPACE though... any conflicts?
+  #library.dynam("psd", pkg, lib)
+  # useDynLib(psd) in NAMESPACE though... any conflicts?
 }
 
 .onUnload <- function(libpath)
 {
-  library.dynam.unload("rlpSpec", libpath)
+  library.dynam.unload("psd", libpath)
 }
 ##
 # executed after .onLoad is executed, once the namespace is visible to user
 .onAttach <- function(...) {
   ##
   ## env pointer
-  rlpSpec:::rlp_envGlobals()
+  psd:::psd_envGlobals()
   ## initialize it
-  rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE)
+  psd:::psd_initEnv(refresh=TRUE, verbose=FALSE)
   ## add some info
-  rlpSpec:::rlp_envAssign("init", paste(rlpSpec:::rlp_envGet("init"), "(upon attach)"))
+  psd:::psd_envAssign("init", paste(psd:::psd_envGet("init"), "(upon attach)"))
   ##
   packageStartupMessage(
-    sprintf("Loaded rlpSpec (%s) -- Adaptive multitaper spectrum estimation.",
-            utils:::packageVersion("rlpSpec")))
+    sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation.",
+            utils:::packageVersion("psd")))
 }
 .Last.lib <- function(...){
   NULL

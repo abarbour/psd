@@ -485,7 +485,7 @@ ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
   tapvec <- as.numeric(tapvec)
   maxslope <- as.numeric(maxslope)
   # c-code used for speed up of forward+backward operations
-  tapvec.adj <- as.tapers(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE = "rlpSpec"))
+  tapvec.adj <- as.tapers(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE="psd"))
   return(tapvec.adj)
 }
 

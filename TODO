@@ -8,8 +8,10 @@ vignettes
 
 Miscellany
 ----------
-[ ] rename? ... to 'psd'?
-[ ] Once rename + examples done, bump to 0.2-0
+[X] rename? ... to 'psd'?
+[X] replace rlpSpec refs to psd
+[ ] change .rlpenv to .psdenv
+[ ] Once replace + vignettes done, bump to 0.2-0
 [ ] Once bump, final packaging and CRAN submit
 [X] remove magsat documentation? where?? during build:
 	Undocumented data sets:
@@ -22,7 +24,7 @@ Miscellany
 *** remove --no-examples and get to build [NA]
 *** *** why do they not build?? [X]
 *** *** because there's some environment thing going on: during example
-*** *** checking there is no pointer available to .rlpenv.
+*** *** checking there is no pointer available to .psdenv.
 *** *** Not worth the effort to track down, so just \dontrun{} stuff
 [X] normalization function
 [X] build --as-cran --no-multiarch --no-examples
@@ -49,8 +51,8 @@ Examples
 [X] parabolic_weights
 [X] prewhiten
 [X] pilot_spec
-[X] rlpSpec-environment
-[X] rlpSpec-normalization
+[X] psd-environment
+[X] psd-normalization
 [X] spectral_properties
 [X] spec_confint
 [X] psdcore

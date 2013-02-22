@@ -4,16 +4,16 @@
 #'
 #' @keywords methods S3methods utilities
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @rdname rlpSpec-utilities
-#' @name rlpSpec-utilities
-#' @seealso \code{\link{rlpSpec-package}}, \code{\link{as.tapers}}
+#' @rdname psd-utilities
+#' @name psd-utilities
+#' @seealso \code{\link{psd-package}}, \code{\link{as.tapers}}
 #' @example inst/Examples/rdex_utilities.R
 NULL
 
 #' @description \code{vardiff} returns the variance of the first (or second) 
 #' difference of the series. \code{varddiff} is a convenience wrapper
 #' to return variance for the second difference.
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export
 #' @keywords utilities first-difference variance
 #' @param Xd object to difference
@@ -23,7 +23,7 @@ vardiff <- function(Xd, double.diff=FALSE){
   if (double.diff) dorder <- 2
   stats::var(diff(Xd, differences=dorder))
 }
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export
 #' @keywords utilities first-difference variance
 varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
@@ -32,7 +32,7 @@ varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
 #' @details 
 #' Decibels are defined as \eqn{10 \log{}_{10} \frac{X_1}{X_2}}, 
 #' unless \code{is.power=TRUE} in which \eqn{\mathrm{db} X^2 \equiv 20 \log{}_{10} X^2}
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @param Rat numeric; A ratio to convert to decibels (\code{dB}).
 #' @param invert logical; assumes \code{Rat} is already in decibels, so return ratio
 #' @param pos.only logical; if \code{invert=FALSE}, sets negative or zero values to NA
@@ -61,7 +61,7 @@ dB <- function(Rat, invert=FALSE, pos.only=TRUE, is.power=FALSE){
 #' is not unintentionally evaluated; \code{envir2char} simply deparses the
 #' object name.
 #' 
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export
 #' @keywords utilities environment
 #' @param envchar An object with class 'character'.
@@ -73,7 +73,7 @@ char2envir <- function(envchar){
   stopifnot(is.character(envchar))
   eval(as.name(envchar))
 }
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export
 #' @keywords utilities environment
 envir2char <- function(envir){
@@ -82,7 +82,7 @@ envir2char <- function(envir){
 }
 
 #' @description \code{vector_reshape} reshapes a vector into another vector.
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @name vector_reshape
 #' @param x  An object to reshape (\code{vector_reshape}).
 #' @param vec.shape  choice between horizontally-long or vertically-long vector.
@@ -92,7 +92,7 @@ envir2char <- function(envir){
 #' @export
 #' @keywords utilities vector-manipulation matrix-manipulation
 vector_reshape <- function(x, vec.shape=c("horizontal","vertical")) UseMethod("vector_reshape")
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @method vector_reshape default
 #' @S3method vector_reshape default
 vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
@@ -105,12 +105,12 @@ vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
 #' @description \code{colvec} returns the object as a vertically long vector; whereas
 #' \code{rowvec} returns the object as a horizontally long vector.
 #' @details \code{colvec, rowvec} are simple wrapper functions to \code{vector_reshape}.
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export
 #' @keywords utilities vector-manipulation matrix-manipulation
 colvec <- function(x) vector_reshape(x, "vertical")
 
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @aliases as.rowvec
 #' @export
 #' @keywords utilities vector-manipulation matrix-manipulation
@@ -118,7 +118,7 @@ rowvec <- function(x) vector_reshape(x, "horizontal")
 
 #' @description \code{is.spec} reports whether an object has class S3 class 'spec', as
 #' would one returned by, for example, \code{spectrum}.
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @param Obj  An object to test for class inheritance.
 #' @return \code{is.spec} and \code{is.tapers} both return
 #' logicals about whether or not the object does have class 'spec' or 'tapers', 
@@ -131,7 +131,7 @@ is.spec <- function(Obj) inherits(Obj, "spec")
 #' would one returned by, for example, \code{\link{as.tapers}}.
 #' @export
 #' @keywords utilities inherits is
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 is.tapers <- function(Obj) inherits(Obj, "tapers")
 
 #' Numerical derivatives of a series based on a weighted, smooth spline representation.
@@ -243,7 +243,7 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 
 #' @description \code{na_mat} populates a matrix of specified dimensions 
 #' with \code{NA} values.
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @param nrow integer; the number of rows to create.
 #' @param ncol integer; the number of columns to create (default 1).
 #' @return \code{na_mat} returns a matrix of dimensions \code{(nrow,ncol)} with
@@ -251,7 +251,7 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 #' @export
 #' @keywords utilities vector-creation matrix-creation
 na_mat <- function(nrow, ncol=1) UseMethod("na_mat")
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @method na_mat default
 #' @S3method na_mat default
 na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
@@ -259,23 +259,23 @@ na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 #' @description \code{zeros} populate a column-wise matrix with zeros; whereas,
 #' \code{ones} populates a column-wise matrix with ones.  \emph{Note that 
 #' \code{nrow} is enforced to be at least 1 for both functions.}
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export 
 #' @keywords utilities vector-creation matrix-creation
 # params described by na_mat
 #' @return For \code{zeros} or \code{ones} respectively, a matrix vector 
 #' with \code{nrow} zeros or ones.
 zeros <- function(nrow) UseMethod("zeros")
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @method zeros default
 #' @S3method zeros default
 zeros.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
 
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @export
 #' @keywords utilities vector-creation matrix-creation
 ones <- function(nrow) UseMethod("ones")
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @method ones default
 #' @S3method ones default
 ones.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
@@ -302,10 +302,10 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow
 #' equivalent to \code{(X) \%\% (Y)}.
 #' @export
 #' @keywords utilities modulo-division arithmetic-operations
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @aliases modulo
 mod <- function(X, Y) UseMethod("mod")
-#' @rdname rlpSpec-utilities
+#' @rdname psd-utilities
 #' @method mod default
 #' @S3method mod default
 mod.default <- function(X, Y){

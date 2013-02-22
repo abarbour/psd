@@ -23,16 +23,16 @@ is.tapers(as.tapers(X))
 ##
 ## Check for spec object:
 ##
-psd <- spectrum(X, plot=FALSE)
+PSD <- spectrum(X, plot=FALSE)
 # return is class 'spec'
-is.spec(psd) # TRUE
+is.spec(PSD) # TRUE
 # but the underlying structure is just a list
-psd <- unclass(psd)
-is.spec(psd) # FALSE
+PSD <- unclass(PSD)
+is.spec(PSD) # FALSE
 ##
 ## Environment character strings
 ##
-print(envname <- get_rlp_env_name())
+print(envname <- get_psd_env_name())
 print(envir <- char2envir(envname))
 try(char2envir("some nonexistent environment"), silent=TRUE) # error
 # and environment objects:

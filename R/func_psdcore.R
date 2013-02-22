@@ -14,7 +14,7 @@
 #' The series, with length \eqn{N}, is necessarily truncated so that \eqn{1+N/2} evenly 
 #' spaced frequencies are returned.  This truncation makes the series length ``highly composite",
 #' which the discrete Fourier transform (DFT) is most efficient.
-#' The vignette "fftw" (accessed with \code{vignette("fftw",package="rlpSpec")}) shows
+#' The vignette "fftw" (accessed with \code{vignette("fftw",package="psd")}) shows
 #' how the performance of a DFT can be affected by series length.
 #' }
 #'
@@ -81,7 +81,7 @@ psdcore.default <- function(X.d,
                             ...
                            ) {
   #
-  if (refresh) rlpSpec:::rlp_envClear(verbose=verbose)
+  if (refresh) psd:::psd_envClear(verbose=verbose)
   #
   series <- deparse(substitute(X.d))
   if (is.null(X.frq)){
@@ -109,24 +109,24 @@ psdcore.default <- function(X.d,
   # only one taper: usually means a first run
   lt <- length(ntaper)
   # onle one variable in the env (init): it hasn't been added to yet
-  nenvar <- length(rlpSpec:::rlp_envStatus()$listing)
+  nenvar <- length(psd:::psd_envStatus()$listing)
   if (lt == 1 | nenvar == 1 | refresh){
     # original series length
-    n.o <- rlpSpec:::rlp_envAssignGet("len_orig", length(X.d))
+    n.o <- psd:::psd_envAssignGet("len_orig", length(X.d))
     #
     X <- X.d
     if (preproc) X <- prewhiten(X, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
     #
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
-    n.e <- rlpSpec:::rlp_envAssignGet("len_even", n.o - n.o %% 2 )
+    n.e <- psd:::psd_envAssignGet("len_even", n.o - n.o %% 2 )
     X.even <- as.matrix(X[seq_len(n.e)])
-    rlpSpec:::rlp_envAssign("ser_orig", X)
-    rlpSpec:::rlp_envAssign("ser_orig_even", X.even)
+    psd:::psd_envAssign("ser_orig", X)
+    psd:::psd_envAssign("ser_orig_even", X.even)
     # half length of even series
-    nhalf <- rlpSpec:::rlp_envAssignGet("len_even_half", n.e/2)
+    nhalf <- psd:::psd_envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <- rlpSpec:::rlp_envAssignGet("ser_even_var", drop(stats::var(X.even)))
+    varx <- psd:::psd_envAssignGet("ser_even_var", drop(stats::var(X.even)))
     # create uniform tapers
     nt <- nhalf + 1
     if (lt < nt) {
@@ -137,16 +137,16 @@ psdcore.default <- function(X.d,
     ## zero pad and take double-length fft
     # fftw is faster (becomes apparent for long series)
     fftz <- fftw::FFT(as.numeric(c(X.even, zeros(n.e))))
-    fftz <- rlpSpec:::rlp_envAssignGet("fft_even_demeaned_padded", fftz)
+    fftz <- psd:::psd_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
     if (verbose){warning("Working environment *not* refreshed. Results may be bogus.")}
     X <- X.d
     ntap <- ntaper
     #stopifnot(length(X)==length(ntap))
-    n.e <- rlpSpec:::rlp_envGet("len_even")
-    nhalf <- rlpSpec:::rlp_envGet("len_even_half")
-    varx <- rlpSpec:::rlp_envGet("ser_even_var")
-    fftz <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
+    n.e <- psd:::psd_envGet("len_even")
+    nhalf <- psd:::psd_envGet("len_even_half")
+    varx <- psd:::psd_envGet("ser_even_var")
+    fftz <- psd:::psd_envGet("fft_even_demeaned_padded")
   }
   #
   # if ntaper is a vector, this doesn't work [ ] ?
@@ -181,12 +181,12 @@ psdcore.default <- function(X.d,
     f <- base::seq.int(0, nhalf, by=1)
   }
   ##
-  ###  Calculate the psd by averaging over tapered estimates
+  ###  Calculate the PSD by averaging over tapered estimates
   nfreq <- length(f)
   NF <- seq_len(nfreq) # faster or slower than 1:nfreq?
   ##
   if (sum(ntap) > 0) {
-    psd <- 0 * NF
+    PSD <- 0 * NF
     n2e <- n.e * 2
     # get a set of all possible weights for the current taper-vector
     # then the function need only subset the master set
@@ -209,21 +209,21 @@ psdcore.default <- function(X.d,
       #f2 <- Xfft[j2+1]
       af12. <- Xfft[j1+1] - Xfft[j2+1]
       af122. <- af12. * af12. # will be complex, so use abs:
-      psdv <- KPW$taper_weights[NT] %*% base::matrix(base::abs(af122.), ncol=1)
-      return(psdv)
+      PSDv <- KPW$taper_weights[NT] %*% base::matrix(base::abs(af122.), ncol=1)
+      return(PSDv)
     }
     # ** compiled code doesn't appear to help speed
     #     PSDFUNc <- compiler::cmpfun(PSDFUN)
     # ** foreach is easier to follow, but foreach solution is actually slower :(
-    #     psd <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
+    #     PSD <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
-    psd <- vapply(X=f[NF], FUN=PSDFUN, FUN.VALUE=double(1))
+    PSD <- vapply(X=f[NF], FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     if (verbose) message("zero taper result == raw periodogram")
-    Xfft <- rlpSpec:::rlp_envGet("fft_even_demeaned_padded")
+    Xfft <- psd:::psd_envGet("fft_even_demeaned_padded")
     ff <- Xfft[NF]
-    N0. <- rlpSpec:::rlp_envGet("len_orig")
-    psd <- base::abs(ff * base::Conj(ff)) / N0.
+    N0. <- psd:::psd_envGet("len_orig")
+    PSD <- base::abs(ff * base::Conj(ff)) / N0.
   }
   ##  Interpolate if necessary to uniform freq sampling
   if (lt > 1 && ndecimate > 1){
@@ -231,20 +231,20 @@ psdcore.default <- function(X.d,
     if (verbose) message("decim stage 2")
     tmp.x <- f
     tmp.xi <- tmp.y
-    tmp.y <- psd
+    tmp.y <- PSD
     # x y x_interp --> y_interp
     tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
-    psd <- tmp.yi
+    PSD <- tmp.yi
   }
   ##
   # should not be complex at this point!!
-  stopifnot(!is.complex(psd))
-  #psd <- as.rowvec(psd)
+  stopifnot(!is.complex(PSD))
+  #PSD <- as.rowvec(PSD)
   ## Normalize by variance, 
-  trap.area <- base::sum(psd) - psd[1]/2 - psd[length(psd)]/2 # Trapezoidal rule
+  trap.area <- base::sum(PSD) - PSD[1]/2 - PSD[length(PSD)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
   ## normalize to two sided spectrum
-  psd.n <- psd * (2 * varx / (trap.area * bandwidth))
+  PSD.n <- PSD * (2 * varx / (trap.area * bandwidth))
   ## Nyquist frequencies
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=nfreq)) # was just 0.5
   ## timebp
@@ -257,19 +257,19 @@ psdcore.default <- function(X.d,
   bandwidth <- bandwidth * (mtap + 1) 
   #
   if (first.last){ 
-    # BUG: there may be an issue with f==0, & f[length(psd)]
+    # BUG: there may be an issue with f==0, & f[length(PSD)]
     # so just extrapolate from the prev point
     indic <- base::seq_len(nfreq - 2) + 1 
-    psd.n <- base::exp(signal::interp1(frq[indic], base::log(psd.n[indic]), frq, method='linear', extrap=TRUE))
+    PSD.n <- base::exp(signal::interp1(frq[indic], base::log(PSD.n[indic]), frq, method='linear', extrap=TRUE))
     if (verbose) message("first.last=TRUE: Zero and Nyquist frequencies were extrapolated")
   }
   ##
-  pltpsd <- function(Xser, frqs, psds, taps, nyq, detrend, demean, ...){
+  pltpsd <- function(Xser, frqs, PSDS, taps, nyq, detrend, demean, ...){
     fsamp <- frequency(Xser)
     stopifnot(fsamp==X.frq)
     Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=detrend, plot=FALSE)
     # frequencies are appropriate,
-    # but spectrum is normed for double-sided whereas rlpSpec single-sided; hence,
+    # but spectrum is normed for double-sided whereas psd single-sided; hence,
     # factor of 2
     Xpg <- normalize(Xpg, fsamp, "spectrum", verbose=FALSE)
     ##
@@ -278,14 +278,14 @@ psdcore.default <- function(X.d,
     #layout(matrix(c(1,2), ncol=1), c(1,2))
     layout(matrix(c(1,1,2,2,3,4), 3, 2, byrow = TRUE))
     ## Prelims:
-    # rlp
+    # psd
     lfrq <- log10(frqs); rm(frqs)
-    db_psd <- dB(psds/fsamp); rm(psds) # quick normalization
+    db_PSD <- dB(PSDS/fsamp); rm(PSDS) # quick normalization
     # spec.pgram
     lfrqp <- log10(Xpg$freq)
     db_pgram <- dB(Xpg$spec); rm(Xpg)
     # plotting
-    r1 <- range(db_psd, na.rm=TRUE, finite=TRUE)
+    r1 <- range(db_PSD, na.rm=TRUE, finite=TRUE)
     r2 <- range(db_pgram, na.rm=TRUE, finite=TRUE)
     ylims <- round(c(min(r1, r2), max(r1, r2)), 1)
     r1 <- range(lfrqp, na.rm=TRUE, finite=TRUE)
@@ -299,7 +299,7 @@ psdcore.default <- function(X.d,
     mtext("log10 frequency", side=1, line=1.6)
     #mtext(, cex=0.6)
     abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
-    lines(lfrq, db_psd, type="l")
+    lines(lfrq, db_PSD, type="l")
     legend("bottomleft",c("spec.pgram (20% cosine taper)",sprintf("psdcore (max %i tapers)",max(taps))), col=c("red","black"), lty=1, lwd=2, cex=0.9)
     ## tapers
     if (is.tapers(taps)){
@@ -318,12 +318,12 @@ psdcore.default <- function(X.d,
     par(opar)
   }
   ## Plot it
-  if (plotpsd) pltpsd(Xser=X, frqs=frq, psds=psd.n, taps=ntap, nyq=Nyq, detrend=preproc, demean=preproc, ...)
+  if (plotpsd) pltpsd(Xser=X, frqs=frq, PSDS=PSD.n, taps=ntap, nyq=Nyq, detrend=preproc, demean=preproc, ...)
   ##
   funcall <- sprintf("psdcore (dem.+detr. %s f.l. %s refr. %s)", preproc, first.last, refresh) 
   ## paste(as.character(match.call()[]),collapse=" ") 
-  psd.out <- list(freq = as.numeric(frq), 
-                  spec = as.numeric(psd.n), 
+  PSD.out <- list(freq = as.numeric(frq), 
+                  spec = as.numeric(PSD.n), 
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NULL, 
@@ -331,8 +331,8 @@ psdcore.default <- function(X.d,
                   df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
-                  n.used = rlpSpec:::rlp_envGet("len_even"), 
-                  orig.n = rlpSpec:::rlp_envGet("len_orig"), 
+                  n.used = psd:::psd_envGet("len_even"), 
+                  orig.n = psd:::psd_envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
                   method = sprintf("Sine multitaper\n%s",funcall), 
@@ -343,6 +343,6 @@ psdcore.default <- function(X.d,
                   timebp=timebp,
                   nyquist.frequency=Nyq
                   )
-  if (as.spec){class(psd.out) <- "spec"}
-  return(invisible(psd.out))
+  if (as.spec){class(PSD.out) <- "spec"}
+  return(invisible(PSD.out))
 }

@@ -37,7 +37,7 @@
 #' @name spectral_properties
 #' @export
 #' @keywords properties tapers resolution uncertainty degrees-of-freedom bandwidth
-#' @seealso \code{\link{spec_confint}}, \code{\link{rlpSpec-package}}
+#' @seealso \code{\link{spec_confint}}, \code{\link{psd-package}}
 #'
 #' @param tapvec object with class \code{tapers} or \code{spec}
 #' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
@@ -121,7 +121,7 @@ spectral_properties.tapers <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db
 #' \code{spec.ci} function inside \code{stats::plot.spec}.
 #' @name spec_confint
 #' @export
-#' @seealso \code{\link{spectral_properties}}, \code{\link{rlpSpec-package}}, \code{plot.spec}, \code{\link{dB}}
+#' @seealso \code{\link{spectral_properties}}, \code{\link{psd-package}}, \code{plot.spec}, \code{\link{dB}}
 #' @param dof numeric; the degrees of freedom \eqn{\nu}
 #' @param p numeric; the coverage probability \eqn{p}, bound within \eqn{[0,1)}
 #' @param as.db logical; should the values be returned as decibels?

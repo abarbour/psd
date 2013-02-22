@@ -5,7 +5,7 @@
 #' frequency has been iteratively optimized (\code{niter} times).
 #'
 #' See the \strong{Adaptive estimation} section in the description of
-#' the \code{\link{rlpSpec-package}} for details regarding adaptive estimation.
+#' the \code{\link{psd-package}} for details regarding adaptive estimation.
 #'
 #' @name pspectrum
 #' @export
@@ -50,7 +50,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=verbose)
+      psd:::psd_initEnv(refresh=TRUE, verbose=verbose)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){
@@ -61,16 +61,16 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
       pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap_pilot, 
                  remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       # ensure it's in the environment
-      Pspec <- rlpSpec:::rlp_envGet("pilot_psd")
-      xo <- rlpSpec:::rlp_envAssignGet("original_series", x)
+      Pspec <- psd:::psd_envGet("pilot_psd")
+      xo <- psd:::psd_envAssignGet("original_series", x)
       # starting spec variance
       dvar.o <- varddiff(Pspec$spec)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
       if (save_hist){
-        rlpSpec:::new_adapt_history(niter)
-        rlpSpec:::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
+        psd:::new_adapt_history(niter)
+        psd:::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
       #xo <- 0 # to prevent passing orig data back/forth
     } else {
@@ -90,11 +90,11 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
                        preproc=FALSE, plotpsd=plotpsd_, verbose=FALSE)
       if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
       ## update history
-      if (save_hist) rlpSpec:::update_adapt_history(stage, Pspec$taper, Pspec$spec)
+      if (save_hist) psd:::update_adapt_history(stage, Pspec$taper, Pspec$spec)
     }
   }
-  if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "rlp", verbose=verbose)
-  return(invisible(rlpSpec:::rlp_envAssignGet("final_psd", Pspec)))
+  if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "psd", verbose=verbose)
+  return(invisible(psd:::psd_envAssignGet("final_psd", Pspec)))
 }
 
 #' Calculate the pilot power spectral densities.
@@ -191,7 +191,7 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     Pspec_ar$spec <- Pspec_ar$spec / (mARs <- mean(Pspec_ar$spec))
   }
   #
-  #rlpSpec:::rlp_initEnv(refresh=TRUE, verbose=FALSE)
+  #psd:::psd_initEnv(refresh=TRUE, verbose=FALSE)
   # Initial spectrum:
   Pspec <- PSDFUN(xprew$prew_lm, x.frequency, ntap, AR=FALSE)
   num_frq <- length(Pspec$freq)
@@ -210,7 +210,7 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     Ospec <- Pspec
     Pspec$spec <- Pspec$spec / Pspec_ar$spec
     # reup the spectrum
-    rlpSpec:::rlp_envAssignGet("AR_psd", Pspec_ar)
+    psd:::psd_envAssignGet("AR_psd", Pspec_ar)
   }
   if (plot){
     if (REMAR){
@@ -229,5 +229,5 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
       plot(Pspec, log="dB", main="Pilot spectrum estimation")
     }
   }
-  return(invisible(rlpSpec:::rlp_envAssignGet("pilot_psd", Pspec)))
+  return(invisible(psd:::psd_envAssignGet("pilot_psd", Pspec)))
 }

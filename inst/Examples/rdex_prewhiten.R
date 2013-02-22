@@ -16,12 +16,12 @@ mts.par <- mts$prew_ar
 #
 ntap <- 20
 ylog <- "dB"
-plot(psd <- psdcore(mts.p, ntaper=ntap), log=ylog, lwd=2, ylim=c(-5,35))
+plot(PSD <- psdcore(mts.p, ntaper=ntap), log=ylog, lwd=2, ylim=c(-5,35))
 # remove the effect of AR model
-psd.ar <- psdcore(mts.par, ntaper=ntap)
-psd.ar$spec <- psd.ar$spec / mean(psd.ar$spec)
-psd$spec <- psd$spec / psd.ar$spec
-plot(psd, log=ylog, add=TRUE, lwd=2, col="red")
-plot(psd.ar, log=ylog, add=TRUE, col="blue", lwd=2)
+PSD.ar <- psdcore(mts.par, ntaper=ntap)
+PSD.ar$spec <- PSD.ar$spec / mean(PSD.ar$spec)
+PSD$spec <- PSD$spec / PSD.ar$spec
+plot(PSD, log=ylog, add=TRUE, lwd=2, col="red")
+plot(PSD.ar, log=ylog, add=TRUE, col="blue", lwd=2)
 ##
 #RDEX#}

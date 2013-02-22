@@ -8,20 +8,20 @@ require(RColorBrewer)
 ## adaptive estimation for the Project MAGNET dataset
 data(magnet)
 # adaptive psd estimation (turn off diagnostic plot)
-psdr <- pspectrum(Xr <- magnet$raw, plot=FALSE)
-psdc <- pspectrum(Xc <- magnet$clean, plot=FALSE)
+PSDr <- pspectrum(Xr <- magnet$raw, plot=FALSE)
+PSDc <- pspectrum(Xc <- magnet$clean, plot=FALSE)
 # plot them on the same scale
-plot(psdc, log="dB", main="Raw and Clean Project MAGNET power spectral density",
+plot(PSDc, log="dB", main="Raw and Clean Project MAGNET power spectral density",
      lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
-plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
+plot(PSDr, log="dB", add=TRUE, lwd=3, lty=5)
 text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 
 ## Change sampling, and inspect the diagnostic plot
 pspectrum(Xc, niter=1, x.frqsamp=10)
 
 ## Say we forgot to assign the results: we can recover from the environment with:
-psdc_recovered <- rlpSpec:::rlp_envGet("final_psd")
-plot(psdc_recovered)
+PSDc_recovered <- psd:::psd_envGet("final_psd")
+plot(PSDc_recovered)
 
 ##
 ## Visualize adaptive history

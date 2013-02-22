@@ -1,7 +1,7 @@
 #
-# Profile rlpSpec core functionality
+# Profile psd core functionality
 #
-require(rlpSpec)
+require(psd)
 do.prof <- function(PSD){
   nd <- 1e2 
   X.d <- arima.sim(list(order = c(1,1,0), ar = 0.9),n=nd)

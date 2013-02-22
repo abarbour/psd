@@ -9,7 +9,7 @@ require(plyr)
 require(multitaper)
 require(rbenchmark)
 require(reshape2)
-require(rlpSpec)
+require(psd)
 #
 reps <- 10
 PSD <- psdcore
@@ -24,7 +24,7 @@ run.bench <- function(nd, nt=8, nreps=reps){
                         replications=nreps)
   psdbench$num_terms <- nd
   psdbench$num_taps <- nt
-  psdbench$test <- c("rlpSpec::psdcore","multitaper::spec.mtm")
+  psdbench$test <- c("psd::psdcore","multitaper::spec.mtm")
   return(psdbench)
 }
 #
