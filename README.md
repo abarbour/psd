@@ -1,8 +1,8 @@
-** rlpSpec: Adaptive, sine-multitaper power spectral density estimation. **
+**psd: Adaptive, sine-multitaper power spectral density estimation (in R)**
 
-This work is a port of Robert Parker's (Matlab version of) PSD*
+*This work is a port of Robert Parker's (Matlab version of) PSD*
 
-From Parker's site:
+From Parker's site [1]:
 
     P.S.D. stands for the Power Spectral Density, often simply
     referred to as the power spectrum, a property of stationary
@@ -24,4 +24,5 @@ From Parker's site:
     frequency to minimize the sum of variance and bias at each
     point.
 
-* http://igppweb.ucsd.edu/~parker/Software/index.html
+**References**
+* [1] http://igppweb.ucsd.edu/~parker/Software/index.html
