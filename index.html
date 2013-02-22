@@ -1,83 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset='utf-8'>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>PSD by abarbour</title>
 
-  <title>abarbour/rlpSpec @ GitHub</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #f1f3ba;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #0e0c45; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #0e0c45; }
-    h3 { text-align: center; color: #0e0c45; }
-    a { color: #0e0c45; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>PSD</h1>
+        <p>Adaptive sine-multitaper spectrum estimation in R</p>
+        <p class="view"><a href="https://github.com/abarbour/psd">View the Project on GitHub <small>abarbour/psd</small></a></p>
+        <ul>
+          <li><a href="https://github.com/abarbour/psd/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/abarbour/psd/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/abarbour/psd">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>** psd: Adaptive, sine-multitaper power spectral density estimation. (in R) **</p>
 
-<body>
-  <a href="https://github.com/abarbour/rlpSpec"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+<p>This work is a port of Robert Parker's (Matlab version of) PSD*</p>
 
-  <div id="container">
+<p>From Parker's site:</p>
 
-    <div class="download">
-      <a href="https://github.com/abarbour/rlpSpec/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/abarbour/rlpSpec/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+<pre><code>P.S.D. stands for the Power Spectral Density, often simply
+referred to as the power spectrum, a property of stationary
+stochastic time series that usually provides remarkable insights
+into the physical processes in question. Loosely speaking, the
+PSD gives the energy density in each frequency band; it is a
+statistic of the underlying random process, and so it can only
+be estimated from a given realization, that is, a given finite
+collection of data. There are probably dozens of different
+estimation algorithms for the job. The program psd provides a
+small number of easily used methods, with the intent of providing
+a good spectral estimate without requiring the user to set too
+many tuning parameters.
+
+Specifically, psd is based on the sine
+multitaper approach of Riedel and Sidorenko to spectral estimation.
+All spectral estimators smooth the spectrum in order to reduce
+variance; the S-R method applies smoothing that varies with
+frequency to minimize the sum of variance and bias at each
+point.
+</code></pre>
+
+<ul>
+<li><a href="http://igppweb.ucsd.edu/%7Eparker/Software/index.html">http://igppweb.ucsd.edu/~parker/Software/index.html</a></li>
+</ul>
+      </section>
     </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/abarbour">abarbour</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
-    <h1><a href="https://github.com/abarbour/rlpSpec">rlpSpec</a></h1>
-    
-    <div class="description">
-      Adaptive sine-multitaper spectrum estimation
-    </div>
-
-    <h2>Authors</h2>
-      <p>
-      <a href="https://github.com/abarbour">Andrew Barbour</a> (port to R: classes, data, demo, documentation, methods)
-      <br/>
-      Robert L Parker (original implementations in Fortran, and Matlab)
-      <br/>
-      </p>    
-
-    
-      <h2>Contact</h2>
-      <p>Andy Barbour (andy.barbour@gmail.com)
-<br/>      </p>
-    
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/abarbour/rlpSpec/zipball/master">zip</a> or
-      <a href="https://github.com/abarbour/rlpSpec/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/abarbour/rlpSpec</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/abarbour/rlpSpec">abarbour/rlpSpec</a>
-    </div>
-
-  </div>
-
-</body>
+  </body>
 </html>
