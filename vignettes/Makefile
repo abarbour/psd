@@ -3,7 +3,7 @@
 
 R_HOME = /usr
 
-PDFS = fftw.pdf normalization.pdf rlpSpec_overview.pdf
+PDFS = fftw.pdf normalization.pdf psd_overview.pdf
 
 all: $(PDFS)
 

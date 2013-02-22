@@ -74,6 +74,7 @@
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{geometry}
+\usepackage{hyperref}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
@@ -87,7 +88,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
+\newcommand{\psd}[0]{\href{http://abarbour.github.com/psd/}{\color{blue}\Rcmd{psd}}}
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
@@ -117,7 +118,7 @@
   depends crucially on the normalization used, 
   which is often the greatest source of confusion.
   Here we outline
-  the normalization used by \rlp{}, namely
+  the normalization used by \psd{}, namely
   the \bidx{single-sided}
   \bidx{power spectral density} (PSD).
   We briefly outline the background mathematics,
@@ -299,7 +300,7 @@ of the quantities we have reviewed.
 %%
 %%
 \section{A from-scratch example: White noise.}
-Without using the tools in \rlp{} we will build up an example
+Without using the tools in \psd{} we will build up an example
 using R commands, in order to highlight the topic of normalization.
 
 First, generate a normally distributed series\footnote{
@@ -417,8 +418,8 @@ Schi <- \hlfunctioncall{Chifit}(S)
 \end{knitrout}
 
 While the optimal degrees of freedom is very nearly two, the
-value produced by \Rcmd{mean} is different by merely one percent--certainly
-an acceptable bias.
+value produced by \Rcmd{mean} is different by merely one percent (certainly
+an acceptable bias for our purposes).
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -684,7 +685,7 @@ assuming the sampling information is included in the series.
 
 \section{Other PSD estimators}
 The suite of extensions having
-similar functionality to \rlp{}
+similar functionality to \psd{}
 is relatively limited; however, there are at least three which
 can produce sophisticated PSD estimates.   We have
 summarized the available functions in Table \ref{tbl:methods}

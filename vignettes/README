@@ -1,7 +1,3 @@
-README
-/Users/abarbour/nute.processing/development/rlpSpec/inst/doc
-Creation date:	Tue Jan 29 20:59:57 PST 2013
-
 Notes:
 	* another quirk to deal with:
 http://cran.r-project.org/web/packages/R.rsp/vignettes/NonSweaveVignettes.pdf	
@@ -16,21 +12,18 @@ http://www.mail-archive.com/r-devel@r-project.org/msg26748.html
 ## DFT benchmark vignette [DONE]
 ##
 	fftw.Rnw
-	fftw.pdf
-	# see /Users/abarbour/Google\ Drive/PUB/rlpSpec
+	# see /Users/abarbour/Google\ Drive/PUB/psd
 	fftw_bench_even.pdf
 	fftw_bench_odd.pdf
 ##
 ## Normalization vignette [ ]
 ##
 	normalization.Rnw
-	normalization.pdf
 	tbl_norms.tex		normalization definitions
 ##
 ## Overview benchmark vignette [DONE]
 ##
-	rlpSpec_overview.Rnw
-	rlpSpec_overview.pdf
+	psd_overview.Rnw
 	yuml.fawk*
 	yuml.sh*
 	yuml_d.png

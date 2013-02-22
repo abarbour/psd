@@ -4,7 +4,7 @@
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
 
-%% \VignetteIndexEntry{An overview of rlpSpec.}
+%% \VignetteIndexEntry{An overview of psd.}
 %% \VignetteEngine{knitr}
 
 \usepackage[utf8]{inputenc}
@@ -30,8 +30,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\rlp}[0]{\Rcmd{rlpSpec}}
-\newcommand{\naive}[0]{na\"{\i}ve}
+\newcommand{\psd}[0]{\href{http://abarbour.github.com/psd/}{\color{blue}\Rcmd{psd}}}
 %% path, filename, caption, label
 \newcommand{\listing}[4]{        %
   \begin{figure}[H]              %
@@ -44,21 +43,21 @@
   \end{figure}                   %
 }
 \author{Andrew J. Barbour and Robert L. Parker}
-\title{\rlp{}: Adaptive sine multitaper power spectral density estimation}
+\title{\psd{}: Adaptive sine multitaper power spectral density estimation}
 \begin{document}
 \maketitle
 \begin{abstract}
-  This vignette provides an overview of some of the
-  features included in \rlp{}, designed to
+  This vignette provides an overview of some 
+  features included in the package \psd{}, designed to
   compute estimates of power spectral
   density (PSD) for a univariate series in a sophisticated manner,
   with very little tuning effort.
-  The sine multitapers are used in which
+  The sine multitapers are used, and
   the number of tapers varies with spectral shape, according
   to the optimal value proposed by \citet{rs1995}.
   The adaptive procedure
   iteratively refines the optimal number of tapers at each frequency
-  based on the spectra from the previous iteration.
+  based on the spectrum from the previous iteration.
   Assuming the adaptive procedure converges, 
   this produces power spectra
   with significantly
@@ -75,7 +74,7 @@
   which can badly distort important features without careful tuning
   (e.g. the Daniell kernel in \Rcmd{stats::spectrum}).
   In this regards
-  \rlp{} is best suited for data having 
+  \psd{} is best suited for data having 
    large dynamic range and some mix of narrow and wide-band structure,
    features typically found in geophysical datasets.
 \end{abstract}
@@ -90,9 +89,9 @@ par(las=1)
 @
 %% libload
 <<eval=TRUE, echo=TRUE, label="Load library.">>=
-library(rlpSpec)
+library(psd)
 @ 
-For a series to analyze, we can use \Rcmd{magnet}, included in \rlp{},
+For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
 which represents along-track measurements
 of horizontal magnetic-field strength from a gimbaled, airborne magnetometer.
 These data are a small subset of the full Project MAGNET series \citep{coleman1992},
@@ -100,7 +99,7 @@ which has provided insight into
 the history of the Earth's oceanic crust 
 \citep{parker1997, obrien1999, korte2002}.
 The sampling interval is
-once every kilometer (km), so the will represent
+once every kilometer (km), so the data will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% Project MAGNET data
 <<eval=TRUE, eval=TRUE, label="Load Project MAGNET data.">>=
@@ -125,8 +124,7 @@ These deviations can,
 as we will see, adversely affect the accuracy of any PSD estimate,
 multitaper or otherwise.
 
-Setting aside any discussion regarding sample stationarity,
-we can find power spectral density (PSD)
+We can find power spectral density (PSD)
 estimates for the two series quite simply:
 %% pspectrum 5 iters
 <<eval=TRUE, echo=TRUE, label=MAGPSDS>>=
@@ -138,16 +136,17 @@ Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by
 iterations of refinement.
 With each iteration
 the number of tapers is adjusted 
-based the proposed optimal number from \citet{rs1995}, which
+based on the proposed optimal number from \citet{rs1995}, which
 depends on spectral shape; we use 
-quadratically weighted spectral derivatives to estimate this shape.
+quadratically weighted spectral derivatives \citep{prieto2007}
+to estimate this shape.
 By default, a multipanel summary plot of the final PSD compared
 to the raw periodogram estimate is shown after the final iterative stage.
 Note that if the user forgets to assign the results of
 \Rcmd{pspectrum} to the global environment, this can be
-done with the \Rcmd{rlp\_envGet} function:
+done with the \Rcmd{psd\_envGet} function:
 <<echo=TRUE, eval=TRUE>>=
-psdc_recovered <- rlp_envGet("final_psd")
+psdc_recovered <- psd_envGet("final_psd")
 all.equal(psdc, psdc_recovered)
 @
 %stopifnot(!is.null("psdc"))
@@ -198,7 +197,7 @@ plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 @
 \caption{Power spectral density estimates for the raw and cleaned
-             \Rcmd{Project MAGNET} data bundled with \rlp{}. Note that
+             \Rcmd{Project MAGNET} data bundled with \psd{}. Note that
              because the class is \Rcmd{'spec'} we have
              utilized  existing methods in the \Rcmd{stats} namespace.}
 \label{fig:pmag}
@@ -211,7 +210,7 @@ As we have shown in the Project MAGNET example,
 improved understanding of the physics behind the signals in the data
 is of great concern.
 Assuming a sample is free of non-physical points, how do
-PSD estimates from \rlp{}
+PSD estimates from \psd{}
 compare with other methods?
 Unfortunately the suite of extensions with similar functionality
 is relatively limited, but hopefully we have
@@ -220,7 +219,7 @@ summarized most, if not all, the available functions in Table \ref{tbl:methods}.
 \input{tbl_specprogs}
 
 We compare results from
-\rlp{} with those from a few of the methods in Table \ref{tbl:methods},
+\psd{} with those from a few of the methods in Table \ref{tbl:methods},
 using the same data: the cleaned Project MAGNET series.
 
 %%
@@ -247,7 +246,7 @@ passed to \Rcmd{spec.pgram}, which is \SC{True} by default.
 
 As a matter of bookkeeping and good practice, 
 we should consider the working environment
-accessed by \rlp{} functions.
+accessed by \psd{} functions.
 To ensure
 \Rcmd{psdcore} does not access any inappropriate information leftover
 from the previous calculations, we
@@ -413,7 +412,7 @@ legend("topright",
 
 Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
-of the results, we can interpolate PSD levels onto the \rlp{}-based frequencies
+of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
 <<eval=TRUE, echo=TRUE, label="Interpolate results.">>=
 require(signal)
@@ -428,49 +427,36 @@ df <- data.frame(x=dB(Pspec$spec), y=pltpi, tap=unclass(Aspec$taper))
 summary(dflm <- lm(y ~ x + 0, df))
 df$res <- residuals(dflm)
 @
-Create \Rcmd{ggplot2} objects for plotting purposes:
-<<eval=TRUE, echo=TRUE, label="Create ggplot objects.">>=
-require(ggplot2)
-# data and regression
-g <- ggplot(df, aes(x=x, y=y))
-g1 <- g + geom_abline(intercept=0, slope=1, size=2, color="salmon")+
-    geom_point(aes(color=dB(y/x))) + 
-    geom_smooth(colour="black", formula = y ~ x + 0, method="lm", se=TRUE, fullrange=TRUE)
-# and the residuals
-g <- ggplot(df, aes(x=x, y=res))
-g2 <- g + geom_abline(intercept=0, slope=0, size=2, color="salmon") +
-    geom_point(aes(color=tap))
-@
-We show this regression and its 
-associated residuals in Figure \ref{fig:psdreg}.  
-The structure visible in the residuals
-at low power levels may be from curvature bias in
+We show the regression residuals in Figure \ref{fig:psdreg}.  
+The structure visible
+at low power levels might be from curvature bias in
 the \Rcmd{mtapspec} results, which
 manifests at short wavelengths
 in Figure \ref{fig:psdcomp}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=5, label=RSEISvsRLP1>>=
-print(g1 + scale_colour_gradient2(mid="light grey") + theme_bw() + 
-	ggtitle("Regression of mtapspec against psdcore"))
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
+require(ggplot2)
+gr <- ggplot(df, aes(x=x, y=res)) + geom_abline(intercept=0, slope=0, size=2, color="salmon") + 
+geom_point(aes(color=tap))
+print(gr + theme_bw() + 
+ggtitle("Regression residuals, colored by optimized tapers")+
+xlab("Power levels, dB") + ylab("")
+)
 @
-<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
-print(g2 + theme_bw() +
-	ggtitle("Regression residuals, colored by optimized tapers"))
-@
-\caption{Regression of  Project MAGNET PSD estimates: 
-\Rcmd{mtapspec} against \Rcmd{psdcore}.}
+\caption{Linear regression residuals of
+\Rcmd{mtapspec} against \Rcmd{psdcore} for Project MAGNET PSD estimates.}
 \label{fig:psdreg}
 \end{center}
 \end{figure}
 
 \subsection{\Rcmd{multitaper::spec.mtm}}
-The function with the highest similarity to \rlp{} is
+The function with the highest similarity to \psd{} is
 \Rcmd{spec.mtm} in the \Rcmd{multitaper} package: it uses
 the sine multitapers, and can adaptively refine the spectrum.
 In fact, this function
-calls source code of a Fortran equivalent to \rlp{}
+calls source code of a Fortran equivalent to \psd{}
 authored by R.L. Parker (\citeyear{parkerweb}) to do these operations.
 
 There are some notable differences, though.  
@@ -492,7 +478,7 @@ to having many more knobs to turn.
 \subsection{\Rcmd{sapa::SDF}}
 As of this writing, the package has no maintainer; 
 lest we end up discussing deprecated and archived functions,
-we will not compare it to \rlp{}.
+we will not compare it to \psd{}.
 
 \section{Can AR prewhitening improve the spectrum?}
 
@@ -539,22 +525,6 @@ from Figure \ref{fig:psdcomp}.}
 \label{fig:arspecvar}
 \end{center}
 \end{figure}
-
-
-%\begin{figure}[htb!]
-%\begin{center}
-%<<eval=TRUE, echo=TRUE, label=PREWPSD>>=
-%plot(psdc, log="dB", main="Raw and Clean Project MAGNET power spectral density", 
-%     lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
-%plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
-%plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
-%text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
-%@
-%\caption{Power spectral density estimates for the raw and cleaned
-%   \Rcmd{Project MAGNET}, with and without auto-regressive (AR) prewhitening.}
-%\label{fig:arpsd}
-%\end{center}
-%\end{figure}
 
 \section{Assessing spectral properties}
 \subsection{Spectral uncertainties}
@@ -616,7 +586,7 @@ based on $1/\sqrt{\nu-1}$, which is accurate to within a few percent in most cas
 \end{center}
 \end{figure}
 
-Returning to the Project MAGNET spectra, let us compare the \rlp{}
+Returning to the Project MAGNET spectra, let us compare the \psd{}
 spectra with spectral uncertainty as bounded polygons.
 First calculate the uncertainty polygon data:
 <<eval=TRUE, echo=TRUE, label="Compute spectral properties.">>=
@@ -651,8 +621,10 @@ polygon(pspa$xx, (pspa$yy)-10, col="dark grey", border=NA)
 text(0.35, 22, "Uniform tapering", cex=1.2)
 @
 \caption{Project MAGNET Spectral uncertainties with and without adaptive taper optimization.
-The filled regions encompass the upper limit and approximate values of 
-spectral uncertainty .}
+The filled regions encompass the spectral uncertainties values based on the
+curves shown in Figure \ref{fig:psderr}, light and dark for the
+upper $\chi_\nu^2$ and approximate values respectively.
+}
 \label{fig:magerr}
 \end{center}
 \end{figure}
@@ -677,7 +649,7 @@ plot(frq, relp,
      ylim=dB(c(1,5)),
      type="h", xaxs="i", yaxs="i", 
      ylab="dB", xlab="frequency, 1/km",
-     main="Project MAGNET Spectral Resolution and Uncertainty")
+     main="Project MAGNET Spectral Resolution")
 lines(frq, relp)
 lines(frq, spp$stderr.chi.upper+relp, lwd=1.5, lty=3)
 lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
@@ -729,19 +701,21 @@ Figure \ref{fig:psdhist}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=4, label=HIST1>>=
+<<eval=TRUE, echo=FALSE, fig.width=6.0, fig.height=4.0, label=HIST1>>=
 seqcols <- seq_len(numit)
 itseq <- seqcols - 1
 toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
-par(xpd=TRUE)
+par(xpd=TRUE, oma=rep(0,4), mar=c(1,4,2,2))
 matplot(Freqs, StgPsd + (sc<-9)*toadd, type="l", lty=1, lwd=2, col="black",
-             main="PSD estimation history", ylab="", xlab="Spatial frequency",
+             main="PSD estimation history", ylab="", xlab="",
              yaxt="n", frame.plot=FALSE)
 text(0.52, 1.05*sc*itseq, itseq)
-text(0.49, 1.1*sc*numit, "Stage:")
+lines(c(2,1,1,2)*0.01,c(0,0,7,7))
+text(.06, 3.5, "7 dB")
+mtext("Spectrum optimization stages", line=-0.8)
 @
-<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3.5, label=HIST2>>=
-par(xpd=TRUE)
+<<eval=TRUE, echo=FALSE, fig.width=6.0, fig.height=3.0, label=HIST2>>=
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(4,4,2,2))
 Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
@@ -749,20 +723,21 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   icol <- Cols[mcol]
   if (iter==1){
     plot(Frq, y, type="h", col=icol, 
-           main="Taper optimization history", ylab="", xlab="Spatial frequency",
-           ylim=c(-50,650), frame.plot=FALSE)
+           main="", ylab="", xlab="Spatial frequency",
+           ylim=c(0,550), yaxs="i", frame.plot=FALSE)
   } else {
     lines(Frq, y, type="h", col=icol)
   }
-  lines(Frq, y, type="l",  lwd=1.2)
+  lines(Frq, y, type="l",  lwd=0.9)
   x <- (c(0,1)+iter-1)*.05+0.075
-  y <- c(595,595,650,650,595)+10
-  text(mean(x),max(y)+1.0*diff(range(y)), mcol-1)
+  y <- c(545,545,600,600,545)
+  text(mean(x),max(y)-1.7*diff(range(y)), mcol-1)
   polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
 }))
+mtext("Taper optimization stages", line=1)
 @
 \caption{Adaptive spectral estimation history.
-Top: Sequential PSD series for each stage of the adaptive method, 
+Top: PSD series for each stage of the adaptive method, 
 offset by a few decibels for visualization purposes.
 Bottom: Filled polygons showing the number of tapers at each stage.
 }
@@ -771,34 +746,16 @@ Bottom: Filled polygons showing the number of tapers at each stage.
 \end{figure}
 
 It may be informative to investigate cross correlation
-coefficients between the stages:
+coefficients between the stages;
+but, in this case, only the PSD estimates are significantly correlated:
 <<eval=TRUE, echo=TRUE, label=SYMCORT>>=
 symnum( cT <- cor(StgTap) )
 @
 <<eval=TRUE, echo=TRUE, label=SYMCORP>>=
 symnum( cP <- cor(StgPsd) )
 @
-But, in this case, only the PSD estimates are significantly correlated.
 
-%In Figure \ref{fig:histcorrel} we show the results of a hierarchic
-%clustering
-%algorithm applied to the cross correlation matrix.  This shows
-%the expected result that
-%each stage is closely related to its parent, the pilot spectrum.
-%
-%%image(cP, col=rev(heat.colors(5)))
-%\begin{figure}[htb!]
-%\begin{center}
-%<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=6, label=XCORP>>=
-%hP <- heatmap(cP, Rowv = FALSE, symm = TRUE, col = heat.colors(5),
-%distfun = function(c) as.dist(1 - c), keep.dendro = TRUE)
-%@
-%\caption{Clustered correlation coefficients with associated dendrograms;
-%deeper red colors indicate stronger family association.}
-%% is that true?
-%\label{fig:histcorrel}
-%\end{center}
-%\end{figure}
+%\section{Acknowledgements}
 
 %%
 %\pagebreak
@@ -813,17 +770,16 @@ process. The primary function is \Rcmd{pspectrum}.
 
 \begin{figure}[htb!]
  \centering
- \includegraphics[width=0.6\textwidth]{yuml_d.png}%%
- \includegraphics[width=0.4\textwidth]{yuml_n.png}
- \caption{Simplified call graph for \rlp{}. The dashed lines show a
+ \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
+ \includegraphics[width=0.3\textwidth]{yuml_n.png}
+ \caption{Simplified call graph for \psd{}. The dashed lines show a
  simplified circuit
- in which the spectra and its tapers make during the iterative process.}
+ which the spectra and its tapers make during the iterative process.}
  \label{fig:calls}
 \end{figure}
 
-%\section{Acknowledgements}
-
-\section{Session Info}
+\pagebreak
+\section*{Session Info}
 <<eval=TRUE, echo=TRUE, label=SI>>=
 sessionInfo()
 @
@@ -832,4 +788,5 @@ sessionInfo()
 %\pagebreak
 \bibliographystyle{apalike} %plainnat}
 \bibliography{REFS}
+
 \end{document}
