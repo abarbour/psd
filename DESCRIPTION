@@ -27,6 +27,7 @@ Imports:
     signal,
     zoo
 Suggests:
+    bspec,
     ggplot2 (>= 0.9),
     knitr,
     multitaper,

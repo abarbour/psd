@@ -79,7 +79,7 @@
 #' \emph{Biometrika}, \strong{82}(1), 201--214.
 # \url{http://biomet.oxfordjournals.org/content/82/1/201}
 #'
-# @seealso \code{\link{pspectrum}}, \code{\link{psdcore}}
+#' @seealso \code{\link{pspectrum}}
 #'  
 NULL
 
@@ -116,6 +116,8 @@ NULL
 #' \item{\code{clean}}{Edited raw intensites, in nanotesla}
 #' \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
 #' }
+#'
+#' @seealso \code{\link{pspectrum}}
 #'
 #' @references Coleman, R. J. (1992),
 #' Project Magnet high-level vector survey data reduction. 

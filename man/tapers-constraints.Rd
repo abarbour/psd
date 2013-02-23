@@ -56,8 +56,8 @@
     smoo.span = 0.3, smoo.bass = 2, verbose = TRUE, ...)
 }
 \arguments{
-  \item{tapvec}{'tapers' object; the number of tapers at
-  each frequency}
+  \item{tapvec}{\code{'tapers'} object; the number of
+  tapers at each frequency}
 
   \item{tapseq}{vector; positions or frequencies --
   necessary for smoother methods}
@@ -90,7 +90,7 @@
   \item{...}{optional arguments (unused)}
 }
 \value{
-  An object with class 'tapers'.
+  An object with class \code{'tapers'}.
 }
 \description{
   In the Riedel-Sidorenko recipe, the number of optimal
@@ -177,7 +177,7 @@
   thumb: the smaller the parameter is, the shorter the
   tails become.
 
-  \code{\link{ctap_markov}} results tend to be strongly
+  \code{\link{ctap_loess}} results tend to be strongly
   dependent on the tuning parameters given to \code{loess}
   (for obvious reasons); hence, some effort should be given
   to understand their effect, and/or re-tuning them if

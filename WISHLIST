@@ -1,9 +1,14 @@
-# Sorted by desirability
+#
+# A list of future action items,
+# reverse sorted by desirability.
+#
 
-[ ] reidsid "local_qls" spectral derivatives as callable .c code
+[ ] reidsid "local_qls" spectral derivatives as callable .c [.cpp?] code
 *** This is likely the bottleneck of the entire operation, besides the FFT
 
 [ ] logsmoo
+
+[ ] Unified argument names
 
 [ ] A well-tested decimation option.
 

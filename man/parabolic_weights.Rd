@@ -16,8 +16,8 @@
   \method{parabolic_weights_fast}{default} (ntap = 1L)
 }
 \arguments{
-  \item{tapvec}{'tapers' object; the number of tapers at
-  each frequency}
+  \item{tapvec}{\code{'tapers'} object; the number of
+  tapers at each frequency}
 
   \item{tap.index}{integer; the index of \code{tapvec} from
   which to produce a sequence of weights for}

@@ -1,0 +1,5 @@
+ls -d x_* | awk 'BEGIN{}{
+  loc=$0
+  gsub("x_","")
+  printf"mv -i %s NOBUILD/%s\n",loc,$1
+}'

@@ -1,18 +1,34 @@
+datasets
+--------
+[ ] bsm + pp
+*** find large teleseism: list with ambient and seismic times
+*** include BSM & LSM noise model
+[-] scarb
+*** should not include? <- proprietary?
+[X] magnet
+
+`spectral_properties`
+---------------------
+[ ] check formulas for various quantities
+*** finish documentation [ ]
+*** consult Bob
+
 vignettes
 ---------
-[ ] revise overview with DCAs suggestions
 [ ] revise normalization with RLPs suggestions
+[X] revise overview with DCAs suggestions
 [-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
 [X] finish norm
 [X] develop overview
 
 Miscellany
 ----------
-[X] rename? ... to 'psd'?
+[ ] revisit draft for Comp. Geosc.
+[ ] Once datasets + vignettes done, final packaging and CRAN submit
+[X] bump to 0.2-0
+[X] rename? ... to 'psd'
 [X] replace rlpSpec refs to psd
-[ ] change .rlpenv to .psdenv
-[ ] Once replace + vignettes done, bump to 0.2-0
-[ ] Once bump, final packaging and CRAN submit
+[X] change .rlpenv to .psdenv
 [X] remove magsat documentation? where?? during build:
 	Undocumented data sets:
 	‘magsat’
@@ -29,20 +45,6 @@ Miscellany
 [X] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
-
-datasets
---------
-[ ] bsm + pp
-*** find large teleseism: list with ambient and seismic times
-[-] scarb
-*** should not include? <- proprietary?
-[X] magnet
-
-`spectral_properties`
----------------------
-[ ] check formulas for various quantities
-*** finish documentation [ ]
-*** consult Bob
 
 Examples
 --------

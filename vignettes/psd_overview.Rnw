@@ -17,6 +17,7 @@
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{amsmath}
+\usepackage{hyperref}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %\usepackage{fullpage}
@@ -480,6 +481,41 @@ As of this writing, the package has no maintainer;
 lest we end up discussing deprecated and archived functions,
 we will not compare it to \psd{}.
 
+\subsection{\Rcmd{bspec::bspec}}
+An intriguing method for producing power spectral density estimates
+ using Bayesian inference
+ is presented by \citet{rover2011}.
+ The method uses the \emph{Student's t} distribution
+ to estimate the distribution of spectral densities
+ at a given frequency and is packaged into
+ \Rcmd{bspec} as the function \Rcmd{bspec}.
+ We will use the spectra from the previous 
+ calculation to compare with \Rcmd{bspec} results.
+ For this comparison
+ we use the default 
+ settings for the \emph{a priori} distribution scale
+ and degrees of freedom.
+ In Figure \ref{fig:bayes} we have used the \Rcmd{plot.bspec} method
+ and overlain the results found previously by \Rcmd{psdcore}.
+
+<<eval=TRUE, echo=TRUE, label=BSPEC>>=
+require(bspec)
+print(Bspec <- bspec(magnet$clean))
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=5, label=BSPECFIG>>=
+Bspec_plt <- plot(Bspec)
+lines(Pspec$freq, Pspec$spec, col="red", lwd=2)
+@
+\caption{Project MAGNET PSD estimates from \Rcmd{bspec}, a Bayesian method,
+ compared to the \Rcmd{psdcore} results shown in Figure \ref{fig:psdcomp}.
+}
+\label{fig:bayes}
+\end{center}
+\end{figure}
+
 \section{Can AR prewhitening improve the spectrum?}
 
 This question must be addressed on a case-by-base basis; but, if there
@@ -555,7 +591,7 @@ only slight improvements with logarithmic number of tapers.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig.width=5, fig.height=4.5, label=SPECERR>>=
+<<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4.5, label=SPECERR>>=
 sp <- spectral_properties(as.tapers(1:50), p=0.95, db.ci=TRUE)
 par(las=1)
 plot(stderr.chi.upper ~ taper, sp, type="s", 
@@ -586,44 +622,50 @@ based on $1/\sqrt{\nu-1}$, which is accurate to within a few percent in most cas
 \end{center}
 \end{figure}
 
-Returning to the Project MAGNET spectra, let us compare the \psd{}
-spectra with spectral uncertainty as bounded polygons.
-First calculate the uncertainty polygon data:
+Returning to the Project MAGNET spectra, we will compare the
+spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
+the Bayesian method, for a coverage probability of
+95\%. Figure \ref{fig:magerr} shows the uncertainties as bounded polygons,
+which we calculate here:
 <<eval=TRUE, echo=TRUE, label="Compute spectral properties.">>=
 spp <- spectral_properties(Pspec$taper, db.ci=TRUE)
 spa <- spectral_properties(Aspec$taper, db.ci=TRUE)
 str(spa)
-create_poly <- function(x, y, dy){
+create_poly <- function(x, y, dy, from.lower=FALSE){
   xx <- c(x, rev(x))
-  yy <- c(y+dy, rev(y-dy))
+  if (from.lower){
+    yy <- c(y, rev(y+dy))
+  } else {
+    yy <- c(y+dy, rev(y-dy))
+  }
   return(data.frame(xx=xx, yy=yy))
 }
-pspp <- create_poly(Pspec$freq, dB(Pspec$spec), spp$stderr.chi.approx)
 psppu <- create_poly(Pspec$freq, dB(Pspec$spec), spp$stderr.chi.upper)
-pspa <- create_poly(Aspec$freq, dB(Aspec$spec), spa$stderr.chi.approx)
 pspau <- create_poly(Aspec$freq, dB(Aspec$spec), spa$stderr.chi.upper)
+# and the Bayesian spectrum 95% limits
+pspb <- create_poly(Bspec_plt$freq, Bspec_plt$spectrum[,1], Bspec_plt$spectrum[,3], from.lower=TRUE)
 @
-and plot the comparison, shown in Figure \ref{fig:magerr}.
 
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=5.5, label=MAGERR>>=
-plot(c(0,0.5),c(-8,35),col="white", 
+<<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4.5, label=MAGERR>>=
+plot(c(0,0.5),c(-5,40),col="white", 
        main="Project MAGNET Spectral Uncertainty (p > 0.95)",
        ylab="", xlab="spatial frequency, 1/km", yaxt="n", frame.plot=FALSE)
 lines(c(2,1,1,2)*0.01,c(5,5,8.01,8.01)-8)
 text(.05, -1.4, "3.01 dB")
-polygon(psppu$xx, (psppu$yy), col="light grey", border="black", lwd=0.5)
-polygon(pspp$xx, (pspp$yy), col="dark grey", border=NA)
-text(0.15, 6, "With adaptive\ntaper refinement", cex=1.2)
-polygon(pspau$xx, (pspau$yy)-10, col="light grey", border="black", lwd=0.5)
-polygon(pspa$xx, (pspa$yy)-10, col="dark grey", border=NA)
-text(0.35, 22, "Uniform tapering", cex=1.2)
+polygon(pspb$xx, dB(pspb$yy), col="light blue", border=NA)
+text(0.22, 35, "Bayesian (bspec)", cex=0.9)
+polygon(psppu$xx, psppu$yy, col="dark grey", border="black", lwd=0.2)
+text(0.15, 6, "Light: adaptive\ntaper refinement\n(pspectrum)", cex=0.9)
+polygon(pspau$xx, pspau$yy, col="light grey", border="black", lwd=0.2)
+text(0.40, 22, "Dark: Uniform\ntapering (psdcore)", cex=0.9)
 @
-\caption{Project MAGNET Spectral uncertainties with and without adaptive taper optimization.
+\caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
 The filled regions encompass the spectral uncertainties values based on the
-curves shown in Figure \ref{fig:psderr}, light and dark for the
-upper $\chi_\nu^2$ and approximate values respectively.
+upper $\chi_\nu^2$ curve shown in Figure \ref{fig:psderr}, light and dark for 
+PSDs with and without adaptive taper optimizaiton, respectively.
+The results from Figure \ref{fig:bayes} (Bayesian method) are shown in blue.
 }
 \label{fig:magerr}
 \end{center}

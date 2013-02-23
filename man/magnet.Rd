@@ -42,5 +42,8 @@ summary(magnet)
   of Data for Geomagnetic Field Modeling}, \strong{3153},
   pp. 215-248.
 }
+\seealso{
+  \code{\link{pspectrum}}
+}
 \keyword{datasets}
 

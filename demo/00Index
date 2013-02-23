@@ -1,1 +1,3 @@
-ctap	comparison of taper constraint methods
+ctap		comparison of taper constraint methods
+vign_norm	run code from the normalization vignette
+vign_overview	run code from the overview vignette

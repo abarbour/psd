@@ -31,11 +31,12 @@
 #' }
 #'
 #' \subsection{\code{"single.sided"} or \code{"psd"}}{
-#'
-#' These spectra are scaled by the inverse of the sampling rate.
+#' As mentioned before, 
+#' these spectra assume frequency range of \eqn{[0,F_S/2]} and
+#' are scaled only by the inverse of the sampling rate.
 #' Some estimators producing single-sided spectra: 
 #' \itemize{
-#' \item{\code{psd::\link{psdcore}}}{}
+#' \item{\code{\link{psdcore}}}{}
 #' }
 #' }
 #'

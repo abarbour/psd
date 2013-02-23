@@ -13,7 +13,7 @@
 \alias{summary.tapers}
 \alias{tapers}
 \alias{tapers-methods}
-\title{Generic methods for objects with class 'tapers'.}
+\title{Generic methods for objects with class \code{'tapers'}.}
 \usage{
   \method{print}{tapers} (x, ...)
 
@@ -51,7 +51,7 @@
   \item{...}{optional arguments}
 }
 \description{
-  Generic methods for objects with class 'tapers'.
+  Generic methods for objects with class \code{'tapers'}.
 }
 \examples{
 ##

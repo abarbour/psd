@@ -4,7 +4,6 @@
 .Rhistory
 .DS_Store
 .git/
-.git/*
 .gitignore
 ^src/.gitignore$
 README.md
@@ -18,16 +17,4 @@ vignettes/.sweave
 vignettes/.knitr$
 vignettes/.knitr2$
 ^.*/.gitignore$
-x_S4/
-x_data_prep/
-x_demo/
-x_dep/
-x_docs/
-x_examp/
-x_figures/
-x_m/
-x_notes/
-x_rsrc/
-x_tex/
-x_tests/
-x_vignettes/
+NOBUILD/

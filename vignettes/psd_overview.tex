@@ -72,6 +72,7 @@
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{amsmath}
+\usepackage{hyperref}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %\usepackage{fullpage}
@@ -149,9 +150,9 @@ First, we load the package into the namespace:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: fftw}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: fftw}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loaded psd (0.2.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (0.2.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
 \end{knitrout}
 
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
@@ -220,44 +221,44 @@ psdr <- \hlfunctioncall{pspectrum}(magnet$raw)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# 	environment  ** .PsdSpecEnv **  refreshed}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .PsdSpecEnv **\ \ refreshed}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -4.1 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -4.1 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -12.7 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -12.7 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -18.6 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -18.6 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -25.0 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -25.0 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -35.1 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -35.1 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (PSD)  to sampling-freq.  1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
 psdc <- \hlfunctioncall{pspectrum}(magnet$clean)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# 	environment  ** .PsdSpecEnv **  refreshed}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .PsdSpecEnv **\ \ refreshed}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -3.9 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -3.9 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -14.6 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -14.6 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -22.0 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -22.0 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -28.5 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -28.5 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -34.4 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (PSD)  to sampling-freq.  1}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\end{kframe}
 \end{knitrout}
 
 Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
@@ -455,15 +456,15 @@ input series.  We can do this easily with the \Rcmd{prewhiten} methods:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: RSEIS}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RSEIS}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: RPMG}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RPMG}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: Rwave}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: Rwave}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# \\\#\# Attaching package: 'Rwave'}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'Rwave'}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#     kernel}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  kernel}}\begin{alltt}
 dt = 1  \hlcomment{# km}
 \hlcomment{# prewhiten the data after adding a linear trend + offset}
 \hlfunctioncall{summary}(\hlfunctioncall{prewhiten}(mc <- (\hlfunctioncall{ts}(magnet$clean + 1000, deltat = dt) + \hlfunctioncall{seq_along}(magnet$clean)), 
@@ -471,7 +472,7 @@ dt = 1  \hlcomment{# km}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}\begin{verbatim}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}\begin{verbatim}
 ##         Length Class  Mode   
 ## lmdfit    12   lm     list   
 ## ardfit     0   -none- NULL   
@@ -502,9 +503,9 @@ the highest order appropriate for the data.
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# autoregressive model fit (returning innovations)}}\begin{verbatim}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# autoregressive model fit (returning innovations)}}\begin{verbatim}
 ##         Length Class  Mode   
 ## lmdfit    12   lm     list   
 ## ardfit    14   ar     list   
@@ -647,23 +648,23 @@ Aspec <- \hlfunctioncall{pspectrum}(ats_lm, dt, tapinit, plot = FALSE)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# 	environment  ** .PsdSpecEnv **  refreshed}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .PsdSpecEnv **\ \ refreshed}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -1.5 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -1.5 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -8.8 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -8.8 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -16.3 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -16.3 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -18.1 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -18.1 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -23.6 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -23.6 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (PSD)  to sampling-freq.  1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
 \hlcomment{# Correct for double-sidedness of spectrum and mtapspec results}
 \hlfunctioncall{class}(Mspec)
 \end{alltt}
@@ -675,7 +676,7 @@ Mspec <- \hlfunctioncall{normalize}(Mspec, dt, \hlstring{"spectrum"})
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  double-sided PSD  (SPECTRUM)  to sampling-freq.  1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (SPECTRUM)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
 nt <- 1:Mspec$numfreqs
 mspec <- Mspec$spec[nt]
 \hlfunctioncall{class}(Xspec)
@@ -688,7 +689,7 @@ Xspec <- \hlfunctioncall{normalize}(Xspec, dt, \hlstring{"spectrum"})
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  double-sided PSD  (SPECTRUM)  to sampling-freq.  1}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (SPECTRUM)\ \ to sampling-freq.\ \ 1}}\end{kframe}
 \end{knitrout}
 
 These estimates are shown on the same scale in
@@ -703,7 +704,7 @@ Figure \ref{fig:psdcomp}.
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: RColorBrewer}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RColorBrewer}}\begin{alltt}
 cols <- \hlfunctioncall{c}(\hlstring{"dark grey"}, \hlfunctioncall{brewer.pal}(8, \hlstring{"Set1"})[\hlfunctioncall{c}(5:4, 2)])
 lwds <- \hlfunctioncall{c}(1, 2, 2, 5)
 \hlfunctioncall{par}(las = 1)
@@ -737,13 +738,13 @@ of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: signal}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: signal}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: MASS}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: MASS}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#     filter, poly}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
 pltpi <- \hlfunctioncall{interp1}(pltf, pltp, Pspec$freq)
 \end{alltt}
 \end{kframe}
@@ -800,7 +801,7 @@ in Figure \ref{fig:psdcomp}.
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: ggplot2}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: ggplot2}}\begin{alltt}
 gr <- \hlfunctioncall{ggplot}(df, \hlfunctioncall{aes}(x = x, y = res)) + \hlfunctioncall{geom_abline}(intercept = 0, slope = 0, 
     size = 2, color = \hlstring{"salmon"}) + \hlfunctioncall{geom_point}(\hlfunctioncall{aes}(color = tap))
 \hlfunctioncall{print}(gr + \hlfunctioncall{theme_bw}() + \hlfunctioncall{ggtitle}(\hlstring{"Regression residuals, colored by optimized tapers"}) + 
@@ -845,6 +846,73 @@ to having many more knobs to turn.
 As of this writing, the package has no maintainer; 
 lest we end up discussing deprecated and archived functions,
 we will not compare it to \psd{}.
+
+\subsection{\Rcmd{bspec::bspec}}
+An intriguing method for producing power spectral density estimates
+ using Bayesian inference
+ is presented by \citet{rover2011}.
+ The method uses the \emph{Student's t} distribution
+ to estimate the distribution of spectral densities
+ at a given frequency and is packaged into
+ \Rcmd{bspec} as the function \Rcmd{bspec}.
+ We will use the spectra from the previous 
+ calculation to compare with \Rcmd{bspec} results.
+ For this comparison
+ we use the default 
+ settings for the \emph{a priori} distribution scale
+ and degrees of freedom.
+ In Figure \ref{fig:bayes} we have used the \Rcmd{plot.bspec} method
+ and overlain the results found previously by \Rcmd{psdcore}.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{require}(bspec)
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: bspec}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'bspec'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  acf}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:base':\\\#\# \\\#\#\ \ \ \  sample}}\begin{alltt}
+\hlfunctioncall{print}(Bspec <- \hlfunctioncall{bspec}(magnet$clean))
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: argument 'x' is not a time-series object, default conversion 'as.ts(x)' applied.}}\begin{verbatim}
+##  'bspec' posterior spectrum (one-sided).
+##  frequency range     : 0--0.5
+##  number of parameters: 1025
+##  finite expectations : none
+##  finite variances    : none
+##  call: bspec.default(x = magnet$clean)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{figure}[htb!]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+Bspec_plt <- \hlfunctioncall{plot}(Bspec)
+\hlfunctioncall{lines}(Pspec$freq, Pspec$spec, col = \hlstring{"red"}, lwd = 2)
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/BSPECFIG} 
+
+\end{knitrout}
+
+\caption{Project MAGNET PSD estimates from \Rcmd{bspec}, a Bayesian method,
+ compared to the \Rcmd{psdcore} results shown in Figure \ref{fig:psdcomp}.
+}
+\label{fig:bayes}
+\end{center}
+\end{figure}
 
 \section{Can AR prewhitening improve the spectrum?}
 
@@ -971,9 +1039,11 @@ based on $1/\sqrt{\nu-1}$, which is accurate to within a few percent in most cas
 \end{center}
 \end{figure}
 
-Returning to the Project MAGNET spectra, let us compare the \psd{}
-spectra with spectral uncertainty as bounded polygons.
-First calculate the uncertainty polygon data:
+Returning to the Project MAGNET spectra, we will compare the
+spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
+the Bayesian method, for a coverage probability of
+95\%. Figure \ref{fig:magerr} shows the uncertainties as bounded polygons,
+which we calculate here:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -993,46 +1063,51 @@ spa <- \hlfunctioncall{spectral_properties}(Aspec$taper, db.ci = TRUE)
 ##  $ bw               : num  0.23 0.23 0.23 0.23 0.23 ...
 \end{verbatim}
 \begin{alltt}
-create_poly <- \hlfunctioncall{function}(x, y, dy) \{
+create_poly <- \hlfunctioncall{function}(x, y, dy, from.lower = FALSE) \{
     xx <- \hlfunctioncall{c}(x, \hlfunctioncall{rev}(x))
-    yy <- \hlfunctioncall{c}(y + dy, \hlfunctioncall{rev}(y - dy))
+    \hlfunctioncall{if} (from.lower) \{
+        yy <- \hlfunctioncall{c}(y, \hlfunctioncall{rev}(y + dy))
+    \} else \{
+        yy <- \hlfunctioncall{c}(y + dy, \hlfunctioncall{rev}(y - dy))
+    \}
     \hlfunctioncall{return}(\hlfunctioncall{data.frame}(xx = xx, yy = yy))
 \}
-pspp <- \hlfunctioncall{create_poly}(Pspec$freq, \hlfunctioncall{dB}(Pspec$spec), spp$stderr.chi.approx)
 psppu <- \hlfunctioncall{create_poly}(Pspec$freq, \hlfunctioncall{dB}(Pspec$spec), spp$stderr.chi.upper)
-pspa <- \hlfunctioncall{create_poly}(Aspec$freq, \hlfunctioncall{dB}(Aspec$spec), spa$stderr.chi.approx)
 pspau <- \hlfunctioncall{create_poly}(Aspec$freq, \hlfunctioncall{dB}(Aspec$spec), spa$stderr.chi.upper)
+\hlcomment{# and the Bayesian spectrum 95% limits}
+pspb <- \hlfunctioncall{create_poly}(Bspec_plt$freq, Bspec_plt$spectrum[, 1], Bspec_plt$spectrum[, 
+    3], from.lower = TRUE)
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-and plot the comparison, shown in Figure \ref{fig:magerr}.
 
 \begin{figure}[htb!]
 \begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{plot}(\hlfunctioncall{c}(0, 0.5), \hlfunctioncall{c}(-8, 35), col = \hlstring{"white"}, main = \hlstring{"Project MAGNET Spectral \hlfunctioncall{Uncertainty} (p > 0.95)"}, 
+\hlfunctioncall{plot}(\hlfunctioncall{c}(0, 0.5), \hlfunctioncall{c}(-5, 40), col = \hlstring{"white"}, main = \hlstring{"Project MAGNET Spectral \hlfunctioncall{Uncertainty} (p > 0.95)"}, 
     ylab = \hlstring{""}, xlab = \hlstring{"spatial frequency, 1/km"}, yaxt = \hlstring{"n"}, frame.plot = FALSE)
 \hlfunctioncall{lines}(\hlfunctioncall{c}(2, 1, 1, 2) * 0.01, \hlfunctioncall{c}(5, 5, 8.01, 8.01) - 8)
 \hlfunctioncall{text}(0.05, -1.4, \hlstring{"3.01 dB"})
-\hlfunctioncall{polygon}(psppu$xx, (psppu$yy), col = \hlstring{"light grey"}, border = \hlstring{"black"}, lwd = 0.5)
-\hlfunctioncall{polygon}(pspp$xx, (pspp$yy), col = \hlstring{"dark grey"}, border = NA)
-\hlfunctioncall{text}(0.15, 6, \hlstring{"With adaptive\textbackslash{}ntaper refinement"}, cex = 1.2)
-\hlfunctioncall{polygon}(pspau$xx, (pspau$yy) - 10, col = \hlstring{"light grey"}, border = \hlstring{"black"}, lwd = 0.5)
-\hlfunctioncall{polygon}(pspa$xx, (pspa$yy) - 10, col = \hlstring{"dark grey"}, border = NA)
-\hlfunctioncall{text}(0.35, 22, \hlstring{"Uniform tapering"}, cex = 1.2)
+\hlfunctioncall{polygon}(pspb$xx, \hlfunctioncall{dB}(pspb$yy), col = \hlstring{"light blue"}, border = NA)
+\hlfunctioncall{text}(0.22, 35, \hlstring{"\hlfunctioncall{Bayesian} (bspec)"}, cex = 0.9)
+\hlfunctioncall{polygon}(psppu$xx, psppu$yy, col = \hlstring{"dark grey"}, border = \hlstring{"black"}, lwd = 0.2)
+\hlfunctioncall{text}(0.15, 6, \hlstring{"Light: adaptive\textbackslash{}ntaper refinement\textbackslash{}\hlfunctioncall{n}(pspectrum)"}, cex = 0.9)
+\hlfunctioncall{polygon}(pspau$xx, pspau$yy, col = \hlstring{"light grey"}, border = \hlstring{"black"}, lwd = 0.2)
+\hlfunctioncall{text}(0.4, 22, \hlstring{"Dark: Uniform\textbackslash{}\hlfunctioncall{ntapering} (psdcore)"}, cex = 0.9)
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/MAGERR} 
 
 \end{knitrout}
 
-\caption{Project MAGNET Spectral uncertainties with and without adaptive taper optimization.
+\caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
 The filled regions encompass the spectral uncertainties values based on the
-curves shown in Figure \ref{fig:psderr}, light and dark for the
-upper $\chi_\nu^2$ and approximate values respectively.
+upper $\chi_\nu^2$ curve shown in Figure \ref{fig:psderr}, light and dark for 
+PSDs with and without adaptive taper optimizaiton, respectively.
+The results from Figure \ref{fig:bayes} (Bayesian method) are shown in blue.
 }
 \label{fig:magerr}
 \end{center}
@@ -1099,25 +1174,25 @@ and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  0 est. (pilot)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# 	environment  ** .PsdSpecEnv **  refreshed}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 	environment\ \ ** .PsdSpecEnv **\ \ refreshed}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# detrending (and demeaning)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  1 est. (Ave. S.V.R. -3.9 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -3.9 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  2 est. (Ave. S.V.R. -14.6 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -14.6 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  3 est. (Ave. S.V.R. -22.0 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -22.0 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  4 est. (Ave. S.V.R. -28.5 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -28.5 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  5 est. (Ave. S.V.R. -34.4 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Stage  6 est. (Ave. S.V.R. -35.7 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 6 est. (Ave. S.V.R. -35.7 dB)}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Normalized  single-sided PSD  (PSD)  to sampling-freq.  1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
 \hlfunctioncall{str}(AH <- \hlfunctioncall{get_adapt_history}())
 \end{alltt}
 \begin{verbatim}
@@ -1196,7 +1271,7 @@ but, in this case, only the PSD estimates are significantly correlated:
 \end{alltt}
 
 
-{\ttfamily\noindent\textcolor{warningcolor}{\#\# Warning: the standard deviation is zero}}\begin{verbatim}
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: the standard deviation is zero}}\begin{verbatim}
 ##                   
 ## [1,] 1            
 ## [2,] ? 1          
@@ -1264,26 +1339,26 @@ process. The primary function is \Rcmd{pspectrum}.
 \end{alltt}
 \begin{verbatim}
 ## R version 2.15.2 (2012-10-26)
-## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## Platform: i386-apple-darwin9.8.0/i386 (32-bit)
 ## 
 ## locale:
 ## [1] C
 ## 
 ## attached base packages:
-##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
-##  [8] utils     methods   base     
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] ggplot2_0.9.3      signal_0.7-2       MASS_7.3-22       
-##  [4] RColorBrewer_1.0-5 RSEIS_3.0-9        Rwave_2.0         
-##  [7] RPMG_2.1-4         psd_0.2-0          fftw_1.0-3        
-## [10] knitr_0.9         
+##  [1] bspec_1.4          ggplot2_0.9.3      signal_0.7-2      
+##  [4] MASS_7.3-23        RColorBrewer_1.0-5 RSEIS_3.0-9       
+##  [7] Rwave_2.0          RPMG_2.1-4         psd_0.2-0         
+## [10] fftw_1.0-3         knitr_1.0.5       
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Peaks_0.2        colorspace_1.2-0 dichromat_1.2-4  digest_0.6.0    
-##  [5] evaluate_0.4.3   formatR_0.7      gtable_0.1.2     labeling_0.1    
-##  [9] lattice_0.20-10  munsell_0.4      plyr_1.8         proto_0.3-10    
-## [13] reshape2_1.2.2   scales_0.2.3     stringr_0.6.2    zoo_1.7-9
+##  [1] Peaks_0.2        colorspace_1.2-1 dichromat_2.0-0  digest_0.6.2    
+##  [5] evaluate_0.4.3   formatR_0.7      grid_2.15.2      gtable_0.1.2    
+##  [9] labeling_0.1     lattice_0.20-13  munsell_0.4      plyr_1.8        
+## [13] proto_0.3-10     reshape2_1.2.2   scales_0.2.3     stringr_0.6.2   
+## [17] tools_2.15.2     zoo_1.7-9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

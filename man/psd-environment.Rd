@@ -95,7 +95,9 @@
   functions exist in the namespace.}
 
   \code{psd_envGlobals} sets up the environment's pointer,
-  and name strings in the \code{.GlobalEnv}.
+  and name strings in the \code{.GlobalEnv} environment.
+  See the Usage section for the names of the default
+  pointer and environment.
 
   \code{get_psd_env_pointer} is a convenience wrapper to
   get the environment pointer.
@@ -137,7 +139,7 @@
 }
 \section{Defaults and Initialization}{
   By default, these functions all use the global pointer
-  and name set by \code{psd_envGlobals}. One can use
+  and name set by \code{psd_envGlobals()}. One can use
   \code{get_psd_env_pointer()} and
   \code{get_psd_env_name()} to access them if needed.
 
@@ -168,20 +170,20 @@
 
   \subsection{Getter}{ \itemize{
   \item{\code{get_adapt_history}}{}
-  \item{\code{get_psd_env_name}}{global}
-  \item{\code{get_psd_env_pointer}}{global}
+  \item{\code{get_psd_env_name}}{ (global)}
+  \item{\code{get_psd_env_pointer}}{ (global)}
   \item{\code{psd_envGet}}{} \item{\code{psd_envList}}{}
   \item{\code{psd_envStatus}}{both} } }
 
   \subsection{Setter}{ \itemize{
-  \item{\code{new_adapt_history}}{} #S
+  \item{\code{new_adapt_history}}{}
   \item{\code{psd_envAssign}}{}
-  \item{\code{psd_envGlobals}}{global} } }
+  \item{\code{psd_envGlobals}}{ (global)} } }
 
   \subsection{Getter and Setter}{ \itemize{
   \item{\code{psd_envAssignGet}}{}
-  \item{\code{psd_envClear}}{both}
-  \item{\code{psd_initEnv}}{both}
+  \item{\code{psd_envClear}}{ (both)}
+  \item{\code{psd_initEnv}}{ (both)}
   \item{\code{update_adapt_history}}{} } }
 }
 

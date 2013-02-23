@@ -1,6 +1,6 @@
 \name{as.tapers}
 \alias{as.tapers}
-\title{Coerce an object into a 'tapers' object.}
+\title{Coerce an object into a \code{'tapers'} object.}
 \usage{
   as.tapers(x, min_taper = 1, max_taper = NULL,
     setspan = FALSE)
@@ -31,17 +31,18 @@
   absurd, and violate orthogonality conditions for any
   series less than two million terms long!).
 
-  An object with S3 class 'tapers' is created; this will
-  have a minimum number of tapers in each position set by
-  \code{min_taper}, and a maximum number of tapers in each
-  position set by \code{max_taper}. If \code{minspan=TRUE},
-  the bounded taper is fed through \code{\link{minspan}}
-  which will restrict the maximum tapers to less than or
-  equal to the half-length of the spectrum.
+  An object with S3 class \code{'tapers'} is created; this
+  will have a minimum number of tapers in each position set
+  by \code{min_taper}, and a maximum number of tapers in
+  each position set by \code{max_taper}. If
+  \code{minspan=TRUE}, the bounded taper is fed through
+  \code{\link{minspan}} which will restrict the maximum
+  tapers to less than or equal to the half-length of the
+  spectrum.
 
-  Various classes can be coerced into a 'tapers' object;
-  those tested sofar include: scalar, vector, matrix,
-  data.frame, and list.
+  Various classes can be coerced into a \code{'tapers'}
+  object; those tested sofar include: scalar, vector,
+  matrix, data.frame, and list.
 
   Multiple objects are concatenated into a single vector
   dimension.

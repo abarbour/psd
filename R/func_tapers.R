@@ -1,4 +1,4 @@
-#' Coerce an object into a 'tapers' object.
+#' Coerce an object into a \code{'tapers'} object.
 #'
 #' In a tapered spectrum estimation algorithm, it is
 #' necessary to enforce rules on the number of tapers
@@ -16,7 +16,7 @@
 #' violate orthogonality
 #' conditions for any series less than two million terms long!).
 #' 
-#' An object with S3 class 'tapers' is created;
+#' An object with S3 class \code{'tapers'} is created;
 #' this will have
 #' a minimum number of tapers in each position
 #' set by \code{min_taper}, and
@@ -26,7 +26,7 @@
 #' which will restrict the maximum tapers to less than or equal to
 #' the half-length of the spectrum.
 #'
-#' Various classes can be coerced into a 'tapers' object; those
+#' Various classes can be coerced into a \code{'tapers'} object; those
 #' tested sofar include: scalar, vector, matrix, data.frame, 
 #' and list.  
 #'
@@ -37,7 +37,7 @@
 #' \code{max_taper} should it be larger than the half-width of the series.
 #'
 # @section Example of For example, if the object is 
-# \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding 'tapers'
+# \code{list(x=c(1,2),y=c(3,4,5,0,1.1))} then the corresponding \code{'tapers'}
 # objects for the following arguments are:
 #
 # \describe{
@@ -80,7 +80,7 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 ###  Generic methods
 ###
 
-#' @title Generic methods for objects with class 'tapers'.
+#' @title Generic methods for objects with class \code{'tapers'}.
 #' @keywords methods S3methods tapers
 #' @name tapers-methods
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
@@ -232,7 +232,7 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' and authored the optimized version.
 #' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
 #'
-#' @param tapvec 'tapers' object; the number of tapers at each frequency
+#' @param tapvec \code{'tapers'} object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to produce a sequence of weights for
 #' @param ntap integer; the number of tapers to provide weightings for.
 #' @return A list with taper indices, and the weights \eqn{W_N}.
@@ -386,7 +386,7 @@ minspan.tapers <- function(tapvec, ...){
 #' of the a priori distribution.  As a rule of thumb: the smaller the parameter is, 
 #' the shorter the tails become.
 #'
-#' \code{\link{ctap_markov}} results tend to be strongly dependent on
+#' \code{\link{ctap_loess}} results tend to be strongly dependent on
 #' the tuning parameters given to \code{loess} (for obvious reasons); hence, 
 #' some effort should be given to understand
 #' their effect, and/or re-tuning them if needed.
@@ -400,7 +400,7 @@ minspan.tapers <- function(tapvec, ...){
 #' @export
 #' @import Peaks
 #' @keywords tapers tapers-constraints
-#' @param tapvec 'tapers' object; the number of tapers at each frequency
+#' @param tapvec \code{'tapers'} object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param constraint.method  character; method to use for constraints on tapers numbers
 ## @param min_tapers integer; the minimum number of tapers
@@ -413,7 +413,7 @@ minspan.tapers <- function(tapvec, ...){
 #' @param smoo.span  scalar; fraction of the observations in the span of the running lines smoother
 #' @param smoo.bass  scalar; controls the smoothness of the fitted curve 
 #' @param ... optional arguments (unused)
-#' @return An object with class 'tapers'.
+#' @return An object with class \code{'tapers'}.
 #'
 #' @references Morhac, M. (2008), Peaks: Peaks, \emph{R package}, \strong{version 0.2}
 #' @references Silagadze, Z.K. (1996), A new algorithm for automatic photopeak searches,
@@ -481,7 +481,7 @@ ctap_simple <- function(tapvec, tapseq=NA, maxslope=1, ...) UseMethod("ctap_simp
 ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
   stopifnot(is.tapers(tapvec))
   # tapseq not needed
-  # 'tapers' object gives integer values, but code requires real
+  # \code{'tapers'} object gives integer values, but code requires real
   tapvec <- as.numeric(tapvec)
   maxslope <- as.numeric(maxslope)
   # c-code used for speed up of forward+backward operations

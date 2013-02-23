@@ -88,4 +88,7 @@
   (1995), The effective bandwidth of a multitaper spectral
   estimator, \emph{Biometrika}, \strong{82}(1), 201--214.
 }
+\seealso{
+  \code{\link{pspectrum}}
+}
 
