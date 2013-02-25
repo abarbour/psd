@@ -264,6 +264,8 @@ psdcore.default <- function(X.d,
     if (verbose) message("first.last=TRUE: Zero and Nyquist frequencies were extrapolated")
   }
   ##
+  funcall <- sprintf("psdcore (dem.+detr. %s f.l. %s refr. %s)", preproc, first.last, refresh) 
+  ##
   pltpsd <- function(Xser, frqs, PSDS, taps, nyq, detrend, demean, ...){
     fsamp <- frequency(Xser)
     stopifnot(fsamp==X.frq)
@@ -293,7 +295,7 @@ psdcore.default <- function(X.d,
     xlims <- round(c(min(r1, r2), max(r1, r2)), 1) + .1*c(-1,1)
     ## Spectra, in decibels
     plot(lfrqp, db_pgram, col="red", type="l", 
-         main="Naive and Multitaper PSD",
+         main=funcall,
          xaxs="i", xlab="", xlim=xlims,
          ylab="dB, units^2 * delta", ylim=ylims)
     mtext("log10 frequency", side=1, line=1.6)
@@ -320,8 +322,7 @@ psdcore.default <- function(X.d,
   ## Plot it
   if (plotpsd) pltpsd(Xser=X, frqs=frq, PSDS=PSD.n, taps=ntap, nyq=Nyq, detrend=preproc, demean=preproc, ...)
   ##
-  funcall <- sprintf("psdcore (dem.+detr. %s f.l. %s refr. %s)", preproc, first.last, refresh) 
-  ## paste(as.character(match.call()[]),collapse=" ") 
+ ## paste(as.character(match.call()[]),collapse=" ") 
   PSD.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(PSD.n), 
                   coh = NULL, 

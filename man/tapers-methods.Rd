@@ -26,7 +26,8 @@
   \method{points}{tapers} (x, pch = "_", cex = 1, ...)
 
   \method{plot}{tapers} (x, xi = NULL,
-    color.pal = c("Blues", "Spectral"), ylim = NULL, ...)
+    color.pal = c("Blues", "Spectral"), ylim = NULL,
+    hv.lines = FALSE, ...)
 }
 \arguments{
   \item{x}{tapers object}
@@ -48,7 +49,14 @@
 
   \item{ylim}{optional limits for y-axis}
 
+  \item{hv.lines}{logical; should horizontal and vertival
+  reference lines be plotted?}
+
   \item{...}{optional arguments}
+}
+\value{
+  \code{plot} returns a list with names: \code{line.colors}
+  (hex values)
 }
 \description{
   Generic methods for objects with class \code{'tapers'}.

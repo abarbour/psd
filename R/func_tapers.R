@@ -99,7 +99,9 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #' @param cex point size (default is 1)
 #' @param color.pal color palette to use (choices are: "Blues","Spectral")
 #' @param ylim optional limits for y-axis
+#' @param hv.lines logical; should horizontal and vertival reference lines be plotted?
 #' @param ... optional arguments
+#' @return \code{plot} returns a list with names: \code{line.colors} (hex values)
 #' @examples
 #' ##
 #' tap <- as.tapers(c(1:49,50:0)+rnorm(1e2))
@@ -176,7 +178,7 @@ points.tapers <- function(x, pch="_", cex=1, ...){
 #' @aliases plot.tapers
 #' @method plot tapers
 #' @S3method plot tapers
-plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, ...){
+plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, hv.lines=FALSE, ...){
   stopifnot(is.tapers(x))
   #if isS4(x) x <- x@tapers
   nt <- length(x)
@@ -201,11 +203,14 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
                col=cols[x],
                ...)
   graphics::lines.default(xi,x,col="black",lwd=0.7)
-  # plot log2 multiples as horiz lines
-  hl <- 2**(1:round(log2(mx)))
-  graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
-  vl <- c(1, nt)
-  graphics::abline(v=vl,lty=3,lwd=2,col="blue")
+  if (hv.lines){
+    # plot log2 multiples as horiz lines
+    hl <- 2**(1:round(log2(mx)))
+    graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
+    vl <- c(1, nt)
+    graphics::abline(v=vl,lty=3,lwd=2,col="blue")
+  }
+  return(invisible(list(line.colors=cols)))
 }
 
 ###

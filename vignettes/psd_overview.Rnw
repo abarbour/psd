@@ -44,7 +44,7 @@
   \end{figure}                   %
 }
 \author{Andrew J. Barbour and Robert L. Parker}
-\title{\psd{}: Adaptive sine multitaper power spectral density estimation}
+\title{An overview of \psd{}: Adaptive sine multitaper power spectral density estimation in R}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -126,13 +126,13 @@ as we will see, adversely affect the accuracy of any PSD estimate,
 multitaper or otherwise.
 
 We can find power spectral density (PSD)
-estimates for the two series quite simply:
+estimates for the two series quite simply with \Rcmd{pspectrum}:
 %% pspectrum 5 iters
 <<eval=TRUE, echo=TRUE, label=MAGPSDS>>=
 psdr <- pspectrum(magnet$raw)
 psdc <- pspectrum(magnet$clean)
 @
-Each  \Rcmd{pspectrum} command calculates a pilot PSD, followed by 
+Each application of \Rcmd{pspectrum} calculates a pilot PSD, followed by 
 \Rcmd{niter}
 iterations of refinement.
 With each iteration
@@ -154,12 +154,13 @@ all.equal(psdc, psdc_recovered)
 
 In general, spectral variance is reduced
 with sequential refinements\footnote{
-Messages given by \Rcmd{pspectrum} with
-``Ave. S.V.R."  (not shown)
-are in reference to the 
- average spectral-variance reduction, found from
+Messages are given by default; ones with
+``Ave. S.V.R."
+are in reference to 
+ ``average spectral-variance reduction", which
+ is the variance of the
  double-differenced spectra at each stage, relative
- to the pilot estimate.
+ to the pilot estimate's variance.
 }, but is not necessarily guaranteed to converge.
 Note that in the example
 the sampling frequency of both series
@@ -242,7 +243,7 @@ spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=F)
 @
 Within \Rcmd{psdcore} the comparison is
 made with
-the logical argument in \Rcmd{preproc} 
+the logical argument \Rcmd{preproc} 
 passed to \Rcmd{spec.pgram}, which is \SC{True} by default.
 
 As a matter of bookkeeping and good practice, 
@@ -264,7 +265,9 @@ results are shown in Figure \ref{fig:two}.
 ntap <- psdc$taper
 psdcore(magnet$clean, ntaper=ntap, refresh=TRUE, plotpsd=TRUE)
 @
-\caption{Top: Comparison between PSD estimators for the 
+\caption{A summary plot produced by \Rcmd{psdcore} when
+\Rcmd{plotpsd=TRUE}.  
+Top: Comparison between PSD estimators for the 
 clean Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.
 Middle: The number of tapers applied as a function of frequency from
@@ -652,14 +655,14 @@ pspb <- create_poly(Bspec_plt$freq, Bspec_plt$spectrum[,1], Bspec_plt$spectrum[,
 plot(c(0,0.5),c(-5,40),col="white", 
        main="Project MAGNET Spectral Uncertainty (p > 0.95)",
        ylab="", xlab="spatial frequency, 1/km", yaxt="n", frame.plot=FALSE)
-lines(c(2,1,1,2)*0.01,c(5,5,8.01,8.01)-8)
-text(.05, -1.4, "3.01 dB")
+lines(c(2,1,1,2)*0.01,c(0,0,7,7))
+text(.04, 3.5, "7 dB")
 polygon(pspb$xx, dB(pspb$yy), col="light blue", border=NA)
-text(0.22, 35, "Bayesian (bspec)", cex=0.9)
+text(0.26, 37, "Bayesian (bspec)", col="#0099FF", cex=cx<-0.9)
 polygon(psppu$xx, psppu$yy, col="dark grey", border="black", lwd=0.2)
-text(0.15, 6, "Light: adaptive\ntaper refinement\n(pspectrum)", cex=0.9)
+text(0.15, 6, "Light: adaptive\ntaper refinement\n(pspectrum)", cex=cx)
 polygon(pspau$xx, pspau$yy, col="light grey", border="black", lwd=0.2)
-text(0.40, 22, "Dark: Uniform\ntapering (psdcore)", cex=0.9)
+text(0.40, 22, "Dark: Uniform\ntapering (psdcore)", cex=cx)
 @
 \caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
 The filled regions encompass the spectral uncertainties values based on the
@@ -684,20 +687,25 @@ in Figure \ref{fig:magres}.
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4, label=MAGRES>>=
 frq <- Aspec$freq
-relp <- dB(1/spa$resolution)
-par(las=1)
+relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
+relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
+relp <- ((spa$resolution) - spp$resolution - 0 ) / spp$resolution
+par(las=1, oma=rep(0,4), omi=rep(0,4))
+par(mar=c(3,3,2,0))
+layout(matrix(c(1,2),1,2,byrow=TRUE), heights=c(2,2), widths=c(3,0.5), respect=TRUE)
 plot(frq, relp,
      col="light grey", 
-     ylim=dB(c(1,5)),
+     ylim=yl<-c(0,50),
      type="h", xaxs="i", yaxs="i", 
      ylab="dB", xlab="frequency, 1/km",
-     main="Project MAGNET Spectral Resolution")
+     main="Percent increase in spectral resolution")
 lines(frq, relp)
-lines(frq, spp$stderr.chi.upper+relp, lwd=1.5, lty=3)
-lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
-abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
+par(mar=c(3,0,2,2))
+boxplot(relp, axes=FALSE, ylim=yl, yaxs="i", notch=TRUE, main=sprintf("%.01f",median(relp)))
+axis(4)
 @
-\caption{Resolution limits for Project MAGNET PSD (\Rcmd{niter=5} adapts--the default) 
+\caption{REDO CAPTION
+Resolution limits for Project MAGNET PSD (\Rcmd{niter=5} adapts--the default) 
 in decibels relative to the spectrum.
 The thick dashed line shows the 
 resolved uncertainties ($p=0.05$) in the adaptively refined
