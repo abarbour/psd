@@ -1,6 +1,6 @@
 **psd: Adaptive, sine-multitaper power spectral density estimation (in R)**
 
-*This work is a port of Robert Parker's (Matlab version of) PSD*
+*This work is a port of Robert Parker's PSD (Matlab version)*
 
 From Parker's site [1]:
 

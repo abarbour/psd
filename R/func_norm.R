@@ -99,10 +99,8 @@ normalize.spec <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   # assume its from spectrum
   PSD <- switch(src <- toupper(match.arg(src,
 			  c("spectrum","double.sided","psd","single.sided"))), 
-                SINGLE.SIDED=TRUE, 
-		DOUBLE.SIDED=FALSE,
-                PSD=TRUE,
-		SPECTRUM=FALSE)
+                SPECTRUM=FALSE, DOUBLE.SIDED=FALSE, 
+                PSD=TRUE, SINGLE.SIDED=TRUE)
   if (PSD){
     ptyp <- "single"
     # spectrum is from psd, and is single-sided
@@ -112,7 +110,7 @@ normalize.spec <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
     # spectrum is from spectrum or others, double sided
     Spec$spec <- Spec$spec * 2
   }
-  if (verbose) message(sprintf("Normalized  %s-sided PSD  (%s)  to sampling-freq.  %s", ptyp, src, Fsamp))
+  if (verbose) message(sprintf("Normalized  %s-sided PSD  (%s)  to single-sided PSD for sampling-freq.  %s", ptyp, src, Fsamp))
   return(invisible(Spec))
 }
 #
