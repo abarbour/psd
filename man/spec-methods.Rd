@@ -18,7 +18,7 @@
   Generic methods for objects with class \code{'spec'}.
 }
 \details{
-  Objects with class \code{'spec'} are simply lists.
+  Objects with class \code{'spec'} are simply list objects.
   \code{as.data.frame} converts the list into a
   \code{'data.frame'} with individual columns for the
   frequency, PSD, and taper vectors; all other information

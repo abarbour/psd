@@ -97,7 +97,8 @@ sometimes used improperly.
 To clarify these terms, we will walk through some background and
 definitions, without overly complicating the discussion with proofs.
 
-\subsection{Power spectral density: An informal definition}
+\section{Power spectral density}
+
 We begin by considering a 
 stationary stochastic process \dXstoch{}, a random function extending 
 throughout all time with time-invariant properties. 
@@ -131,8 +132,6 @@ over frequencies $(\nhalf,\,\half)$:
 \int_{\nhalf}^{\half} \dXstoch{} e^{2 \pi i f n} \, df
 \end{equation}
 
-\subsection{The filter analogy}
-
 There is a problem with the definitions we have just presented.
 The integral in (\ref{eq-FT-0}) or the 
 sum in (\ref{eq-DFT-0}) must converge to apply these equations to
@@ -143,6 +142,8 @@ does not happen for a stationary process.
 And, if we put a stochastic process in $f(t)$ in (\ref{eq-FT-0})
 we would obtain another random function, which is contrary to our stated
 goal of obtaining a descriptive function in frequency space.
+
+\subsection{An informal definition from a digital filtering analogy}
 
 Suppose we wanted to know 
 how much variability the stationary process exhibits at a 
@@ -168,7 +169,8 @@ so $S_X$ is the power spectrum of $X$, or more grandly its
 \bidx{power spectral density}:
 
 \begin{equation}
-\label{eq-PSD-informal}S_X ( f_0 ) \Delta f = \Var \{\phi_f \star X\}
+\label{eq-PSD-informal}
+S_X ( f_0 ) \Delta f = \Var \{\phi_f \star X\}
 \end{equation}
 
 Equation (\ref{eq-PSD-informal}) is our informal definition of $S_X ( f_0 )$. 
@@ -224,7 +226,7 @@ Sxf <- spectrum(xf, pad=1, plot=FALSE, taper=0.2)
 %
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3, label=FILTERS>>=
+<<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3, label=FILTERS>>=
 Sx$df <- Sx$bandwidth <- NA
 par(mar=c(0,0,2,0), oma=rep(0,4))
 plot(Sx, col="grey", log="dB", ylim=c(-150,20), xlim=c(0.1,0.4),
@@ -254,11 +256,11 @@ and looked at the output from each one.
 % return(X[indices])
 %}
 
-\subsection{Power spectral density: A more formal definition}
+\subsection{A more formal definition}
 Let us return to having a single realization
 of a stochastic process in the time domain, 
-\dXstoch{}, which is sampled over a finite interval of time
-$(-T/2, \,T/2)$, denoted by \dXrealiz{}.
+\dXstoch{}, which we assume is sampled over a finite interval of time
+$(-T/2, \,T/2)$, and denoted by \dXrealiz{}.
 A realization of \dXstoch{} will have
 a Fourier transform:
 %
@@ -320,8 +322,9 @@ and the autocovariance function \dACV{\tau}?
 
 From Equation (\ref{eq-psddef1}) we see that \dS{}
 is obtained from products of \dXstoch{} with itself at any particular $f$,
-so it is related to the second-order moment of \dXstoch{} only; so too does 
-the \bidx{autocovariance} (ACV) \dACV{\tau}:
+so it is related to the second-order moment of \dXstoch{} only.
+The \bidx{autocovariance} (ACV) \dACV{\tau} is also related to
+the second-order moment:
 %
 \begin{equation}
 \begin{split}
@@ -347,14 +350,15 @@ For real data, \dACV{\tau} is always even, and always real.
 This implies that \dS{} is also a real and even function in $f$,
 which, because $S(f) >= 0$, restricts the functions \dACV{t}
 could possibly represent.
-Put another way, there are many examples of even functions
-having non-positive Fourier transforms (see \citet{bracewell2000}).
+Put another way, there are many examples of even-functions
+having non-positive Fourier transforms (\citet{bracewell2000} shows
+many).
 
 \subsection{Testing normalization}
-We can use a property of the ACV function \dACV{\tau} or
-the informal definition in (\ref{eq-psd-informal})
-to test whether or not a PSD is properly normalized.  To see this, we
-take the
+We can use the relationship with the ACV in (\ref{eq-psddef2}), or
+the informal definition in (\ref{eq-PSD-informal}),
+to test whether or not a PSD is properly normalized.  
+To see this, we take the
 inverse Fourier transform of (\ref{eq-psddef2}):
 %
 \begin{equation}
@@ -426,16 +430,14 @@ length(X)
 @
 
 We can easily find the amplitude and phase response
-<<eval=TRUE, echo=TRUE, label="Amplitude and phase spectra.">>=
-Sa <- Mod(X) # Amplitude spectrum
-Sp <- Arg(X) # Phase spectrum
-@
 followed by equivalent \idx{energy spectral density}
 estimates\footnote{
 Note the equivalence
 between the complex conjugate based estimates.
 }:
-<<eval=TRUE, echo=TRUE, label="Energy spectral densities.">>=
+<<eval=TRUE, echo=TRUE, label="Amplitude and phase spectra.">>=
+Sa <- Mod(X) # Amplitude spectrum
+Sp <- Arg(X) # Phase spectrum
 XC <- Conj(X)
 all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 @
@@ -555,7 +557,7 @@ In Figure \ref{fig:psdsamp} we
 plot the PSD with new normalization, and compare it to
 the previous normalization.
 Spectral values are shown as
-decibels (relative to 1 units$^2/$frequency), using:
+decibels (relative to \unitfrac[1]{units$^2$}{Hz}), using:
 
 <<eval=TRUE, echo=TRUE, label="DB">>=
 # decibel function

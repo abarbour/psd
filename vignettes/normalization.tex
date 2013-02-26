@@ -152,7 +152,8 @@ sometimes used improperly.
 To clarify these terms, we will walk through some background and
 definitions, without overly complicating the discussion with proofs.
 
-\subsection{Power spectral density: An informal definition}
+\section{Power spectral density}
+
 We begin by considering a 
 stationary stochastic process \dXstoch{}, a random function extending 
 throughout all time with time-invariant properties. 
@@ -186,8 +187,6 @@ over frequencies $(\nhalf,\,\half)$:
 \int_{\nhalf}^{\half} \dXstoch{} e^{2 \pi i f n} \, df
 \end{equation}
 
-\subsection{The filter analogy}
-
 There is a problem with the definitions we have just presented.
 The integral in (\ref{eq-FT-0}) or the 
 sum in (\ref{eq-DFT-0}) must converge to apply these equations to
@@ -198,6 +197,8 @@ does not happen for a stationary process.
 And, if we put a stochastic process in $f(t)$ in (\ref{eq-FT-0})
 we would obtain another random function, which is contrary to our stated
 goal of obtaining a descriptive function in frequency space.
+
+\subsection{An informal definition from a digital filtering analogy}
 
 Suppose we wanted to know 
 how much variability the stationary process exhibits at a 
@@ -265,11 +266,11 @@ x <- \hlfunctioncall{rnorm}(N, mean = 0, sd = 1)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# Loading required package: MASS}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: MASS}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
 
-{\ttfamily\noindent\itshape\textcolor{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#     filter, poly}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
 f <- \hlfunctioncall{c}(0, 0.2, 0.2, 0.3, 0.3, 0.5) * 2
 m <- \hlfunctioncall{c}(0, 0, 1, 1, 0, 0)
 fw <- signal::\hlfunctioncall{fir2}(N, f, m)
@@ -294,18 +295,7 @@ Sxf <- \hlfunctioncall{spectrum}(xf, pad = 1, plot = FALSE, taper = 0.2)
 \begin{figure}[htb!]
 \begin{center}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-Sx$df <- Sx$bandwidth <- NA
-\hlfunctioncall{par}(mar = \hlfunctioncall{c}(0, 0, 2, 0), oma = \hlfunctioncall{rep}(0, 4))
-\hlfunctioncall{plot}(Sx, col = \hlstring{"grey"}, log = \hlstring{"dB"}, ylim = \hlfunctioncall{c}(-150, 20), xlim = \hlfunctioncall{c}(0.1, 0.4), xlab = \hlstring{""}, 
-    ylab = \hlstring{""}, ci.col = NA, axes = FALSE, main = \hlstring{"PSDs of raw and filtered process"})
-\hlfunctioncall{lines}(fhu$f, 20 * \hlfunctioncall{log10}(\hlfunctioncall{Mod}(fhu$h)), col = \hlstring{"red"}, lty = 3, lwd = 2)
-\hlfunctioncall{lines}(fhl$f, 20 * \hlfunctioncall{log10}(\hlfunctioncall{Mod}(fhl$h)), col = \hlstring{"red"}, lty = 3, lwd = 2)
-\hlfunctioncall{lines}(fh$f, 20 * \hlfunctioncall{log10}(\hlfunctioncall{Mod}(fh$h)), col = \hlstring{"red"}, lwd = 2)
-\hlfunctioncall{plot}(Sxf, log = \hlstring{"dB"}, add = TRUE)
-\end{alltt}
-\end{kframe}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
 \includegraphics[width=\maxwidth]{figure/FILTERS} 
 
 \end{knitrout}
@@ -329,11 +319,11 @@ and looked at the output from each one.
 % return(X[indices])
 %}
 
-\subsection{Power spectral density: A more formal definition}
+\subsection{A more formal definition}
 Let us return to having a single realization
 of a stochastic process in the time domain, 
-\dXstoch{}, which is sampled over a finite interval of time
-$(-T/2, \,T/2)$, denoted by \dXrealiz{}.
+\dXstoch{}, which we assume is sampled over a finite interval of time
+$(-T/2, \,T/2)$, and denoted by \dXrealiz{}.
 A realization of \dXstoch{} will have
 a Fourier transform:
 %
@@ -395,8 +385,9 @@ and the autocovariance function \dACV{\tau}?
 
 From Equation (\ref{eq-psddef1}) we see that \dS{}
 is obtained from products of \dXstoch{} with itself at any particular $f$,
-so it is related to the second-order moment of \dXstoch{} only; so too does 
-the \bidx{autocovariance} (ACV) \dACV{\tau}:
+so it is related to the second-order moment of \dXstoch{} only.
+The \bidx{autocovariance} (ACV) \dACV{\tau} is also related to
+the second-order moment:
 %
 \begin{equation}
 \begin{split}
@@ -422,14 +413,15 @@ For real data, \dACV{\tau} is always even, and always real.
 This implies that \dS{} is also a real and even function in $f$,
 which, because $S(f) >= 0$, restricts the functions \dACV{t}
 could possibly represent.
-Put another way, there are many examples of even functions
-having non-positive Fourier transforms (see \citet{bracewell2000}).
+Put another way, there are many examples of even-functions
+having non-positive Fourier transforms (\citet{bracewell2000} shows
+many).
 
 \subsection{Testing normalization}
-We can use a property of the ACV function \dACV{\tau} or
-the informal definition in (\ref{eq-psd-informal})
-to test whether or not a PSD is properly normalized.  To see this, we
-take the
+We can use the relationship with the ACV in (\ref{eq-psddef2}), or
+the informal definition in (\ref{eq-PSD-informal}),
+to test whether or not a PSD is properly normalized.  
+To see this, we take the
 inverse Fourier transform of (\ref{eq-psddef2}):
 %
 \begin{equation}
@@ -514,15 +506,6 @@ X <- \hlfunctioncall{fft}(x)
 
 
 We can easily find the amplitude and phase response
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-Sa <- \hlfunctioncall{Mod}(X)  \hlcomment{# Amplitude spectrum}
-Sp <- \hlfunctioncall{Arg}(X)  \hlcomment{# Phase spectrum}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
 followed by equivalent \idx{energy spectral density}
 estimates\footnote{
 Note the equivalence
@@ -531,6 +514,8 @@ between the complex conjugate based estimates.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+Sa <- \hlfunctioncall{Mod}(X)  \hlcomment{# Amplitude spectrum}
+Sp <- \hlfunctioncall{Arg}(X)  \hlcomment{# Phase spectrum}
 XC <- \hlfunctioncall{Conj}(X)
 \hlfunctioncall{all.equal}(Se <- Sa^2, Se_2 <- \hlfunctioncall{Mod}(XC * X), Se_2R <- \hlfunctioncall{Mod}(X * XC))
 \end{alltt}
@@ -704,7 +689,7 @@ In Figure \ref{fig:psdsamp} we
 plot the PSD with new normalization, and compare it to
 the previous normalization.
 Spectral values are shown as
-decibels (relative to 1 units$^2/$frequency), using:
+decibels (relative to \unitfrac[1]{units$^2$}{Hz}), using:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -881,20 +866,20 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 \end{alltt}
 \begin{verbatim}
 ## R version 2.15.2 (2012-10-26)
-## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## Platform: i386-apple-darwin9.8.0/i386 (32-bit)
 ## 
 ## locale:
-## [1] C
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
-##  [8] utils     methods   base     
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] signal_0.7-2 MASS_7.3-22  knitr_0.9   
+## [1] signal_0.7-3 MASS_7.3-23  knitr_1.1   
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.0   evaluate_0.4.3 formatR_0.7    stringr_0.6.2
+## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    stringr_0.6.2 
+## [5] tools_2.15.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
