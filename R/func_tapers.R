@@ -56,6 +56,7 @@
 #' @param max_taper Set all values greater than this to this.
 #' @param setspan logical; should the tapers object be passed through \code{\link{minspan}} before it is return?
 #' @export
+#' @return An object with class taper.
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.tapers}}
 #' @example inst/Examples/rdex_tapers.R
@@ -67,14 +68,25 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   stopifnot(!(is.character(x)))
   if (is.null(max_taper)) max_taper <- ceiling(max(x))
   stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper)
+  #
   x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(x))))
-  #x[x < min_taper] <- min_taper
-  #   > as.integer(as.matrix(data.frame(x=1:10,y=10:19)))
-  #   [1]  1  2  3  4  5  6  7  8  9 10 10 11 12 13 14 15 16 17 18 19
+  #
   class(x) <- "tapers"
+  
+  attr(x, "n_taper_limits") <- c(min_taper, max_taper)
+  attr(x, "taper_positions") <- NA
+  #
   if (setspan) x <- minspan(x)
+  #
+  attr(x, "span_was_set") <- setspan
+  attr(x, "n_taper_limits_orig") <- c(min_taper, max_taper)
+  #
   return(x)
 }
+#' @rdname as.tapers
+#' @name tapers
+#' @export
+tapers <- as.tapers
 
 ###
 ###  Generic methods
@@ -84,7 +96,6 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #' @keywords methods S3methods tapers
 #' @name tapers-methods
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @aliases tapers
 #' @rdname tapers-methods
 #' @docType methods
 #' @import RColorBrewer
@@ -112,6 +123,21 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
 #' tap <- as.tapers(tap/2)
 #' lines(tap)
 NULL
+
+#' @rdname tapers-methods
+#' @name as.data.frame.tapers
+#' @method as.data.frame tapers
+#' @S3method as.data.frame tapers
+as.data.frame.tapers <- function(x, ...){
+  df <- as.data.frame.numeric(x)
+  names(df) <- "n.tapers"
+  return(df)
+}
+#' @rdname tapers-methods
+#' @name data.frame.tapers
+#' @method data.frame tapers
+#' @S3method data.frame tapers
+data.frame.tapers <- as.data.frame.tapers
 
 #' @rdname tapers-methods
 #' @name print

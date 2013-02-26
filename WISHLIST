@@ -3,8 +3,6 @@
 # reverse sorted by desirability.
 #
 
-[ ] as.data.frame.tapers
-
 [ ] reidsid "local_qls" spectral derivatives as callable .c [.cpp?] code
 *** This is likely the bottleneck of the entire operation, besides the FFT
 
@@ -13,6 +11,8 @@
 [ ] Unified argument names
 
 [ ] A well-tested decimation option.
+
+[X] as.data.frame.tapers
 
 [X] zero pad or predict for AR > 0 in prewhiten
 

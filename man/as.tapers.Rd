@@ -1,8 +1,12 @@
 \name{as.tapers}
 \alias{as.tapers}
+\alias{tapers}
 \title{Coerce an object into a \code{'tapers'} object.}
 \usage{
   as.tapers(x, min_taper = 1, max_taper = NULL,
+    setspan = FALSE)
+
+  tapers(x, min_taper = 1, max_taper = NULL,
     setspan = FALSE)
 }
 \arguments{
@@ -16,6 +20,9 @@
   \item{setspan}{logical; should the tapers object be
   passed through \code{\link{minspan}} before it is
   return?}
+}
+\value{
+  An object with class taper.
 }
 \description{
   In a tapered spectrum estimation algorithm, it is
@@ -57,6 +64,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Objects with class 'tapers'
 ##

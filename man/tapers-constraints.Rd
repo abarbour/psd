@@ -189,6 +189,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Taper constraint procedures
 ##

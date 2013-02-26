@@ -99,6 +99,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Multitaper PSD estimation
 ##

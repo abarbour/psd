@@ -45,6 +45,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Show parabolic weighting factors
 ##

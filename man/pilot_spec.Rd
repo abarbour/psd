@@ -74,6 +74,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Pilot spectrum
 ##

@@ -39,6 +39,11 @@
 #' @keywords properties tapers resolution uncertainty degrees-of-freedom bandwidth
 #' @seealso \code{\link{spec_confint}}, \code{\link{psd-package}}
 #'
+#' @references Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007), 
+#' Reducing the bias of multitaper spectrum estimates,
+#' \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
+#' doi: 10.1111/j.1365-246X.2007.03592.x
+#'
 #' @param tapvec object with class \code{tapers} or \code{spec}
 #' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
 #' @param n.freq scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the tapers object is assumed to be the number)

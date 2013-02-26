@@ -68,6 +68,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Spectral properties from the number of tapers used
 ## (portions extracted from overview vignette)
@@ -160,6 +161,13 @@ abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
+}
+\references{
+  Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon,
+  and R. L. Graham (2007), Reducing the bias of multitaper
+  spectrum estimates, \emph{Geophysical Journal
+  International}, \strong{171}, 1269--1281, doi:
+  10.1111/j.1365-246X.2007.03592.x
 }
 \seealso{
   \code{\link{spec_confint}}, \code{\link{psd-package}}

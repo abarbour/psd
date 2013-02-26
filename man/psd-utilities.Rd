@@ -197,6 +197,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Various utilities
 ##

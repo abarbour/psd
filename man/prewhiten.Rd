@@ -143,6 +143,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Using prewhiten to improve spectral estimates
 ##

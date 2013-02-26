@@ -38,6 +38,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Spline gradient
 ##

@@ -7,17 +7,11 @@ datasets
 *** should not include? <- proprietary?
 [X] magnet
 
-`spectral_properties`
----------------------
-[ ] check formulas for various quantities
-*** finish documentation [ ]
-*** consult Bob
-
 vignettes
 ---------
-[ ] check out resolution
-*** is it just uncertainty?
 [ ] revise normalization with RLPs suggestions
+[X] check out resolution
+*** is it just uncertainty?
 [X] revise overview with DCAs suggestions
 [-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
 [X] finish norm
@@ -47,6 +41,12 @@ Miscellany
 [X] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
+
+`spectral_properties`
+---------------------
+[X] check formulas for various quantities
+*** finish documentation [X]
+*** consult Bob
 
 Examples
 --------

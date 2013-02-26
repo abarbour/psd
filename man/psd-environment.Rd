@@ -198,6 +198,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## psd working environment
 ##

@@ -1,4 +1,5 @@
 #RDEX#\dontrun{
+require(psd)
 ##
 ## Adaptive multitaper PSD estimation
 ## (portions extracted from overview vignette)

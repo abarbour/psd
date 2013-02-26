@@ -76,6 +76,7 @@
 }
 \examples{
 \dontrun{
+require(psd)
 ##
 ## Normalization
 ##

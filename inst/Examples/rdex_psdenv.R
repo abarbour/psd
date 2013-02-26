@@ -1,4 +1,5 @@
 #RDEX#\dontrun{
+require(psd)
 ##
 ## psd working environment
 ##

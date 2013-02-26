@@ -1,4 +1,5 @@
 #RDEX#\dontrun{
+require(psd)
 ##
 ## Riedel-Sidorenko--Parker taper optimization
 ##

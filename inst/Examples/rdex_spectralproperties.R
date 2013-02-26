@@ -1,4 +1,5 @@
 #RDEX#\dontrun{
+require(psd)
 ##
 ## Spectral properties from the number of tapers used
 ## (portions extracted from overview vignette)

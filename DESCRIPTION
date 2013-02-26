@@ -47,3 +47,4 @@ Collate:
     'zzz.R'
     'func_norm.R'
     'func_specprops.R'
+    'func_spec.R'

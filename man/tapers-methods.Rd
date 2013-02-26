@@ -1,5 +1,7 @@
 \docType{methods}
 \name{tapers-methods}
+\alias{as.data.frame.tapers}
+\alias{data.frame.tapers}
 \alias{lines}
 \alias{lines.tapers}
 \alias{plot}
@@ -11,10 +13,13 @@
 \alias{print.tapers}
 \alias{summary}
 \alias{summary.tapers}
-\alias{tapers}
 \alias{tapers-methods}
 \title{Generic methods for objects with class \code{'tapers'}.}
 \usage{
+  \method{as.data.frame}{tapers} (x, ...)
+
+  \method{data.frame}{tapers} (x, ...)
+
   \method{print}{tapers} (x, ...)
 
   \method{summary}{tapers} (object, ...)
