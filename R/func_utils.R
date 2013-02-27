@@ -28,6 +28,11 @@ vardiff <- function(Xd, double.diff=FALSE){
 #' @keywords utilities first-difference variance
 varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
 
+# @rdname psd-utilities
+# @export
+# @keywords utilities first-difference variance
+#opar <- function() par(no.readonly=TRUE)
+
 #' @description \code{dB} returns an object converted to decibels.
 #' @details 
 #' Decibels are defined as \eqn{10 \log{}_{10} \frac{X_1}{X_2}}, 
