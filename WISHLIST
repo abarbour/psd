@@ -6,6 +6,35 @@
 [ ] reidsid "local_qls" spectral derivatives as callable .c [.cpp?] code
 *** This is likely the bottleneck of the entire operation, besides the FFT
 
+[ ] cross spectral density estimation
+
+ something like the methods in ifultools/src/fra_sdf.c
+
+ * @param result      Pointer to a universal matrix of type
+ *   MUTIL\_DCOMPLEX containing the cross-spectral density function estimates.
+ *   For an M-column input matrix, the number columns in this result
+ *   matrix will be M*(M+1)/2, which corresponds to all unique cross-spectral
+ *   combinations that can be formed. Let Sij = conj(Xi(f)) * Xj(f)
+ *   be the cross-spectral density estimate of the ith and jth time series
+ *   where Xk(f) is the DFT of the kth time series. If M = 3,
+ *   the result will contain the following columns: [S00 S01 S02 S11 S12 S22].
+ *   The memory for this matrix is automatically allocated by the function.
+ *
+ * @see frauniv_spectral_density_function_direct
+ 
+ X <- [ts1, ts2]
+ Xf <- mvfft(X)
+ Sij <- conj(Xj) %*% Xj
+ nser <- 3
+ sser <- seq_len(nser)
+ allcomb <- expand.grid(sser, sser)
+ # all possible combinations (max two columns)
+ cprods <- apply(allcomb, 1, prod) 
+ ucprods <- unique(cprods)
+ # columnwise products
+ allcomb[match(ucprods, cprods),2:1]
+ # get non-redundant rows (from the perspective of indices) and swap columns
+
 [ ] logsmoo
 
 [ ] Unified argument names
