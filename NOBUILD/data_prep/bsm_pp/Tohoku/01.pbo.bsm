@@ -1,0 +1,29 @@
+#!/bin/sh
+BSM="http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311"
+wget -O Readme.txt ${BSM}/20110311_Tohoku.README.txt
+cat << XXX > /tmp/tmp.c.bsm
+wget -O B081_B.tar ${BSM}/B081_20110311_TohokuJapan.tar
+wget -O B082_B.tar ${BSM}/B082_20110311_TohokuJapan.tar
+wget -O B084_B.tar ${BSM}/B084_20110311_TohokuJapan.tar
+wget -O B086_B.tar ${BSM}/B086_20110311_TohokuJapan.tar
+wget -O B087_B.tar ${BSM}/B087_20110311_TohokuJapan.tar
+wget -O B088_B.tar ${BSM}/B088_20110311_TohokuJapan.tar
+wget -O B089_B.tar ${BSM}/B089_20110311_TohokuJapan.tar
+XXX
+cat /tmp/tmp.c.bsm | awk '{
+  wget=$0
+  lfi=$3
+  gsub("/"," ")
+  gsub("\.tar","")
+  tfid=$NF
+  lfid=$3
+  print wget
+  printf"tar -xvf %s\n",lfi
+  printf"mv -f %s/ %s/\n",tfid,lfid
+  printf"rm -f %s %s/B???.CH?.*.txt.gz\n",lfi,lfid
+  gsub("_"," ")
+  sta=$3
+  printf"mv -f %s/B???.tensor.*.txt.gz %s/%s.txt.gz\n",lfid,lfid,sta
+}' > g.c.bsm
+chmod +x g.c.bsm
+g.c.bsm
