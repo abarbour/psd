@@ -1,0 +1,50 @@
+\docType{data}
+\name{hfsnm}
+\alias{hfsnm}
+\title{Noise levels found in PBO strainmeter data at seismic frequencies.}
+\format{A dataframe with 141 observations on the following 4 variables:
+
+\describe{
+\item{\code{freq}}{Frequencies, in Hertz.}
+\item{\code{P50}}{The 50th percentile (median) noise levels in decibels relative to \eqn{1 \epsilon^2 / } Hz.}
+\item{\code{P10}}{The 10th percentile noise levels also in decibels.}
+\item{\code{meter.type}}{The strainmeter design type.}
+}
+
+and 2 attributes:
+\describe{
+\item{\code{source.doi}}{The DOI number of the source publication.}
+\item{\code{generator}}{The structure of a function which will refresh the values from the supplemental files of the original publication.}
+}}
+\source{
+  Barbour, A. J., and Agnew, D. C. (2011), Noise Levels on
+  Plate Boundary Observatory Borehole Strainmeters in
+  Southern California, \emph{Bulletin of the Seismological
+  Society of America}, \strong{101}(5), 2453-2466,
+  doi:10.1785/0120110062
+}
+\description{
+  These values represent noise levels in high frequency
+  data (\eqn{10^{-3} - 10} Hz) from 2009, averaged over all
+  stations in the Anza cluster of the Plate Boundary
+  Observatory (PBO) borehole strainmeter network, and the
+  UCSD-style longbase laser strainmeters.
+}
+\details{
+  \code{NA} values in the series highlight frequency bands
+  where the noise levels are unreliable, due to a
+  instrumental artifact.
+}
+\examples{
+data(hfsnm)
+str(hfsnm)
+FUN <- attr(hfsnm, "generator")
+try(dat <- FUN(molten=FALSE)) # may fail without library-access to BSSA
+try(all.equal(dat[,1:4], hfsnm[,1:4]))
+}
+\seealso{
+  \code{\link{pspectrum}}, \code{\link{Tohoku}},
+  \code{\link{magnet}}
+}
+\keyword{datasets}
+

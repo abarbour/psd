@@ -12,9 +12,8 @@ Tohoku/
 bsmnm.txt
 lsmnm.txt
 readpbo.R
-snm.R
-snm.Rout
-strainnoise.rda
+hfsnm.R
+hfsnm.rda
 toRda.R
 
 MySQL:

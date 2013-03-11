@@ -117,7 +117,7 @@ NULL
 #' \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
 #' }
 #'
-#' @seealso \code{\link{pspectrum}}
+#' @seealso \code{\link{pspectrum}}, \code{\link{Tohoku}}, \code{\link{hfsnm}}
 #'
 #' @references Coleman, R. J. (1992),
 #' Project Magnet high-level vector survey data reduction. 
@@ -129,4 +129,103 @@ NULL
 #' @examples
 #' data(magnet)
 #' summary(magnet)
+NULL
+
+#' Observations of teleseismic strains from the 2011 Tohoku earthquake.
+#'
+#' The \eqn{M_w 9} Tohoku earthquake happend on March 11, 2011.  The seismic
+#' waves were recorded at stations across the globe, including by strainmeters
+#' in the Plate Boundary Observatory (PBO) borehole strainmeters.
+#'
+#' These data are for station B084, which is located approximately 8500 km away from
+#' the epicenter. Because this distance is large, the seismic waves didn't arrive
+#' at this station for more than 700 seconds after the origin time.  So there
+#' is a record of pre-seismic noise included, the timeseries extends 6784 seconds
+#' prior to the origin time, and 9215 seconds after.  
+#'
+#' The data are classified with the \code{"epoch"} variable, which separates
+#' the series into pre-seismic and seismic data; this is defined relative
+#' to the predicted P-wave arrival time from a traveltime model.
+#'
+#' @name Tohoku
+#' @docType data
+#' @format A dataframe with 16000 observations on the following 15 variables.
+#'
+#' \describe{
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' }
+#'
+#' and X attributes:
+#' \describe{
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' \item{\code{}}{}
+#' }
+#' @seealso \code{\link{pspectrum}}, \code{\link{hfsnm}}, \code{\link{magnet}}
+#' @keywords datasets
+#'
+#' @references USGS summary page: 
+#' @references \url{http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/}
+#' @source PBO High Frequency archive: 
+#' @source \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
+#'
+#' @examples
+#' data(Tohoku)
+#' str(Tohoku)
+NULL
+
+#' Noise levels found in PBO strainmeter data at seismic frequencies.
+#'
+#' These values represent noise levels in high frequency data (\eqn{10^{-3} - 10} Hz) from 2009, averaged over all
+#' stations in the Anza cluster of the Plate Boundary Observatory (PBO) borehole
+#' strainmeter network, and the UCSD-style longbase laser strainmeters.
+#'
+#' \code{NA} values in the series highlight frequency bands where the noise
+#' levels are unreliable, due to a instrumental artifact.
+#'
+#' @name hfsnm
+#' @docType data
+#' @format A dataframe with 141 observations on the following 4 variables:
+#'
+#' \describe{
+#' \item{\code{freq}}{Frequencies, in Hertz.}
+#' \item{\code{P50}}{The 50th percentile (median) noise levels in decibels relative to \eqn{1 \epsilon^2 / } Hz.}
+#' \item{\code{P10}}{The 10th percentile noise levels also in decibels.}
+#' \item{\code{meter.type}}{The strainmeter design type.}
+#' }
+#'
+#' and 2 attributes:
+#' \describe{
+#' \item{\code{source.doi}}{The DOI number of the source publication.}
+#' \item{\code{generator}}{The structure of a function which will refresh the values from the supplemental files of the original publication.}
+#' }
+#'
+#' @seealso \code{\link{pspectrum}}, \code{\link{Tohoku}}, \code{\link{magnet}}
+#' @keywords datasets
+#' @source Barbour, A. J., and Agnew, D. C. (2011), Noise Levels on Plate Boundary Observatory Borehole Strainmeters in Southern California,
+#' \emph{Bulletin of the Seismological Society of America},
+#' \strong{101}(5), 2453-2466, doi:10.1785/0120110062
+#'
+#' @examples
+#' data(hfsnm)
+#' str(hfsnm)
+#' FUN <- attr(hfsnm, "generator")
+#' try(dat <- FUN(molten=FALSE)) # may fail without library-access to BSSA
+#' try(all.equal(dat[,1:4], hfsnm[,1:4]))
 NULL

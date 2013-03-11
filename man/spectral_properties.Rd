@@ -67,7 +67,7 @@
   \eqn{N \cdot W} the approximate time-bandwidth product. }
 }
 \examples{
-\dontrun{
+#RDEX#\\dontrun{
 require(psd)
 ##
 ## Spectral properties from the number of tapers used
@@ -157,7 +157,7 @@ lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
 abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 
 ##
-}
+#RDEX#}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

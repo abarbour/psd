@@ -73,7 +73,7 @@
   \code{\link{prewhiten}} will perform.
 }
 \examples{
-\dontrun{
+#RDEX#\\dontrun{
 require(psd)
 ##
 ## Pilot spectrum
@@ -86,7 +86,7 @@ plot(pilot_spec(xc <-  magnet$clean), log="dB",
 ## well for the Project MAGNET data:
 plot(pilot_spec(xc, remove.AR=10), log="dB", add=TRUE, col="red")
 ##
-}
+#RDEX#}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

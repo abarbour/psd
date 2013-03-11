@@ -43,7 +43,8 @@ summary(magnet)
   pp. 215-248.
 }
 \seealso{
-  \code{\link{pspectrum}}
+  \code{\link{pspectrum}}, \code{\link{Tohoku}},
+  \code{\link{hfsnm}}
 }
 \keyword{datasets}
 

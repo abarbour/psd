@@ -75,7 +75,7 @@
   spectra: \itemize{ \item{\code{\link{psdcore}}}{} } }
 }
 \examples{
-\dontrun{
+#RDEX#\\dontrun{
 require(psd)
 ##
 ## Normalization
@@ -106,7 +106,7 @@ plot(PSD, add=TRUE, col="red", log="dB")
 mean(pgram$spec)*max(pgram$freq)
 mean(PSD$spec)*max(PSD$freq)
 #
-}
+#RDEX#}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

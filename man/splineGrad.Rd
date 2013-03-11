@@ -37,7 +37,7 @@
   \strong{Examples} for an illustration of this.
 }
 \examples{
-\dontrun{
+#RDEX#\\dontrun{
 require(psd)
 ##
 ## Spline gradient
@@ -55,7 +55,7 @@ splineGrad(x, y, TRUE, spar=0.2)
 splineGrad(x, y, TRUE, spar=0.6)
 splineGrad(x, y, TRUE, spar=1.0)
 ##
-}
+#RDEX#}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>

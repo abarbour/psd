@@ -30,4 +30,5 @@ lsm$meter.type <- "UCSD laser strainmeters"
 snm <- rbind(bsm, lsm)
 attr(snm, "source.doi") <- "10.1785/0120110062"
 attr(snm, "generator") <- structure(SNM)
-save(snm, file="strainnoise.rda")
+hfsnm <- snm
+save(hfsnm, file="hfsnm.rda")

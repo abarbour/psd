@@ -1,6 +1,8 @@
 #!/bin/sh
 DATLOC="../NOBUILD/data_prep"
 cp ${DATLOC}/mag/magnet.rda .
+cp ${DATLOC}/bsm_pp/hfsnm.rda .
+cp ${DATLOC}/bsm_pp/Tohoku.rda .
 #cp ${DATLOC}/bsm
 #cp ${DATLOC}/scarb
 #cp ${DATLOC}/co2
