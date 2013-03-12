@@ -41,6 +41,7 @@
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation.",
             utils:::packageVersion("psd")))
 }
-.Last.lib <- function(...){
-  NULL
-}
+# CRAN check (3.0.0) gives note
+# .Last.lib <- function(...){
+#   NULL
+# }
