@@ -64,6 +64,10 @@
 #' @example inst/Examples/rdex_psdenv.R
 NULL
 
+#
+# See psd-package.R
+#
+
 #' @description \code{get_psd_env_pointer} is a convenience wrapper to get the environment pointer.
 #' @rdname psd-environment
 #' @name get_psd_env_pointer

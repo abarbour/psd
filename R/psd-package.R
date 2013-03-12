@@ -82,6 +82,8 @@
 #' @seealso \code{\link{pspectrum}}
 #'  
 NULL
+.psdEnvName = ".psdEnv"
+.psdEnv = new.env()
 
 ##
 ## Datasets
@@ -130,8 +132,6 @@ NULL
 #' data(magnet)
 #' summary(magnet)
 NULL
-.psdEnvName = ".psdEnv"
-.psdEnv = new.env()
 
 #' Observations of teleseismic strains from the 2011 Tohoku earthquake.
 #'
