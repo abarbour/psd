@@ -50,7 +50,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      psd:::psd_initEnv(refresh=TRUE, verbose=verbose)
+      psd:::psd_refreshEnv(verbose=verbose)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){
@@ -191,7 +191,6 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     Pspec_ar$spec <- Pspec_ar$spec / (mARs <- mean(Pspec_ar$spec))
   }
   #
-  #psd:::psd_initEnv(refresh=TRUE, verbose=FALSE)
   # Initial spectrum:
   Pspec <- PSDFUN(xprew$prew_lm, x.frequency, ntap, AR=FALSE)
   num_frq <- length(Pspec$freq)

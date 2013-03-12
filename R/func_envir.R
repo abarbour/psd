@@ -13,36 +13,34 @@
 #' @name psd-environment
 #' @docType methods
 #' @section Defaults and Initialization:
-#' By default, these functions all use the global pointer and name set by \code{psd_envGlobals()}.
-#' One can use \code{get_psd_env_pointer()} and \code{get_psd_env_name()} to access them if
+#' One can use \code{get_psd_env_pointer()} and \code{get_psd_env_name()} to access the 
+#' pointer and name of the environment, if
 #' needed.
 #'
-#' If the environment has not yet been initialized (it should never need to be prior
-#' to running \code{pspectrum} unless it was destroyed) \code{psd_initEnv} should be used.
-#' If a fresh environment is desired, and the environment already exists, 
-#' \code{psd_envClear} (which is
-#' really just an alias for \code{psd_initEnv(refresh=TRUE)}) can be used.
+#' \code{psd_refreshEnv} should be used when
+#' a fresh environment is desired: typically only if, for example, \code{psdcore} is 
+#' used rather than \code{pspectrum}.
 #'
 #' @section Assigning and Retieving:
 #' \code{psd_envAssign} and \code{psd_envGet} perform the assignments and retrieval
 #' of objects in the environment.  A convenience function, \code{psd_envAssignGet},
 #' is included so that both assignment and retrieval may be performed at the same
 #' time.  This ensures the assignment has succeeded, and the returned value is
-#' not from the \code{.GlobalEnv} or any other environment.
+#' not from some other frame.
 #'
 #' @section Getters and Setters:
 #' The functions here can be classified whether the get, or set variables in the
-#' environment (noted if in the global environment); some do both.  
+#' environment; some do both.  
 #' Others make no modifications to the environment.
 #' 
 #' \subsection{Getter}{
 #' \itemize{
 #' \item{\code{get_adapt_history}}{}
-#' \item{\code{get_psd_env_name}}{ (global)}
-#' \item{\code{get_psd_env_pointer}}{ (global)}
+#' \item{\code{get_psd_env_name}}{}
+#' \item{\code{get_psd_env_pointer}}{}
 #' \item{\code{psd_envGet}}{}
 #' \item{\code{psd_envList}}{}
-#' \item{\code{psd_envStatus}}{both}
+#' \item{\code{psd_envStatus}}{ (both)}
 #' }
 #' }
 #'
@@ -50,79 +48,51 @@
 #' \itemize{
 #' \item{\code{new_adapt_history}}{}
 #' \item{\code{psd_envAssign}}{}
-#' \item{\code{psd_envGlobals}}{ (global)}
 #' }
 #' }
 #' 
 #' \subsection{Getter and Setter}{
 #' \itemize{
 #' \item{\code{psd_envAssignGet}}{}
-#' \item{\code{psd_envClear}}{ (both)}
-#' \item{\code{psd_initEnv}}{ (both)}
+#' \item{\code{psd_envClear}}{}
+#' \item{\code{psd_refreshEnv}}{ (both)}
 #' \item{\code{update_adapt_history}}{}
 #' }
 #' }
 #' 
-#' @seealso \code{\link{psd-utilities}}, \code{\link{char2envir}}, \code{\link{pspectrum}}
+#' @seealso \code{\link{psd-utilities}}, \code{\link{pspectrum}}
 #' @example inst/Examples/rdex_psdenv.R
 NULL
 
-#' @description \code{psd_envGlobals} sets up the environment's pointer, and name
-#' strings in the \code{.GlobalEnv} environment.  See the Usage section for
-#' the names of the default pointer and environment.
-#' @rdname psd-environment
-#' @name psd_envGlobals
-#' @param envpoint  character; the pointer to the environment
-#' @param envname  character; the name of the environment
-#' @export
-psd_envGlobals <- function(envpoint=".psdenv", envname=".PsdSpecEnv") assign(envpoint, envname, envir=.GlobalEnv)
 #' @description \code{get_psd_env_pointer} is a convenience wrapper to get the environment pointer.
 #' @rdname psd-environment
 #' @name get_psd_env_pointer
 #' @export
-get_psd_env_pointer <- function() as.name(formals(psd_envGlobals)$envpoint)
+get_psd_env_pointer <- function() psd:::.psdEnv
+  #as.name(formals(psd_envPointers)$envpoint)
 #' @description \code{get_psd_env_name} is a convenience wrapper to get the environment name.
 #' @rdname psd-environment
 #' @name get_psd_env_name
 #' @export
-get_psd_env_name <- function() eval(get_psd_env_pointer())
+get_psd_env_name <- function() psd:::.psdEnvName
+  #eval(get_psd_env_pointer())
 
-#' @description \code{psd_initEnv} initializes the environment with
-#' an option to clear the contents (if the environment already exists).
-#' @note \code{psd_initEnv} will not re-initialize the enviroment, unless told to 
-#' do so with \code{refresh=TRUE}.
+#' @description \code{psd_refreshEnv} will clear any variables in the enviroment.
 #' @rdname psd-environment
-#' @name psd_initEnv
-#' @param refresh logical; should the contents of the environment be trashed?
+#' @name psd_refreshEnv
 #' @param verbose logical; should messages be given?
-#' @return \code{psd_initEnv} returns (invisibly) the result of \code{psd_envStatus()}.
+#' @return \code{psd_refreshEnv} returns (invisibly) the result of \code{psd_envStatus()}.
 #' @seealso \code{new.env}, \code{baseenv}
 #' @export
-psd_initEnv <- function(refresh=FALSE, verbose=TRUE, ...) {
+psd_refreshEnv <- function(verbose=TRUE, ...) {
   # env params
-  new_env <- FALSE
-  envir <- get_psd_env_pointer()
   envname <- get_psd_env_name()
-  #
-  if (!exists(envname)){
-    psd:::psd_envGlobals()
-    new_env <- TRUE
+  # rm all in envir
+  psd:::psd_envClear()
+  psd:::psd_envAssign("init", sprintf("refreshed at %s", Sys.time()))
+  if (verbose) {
+    message(sprintf("\tenvironment  ** %s **  refreshed", envname))
   }
-  # initialize the psd calculation environment
-  msg <- "no action"
-  if( new_env | refresh ){
-    assign(x=envname, 
-           value=new.env(parent=globalenv(), ...),  #baseenv()
-           envir=.GlobalEnv)
-    msg <- "initialized"
-    if (refresh & !new_env){ msg <- "refreshed"}
-    if (verbose) {
-      message(sprintf("\tenvironment  ** %s **  %s", envname, msg))
-    }
-  } else if (!refresh) {
-    if (verbose) message(sprintf("\t** %s ** is already initialized: try 'refresh=TRUE' to clear", envname))
-  }
-  psd:::psd_envAssign("init", sprintf("%s at %s", msg, Sys.time()))
   return(invisible(psd:::psd_envStatus()))
 }
 
@@ -130,7 +100,12 @@ psd_initEnv <- function(refresh=FALSE, verbose=TRUE, ...) {
 #' @note \code{psd_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname psd-environment
 #' @name psd_envClear
-psd_envClear <- function(...) psd:::psd_initEnv(refresh=TRUE, ...)
+psd_envClear <- function(...){
+  ENV <- get_psd_env_pointer()
+  listing <- psd:::psd_envList()
+  rm(list=listing, envir=ENV)
+}
+                                   
 
 #' @description \code{psd_envStatus} returns a list of some information regarding
 #' the status of the environment.
@@ -138,12 +113,11 @@ psd_envClear <- function(...) psd:::psd_initEnv(refresh=TRUE, ...)
 #' @name psd_envStatus
 #' @export
 psd_envStatus <- function(){
-  envir <- get_psd_env_pointer()
   envname <- get_psd_env_name()
+  envir <- get_psd_env_pointer()
   return(list(env_name=envname, 
-              env_pointer=envir,
-              env_obviously_exists=exists(envname), 
-              env_is_env=is.environment(char2envir(envname)), 
+              env_pointer=envir, 
+              env_is_env=is.environment(envir), 
               listing=psd:::psd_envList(),
               env_init=psd:::psd_envGet("init"),
               env_status_stamp=Sys.time() ))
@@ -156,7 +130,7 @@ psd_envStatus <- function(){
 #' @export
 psd_envList <- function(){
   ## return listing of envir::variable
-  ENV <- char2envir(get_psd_env_name())
+  ENV <- get_psd_env_pointer()
   ls(envir=ENV, all.names=TRUE)
 }
 
@@ -168,9 +142,9 @@ psd_envList <- function(){
 #' @export
 psd_envGet <- function(variable){
   ## return contents on envir::variable
-  ENV <- char2envir(get_psd_env_name())
+  ENV <- get_psd_env_pointer()
   if (!exists(variable, envir=ENV)){
-    warning(sprintf("Variable  '%s'  not found! Use psd_envList()", variable))
+    warning(sprintf("Variable  '%s'  not found! See psd_envList()", variable))
     return(NULL)
   } else {
     return(get(variable, envir=ENV))
@@ -184,7 +158,7 @@ psd_envGet <- function(variable){
 #' @export
 psd_envAssign <- function(variable, value){
   ## set contents of envir::variable to value
-  ENV <- char2envir(get_psd_env_name())
+  ENV <- get_psd_env_pointer()
   assign(variable, value, envir=ENV)
 }
 
@@ -192,7 +166,7 @@ psd_envAssign <- function(variable, value){
 #' @rdname psd-environment
 #' @name psd_envAssignGet
 # placing these at the end for orderliness.
-#' @param ... For \code{psd_envClear}: arguments passed to \code{psd_initEnv}. For \code{psd_initEnv}: arguments passed to \code{new.env}
+#' @param ... For \code{psd_envClear}: arguments passed to \code{psd_refreshEnv}. For \code{psd_refreshEnv}: arguments passed to \code{new.env}
 #' @export
 psd_envAssignGet <- function(variable, value){
   ## set contents of envir::variable to value

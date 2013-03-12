@@ -3,15 +3,15 @@ require(psd)
 ##
 ## psd working environment
 ##
-# Get some status information about the .psdenv environment
+# Get some status information about the psd working environment
 psd_envStatus()
 #
-# Get a list of all variables in .psdenv
+# Get a list of all variables
 psd_envList()
 #
 # Pull the variable "init" into .GlobalEnv
 print(x <- psd_envGet("init"))
 #
-# pull the adaptive history into .GlobalEnv
+# Pull the adaptive history into .GlobalEnv
 get_adapt_history()
 #RDEX#}

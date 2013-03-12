@@ -8,19 +8,6 @@
 # Use .onAttach only for actions that are needed only when the 
 # package becomes visible to the user (for example a start-up message) 
 # or need to be run after the package environment has been created.
-# ##
-## .First.lib is a defunct(ion)
-# .First.lib <- function(lib, pkg) {
-#   library.dynam("psd", pkg, lib)
-# }
-
-##
-##
-#.onLoad <- function(...) {
-  ## DLL
-  #library.dynam("psd", pkg, lib)
-  # useDynLib(psd) in NAMESPACE though... any conflicts?
-#}
 
 .onUnload <- function(libpath)
 {
@@ -30,18 +17,10 @@
 # executed after .onLoad is executed, once the namespace is visible to user
 .onAttach <- function(...) {
   ##
-  ## env pointer
-  psd:::psd_envGlobals()
-  ## initialize it
-  psd:::psd_initEnv(refresh=TRUE, verbose=FALSE)
-  ## add some info
+  ## add some info to the environment
   psd:::psd_envAssign("init", paste(psd:::psd_envGet("init"), "(upon attach)"))
   ##
   packageStartupMessage(
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation.",
             utils:::packageVersion("psd")))
 }
-# CRAN check (3.0.0) gives note
-# .Last.lib <- function(...){
-#   NULL
-# }

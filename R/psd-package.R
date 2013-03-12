@@ -130,6 +130,8 @@ NULL
 #' data(magnet)
 #' summary(magnet)
 NULL
+.psdEnvName = ".psdEnv"
+.psdEnv = new.env()
 
 #' Observations of teleseismic strains from the 2011 Tohoku earthquake.
 #'

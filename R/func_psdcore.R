@@ -81,7 +81,7 @@ psdcore.default <- function(X.d,
                             ...
                            ) {
   #
-  if (refresh) psd:::psd_envClear(verbose=verbose)
+  if (refresh) psd:::psd_envRefresh(verbose=verbose)
   #
   series <- deparse(substitute(X.d))
   if (is.null(X.frq)){
