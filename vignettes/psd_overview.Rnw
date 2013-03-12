@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[10pt]{article}
 % !Rnw weave = knitr
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
@@ -25,6 +25,9 @@
 %\usepackage{fullpage}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+%
+\usepackage{color}
+%
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index

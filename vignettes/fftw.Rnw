@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[10pt]{article}
 % !Rnw weave = knitr
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
@@ -23,6 +23,9 @@
 %\usepackage{fullpage}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+%
+\usepackage{color}
+%
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
@@ -182,9 +185,10 @@ pltbench <- function(lentyp=c("even","odd")){
                   group=test)) +
        scale_colour_discrete(guide="none") + 
        theme_bw()+
+       ggtitle(sprintf("DFT benchmarks of %s length series",toupper(lentyp))) +
        ylim(c(-11,11))+
-       xlim(c(0.5,6.5))+
-       ggtitle(sprintf("DFT benchmarks of %s length series",toupper(lentyp)))
+       xlim(c(0.5,6.5))
+       
   ## add previous summary curves if exist
   if (exists("allmeds.prev")){
      g <- g + geom_path(size=1.5, colour="dark grey", data=allmeds.prev, 
@@ -236,7 +240,7 @@ drastically increased computation times; hence, zero padding should be
 done to ensure the length does not adversely
 affect the efficiency of the DFT calculator.
 
-\pagebreak
+%\pagebreak
 
 \section*{Session Info}
 <<eval=TRUE, echo=TRUE, label=SI>>=

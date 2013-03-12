@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}\usepackage{graphicx, color}
+\documentclass[10pt]{article}\usepackage{graphicx, color}
 %% maxwidth is the original width if it is less than linewidth
 %% otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -78,6 +78,9 @@
 %\usepackage{fullpage}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+%
+\usepackage{color}
+%
 \usepackage{makeidx} % for indexing
 %\usepackage{showidx} % shows page (remove when complete)
 \makeindex % comment to have no index
@@ -263,8 +266,9 @@ pltbench <- \hlfunctioncall{function}(lentyp = \hlfunctioncall{c}(\hlstring{"eve
     g <- \hlfunctioncall{ggplot}(data = allbench.df.mlt, \hlfunctioncall{aes}(x = \hlfunctioncall{log10}(num_dat), y = \hlfunctioncall{log2}(value), 
         ymin = \hlfunctioncall{log2}(value * (1 - 1/\hlfunctioncall{sqrt}(reps))), ymax = \hlfunctioncall{log2}(value * (1 + 1/\hlfunctioncall{sqrt}(reps))), 
         colour = test, group = test)) + \hlfunctioncall{scale_colour_discrete}(guide = \hlstring{"none"}) + 
-        \hlfunctioncall{theme_bw}() + \hlfunctioncall{ylim}(\hlfunctioncall{c}(-11, 11)) + \hlfunctioncall{xlim}(\hlfunctioncall{c}(0.5, 6.5)) + \hlfunctioncall{ggtitle}(\hlfunctioncall{sprintf}(\hlstring{"DFT benchmarks of %s length series"}, 
-        \hlfunctioncall{toupper}(lentyp)))
+        \hlfunctioncall{theme_bw}() + \hlfunctioncall{ggtitle}(\hlfunctioncall{sprintf}(\hlstring{"DFT benchmarks of %s length series"}, \hlfunctioncall{toupper}(lentyp))) + 
+        \hlfunctioncall{ylim}(\hlfunctioncall{c}(-11, 11)) + \hlfunctioncall{xlim}(\hlfunctioncall{c}(0.5, 6.5))
+    
 \hlcomment{    ## add previous summary curves if exist}
     \hlfunctioncall{if} (\hlfunctioncall{exists}(\hlstring{"allmeds.prev"})) \{
         g <- g + \hlfunctioncall{geom_path}(size = 1.5, colour = \hlstring{"dark grey"}, data = allmeds.prev, 
@@ -324,7 +328,7 @@ drastically increased computation times; hence, zero padding should be
 done to ensure the length does not adversely
 affect the efficiency of the DFT calculator.
 
-\pagebreak
+%\pagebreak
 
 \section*{Session Info}
 \begin{knitrout}
@@ -337,15 +341,17 @@ affect the efficiency of the DFT calculator.
 ## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## [1] C
 ## 
 ## attached base packages:
 ##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
 ##  [8] utils     methods   base     
 ## 
+## other attached packages:
+## [1] knitr_1.1
+## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    knitr_1.1     
-## [5] stringr_0.6.2
+## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    stringr_0.6.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

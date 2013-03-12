@@ -16,11 +16,11 @@
 
 ##
 ##
-.onLoad <- function(...) {
+#.onLoad <- function(...) {
   ## DLL
   #library.dynam("psd", pkg, lib)
   # useDynLib(psd) in NAMESPACE though... any conflicts?
-}
+#}
 
 .onUnload <- function(libpath)
 {

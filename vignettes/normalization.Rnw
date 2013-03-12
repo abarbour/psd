@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 % !Rnw weave = knitr
 % sweave fig help:
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
@@ -24,6 +24,8 @@
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+%
+\usepackage{color}
 %
 \usepackage{makeidx} % for indexing
 \makeindex % comment to have no index
