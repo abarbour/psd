@@ -50,7 +50,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      psd:::psd_refreshEnv(verbose=verbose)
+      psd:::psd_envRefresh(verbose=verbose)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){

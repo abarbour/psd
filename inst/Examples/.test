@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 cat << XXX > /tmp/tmprunhdr
-library(rlpSpec)
+library(psd)
 XXX
 ls rdex_*.R |\
 awk '{
@@ -9,8 +9,8 @@ awk '{
 	printf"clear\n"
 	printf"echo \"%s\"\n",$1
 	printf"rr /tmp/tmptorun\n"
-	printf"mv tmptorun.Rout results.%sout\n",$1
-	printf"mv Rplots.pdf plots.%s.pdf\n",$1
+	printf"mv -f tmptorun.Rout results.%sout\n",$1
+	printf"mv -f Rplots.pdf plots.%s.pdf\n",$1
 }END{
 	printf"cat results.rdex_*.Rout > test_results_rdex\n"
 	printf"grep Error test_results_rdex\n"

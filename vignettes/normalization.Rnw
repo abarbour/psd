@@ -7,6 +7,7 @@
 %% \VignetteIndexEntry{Normalization of power spectral density estimates.}
 %% \VignetteEngine{knitr}
 
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
 \usepackage[pdfborder={0 0 0}]{hyperref}

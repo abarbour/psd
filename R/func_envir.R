@@ -17,9 +17,9 @@
 #' pointer and name of the environment, if
 #' needed.
 #'
-#' \code{psd_refreshEnv} should be used when
-#' a fresh environment is desired: typically only if, for example, \code{psdcore} is 
-#' used rather than \code{pspectrum}.
+#' \code{psd_envRefresh} should be used when
+#' a fresh environment is desired: typically only if, for example, \code{\link{psdcore}} is 
+#' used rather than \code{\link{pspectrum}}.
 #'
 #' @section Assigning and Retieving:
 #' \code{psd_envAssign} and \code{psd_envGet} perform the assignments and retrieval
@@ -40,7 +40,7 @@
 #' \item{\code{get_psd_env_pointer}}{}
 #' \item{\code{psd_envGet}}{}
 #' \item{\code{psd_envList}}{}
-#' \item{\code{psd_envStatus}}{ (both)}
+#' \item{\code{psd_envStatus}}{}
 #' }
 #' }
 #'
@@ -55,7 +55,7 @@
 #' \itemize{
 #' \item{\code{psd_envAssignGet}}{}
 #' \item{\code{psd_envClear}}{}
-#' \item{\code{psd_refreshEnv}}{ (both)}
+#' \item{\code{psd_envRefresh}}{}
 #' \item{\code{update_adapt_history}}{}
 #' }
 #' }
@@ -77,14 +77,13 @@ get_psd_env_pointer <- function() psd:::.psdEnv
 get_psd_env_name <- function() psd:::.psdEnvName
   #eval(get_psd_env_pointer())
 
-#' @description \code{psd_refreshEnv} will clear any variables in the enviroment.
+#' @description \code{psd_envRefresh} will clear any variables in the enviroment and reset the initialization stamp.
 #' @rdname psd-environment
-#' @name psd_refreshEnv
+#' @name psd_envRefresh
 #' @param verbose logical; should messages be given?
-#' @return \code{psd_refreshEnv} returns (invisibly) the result of \code{psd_envStatus()}.
-#' @seealso \code{new.env}, \code{baseenv}
+#' @return \code{psd_envRefresh} returns (invisibly) the result of \code{psd_envStatus()}.
 #' @export
-psd_refreshEnv <- function(verbose=TRUE, ...) {
+psd_envRefresh <- function(verbose=TRUE) {
   # env params
   envname <- get_psd_env_name()
   # rm all in envir
@@ -100,7 +99,7 @@ psd_refreshEnv <- function(verbose=TRUE, ...) {
 #' @note \code{psd_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname psd-environment
 #' @name psd_envClear
-psd_envClear <- function(...){
+psd_envClear <- function(){
   ENV <- get_psd_env_pointer()
   listing <- psd:::psd_envList()
   rm(list=listing, envir=ENV)
@@ -124,7 +123,7 @@ psd_envStatus <- function(){
   
 }
 
-#' @description \code{psd_envList} returns a listing of the assignments.
+#' @description \code{psd_envList} returns a listing of any assignments.
 #' @rdname psd-environment
 #' @name psd_envList
 #' @export
@@ -134,7 +133,7 @@ psd_envList <- function(){
   ls(envir=ENV, all.names=TRUE)
 }
 
-#' @description \code{psd_envGet} returns a the value of \code{variable}.
+#' @description \code{psd_envGet} returns the value of \code{variable}.
 #' @rdname psd-environment
 #' @name psd_envGet
 #' @param variable character; the name of the variable to get or assign
@@ -165,8 +164,6 @@ psd_envAssign <- function(variable, value){
 #' @description \code{psd_envAssignGet} both assigns and returns a value.
 #' @rdname psd-environment
 #' @name psd_envAssignGet
-# placing these at the end for orderliness.
-#' @param ... For \code{psd_envClear}: arguments passed to \code{psd_refreshEnv}. For \code{psd_refreshEnv}: arguments passed to \code{new.env}
 #' @export
 psd_envAssignGet <- function(variable, value){
   ## set contents of envir::variable to value
@@ -200,7 +197,7 @@ new_adapt_history <- function(adapt_stages){
 #' @rdname psd-environment
 get_adapt_history <- function() psd:::psd_envGet("histlist")
 
-#' @description \code{update_adapt_history} Updates the adaptive estimation history list.
+#' @description \code{update_adapt_history} updates the adaptive estimation history list.
 #' @rdname psd-environment
 #' @param stage scalar; the current stage of the adaptive estimation procedure
 #' @param ntap vector; the tapers

@@ -22,8 +22,11 @@ Miscellany
 [ ] work on bugs
 [ ] revisit draft for Comp. Geosc.
 [ ] test on R 3.0, CRAN update if necessary
-[ ] final build/check for new CRAN submission
-[X] bump to 0.3-0
+*** I think CRAN checks with devel, which is 3.0.0alpha
+[ ] resubmit
+[X] bump to 0.3-1
+[X] fix cran check warnings
+[X] final build/check for new CRAN submission
 [X] rename? ... to 'psd'
 [X] replace rlpSpec refs to psd
 [X] change .rlpenv to .psdenv

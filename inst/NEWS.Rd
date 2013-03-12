@@ -8,12 +8,21 @@
 \name{psd}
 \title{News for package 'psd'}
 \encoding{UTF-8}
-\section{CHANGES IN psd VERSION 0.3-0 (2013-03-11)}{
+\section{CHANGES IN psd VERSION 0.3-1 (2013-03-12)}{
   \itemize{
     \item This marks the first release to CRAN: \CRANpkg{psd}.
           We have included three vignettes, one of which is an overview of
           the general functionality of the program. These may be listed with
 	  \code{vignette(pack="psd")}, but we recommend consulting
 	  \code{vignette("psd_overview", package="psd")} to begin.
+    \item Altered the environment manipulation features to prevent .GlobalEnv
+    modification.
+    \item Fixed CRAN-check failure with \code{usepackage{color}} in vignettes.
+    \item Removed empty \code{.Last.lib} function to prevent CRAN-check note.
+  }
+}
+\section{CHANGES IN psd VERSION 0.3-0 (2013-03-11)}{
+  \itemize{
+    \item Added \code{Tohoku} data.
   }
 }
