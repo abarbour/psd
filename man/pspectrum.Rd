@@ -56,7 +56,7 @@
   regarding adaptive estimation.
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## Adaptive multitaper PSD estimation
@@ -129,7 +129,7 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
 }
 )) # end of invisible lapply
-#RDEX#}
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by

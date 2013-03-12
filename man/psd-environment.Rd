@@ -197,7 +197,7 @@
   of \code{stg_kopt} and \code{stg_psd}.} }
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## psd working environment
@@ -213,7 +213,7 @@ print(x <- psd_envGet("init"))
 #
 # pull the adaptive history into .GlobalEnv
 get_adapt_history()
-#RDEX#}
+}
 }
 \seealso{
   \code{\link{psd-utilities}}, \code{\link{char2envir}},

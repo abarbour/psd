@@ -4,8 +4,10 @@
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
 
+%\makeatletter
 %% \VignetteIndexEntry{An overview of psd.}
 %% \VignetteEngine{knitr}
+%\makeatother
 
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
@@ -487,11 +489,11 @@ we will not compare it to \psd{}.
 \subsection{\Rcmd{bspec::bspec}}
 An intriguing method for producing power spectral density estimates
  using Bayesian inference
- is presented by \citet{rover2011}.
- The method uses the \emph{Student's t} distribution
+ is presented by \citet{rover2011} and included in
+ the \Rcmd{bspec} package.
+ Simplistically, the method uses a \emph{Student's t} likelihood function
  to estimate the distribution of spectral densities
- at a given frequency and is packaged into
- \Rcmd{bspec} as the function \Rcmd{bspec}.
+ at a given frequency.
  We will use the spectra from the previous 
  calculation to compare with \Rcmd{bspec} results.
  For this comparison
@@ -545,7 +547,7 @@ dB(mean(psd_ar$spec))
 
 An example of this potential variance-reduction is shown in Figure \ref{fig:arspecvar},
 which we have used \Rcmd{pilot\_spec} to remove the AR spectrum
-internally.  The AR component adds approximately $\pm 3$ dB to the original spectrum,
+internally.  The non-AR component adds approximately $\pm 3$ dB to the original spectrum,
 and removing it will give a considerably smoother spectrum without the 
 need for adaptive 
 taper optimization.
@@ -667,7 +669,7 @@ text(0.40, 22, "Dark: Uniform\ntapering (psdcore)", cex=cx)
 \caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
 The filled regions encompass the spectral uncertainties values based on the
 upper $\chi_\nu^2$ curve shown in Figure \ref{fig:psderr}, light and dark for 
-PSDs with and without adaptive taper optimizaiton, respectively.
+PSDs with and without adaptive taper optimization, respectively.
 The results from Figure \ref{fig:bayes} (Bayesian method) are shown in blue.
 }
 \label{fig:magerr}
@@ -685,34 +687,32 @@ are shown
 in Figure \ref{fig:magres}.
 \begin{figure}[htb!]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4, label=MAGRES>>=
+%relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
+%relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=MAGRES>>=
 frq <- Aspec$freq
-relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
-relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
-relp <- ((spa$resolution) - spp$resolution - 0 ) / spp$resolution
-par(las=1, oma=rep(0,4), omi=rep(0,4))
-par(mar=c(3,3,2,0))
+relp <- (spa$resolution - spp$resolution) / spp$resolution
+par(las=1, oma=rep(0,4), omi=rep(0,4), mar=c(4,3,2,0))
 layout(matrix(c(1,2),1,2,byrow=TRUE), heights=c(2,2), widths=c(3,0.5), respect=TRUE)
 plot(frq, relp,
+     main="Percent change in spectral resolution",
      col="light grey", 
      ylim=yl<-c(0,50),
      type="h", xaxs="i", yaxs="i", 
-     ylab="dB", xlab="frequency, 1/km",
-     main="Percent increase in spectral resolution")
+     ylab="dB", xlab="frequency, 1/km")
 lines(frq, relp)
-par(mar=c(3,0,2,2))
-boxplot(relp, axes=FALSE, ylim=yl, yaxs="i", notch=TRUE, main=sprintf("%.01f",median(relp)))
+text(0.25, 45, "Adaptive relative to fixed", cex=0.9)
+par(mar=c(4,0,2,2))
+# empirical distribution of values
+boxplot(relp, main=sprintf("%.01f",median(relp)), axes=FALSE, ylim=yl, yaxs="i", notch=TRUE)
 axis(4)
 @
-\caption{REDO CAPTION
-Resolution limits for Project MAGNET PSD (\Rcmd{niter=5} adapts--the default) 
-in decibels relative to the spectrum.
-The thick dashed line shows the 
-resolved uncertainties ($p=0.05$) in the adaptively refined
-spectrum; whereas, the thin dashed line
-shows the approximate RMS spectral variation.
-The dotted line shows the
-resolved uncertainties for the uniformly tapered result.
+\caption{Relative changes in resolution of the adaptive method
+relative to the fixed multitaper method, plotted
+as a function of spatial frequency in units of percent. 
+The non-zero median value implies the pilot spectrum was found using too-few tapers,
+according to the optimization algorithm.  Positive values indicate broadening
+resolution bandwidth.
 }
 \label{fig:magres}
 \end{center}
@@ -757,7 +757,7 @@ itseq <- seqcols - 1
 toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
 par(xpd=TRUE, oma=rep(0,4), mar=c(1,4,2,2))
 matplot(Freqs, StgPsd + (sc<-9)*toadd, type="l", lty=1, lwd=2, col="black",
-             main="PSD estimation history", ylab="", xlab="",
+             main="Adaptive estimation history", ylab="", xlab="",
              yaxt="n", frame.plot=FALSE)
 text(0.52, 1.05*sc*itseq, itseq)
 lines(c(2,1,1,2)*0.01,c(0,0,7,7))

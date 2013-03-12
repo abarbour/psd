@@ -89,7 +89,7 @@
   sake.
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## Riedel-Sidorenko--Parker taper optimization
@@ -122,7 +122,7 @@ plot(rtap, log="y")
 # original tapers:
 lines(as.tapers(rep.int(ntap,nd)), col="blue")
 par(op)
-#RDEX#}
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by

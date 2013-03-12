@@ -75,7 +75,7 @@
 \usepackage{natbib}
 \usepackage{geometry}
 \usepackage{hyperref}
-\usepackage[]{units}
+\usepackage{units}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
@@ -139,18 +139,18 @@ There can often be confusion about the different quantities used
 in spectral analysis,
 partly due to myriad nomenclature within the incredibly vast literature
 on the subject\footnote{
-A nice illustration of the type of
+The type of
 confusion common in spectral analyses
-of confusion is found in
-this thread on \Rcmd{R-help}:
+is illustrated in this thread on \Rcmd{R-help}:
 \url{http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html}
 }.
 Commonly one finds similarly sounding phrases, including ``amplitude spectrum",
 ``energy spectral density", ``power", ``power spectra", and even ``spectra".
 These all mean \emph{something}, but are rarely equivalent, and are
 sometimes used improperly.
-To clarify these terms, we will walk through some background and
-definitions, without overly complicating the discussion with proofs.
+To clarify these terms, we will tread somewhat lightly through the background and
+definitions used in spectral analysis, 
+without overly complicating the discussion with proofs.
 
 \section{Power spectral density}
 
@@ -261,16 +261,13 @@ edges of the pass-band.
 \hlfunctioncall{set.seed}(1234)
 N <- 1028
 x <- \hlfunctioncall{rnorm}(N, mean = 0, sd = 1)
-\hlcomment{# Construct an FIR filter}
-\hlfunctioncall{library}(signal)
+\hlcomment{# Load signal processing}
+\hlfunctioncall{library}(signal, warn.conflicts = FALSE)
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: MASS}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: MASS}}\begin{alltt}
+\hlcomment{# Construct an FIR filter}
 f <- \hlfunctioncall{c}(0, 0.2, 0.2, 0.3, 0.3, 0.5) * 2
 m <- \hlfunctioncall{c}(0, 0, 1, 1, 0, 0)
 fw <- signal::\hlfunctioncall{fir2}(N, f, m)
@@ -608,7 +605,9 @@ quantiles of our example PSD
  against
  theoretical $\chi^2_\nu$ quantiles.  The distribution is calculated
 with a value for degrees of freedom ($\nu$) obtained from the
-$L_1$-norm minimization procedure.}
+$L_1$-norm minimization procedure.  Such a minimization is not
+generally required, since we have shown the estimator found with \Rcmd{mean}
+is reasonably accurate.}
 \label{fig:qqchi}
 \end{center}
 \end{figure}
@@ -865,21 +864,22 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 \hlfunctioncall{sessionInfo}()
 \end{alltt}
 \begin{verbatim}
-## R version 2.15.2 (2012-10-26)
-## Platform: i386-apple-darwin9.8.0/i386 (32-bit)
+## R version 2.15.3 (2013-03-01)
+## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
+##  [8] utils     methods   base     
 ## 
 ## other attached packages:
-## [1] signal_0.7-3 MASS_7.3-23  knitr_1.1   
+## [1] signal_0.7-3 MASS_7.3-23 
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    stringr_0.6.2 
-## [5] tools_2.15.2
+## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    knitr_1.1     
+## [5] stringr_0.6.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

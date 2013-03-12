@@ -55,7 +55,7 @@
   \delta S}.
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## Confidence intervals from taper numbers
@@ -78,7 +78,7 @@ legend("topright",
           "approximation"),
 lwd=c(1,3,3), col=c("black","black","red"), bg="white")
 ##
-#RDEX#}
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>, modified from the

@@ -147,37 +147,44 @@ NULL
 #' the series into pre-seismic and seismic data; this is defined relative
 #' to the predicted P-wave arrival time from a traveltime model.
 #'
+#' The original dataset contained \code{NA} values, which were imputed
+#' using \code{zoo::na.locf}, which fills \code{NA} with the last previous observation.
+#'
 #' @name Tohoku
 #' @docType data
 #' @format A dataframe with 16000 observations on the following 15 variables.
 #'
 #' \describe{
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
+#' \item{\code{Dts}}{The original datetime string, in UTC.}
+#' \item{\code{areal}}{Areal strains}
+#' \item{\code{areal.tide}}{Tidal correction to the areal strains.}
+#' \item{\code{areal.baro}}{Barometric correction to the areal strains.}
+#' \item{\code{gamma1}}{Engineering differential extensional strain: \eqn{\gamma_1}}
+#' \item{\code{gamma1.tide}}{Tidal correction for the \eqn{\gamma_1} strains.}
+#' \item{\code{gamma1.baro}}{Barometric pressure correction to the \eqn{\gamma_1} strains.}
+#' \item{\code{gamma2}}{Engineering shear strain: \eqn{\gamma_2}}.
+#' \item{\code{gamma2.tide}}{Tidal correction for the \eqn{\gamma_2} strains.}
+#' \item{\code{gamma2.baro}}{Barometric pressure correction to the \eqn{\gamma_2} strains.}
+#' \item{\code{pressure.atm}}{Atmospheric pressure.}
+#' \item{\code{pressure.pore}}{Pore-fluid pressure.}
+#' \item{\code{Dt}}{The \code{Dts} information converted to POSIX datetime.}
+#' \item{\code{Origin.secs}}{The number of seconds relative to the earthquake-origin time.}
+#' \item{\code{epoch}}{Classification based on predicted P-wave arrival: preseismic or seismic.}
 #' }
 #'
-#' and X attributes:
+#' and 2 attributes:
+#' 
 #' \describe{
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
-#' \item{\code{}}{}
+#' \item{\code{units}}{A list of strings regarding the units of various physical quantities given here.}
+#' \item{\code{iasp}}{A list of source and station characteristics, including the
+#' the origin time, predicted
+#' traveltimes for P and S waves, and the geodetic information used in the traveltime
+#' calculation.}
 #' }
+
 #' @seealso \code{\link{pspectrum}}, \code{\link{hfsnm}}, \code{\link{magnet}}
+#' @seealso \code{TauP.R} for an R-implementation of the traveltime calculations:
+#' @seealso \url{http://cran.r-project.org/web/packages/TauP.R/}
 #' @keywords datasets
 #'
 #' @references USGS summary page: 

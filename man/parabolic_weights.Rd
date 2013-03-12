@@ -44,7 +44,7 @@
   \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]}
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## Show parabolic weighting factors
@@ -99,7 +99,7 @@ invisible(lapply(round(10**xseq), FUN=WFUN))
 WFUN(maxx)
 
 ##
-#RDEX#}
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> adapted original by

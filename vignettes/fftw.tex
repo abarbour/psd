@@ -242,52 +242,40 @@ in Figure \ref{fig:results}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-pltbench <- \hlfunctioncall{function}(lentyp=\hlfunctioncall{c}(\hlstring{"even"},\hlstring{"odd"}))\{
-  benchdat <- \hlfunctioncall{switch}(\hlfunctioncall{match.arg}(lentyp), even=benchdat.e, odd=benchdat.o)
-  \hlfunctioncall{stopifnot}(\hlfunctioncall{exists}(\hlstring{"benchdat"}))
-  tests <- \hlfunctioncall{unique}(benchdat$test)
-\hlcomment{  ## subset only information we care about}
-  allbench.df.drp <- \hlfunctioncall{subset}(benchdat, 
-        select=\hlfunctioncall{c}(test, num_dat, user.self, sys.self, elapsed, relative))
-\hlcomment{  ## reduce data.frame with melt}
-  allbench.df.mlt <- reshape2::\hlfunctioncall{melt}(allbench.df.drp, 
-                                    id.vars=\hlfunctioncall{c}(\hlstring{"test"},\hlstring{"num_dat"}))
-\hlcomment{  ## calculate the summary information to be plotted:}
-  tmpd <- plyr::\hlfunctioncall{ddply}(allbench.df.mlt, 
-                      \hlfunctioncall{.}(variable,  num_dat),
-                      summarise, 
-                      summary=\hlstring{"medians"}, # just a name
-                      value=ggplot2::\hlfunctioncall{mean_cl_normal}(value)[1,1])
-\hlcomment{  ## create copies for each test and map to data.frame}
-  allmeds <<- plyr::\hlfunctioncall{ldply}(\hlfunctioncall{lapply}(X=tests, 
-                                 FUN=\hlfunctioncall{function}(x,df=tmpd)\{
-                                       df$test <- x; \hlfunctioncall{return}(df)
-                                     \}))
-\hlcomment{  ## plot the benchmark data}
-  g <- \hlfunctioncall{ggplot}(data=allbench.df.mlt,
-              \hlfunctioncall{aes}(x=\hlfunctioncall{log10}(num_dat),
-                  y=\hlfunctioncall{log2}(value),
-\hlcomment{                  # 1/sqrt(n) standard errors [assumes N(0,1)]}
-                  ymin=\hlfunctioncall{log2}(value*(1-1/\hlfunctioncall{sqrt}(reps))),
-                  ymax=\hlfunctioncall{log2}(value*(1+1/\hlfunctioncall{sqrt}(reps))),
-                  colour=test,
-                  group=test)) +
-       \hlfunctioncall{scale_colour_discrete}(guide=\hlstring{"none"}) + 
-       \hlfunctioncall{theme_bw}()+
-       \hlfunctioncall{ylim}(\hlfunctioncall{c}(-11,11))+
-       \hlfunctioncall{xlim}(\hlfunctioncall{c}(0.5,6.5))+
-       \hlfunctioncall{ggtitle}(\hlfunctioncall{sprintf}(\hlstring{"DFT benchmarks of %s length series"},\hlfunctioncall{toupper}(lentyp)))
-\hlcomment{  ## add previous summary curves if exist}
-  \hlfunctioncall{if} (\hlfunctioncall{exists}(\hlstring{"allmeds.prev"}))\{
-     g <- g + \hlfunctioncall{geom_path}(size=1.5, colour=\hlstring{"dark grey"}, data=allmeds.prev, 
-                        \hlfunctioncall{aes}(group=test))
-                        \}
-\hlcomment{  ## create a facetted version}
-  g2 <- g + \hlfunctioncall{facet_grid}(variable~test) #, scales=\hlstring{"free_y"})
-\hlcomment{  ## add the summary data as a line}
-  g3 <- g2 + \hlfunctioncall{geom_path}(colour=\hlstring{"black"}, data=allmeds, \hlfunctioncall{aes}(group=test))
-\hlcomment{  ## and finally the data}
-  \hlfunctioncall{print}(g4 <<- g3 + \hlfunctioncall{geom_pointrange}())
+pltbench <- \hlfunctioncall{function}(lentyp = \hlfunctioncall{c}(\hlstring{"even"}, \hlstring{"odd"})) \{
+    benchdat <- \hlfunctioncall{switch}(\hlfunctioncall{match.arg}(lentyp), even = benchdat.e, odd = benchdat.o)
+    \hlfunctioncall{stopifnot}(\hlfunctioncall{exists}(\hlstring{"benchdat"}))
+    tests <- \hlfunctioncall{unique}(benchdat$test)
+\hlcomment{    ## subset only information we care about}
+    allbench.df.drp <- \hlfunctioncall{subset}(benchdat, select = \hlfunctioncall{c}(test, num_dat, user.self, 
+        sys.self, elapsed, relative))
+\hlcomment{    ## reduce data.frame with melt}
+    allbench.df.mlt <- reshape2::\hlfunctioncall{melt}(allbench.df.drp, id.vars = \hlfunctioncall{c}(\hlstring{"test"}, \hlstring{"num_dat"}))
+\hlcomment{    ## calculate the summary information to be plotted:}
+    tmpd <- plyr::\hlfunctioncall{ddply}(allbench.df.mlt, \hlfunctioncall{.}(variable, num_dat), summarise, summary = \hlstring{"medians"}, 
+        value = ggplot2::\hlfunctioncall{mean_cl_normal}(value)[1, 1])
+\hlcomment{    ## create copies for each test and map to data.frame}
+    allmeds <<- plyr::\hlfunctioncall{ldply}(\hlfunctioncall{lapply}(X = tests, FUN = \hlfunctioncall{function}(x, df = tmpd) \{
+        df$test <- x
+        \hlfunctioncall{return}(df)
+    \}))
+\hlcomment{    ## plot the benchmark data 1/sqrt(n) standard errors [assumes N(0,1)]}
+    g <- \hlfunctioncall{ggplot}(data = allbench.df.mlt, \hlfunctioncall{aes}(x = \hlfunctioncall{log10}(num_dat), y = \hlfunctioncall{log2}(value), 
+        ymin = \hlfunctioncall{log2}(value * (1 - 1/\hlfunctioncall{sqrt}(reps))), ymax = \hlfunctioncall{log2}(value * (1 + 1/\hlfunctioncall{sqrt}(reps))), 
+        colour = test, group = test)) + \hlfunctioncall{scale_colour_discrete}(guide = \hlstring{"none"}) + 
+        \hlfunctioncall{theme_bw}() + \hlfunctioncall{ylim}(\hlfunctioncall{c}(-11, 11)) + \hlfunctioncall{xlim}(\hlfunctioncall{c}(0.5, 6.5)) + \hlfunctioncall{ggtitle}(\hlfunctioncall{sprintf}(\hlstring{"DFT benchmarks of %s length series"}, 
+        \hlfunctioncall{toupper}(lentyp)))
+\hlcomment{    ## add previous summary curves if exist}
+    \hlfunctioncall{if} (\hlfunctioncall{exists}(\hlstring{"allmeds.prev"})) \{
+        g <- g + \hlfunctioncall{geom_path}(size = 1.5, colour = \hlstring{"dark grey"}, data = allmeds.prev, 
+            \hlfunctioncall{aes}(group = test))
+    \}
+\hlcomment{    ## create a facetted version}
+    g2 <- g + \hlfunctioncall{facet_grid}(variable ~ test)
+\hlcomment{    ## add the summary data as a line}
+    g3 <- g2 + \hlfunctioncall{geom_path}(colour = \hlstring{"black"}, data = allmeds, \hlfunctioncall{aes}(group = test))
+\hlcomment{    ## and finally the data}
+    \hlfunctioncall{print}(g4 <<- g3 + \hlfunctioncall{geom_pointrange}())
 \}
 \end{alltt}
 \end{kframe}
@@ -345,21 +333,19 @@ affect the efficiency of the DFT calculator.
 \hlfunctioncall{sessionInfo}()
 \end{alltt}
 \begin{verbatim}
-## R version 2.15.2 (2012-10-26)
+## R version 2.15.3 (2013-03-01)
 ## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
 ## 
 ## locale:
-## [1] C
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
 ##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
 ##  [8] utils     methods   base     
 ## 
-## other attached packages:
-## [1] knitr_0.9
-## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.0   evaluate_0.4.3 formatR_0.7    stringr_0.6.2
+## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    knitr_1.1     
+## [5] stringr_0.6.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

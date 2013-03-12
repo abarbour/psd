@@ -1,6 +1,6 @@
 datasets
 --------
-[ ] bsm + pp
+[X] bsm + pp
 *** find large teleseism: list with ambient and seismic times
 *** include BSM & LSM noise model
 [-] scarb
@@ -9,7 +9,7 @@ datasets
 
 vignettes
 ---------
-[ ] revise normalization with RLPs suggestions
+[X] revise normalization with RLPs suggestions
 [X] check out resolution
 *** is it just uncertainty?
 [X] revise overview with DCAs suggestions
@@ -19,9 +19,11 @@ vignettes
 
 Miscellany
 ----------
+[ ] work on bugs
 [ ] revisit draft for Comp. Geosc.
-[ ] Once datasets + vignettes done, final packaging and CRAN submit
-[X] bump to 0.2-0
+[ ] test on R 3.0, CRAN update if necessary
+[ ] final build/check for new CRAN submission
+[X] bump to 0.3-0
 [X] rename? ... to 'psd'
 [X] replace rlpSpec refs to psd
 [X] change .rlpenv to .psdenv

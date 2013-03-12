@@ -59,8 +59,10 @@
 % http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
 % borrowing design from roxygen -- AJB Jan 13
 
+%\makeatletter
 %% \VignetteIndexEntry{An overview of psd.}
 %% \VignetteEngine{knitr}
+%\makeatother
 
 \usepackage[utf8]{inputenc}
 \usepackage{fancyvrb}
@@ -152,7 +154,7 @@ First, we load the package into the namespace:
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: fftw}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (0.2.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (0.3.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
 \end{knitrout}
 
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
@@ -237,7 +239,7 @@ psdr <- \hlfunctioncall{pspectrum}(magnet$raw)
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -35.1 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 psdc <- \hlfunctioncall{pspectrum}(magnet$clean)
 \end{alltt}
 
@@ -258,7 +260,7 @@ psdc <- \hlfunctioncall{pspectrum}(magnet$clean)
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -34.4 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\end{kframe}
 \end{knitrout}
 
 Each application of \Rcmd{pspectrum} calculates a pilot PSD, followed by 
@@ -667,7 +669,7 @@ Aspec <- \hlfunctioncall{pspectrum}(ats_lm, dt, tapinit, plot = FALSE)
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -23.6 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 \hlcomment{# Correct for double-sidedness of spectrum and mtapspec results}
 \hlfunctioncall{class}(Mspec)
 \end{alltt}
@@ -679,7 +681,7 @@ Mspec <- \hlfunctioncall{normalize}(Mspec, dt, \hlstring{"spectrum"})
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (SPECTRUM)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (SPECTRUM)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 nt <- 1:Mspec$numfreqs
 mspec <- Mspec$spec[nt]
 \hlfunctioncall{class}(Xspec)
@@ -692,7 +694,7 @@ Xspec <- \hlfunctioncall{normalize}(Xspec, dt, \hlstring{"spectrum"})
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (SPECTRUM)\ \ to sampling-freq.\ \ 1}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ double-sided PSD\ \ (SPECTRUM)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\end{kframe}
 \end{knitrout}
 
 These estimates are shown on the same scale in
@@ -853,11 +855,11 @@ we will not compare it to \psd{}.
 \subsection{\Rcmd{bspec::bspec}}
 An intriguing method for producing power spectral density estimates
  using Bayesian inference
- is presented by \citet{rover2011}.
- The method uses the \emph{Student's t} distribution
+ is presented by \citet{rover2011} and included in
+ the \Rcmd{bspec} package.
+ Simplistically, the method uses a \emph{Student's t} likelihood function
  to estimate the distribution of spectral densities
- at a given frequency and is packaged into
- \Rcmd{bspec} as the function \Rcmd{bspec}.
+ at a given frequency.
  We will use the spectra from the previous 
  calculation to compare with \Rcmd{bspec} results.
  For this comparison
@@ -951,7 +953,7 @@ psd_ar <- \hlfunctioncall{psdcore}(ats_ar, ntaper = ntap, refresh = TRUE)
 
 An example of this potential variance-reduction is shown in Figure \ref{fig:arspecvar},
 which we have used \Rcmd{pilot\_spec} to remove the AR spectrum
-internally.  The AR component adds approximately $\pm 3$ dB to the original spectrum,
+internally.  The non-AR component adds approximately $\pm 3$ dB to the original spectrum,
 and removing it will give a considerably smoother spectrum without the 
 need for adaptive 
 taper optimization.
@@ -1056,14 +1058,34 @@ spa <- \hlfunctioncall{spectral_properties}(Aspec$taper, db.ci = TRUE)
 \end{alltt}
 \begin{verbatim}
 ## 'data.frame':	1025 obs. of  8 variables:
-##  $ taper            : int  235 235 235 235 235 235 235 235 235 235 ...
+##  $ taper            : atomic  235 235 235 235 235 235 235 235 235 235 ...
+##   ..- attr(*, "n_taper_limits")= num  1 512
+##   ..- attr(*, "taper_positions")= logi NA
+##   ..- attr(*, "span_was_set")= logi FALSE
+##   ..- attr(*, "n_taper_limits_orig")= num  1 512
 ##  $ stderr.chi.lower : num  -0.54 -0.54 -0.54 -0.54 -0.54 ...
 ##  $ stderr.chi.upper : num  0.572 0.572 0.572 0.572 0.572 ...
 ##  $ stderr.chi.median: num  0.195 0.195 0.195 0.195 0.195 ...
-##  $ stderr.chi.approx: num  0.196 0.196 0.196 0.196 0.196 ...
-##  $ resolution       : num  0.46 0.46 0.46 0.46 0.46 ...
-##  $ dof              : num  470 470 470 470 470 470 470 470 470 470 ...
-##  $ bw               : num  0.23 0.23 0.23 0.23 0.23 ...
+##  $ stderr.chi.approx: atomic  0.196 0.196 0.196 0.196 0.196 ...
+##   ..- attr(*, "n_taper_limits")= num  1 512
+##   ..- attr(*, "taper_positions")= logi NA
+##   ..- attr(*, "span_was_set")= logi FALSE
+##   ..- attr(*, "n_taper_limits_orig")= num  1 512
+##  $ resolution       : atomic  0.46 0.46 0.46 0.46 0.46 ...
+##   ..- attr(*, "n_taper_limits")= num  1 512
+##   ..- attr(*, "taper_positions")= logi NA
+##   ..- attr(*, "span_was_set")= logi FALSE
+##   ..- attr(*, "n_taper_limits_orig")= num  1 512
+##  $ dof              : atomic  470 470 470 470 470 470 470 470 470 470 ...
+##   ..- attr(*, "n_taper_limits")= num  1 512
+##   ..- attr(*, "taper_positions")= logi NA
+##   ..- attr(*, "span_was_set")= logi FALSE
+##   ..- attr(*, "n_taper_limits_orig")= num  1 512
+##  $ bw               : atomic  0.23 0.23 0.23 0.23 0.23 ...
+##   ..- attr(*, "n_taper_limits")= num  1 512
+##   ..- attr(*, "taper_positions")= logi NA
+##   ..- attr(*, "span_was_set")= logi FALSE
+##   ..- attr(*, "n_taper_limits_orig")= num  1 512
 \end{verbatim}
 \begin{alltt}
 create_poly <- \hlfunctioncall{function}(x, y, dy, from.lower = FALSE) \{
@@ -1109,7 +1131,7 @@ pspb <- \hlfunctioncall{create_poly}(Bspec_plt$freq, Bspec_plt$spectrum[, 1], Bs
 \caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
 The filled regions encompass the spectral uncertainties values based on the
 upper $\chi_\nu^2$ curve shown in Figure \ref{fig:psderr}, light and dark for 
-PSDs with and without adaptive taper optimizaiton, respectively.
+PSDs with and without adaptive taper optimization, respectively.
 The results from Figure \ref{fig:bayes} (Bayesian method) are shown in blue.
 }
 \label{fig:magerr}
@@ -1127,23 +1149,25 @@ are shown
 in Figure \ref{fig:magres}.
 \begin{figure}[htb!]
 \begin{center}
+%relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
+%relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 frq <- Aspec$freq
-relp <- (\hlfunctioncall{sqrt}(\hlfunctioncall{varddiff}(Aspec$spec))/spa$resolution - 0)
-relp <- \hlfunctioncall{dB}(spa$stderr.chi.upper/spa$resolution - 0)
-relp <- ((spa$resolution) - spp$resolution - 0)/spp$resolution
-\hlfunctioncall{par}(las = 1, oma = \hlfunctioncall{rep}(0, 4), omi = \hlfunctioncall{rep}(0, 4))
-\hlfunctioncall{par}(mar = \hlfunctioncall{c}(3, 3, 2, 0))
+relp <- (spa$resolution - spp$resolution)/spp$resolution
+\hlfunctioncall{par}(las = 1, oma = \hlfunctioncall{rep}(0, 4), omi = \hlfunctioncall{rep}(0, 4), mar = \hlfunctioncall{c}(4, 3, 2, 0))
 \hlfunctioncall{layout}(\hlfunctioncall{matrix}(\hlfunctioncall{c}(1, 2), 1, 2, byrow = TRUE), heights = \hlfunctioncall{c}(2, 2), widths = \hlfunctioncall{c}(3, 
     0.5), respect = TRUE)
-\hlfunctioncall{plot}(frq, relp, col = \hlstring{"light grey"}, ylim = yl <- \hlfunctioncall{c}(0, 50), type = \hlstring{"h"}, xaxs = \hlstring{"i"}, 
-    yaxs = \hlstring{"i"}, ylab = \hlstring{"dB"}, xlab = \hlstring{"frequency, 1/km"}, main = \hlstring{"Percent increase in spectral resolution"})
+\hlfunctioncall{plot}(frq, relp, main = \hlstring{"Percent change in spectral resolution"}, col = \hlstring{"light grey"}, 
+    ylim = yl <- \hlfunctioncall{c}(0, 50), type = \hlstring{"h"}, xaxs = \hlstring{"i"}, yaxs = \hlstring{"i"}, ylab = \hlstring{"dB"}, 
+    xlab = \hlstring{"frequency, 1/km"})
 \hlfunctioncall{lines}(frq, relp)
-\hlfunctioncall{par}(mar = \hlfunctioncall{c}(3, 0, 2, 2))
-\hlfunctioncall{boxplot}(relp, axes = FALSE, ylim = yl, yaxs = \hlstring{"i"}, notch = TRUE, main = \hlfunctioncall{sprintf}(\hlstring{"%.01f"}, 
-    \hlfunctioncall{median}(relp)))
+\hlfunctioncall{text}(0.25, 45, \hlstring{"Adaptive relative to fixed"}, cex = 0.9)
+\hlfunctioncall{par}(mar = \hlfunctioncall{c}(4, 0, 2, 2))
+\hlcomment{# empirical distribution of values}
+\hlfunctioncall{boxplot}(relp, main = \hlfunctioncall{sprintf}(\hlstring{"%.01f"}, \hlfunctioncall{median}(relp)), axes = FALSE, ylim = yl, 
+    yaxs = \hlstring{"i"}, notch = TRUE)
 \hlfunctioncall{axis}(4)
 \end{alltt}
 \end{kframe}
@@ -1151,15 +1175,12 @@ relp <- ((spa$resolution) - spp$resolution - 0)/spp$resolution
 
 \end{knitrout}
 
-\caption{REDO CAPTION
-Resolution limits for Project MAGNET PSD (\Rcmd{niter=5} adapts--the default) 
-in decibels relative to the spectrum.
-The thick dashed line shows the 
-resolved uncertainties ($p=0.05$) in the adaptively refined
-spectrum; whereas, the thin dashed line
-shows the approximate RMS spectral variation.
-The dotted line shows the
-resolved uncertainties for the uniformly tapered result.
+\caption{Relative changes in resolution of the adaptive method
+relative to the fixed multitaper method, plotted
+as a function of spatial frequency in units of percent. 
+The non-zero median value implies the pilot spectrum was found using too-few tapers,
+according to the optimization algorithm.  Positive values indicate broadening
+resolution bandwidth.
 }
 \label{fig:magres}
 \end{center}
@@ -1202,20 +1223,48 @@ and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 6 est. (Ave. S.V.R. -35.7 dB)}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 \hlfunctioncall{str}(AH <- \hlfunctioncall{get_adapt_history}())
 \end{alltt}
 \begin{verbatim}
 ## List of 3
 ##  $ freq    : num [1:1025] 0 0.000488 0.000977 0.001465 0.001953 ...
 ##  $ stg_kopt:List of 7
-##   ..$ :Class 'tapers'  int [1:1025] 7 7 7 7 7 7 7 7 7 7 ...
-##   ..$ :Class 'tapers'  int [1:1025] 22 22 23 24 25 24 23 22 21 22 ...
-##   ..$ :Class 'tapers'  int [1:1025] 79 78 77 76 77 78 77 76 75 76 ...
-##   ..$ :Class 'tapers'  int [1:1025] 202 201 200 199 198 197 196 195 194 193 ...
-##   ..$ :Class 'tapers'  int [1:1025] 223 223 223 223 223 223 223 223 222 222 ...
-##   ..$ :Class 'tapers'  int [1:1025] 264 264 264 264 264 264 264 264 265 265 ...
-##   ..$ :Class 'tapers'  int [1:1025] 306 306 306 306 306 306 306 306 306 306 ...
+##   ..$ :Class 'tapers'  atomic [1:1025] 7 7 7 7 7 7 7 7 7 7 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 7
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi TRUE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 7
+##   ..$ :Class 'tapers'  atomic [1:1025] 22 22 23 24 25 24 23 22 21 22 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi FALSE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
+##   ..$ :Class 'tapers'  atomic [1:1025] 79 78 77 76 77 78 77 76 75 76 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi FALSE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
+##   ..$ :Class 'tapers'  atomic [1:1025] 202 201 200 199 198 197 196 195 194 193 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi FALSE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
+##   ..$ :Class 'tapers'  atomic [1:1025] 223 223 223 223 223 223 223 223 222 222 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi FALSE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
+##   ..$ :Class 'tapers'  atomic [1:1025] 264 264 264 264 264 264 264 264 265 265 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi FALSE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
+##   ..$ :Class 'tapers'  atomic [1:1025] 306 306 306 306 306 306 306 306 306 306 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
+##   .. .. ..- attr(*, "taper_positions")= logi NA
+##   .. .. ..- attr(*, "span_was_set")= logi FALSE
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
 ##  $ stg_psd :List of 7
 ##   ..$ : num [1:1025] 1144 1228 1318 1363 1377 ...
 ##   ..$ : num [1:1025] 1085 1121 1158 1225 1331 ...
@@ -1348,27 +1397,28 @@ process. The primary function is \Rcmd{pspectrum}.
 \hlfunctioncall{sessionInfo}()
 \end{alltt}
 \begin{verbatim}
-## R version 2.15.2 (2012-10-26)
-## Platform: i386-apple-darwin9.8.0/i386 (32-bit)
+## R version 2.15.3 (2013-03-01)
+## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
 ## 
 ## locale:
-## [1] C
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
+##  [8] utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] bspec_1.4          ggplot2_0.9.3      signal_0.7-3      
+##  [1] bspec_1.4          ggplot2_0.9.3.1    signal_0.7-3      
 ##  [4] MASS_7.3-23        RColorBrewer_1.0-5 RSEIS_3.0-9       
-##  [7] Rwave_2.0          RPMG_2.1-4         psd_0.2-0         
-## [10] fftw_1.0-3         knitr_1.1         
+##  [7] Rwave_2.0          RPMG_2.1-4         psd_0.3-0         
+## [10] fftw_1.0-3        
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Peaks_0.2        colorspace_1.2-1 dichromat_2.0-0  digest_0.6.3    
-##  [5] evaluate_0.4.3   formatR_0.7      grid_2.15.2      gtable_0.1.2    
-##  [9] labeling_0.1     lattice_0.20-13  munsell_0.4      plyr_1.8        
+##  [1] colorspace_1.2-1 dichromat_2.0-0  digest_0.6.3     evaluate_0.4.3  
+##  [5] formatR_0.7      gtable_0.1.2     knitr_1.1        labeling_0.1    
+##  [9] lattice_0.20-13  munsell_0.4      Peaks_0.2        plyr_1.8        
 ## [13] proto_0.3-10     reshape2_1.2.2   scales_0.2.3     stringr_0.6.2   
-## [17] tools_2.15.2     zoo_1.7-9
+## [17] zoo_1.7-9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

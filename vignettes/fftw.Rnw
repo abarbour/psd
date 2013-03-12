@@ -164,7 +164,7 @@ pltbench <- function(lentyp=c("even","odd")){
   tmpd <- plyr::ddply(allbench.df.mlt, 
                       .(variable,  num_dat),
                       summarise, 
-                      summary="medians", # just a name
+                      summary="medians", 
                       value=ggplot2::mean_cl_normal(value)[1,1])
   ## create copies for each test and map to data.frame
   allmeds <<- plyr::ldply(lapply(X=tests, 
@@ -172,10 +172,10 @@ pltbench <- function(lentyp=c("even","odd")){
                                        df$test <- x; return(df)
                                      }))
   ## plot the benchmark data
+  # 1/sqrt(n) standard errors [assumes N(0,1)]
   g <- ggplot(data=allbench.df.mlt,
               aes(x=log10(num_dat),
                   y=log2(value),
-                  # 1/sqrt(n) standard errors [assumes N(0,1)]
                   ymin=log2(value*(1-1/sqrt(reps))),
                   ymax=log2(value*(1+1/sqrt(reps))),
                   colour=test,

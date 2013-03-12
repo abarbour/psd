@@ -188,7 +188,7 @@
   releases.
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## Taper constraint procedures
@@ -211,7 +211,7 @@ lines(kopt.markov, log="y", col="orange")
 ## To compare all the methods at once:
 demo("ctap")
 ##
-#RDEX#}
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com> and R.L.Parker. AJB

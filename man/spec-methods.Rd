@@ -26,7 +26,7 @@
   alias.
 }
 \examples{
-#RDEX#\\dontrun{
+\dontrun{
 require(psd)
 ##
 ## Objects with class 'spec'
@@ -44,7 +44,7 @@ x <- psdcore(xn)
 xdf <- as.data.frame(x)
 str(xdf)
 is.tapers(xdf$taper)
-#RDEX#}
+}
 }
 \author{
   A.J. Barbour <andy.barbour@gmail.com>
