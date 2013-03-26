@@ -54,23 +54,30 @@
 
   The default behaviour (\code{remove.AR <= 0}) is to
   remove the standard linear model \eqn{[f(x) = \alpha x +
-  \beta]} from the data; however, the user can remove the
+  \beta]} from the data; however, the user can model the
   effect of an autoregressive process by specifiying
   \code{remove.AR}.
 }
 \section{Removing an AR effect from the spectrum}{
   If \code{remove.AR > 0} the argument is used as
   \code{AR.max} in \code{\link{prewhiten}}, from which an
-  AR spectrum is calculated using the best fitting model;
-  this is removed from the spectrum calculated with the
-  full data.
+  AR-response spectrum is calculated using the best fitting
+  model.
 
   If the value of \code{remove.AR} is too low the spectrum
   could become distorted, so use with care. \emph{Note,
   however, that the value of \code{remove.AR} will be
   restricted to within the range \eqn{[1,100]}.} If the AR
   order is much larger than this, it's unclear how
-  \code{\link{prewhiten}} will perform.
+  \code{\link{prewhiten}} will perform and whether the AR
+  model is appropriate.
+
+  \emph{Note that this function does not produce a
+  parametric spectrum estimation; rather, it will return
+  the amplitude response of the best-fitting AR model as
+  \code{spec.ar} would. \strong{Interpret these results
+  with caution, as an AR response spectrum can be
+  misleading.}}
 }
 \examples{
 \dontrun{
@@ -93,5 +100,7 @@ plot(pilot_spec(xc, remove.AR=10), log="dB", add=TRUE, col="red")
 }
 \seealso{
   \code{\link{psdcore}}, \code{\link{prewhiten}}
+
+  Documentation for \code{spec.ar}.
 }
 
