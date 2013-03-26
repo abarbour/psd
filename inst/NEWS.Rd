@@ -8,6 +8,17 @@
 \name{psd}
 \title{News for package 'psd'}
 \encoding{UTF-8}
+\section{CHANGES IN psd VERSION 0.3-2 (2013-03-25)}{
+  \itemize{
+    \item Fixed \code{psdcore}: it was applying parabolic weights incorrectly.
+    \item Changed argument name \code{ntap_pilot} in \code{pspectrum} to \code{ntap.init}.
+    \item Changed \code{ceiling} in \code{minspan} to \code{round}.
+    \item Fixed \code{km} field in \code{magnet} dataset.
+    \item Fixed referencing s.t. \code{?plot} isn't ambiguous.
+    \item The default number of iterations and pilot tapers
+          was changed to 3 and 7 respectively.
+  }
+}
 \section{CHANGES IN psd VERSION 0.3-1 (2013-03-12)}{
   \itemize{
     \item This marks the first release to CRAN: \CRANpkg{psd}.

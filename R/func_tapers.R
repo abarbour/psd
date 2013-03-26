@@ -69,7 +69,7 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   if (is.null(max_taper)) max_taper <- ceiling(max(x))
   stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper)
   #
-  x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, floor(x))))
+  x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, round(x))))
   #
   class(x) <- "tapers"
   
@@ -125,7 +125,7 @@ tapers <- as.tapers
 NULL
 
 #' @rdname tapers-methods
-#' @name as.data.frame.tapers
+# @name as.data.frame.tapers
 #' @method as.data.frame tapers
 #' @S3method as.data.frame tapers
 as.data.frame.tapers <- function(x, ...){
@@ -134,13 +134,13 @@ as.data.frame.tapers <- function(x, ...){
   return(df)
 }
 #' @rdname tapers-methods
-#' @name data.frame.tapers
+# @name data.frame.tapers
 #' @method data.frame tapers
 #' @S3method data.frame tapers
 data.frame.tapers <- as.data.frame.tapers
 
 #' @rdname tapers-methods
-#' @name print
+# @name print
 #' @aliases print.tapers
 #' @method print tapers
 #' @S3method print tapers
@@ -152,7 +152,7 @@ print.tapers <- function(x, ...){
 }
 
 #' @rdname tapers-methods
-#' @name summary
+# @name summary
 #' @aliases summary.tapers
 #' @method summary tapers
 #' @S3method summary tapers
@@ -164,7 +164,7 @@ summary.tapers <- function(object, ...){
 }
 
 #' @rdname tapers-methods
-#' @name print
+# @name print
 #' @aliases print.summary.tapers
 #' @method print summary.tapers
 #' @S3method print summary.tapers
@@ -174,7 +174,7 @@ print.summary.tapers <- function(x, ...){
 }
 
 #' @rdname tapers-methods
-#' @name lines
+# @name lines
 #' @aliases lines.tapers
 #' @method lines tapers
 #' @S3method lines tapers
@@ -187,7 +187,7 @@ lines.tapers <- function(x, lwd=1.8, col="red", ...){
 }
 
 #' @rdname tapers-methods
-#' @name points
+# @name points
 #' @aliases points.tapers
 #' @method points tapers
 #' @S3method points tapers
@@ -200,7 +200,7 @@ points.tapers <- function(x, pch="_", cex=1, ...){
 }
 
 #' @rdname tapers-methods
-#' @name plot
+# @name plot
 #' @aliases plot.tapers
 #' @method plot tapers
 #' @S3method plot tapers
@@ -289,15 +289,15 @@ parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
 #' @method parabolic_weights_fast default
 #' @S3method parabolic_weights_fast default
 parabolic_weights_fast.default <- function(ntap=1L){
-  ntap <- max(1, as.integer(ntap[1]))
-  kseq <- seq.int(from=0, to=ntap-1, by=1)
-  lk <- length(kseq)
+  #ntap <- max(1, as.integer(ntap[1]))
+  kseq <- K2 <- TW <- seq_len(ntap) - 1 #
+  toret <- list(taper_seq=matrix(kseq+1, ncol=ntap), taper_weights=numeric(ntap))
   K2 <- kseq * kseq # vector
   NT2 <- ntap * ntap # scalar
   NT3 <- NT2 * ntap # scalar
   #w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
-  TW <- matrix((NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2), ncol=lk)
-  return(list(taper_seq=kseq+1, taper_weights=TW ))
+  toret$taper_weights <- matrix((NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2), ncol=ntap)
+  return(toret)
 }
 
 ###
@@ -349,7 +349,7 @@ minspan <- function(tapvec, ...) UseMethod("minspan")
 #' @S3method minspan tapers
 minspan.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
-  ##tapvec <- 7*tapvec/5
+  tapvec <- 7*tapvec/5
   maxtap <- min(max(tapvec), length(tapvec)/2)
   nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
   return(nspan)

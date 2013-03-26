@@ -90,7 +90,8 @@ riedsid.default <- function(PSD, ntaper,
   # num freqs
   nf <- psd:::psd_envAssignGet("num_freqs", length(PSD))
   # prelims
-  eps <- .Machine$double.eps #**2 # was: 1e-78  #  A small number to protect against zeros
+  eps <- 1e-78 
+  # .Machine$double.eps #  A small number to protect against zeros
   # vectorize initial estimate
   Zeros <- zeros(nf)
   nt <- length(ntaper)
@@ -212,7 +213,7 @@ riedsid.default <- function(PSD, ntaper,
   #print(all.equal(kopt_old,kopt)) # TRUE!
   ##
   ## Constrain tapers
-  stopifnot(diff(length(kopt),length(kseq))==0)
+  stopifnot(diff(length(kopt), length(kseq))==0)
   if (constrained) kopt <- constrain_tapers(tapvec=kopt, 
                                             tapseq=kseq, 
                                             constraint.method=c.method, 

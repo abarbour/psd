@@ -2,16 +2,11 @@
 \name{tapers-methods}
 \alias{as.data.frame.tapers}
 \alias{data.frame.tapers}
-\alias{lines}
 \alias{lines.tapers}
-\alias{plot}
 \alias{plot.tapers}
-\alias{points}
 \alias{points.tapers}
-\alias{print}
 \alias{print.summary.tapers}
 \alias{print.tapers}
-\alias{summary}
 \alias{summary.tapers}
 \alias{tapers-methods}
 \title{Generic methods for objects with class \code{'tapers'}.}

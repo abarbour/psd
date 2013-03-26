@@ -30,8 +30,17 @@ varddiff <- function(Xd) vardiff(Xd, double.diff=TRUE)
 
 # @rdname psd-utilities
 # @export
-# @keywords utilities first-difference variance
+# @keywords utilities polygon
 #opar <- function() par(no.readonly=TRUE)
+# create_poly <- function(x, y, dy, from.lower=FALSE){
+#   xx <- c(x, rev(x))
+#   if (from.lower){
+#     yy <- c(y, rev(y+dy))
+#   } else {
+#     yy <- c(y+dy, rev(y-dy))
+#   }
+#   return(data.frame(xx=xx, yy=yy))
+# }
 
 #' @description \code{dB} returns an object converted to decibels.
 #' @details 

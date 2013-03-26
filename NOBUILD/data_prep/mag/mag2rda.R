@@ -8,7 +8,7 @@ mc <- read.table(paste(mag.dir,"mag.clean",sep="/"), colClasses="numeric", col.n
 ## Difference
 mdiff <- zapsmall(mc$clean - mr$raw)
 ## Distance
-km <- 0:(length(mr)-1)
+km <- seq_len(length(mdiff))-1
 
 ## Data.frame
 mag <- data.frame(km=km, raw=mr, clean=mc, mdiff=mdiff)

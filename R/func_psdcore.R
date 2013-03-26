@@ -188,28 +188,32 @@ psdcore.default <- function(X.d,
   if (sum(ntap) > 0) {
     PSD <- 0 * NF
     n2e <- n.e * 2
+    fjs <- f[NF]
+    fjs2 <- fjs * 2
     # get a set of all possible weights for the current taper-vector
     # then the function need only subset the master set
     # faster? YES
-    KPWM <- parabolic_weights_fast(max(ntap))
-    PSDFUN <- function(fj, n2.e=n2e, KPW=KPWM, ntaps=ntap, Xfft=fftz){
+    # BUT this is wrong, because it normalizes by the max taper!!
+    #KPWM <- parabolic_weights_fast(max(ntap))
+    
+    PSDFUN <- function(fj, fi=fj+1, fj2=fjs2[fi], n2.e=n2e, ntaps=ntap, Xfft=fftz){
       # number tapers (for subsetting)
-      NT <- base::seq_len(ntaps[fj+1])
+      NT <- ntaps[fi]
+      #NT <- base::seq_len(NT)
       # sequence
-      Kseq <- KPW$taper_seq[NT]
+      KPW <- parabolic_weights_fast(NT)
+      Kseq <- KPW$taper_seq
       # weights
-      #Kwgt <- KPW$taper_weights[NT]
+      Kwgt <- KPW$taper_weights
+      #rm(KPW)
       # Resampling weighted spectral values:
-      fj2 <- fj * 2
-      #m1. <- fj2 + n2.e - Kseq
       j1 <- (fj2 + n2.e - Kseq) %% n2.e
-      #m1. <- fj2 + Kseq
       j2 <- (fj2 + Kseq) %% n2.e
-      #f1 <- Xfft[j1+1]
-      #f2 <- Xfft[j2+1]
-      af12. <- Xfft[j1+1] - Xfft[j2+1]
-      af122. <- af12. * af12. # will be complex, so use abs:
-      PSDv <- KPW$taper_weights[NT] %*% base::matrix(base::abs(af122.), ncol=1)
+      # select spectra
+      af12. <- abs(Xfft[j1+1] - Xfft[j2+1])
+      af12. <- matrix(af12. * af12., ncol=1)
+      # reweighted spectra
+      PSDv <- Kwgt %*% af12.
       return(PSDv)
     }
     # ** compiled code doesn't appear to help speed
@@ -217,7 +221,7 @@ psdcore.default <- function(X.d,
     # ** foreach is easier to follow, but foreach solution is actually slower :(
     #     PSD <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
-    PSD <- vapply(X=f[NF], FUN=PSDFUN, FUN.VALUE=double(1))
+    PSD <- vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     if (verbose) message("zero taper result == raw periodogram")
     Xfft <- psd:::psd_envGet("fft_even_demeaned_padded")
@@ -243,7 +247,7 @@ psdcore.default <- function(X.d,
   ## Normalize by variance, 
   trap.area <- base::sum(PSD) - PSD[1]/2 - PSD[length(PSD)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
-  ## normalize to two sided spectrum
+  ## normalize to one sided spectrum
   PSD.n <- PSD * (2 * varx / (trap.area * bandwidth))
   ## Nyquist frequencies
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=nfreq)) # was just 0.5

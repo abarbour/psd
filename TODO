@@ -1,14 +1,16 @@
-datasets
---------
-[X] bsm + pp
-*** find large teleseism: list with ambient and seismic times
-*** include BSM & LSM noise model
-[-] scarb
-*** should not include? <- proprietary?
-[X] magnet
+performance
+-----------
+[ ] vapply to C
+*** riedsid [ ]
+*** psdcore [ ]
+
+manual
+------
+[ ] reword AR spectrum section
 
 vignettes
 ---------
+[ ] reword AR spectrum section
 [X] revise normalization with RLPs suggestions
 [X] check out resolution
 *** is it just uncertainty?
@@ -19,12 +21,15 @@ vignettes
 
 Miscellany
 ----------
+[ ] remove untested or unstable options
+*** is there a function for deprecation?
+*** ctap_markov?
+[ ] add option for tapcap in pspectrum, rather than hardwire
 [ ] work on bugs
 [ ] revisit draft for Comp. Geosc.
 [ ] test on R 3.0, CRAN update if necessary
 *** I think CRAN checks with devel, which is 3.0.0alpha
-[ ] resubmit
-[X] bump to 0.3-1
+[X] make sure ?plot doesn't conflict
 [X] fix cran check warnings
 [X] final build/check for new CRAN submission
 [X] rename? ... to 'psd'
@@ -46,6 +51,16 @@ Miscellany
 [X] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
+
+datasets
+--------
+[X] Fix km in magnet (currently all zeros)
+[X] bsm + pp
+*** find large teleseism: list with ambient and seismic times
+*** include BSM & LSM noise model
+[-] scarb
+*** should not include? <- proprietary?
+[X] magnet
 
 `spectral_properties`
 ---------------------

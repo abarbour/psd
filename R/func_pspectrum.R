@@ -15,7 +15,7 @@
 #' 
 #' @param x vector; series to estimate PSD for.
 #' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}.
-#' @param ntap_pilot scalar; the number of sine tapers to use in the pilot spectrum estimation.
+#' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation.
 #' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum.
 #' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
 #' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
@@ -27,11 +27,11 @@
 #' \code{"final_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pspectrum.R
-pspectrum <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
+pspectrum <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
 #' @S3method pspectrum default
-pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
   adapt_message <- function(stage, dvar=NULL){
@@ -58,7 +58,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
       }
       ##
       ordAR <- ifelse(AR, 100, 0)
-      pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap_pilot, 
+      pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
                  remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       # ensure it's in the environment
       Pspec <- psd:::psd_envGet("pilot_psd")
@@ -72,18 +72,23 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap_pilot=7, niter=5, AR=FALSE, N
         psd:::new_adapt_history(niter)
         psd:::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
-      #xo <- 0 # to prevent passing orig data back/forth
+      xo <- 0 # to prevent passing orig data back/forth
     } else {
       # enforce no verbosity
       rverb <- ifelse(stage > 0, FALSE, TRUE)
       ## calculate optimal tapers
+      if (rverb) rm(kopt)
+      tapcap <- 1000 # absolute limit
       kopt <- riedsid(Pspec, verbose=rverb, ...)
+      kopt[kopt>tapcap] <- tapcap
       stopifnot(exists('kopt'))
       ## reapply to spectrum
-      if (stage==niter & plot){
-        plotpsd_ <- TRUE
-        #xo <- x
-        #rm(x)
+      if (stage==niter){
+        xo <- x
+        rm(x)
+        if (plot){
+          plotpsd_ <- TRUE
+        }
       }
       # preproc done in pilot_spec
       Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, 

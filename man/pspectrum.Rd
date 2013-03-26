@@ -3,12 +3,12 @@
 \alias{pspectrum.default}
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
-  pspectrum(x, x.frqsamp = 1, ntap_pilot = 7, niter = 5,
+  pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
     AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
     no.history = FALSE, plot = FALSE, ...)
 
   \method{pspectrum}{default} (x, x.frqsamp = 1,
-    ntap_pilot = 7, niter = 5, AR = FALSE,
+    ntap.init = 7, niter = 3, AR = FALSE,
     Nyquist.normalize = TRUE, verbose = TRUE,
     no.history = FALSE, plot = FALSE, ...)
 }
@@ -18,8 +18,8 @@
   \item{x.frqsamp}{scalar; the sampling rate (e.g. Hz) of
   the series \code{x}.}
 
-  \item{ntap_pilot}{scalar; the number of sine tapers to
-  use in the pilot spectrum estimation.}
+  \item{ntap.init}{scalar; the number of sine tapers to use
+  in the pilot spectrum estimation.}
 
   \item{niter}{scalar; the number of adaptive iterations to
   execute after the pilot spectrum.}

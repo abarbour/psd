@@ -29,11 +29,12 @@
 #	L(A,B)  = - sum_n{ ln[A] - k_n*B + Sn'*exp(k_n*B)/A  }
 #
 ##
-setwd("~/kook.processing/R/dev/packages/rlpSpec/figures")
-# setwd("~/nute.processing/development/rlpSpec/figures")
+setwd("~/kook.processing/R/dev/packages/psd/NOBUILD/figures")
+# setwd("~/nute.processing/development/psd/NOBUILD/figures")
 #source('funcload.R')
-source('../rsrc/.sourceloads.R')
-load("../data/mag/mag.rda")
+library(psd)
+data(magnet)
+mag <- magnet
 
 library(psych)
 library(ggplot2)
@@ -172,7 +173,7 @@ doLinMag <- function(dat, src, psdskip, tapinit, rspec=F){
   ##   Use lm to estimate spectrum params
   ##
   if (!rspec){
-    est <- "rlpSpec"
+    est <- "psd"
     psd <- pspectrum(dat, niter=0, ntapinit=tapinit, plot=F)
     psd.c <- psd[(psdskip[1]+1):(length(psd$psd)-psdskip[2]),]
     psd.lm <- lm(log(psd)~f, psd.c)
