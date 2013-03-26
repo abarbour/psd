@@ -4,21 +4,6 @@ performance
 *** riedsid [ ]
 *** psdcore [ ]
 
-manual
-------
-[ ] reword AR spectrum section
-
-vignettes
----------
-[ ] reword AR spectrum section
-[X] revise normalization with RLPs suggestions
-[X] check out resolution
-*** is it just uncertainty?
-[X] revise overview with DCAs suggestions
-[-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
-[X] finish norm
-[X] develop overview
-
 Miscellany
 ----------
 [ ] remove untested or unstable options
@@ -51,6 +36,21 @@ Miscellany
 [X] normalization function
 [X] build --as-cran --no-multiarch --no-examples
 [X] remove references to src/ctap_simple.c and test build {[X]}
+
+manual
+------
+[X] reword AR spectrum section
+
+vignettes
+---------
+[X] reword AR spectrum section
+[X] revise normalization with RLPs suggestions
+[X] check out resolution
+*** is it just uncertainty?
+[X] revise overview with DCAs suggestions
+[-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
+[X] finish norm
+[X] develop overview
 
 datasets
 --------

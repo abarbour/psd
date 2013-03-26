@@ -8,8 +8,9 @@
 \name{psd}
 \title{News for package 'psd'}
 \encoding{UTF-8}
-\section{CHANGES IN psd VERSION 0.3-2 (2013-03-25)}{
+\section{CHANGES IN psd VERSION 0.3-2 (2013-03-26)}{
   \itemize{
+    \item Revised discussion regarding AR spectral response.
     \item Fixed \code{psdcore}: it was applying parabolic weights incorrectly.
     \item Changed argument name \code{ntap_pilot} in \code{pspectrum} to \code{ntap.init}.
     \item Changed \code{ceiling} in \code{minspan} to \code{round}.

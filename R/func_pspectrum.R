@@ -119,14 +119,13 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
 #'
 #' The default behaviour (\code{remove.AR <= 0}) is to remove the standard linear 
 #' model \eqn{[f(x) = \alpha x + \beta]} from the data; however,
-#' the user can remove the effect of an autoregressive process by specifiying
+#' the user can model the effect of an autoregressive process by specifiying
 #' \code{remove.AR}.
 #'
 #' @section Removing an AR effect from the spectrum:
 #' If \code{remove.AR > 0} the argument is used as \code{AR.max} in 
-#' \code{\link{prewhiten}}, from which an AR spectrum is calculated using
-#' the best fitting model; this is removed from the spectrum calculated
-#' with the full data.
+#' \code{\link{prewhiten}}, from which an AR-response spectrum is calculated using
+#' the best fitting model.
 #'
 #' If the value of \code{remove.AR} is too low the spectrum 
 #' could become distorted,
@@ -135,13 +134,19 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
 #' value of \code{remove.AR} will be restricted to within the 
 #' range \eqn{[1,100]}.}
 #' If the AR order is much larger than this, it's unclear how \code{\link{prewhiten}}
-#' will perform.
+#' will perform and whether the AR model is appropriate.
+#'
+#' \emph{Note that this function does not produce a parametric spectrum estimation; rather,
+#' it will return the amplitude response of the best-fitting AR model as \code{spec.ar}
+#' would. \strong{Interpret these results with caution, as an AR response spectrum
+#' can be misleading.}}
 #'
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{psdcore}}, \code{\link{prewhiten}}
+#' @seealso Documentation for \code{spec.ar}.
 #'
 #' @param x  vector; the data series to find a pilot spectrum for
 #' @param x.frequency  scalar; the sampling frequency (e.g. Hz) of the series
@@ -220,14 +225,14 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     if (REMAR){
       par(las=1)
       plot(Ospec, log="dB", col="red", main="Pilot spectrum estimation")
-      mtext(sprintf("(with AR(%s) correction)", ordAR), line=0.4)
+      mtext(sprintf("(with AR(%s) response)", ordAR), line=0.4)
       Pspec_ar$spec <- Pspec_ar$spec * mARs
       plot(Pspec_ar, log="dB", col="blue", add=TRUE)
       plot(Pspec, log="dB", add=TRUE, lwd=2)
       legend("bottomleft", 
              c("original PSD",
                sprintf("AR-innovations PSD\n(mean %.01f +- %.01f dB)", dB(mARs), dB(sqrt(arvar))/4),
-               "AR-corrected PSD"), 
+               "AR-filter response"), 
              lwd=2, col=c("red","blue","black"))
     } else {
       plot(Pspec, log="dB", main="Pilot spectrum estimation")

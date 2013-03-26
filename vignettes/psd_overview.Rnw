@@ -529,10 +529,9 @@ lines(Pspec$freq, Pspec$spec, col="red", lwd=2)
 
 This question must be addressed on a case-by-base basis; but, if there
 is significant auto-regressive structure in the series then
-the answer is likely \SC{Yes}.
-The MAGNET dataset is an example where removing the spectrum
-of the innovations from the AR prewhitening procedure can
-reduce spectral variance considerably.
+the answer is likely \SC{Yes}.  
+The MAGNET dataset is an example where the structure of the series
+is nicely represented by an AR model with a random noise component.
 
 Recall the results of the prewhitening in Section \ref{sxn:prew}.
 While \Rcmd{AR.max} was set relatively high,
@@ -549,24 +548,26 @@ psd_ar <- psdcore(ats_ar, ntaper=ntap, refresh=TRUE)
 dB(mean(psd_ar$spec))
 @
 
-An example of this potential variance-reduction is shown in Figure \ref{fig:arspecvar},
-which we have used \Rcmd{pilot\_spec} to remove the AR spectrum
-internally.  The non-AR component adds approximately $\pm 3$ dB to the original spectrum,
-and removing it will give a considerably smoother spectrum without the 
-need for adaptive 
-taper optimization.
+In Figure \ref{fig:arspecvar} we have used \Rcmd{pilot\_spec} to 
+model the spectral response of the AR component of the series (solid
+black line).
+The non-AR component (labelled "AR-innovations")
+contributes approximately $\pm 3$ dB to the original spectrum.
+Overlain on these series is the adaptive spectrum found previously.
 
 \begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=MAGPSDAR>>=
 pilot_spec(ats_lm, ntap=ntap, remove.AR=100, plot=TRUE)
 plot(Aspec, log="dB", add=TRUE, col="grey", lwd=4) 
-plot(Aspec, log="dB", add=TRUE, lwd=3, lty=3) 
+plot(Aspec, log="dB", add=TRUE, lwd=3, lty=3)
+spec.ar(ats_lm, log="dB", add=TRUE, lwd=2, col="grey40")
 @
-\caption{Spectral variance may be reduced by removing the effect
-on an AR process, as is shown for the MAGNET data using
-\Rcmd{pilot\_spec}.  The dotted line is the adaptively estimated spectrum
-from Figure \ref{fig:psdcomp}.}
+\caption{AR response spectrum for the MAGNET dataset produced by 
+\Rcmd{pilot\_spec}. Overlain on the figure is the adaptive estimation 
+from Figure \ref{fig:psdcomp} (dotted line),
+and the results from \Rcmd{spec.ar} in dark grey; the shift is due to a
+normalization difference.}
 \label{fig:arspecvar}
 \end{center}
 \end{figure}
@@ -708,7 +709,7 @@ lines(frq, relp)
 text(0.25, 45, "Adaptive relative to fixed", cex=0.9)
 par(mar=c(4,0,2,2))
 # empirical distribution of values
-boxplot(relp, main=sprintf("%.01f",median(relp)), axes=FALSE, ylim=yl, yaxs="i", notch=TRUE)
+boxplot(relp, range=0, main=sprintf("%.01f",median(relp)), axes=FALSE, ylim=yl, yaxs="i", notch=TRUE)
 axis(4)
 @
 \caption{Relative changes in resolution of the adaptive method
@@ -778,13 +779,19 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   if (iter==1){
     plot(Frq, y, type="h", col=icol, 
            main="", ylab="", xlab="Spatial frequency",
-           ylim=c(0,550), yaxs="i", frame.plot=FALSE)
+           ylim=c(0,650), yaxs="i", frame.plot=FALSE)
   } else {
     lines(Frq, y, type="h", col=icol)
   }
-  lines(Frq, y, type="l",  lwd=0.9)
+  if (mcol < (niter-1)){
+    yf <- Dat[,(mcol+1)]
+    lcol <- Cols[(mcol+1)]
+    lines(Frq, yf, lty=3) #col=lcol, lty=3)
+  }
+  lines(Frq, y)
+  
   x <- (c(0,1)+iter-1)*.05+0.075
-  y <- c(545,545,600,600,545)
+  y <- c(600,600,655,655,600)
   text(mean(x),max(y)-1.7*diff(range(y)), mcol-1)
   polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
 }))

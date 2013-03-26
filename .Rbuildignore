@@ -10,6 +10,8 @@ README.md
 fix_rd
 install_rlp
 data/.assemb_data
+inst/Makefile
+inst/NEWS.pdf
 inst/Examples/.test
 inst/Examples/test_results_rdex
 inst/Examples/Makefile
