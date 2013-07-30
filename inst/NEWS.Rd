@@ -9,7 +9,7 @@
 \name{psd}
 \title{News for package 'psd'}
 \encoding{UTF-8}
-\section{CHANGES IN \psd{} VERSION 0.3-2 (2013-03-26)}{
+\section{CHANGES IN \psd{} VERSION 0.3-2 (2013-03-27)}{
   \itemize{
     \item Revised discussions regarding AR response spectrum.
     \item Fixed \code{psdcore}: it was applying parabolic weights incorrectly.

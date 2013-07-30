@@ -5,7 +5,9 @@
 #where
 #       c = cos(2*rotation)
 #       s = sin(2*rotation)
-load("Tohoku.rda")
+library(psd)
+data(Tohoku) #load("Tohoku.rda")
+library(signal)
 #
 # Back azimuth, in radians
 bazd <- attributes(Tohoku)$iasp$geodetic["backaz"][[1]]
@@ -18,6 +20,11 @@ baz <- bazd * pi/180
 #areal <- apply(areal, FUN=function(x)x-mean(x), 2)
 #shears <- apply(shears, FUN=function(x)x-mean(x), 2)
 #
+bf <- butter(5,0.001,"high")  # 5th order butterworth filter 0.001*Nyquist
+PROCDAT <- function(dat, fw=bf){
+  require(signal)
+  return(filtfilt(fw, dat))
+}
 DEMEAN <- function(mat) apply(mat, FUN=function(x)x-mean(x), 2)
 Porep <- DEMEAN(as.matrix(Tohoku[,c("pressure.pore")]))
 Areal <- DEMEAN(as.matrix(Tohoku[,c("areal")]))
@@ -39,9 +46,9 @@ AREALS <- function(backaz.deg, areal, shears.){
   message(backaz.deg-bazd)
   backaz. <- backaz.deg * pi / 180
   shears.r <- SHEARROT(backaz., shears.)
-  # 3) rotated shears
+  # 3) rotate shears in radial/transverse extension
   Eh <- Re(shears.r) + areal
-  Er <- Im(shears.r) + areal
+  Er <- Im(shears.r)# + areal
   # 4) regress equivalent areal strains
   #areal_r <- Eh + Er
   #Efit <- lm(areal_r ~ areal)
@@ -53,23 +60,34 @@ AREALS <- function(backaz.deg, areal, shears.){
   Efit <- lm(Eh ~ Er)
   fc <- coefficients(Efit)
   afc <- fc[[2]]
+  message(afc)
   #  res <- (Eh+Er)
   resnorm <- norm(res <- as.matrix(residuals(Efit)))
   #  resnorm
   #  afc - 1
+  #1-log10(afc)
+  #1-log10(resnorm)
   sqrt(var(res))
 }
 FUN <- function(az) AREALS(az, areal=Areal, shears.=Shears)
 #Opt <- optim(baz*180/pi, FUN, gr=NULL, method="L-BFGS-B", lower=-360, upper=360)
 #Opt <- optim(bazd, FUN, gr=NULL, method="L-BFGS-B", lower=-90, upper=90)
-Opt <- optim(bazd, FUN, gr=NULL, method="L-BFGS-B", lower=-180, upper=180)
-#Opt <- optim(0, FUN, gr=NULL, method="L-BFGS-B", lower=-90, upper=90)
-bazopt <- Opt$par[1]
-bazopt
+bazd <- 360+bazd
+#bazd <- 307
+OPT <- function(){
+  Opt <- optim(bazd, FUN, gr=NULL, method="L-BFGS-B", lower=0, upper=360)
+  ##Opt <- optim(0, FUN, gr=NULL, method="L-BFGS-B", lower=-90, upper=90)
+  bazopt <- Opt$par[1]
+}
+if (!exists("bazopt")) bazopt <- OPT()
 
+shears.r <- SHEARROT(bazd*pi/180, Shears) # does not minimize transverse extension
 shears.r <- SHEARROT(bazopt*pi/180, Shears)
-Eh <- Re(shears.r) + Areal
-Er <- Im(shears.r) + Areal
+Eh <- Re(shears.r) + Areal/2
+Er <- Im(shears.r) + Areal/2
+shears.sjf <- SHEARROT((225)*pi/180, Shears)
+g1.fp <- Re(shears.sjf)
+g2.fp <- Im(shears.sjf)
 
 pdf("Tohoku_rotated.pdf",h=11,w=8.5)
 #par(mfcol=c(2,1), pty="m")
@@ -77,11 +95,11 @@ par(pty="m", oma=rep(1,4))
 
 main <- sprintf("B084-Tohoku strains")
 delts <- 0.55*rev(seq_len(11)-4)
-plot(Shears[,1]+delts[1], type="l", lty=1, ylim=range(delts)*1.1,
+plot(g1.fp+delts[1], type="l", lty=1, ylim=range(delts)*1.1,
 	ylab="microstrain", xlab="arbitrary time, seconds",
 	main=main, col="dark red")
 mtext(sprintf("g1, g2 rotated by %.01f to min areal-misfit (%.01f rel eq backaz)",bazopt,bazopt-bazd))
-lines(Shears[,2]+delts[2], col="dark red")
+lines(g2.fp+delts[2], col="dark red")
 #lines(log10(abs(Er/Eh))+delts[3], col="green")
 lines(Eh+delts[3])
 lines(Er+delts[4])

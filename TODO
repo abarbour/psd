@@ -1,3 +1,14 @@
+datasets
+--------
+[ ] add more fields to hfsnm: meter.type== bsm or lsm, location=anza,pfo, etc
+[X] Fix km in magnet (currently all zeros)
+[X] bsm + pp
+*** find large teleseism: list with ambient and seismic times
+*** include BSM & LSM noise model
+[-] scarb
+*** should not include? <- proprietary?
+[X] magnet
+
 performance
 -----------
 [ ] vapply to C
@@ -51,16 +62,6 @@ vignettes
 [-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
 [X] finish norm
 [X] develop overview
-
-datasets
---------
-[X] Fix km in magnet (currently all zeros)
-[X] bsm + pp
-*** find large teleseism: list with ambient and seismic times
-*** include BSM & LSM noise model
-[-] scarb
-*** should not include? <- proprietary?
-[X] magnet
 
 `spectral_properties`
 ---------------------
