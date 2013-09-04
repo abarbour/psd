@@ -18,9 +18,9 @@
 .onAttach <- function(...) {
   ##
   ## add some info to the environment
-  psd:::psd_envAssign("init", "initialized upon attach")
+  psd::psd_envAssign("init", "initialized upon attach")
   ##
   packageStartupMessage(
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation.",
-            utils:::packageVersion("psd")))
+            utils::packageVersion("psd")))
 }
