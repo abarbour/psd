@@ -11,7 +11,6 @@
 }
 \makeatother
 
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \definecolor{fgcolor}{rgb}{0.2, 0.2, 0.2}
 \newcommand{\hlnumber}[1]{\textcolor[rgb]{0,0,0}{#1}}%
 \newcommand{\hlfunctioncall}[1]{\textcolor[rgb]{0.501960784313725,0,0.329411764705882}{\textbf{#1}}}%
@@ -76,7 +75,7 @@
 \usepackage{natbib}
 \usepackage{geometry}
 \usepackage{hyperref}
-\usepackage{units}
+%% was causing errors: \usepackage{units}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
@@ -96,6 +95,7 @@
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
+%
 %% path, filename, caption, label
 \newcommand{\listing}[4]{        %
   \begin{figure}[H]              %
@@ -109,6 +109,7 @@
 }
 \author{Andrew J. Barbour and Robert L. Parker}
 \title{Normalization of Power Spectral Density estimates.}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -455,7 +456,7 @@ calculate the integrated spectrum.
 For example, the \idx{single-sided}
 PSD for a realization of a $\mathcal{N}(0, 1)$ process, 
 sampled at 1 Hz, 
-will be flat at \unitfrac[2]{units$^2$}{Hz}
+will be flat at 2 units$^2$ Hz$^{-1}$
 across the frequency band $[0, \half]$,
 and will have
 an area equal to one.
@@ -691,7 +692,7 @@ In Figure \ref{fig:psdsamp} we
 plot the PSD with new normalization, and compare it to
 the previous normalization.
 Spectral values are shown as
-decibels (relative to \unitfrac[1]{units$^2$}{Hz}), using:
+decibels (relative to 1 units$^2$ Hz$^{-1}$), using:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -867,8 +868,8 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 \hlfunctioncall{sessionInfo}()
 \end{alltt}
 \begin{verbatim}
-## R version 2.15.3 (2013-03-01)
-## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## R Under development (unstable) (2013-09-18 r63944)
+## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
 ## [1] C
@@ -878,10 +879,10 @@ As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
 ##  [8] utils     methods   base     
 ## 
 ## other attached packages:
-## [1] signal_0.7-3 MASS_7.3-23  knitr_1.1   
+## [1] signal_0.7-3 MASS_7.3-27  knitr_1.2   
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    stringr_0.6.2
+## [1] digest_0.6.3   evaluate_0.4.4 formatR_0.8    stringr_0.6.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

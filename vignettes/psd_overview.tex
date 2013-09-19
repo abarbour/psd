@@ -11,7 +11,6 @@
 }
 \makeatother
 
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \definecolor{fgcolor}{rgb}{0.2, 0.2, 0.2}
 \newcommand{\hlnumber}[1]{\textcolor[rgb]{0,0,0}{#1}}%
 \newcommand{\hlfunctioncall}[1]{\textcolor[rgb]{0.501960784313725,0,0.329411764705882}{\textbf{#1}}}%
@@ -106,6 +105,7 @@
 }
 \author{Andrew J. Barbour and Robert L. Parker}
 \title{An overview of \psd{}: Adaptive sine multitaper power spectral density estimation in R}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -158,7 +158,7 @@ First, we load the package into the namespace:
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: fftw}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (0.3.2) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (0.4.0) -- Adaptive multitaper spectrum estimation.}}\end{kframe}
 \end{knitrout}
 
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
@@ -737,7 +737,7 @@ of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'signal'}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following objects are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
 pltpi <- \hlfunctioncall{interp1}(pltf, pltp, Pspec$freq)
 \end{alltt}
 \end{kframe}
@@ -766,10 +766,10 @@ df <- \hlfunctioncall{data.frame}(x = \hlfunctioncall{dB}(Pspec$spec), y = pltpi
 ##   Estimate Std. Error t value Pr(>|t|)    
 ## x  0.98951    0.00192     515   <2e-16 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 1.13 on 1024 degrees of freedom
-## Multiple R-squared: 0.996,	Adjusted R-squared: 0.996 
+## Multiple R-squared:  0.996,	Adjusted R-squared:  0.996 
 ## F-statistic: 2.65e+05 on 1 and 1024 DF,  p-value: <2e-16
 \end{verbatim}
 \begin{alltt}
@@ -868,20 +868,18 @@ An intriguing method for producing power spectral density estimates
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'bspec'}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  acf}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  acf}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object(s) are masked from 'package:base':\\\#\# \\\#\#\ \ \ \  sample}}\begin{alltt}
-\hlfunctioncall{print}(Bspec <- \hlfunctioncall{bspec}(magnet$clean))
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  sample}}\begin{alltt}
+\hlfunctioncall{print}(Bspec <- \hlfunctioncall{bspec}(\hlfunctioncall{ts}(magnet$clean)))
 \end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning: argument 'x' is not a time-series object, default conversion 'as.ts(x)' applied.}}\begin{verbatim}
+\begin{verbatim}
 ##  'bspec' posterior spectrum (one-sided).
 ##  frequency range     : 0--0.5
 ##  number of parameters: 1025
 ##  finite expectations : none
 ##  finite variances    : none
-##  call: bspec.default(x = magnet$clean)
+##  call: bspec.default(x = ts(magnet$clean))
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1310,11 +1308,9 @@ but, in this case, only the PSD estimates are significantly correlated:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{symnum}(cT <- \hlfunctioncall{cor}(StgTap))
+\hlfunctioncall{suppressWarnings}(\hlfunctioncall{symnum}(cT <- \hlfunctioncall{cor}(StgTap)))
 \end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning: the standard deviation is zero}}\begin{verbatim}
+\begin{verbatim}
 ##               
 ## [1,] 1        
 ## [2,] ? 1      
@@ -1330,7 +1326,7 @@ but, in this case, only the PSD estimates are significantly correlated:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{symnum}(cP <- \hlfunctioncall{cor}(StgPsd))
+\hlfunctioncall{suppressWarnings}(\hlfunctioncall{symnum}(cP <- \hlfunctioncall{cor}(StgPsd)))
 \end{alltt}
 \begin{verbatim}
 ##               
@@ -1377,8 +1373,8 @@ process. The primary function is \Rcmd{pspectrum}.
 \hlfunctioncall{sessionInfo}()
 \end{alltt}
 \begin{verbatim}
-## R version 2.15.3 (2013-03-01)
-## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## R Under development (unstable) (2013-09-18 r63944)
+## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
 ## [1] C
@@ -1389,15 +1385,15 @@ process. The primary function is \Rcmd{pspectrum}.
 ## 
 ## other attached packages:
 ##  [1] bspec_1.4          ggplot2_0.9.3.1    signal_0.7-3      
-##  [4] MASS_7.3-23        RColorBrewer_1.0-5 RSEIS_3.0-9       
-##  [7] Rwave_2.1          RPMG_2.1-4         psd_0.3-2         
-## [10] fftw_1.0-3         knitr_1.1         
+##  [4] MASS_7.3-27        RColorBrewer_1.0-5 RSEIS_3.2-1       
+##  [7] Rwave_2.1          RPMG_2.1-4         psd_0.4-0         
+## [10] fftw_1.0-3         knitr_1.2         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Peaks_0.2        colorspace_1.2-1 dichromat_2.0-0  digest_0.6.3    
-##  [5] evaluate_0.4.3   formatR_0.7      gtable_0.1.2     labeling_0.1    
-##  [9] lattice_0.20-14  munsell_0.4      plyr_1.8         proto_0.3-10    
-## [13] reshape2_1.2.2   scales_0.2.3     stringr_0.6.2    zoo_1.7-9
+##  [1] colorspace_1.2-2 dichromat_2.0-0  digest_0.6.3     evaluate_0.4.4  
+##  [5] formatR_0.8      gtable_0.1.2     labeling_0.2     lattice_0.20-15 
+##  [9] munsell_0.4      plyr_1.8         proto_0.3-10     reshape2_1.2.2  
+## [13] scales_0.2.3     stringr_0.6.2    zoo_1.7-10
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

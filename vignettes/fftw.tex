@@ -11,7 +11,6 @@
 }
 \makeatother
 
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \definecolor{fgcolor}{rgb}{0.2, 0.2, 0.2}
 \newcommand{\hlnumber}[1]{\textcolor[rgb]{0,0,0}{#1}}%
 \newcommand{\hlfunctioncall}[1]{\textcolor[rgb]{0.501960784313725,0,0.329411764705882}{\textbf{#1}}}%
@@ -109,6 +108,7 @@
 }
 \author{Andrew J. Barbour}
 \title{Benchmarks for Discrete Fourier Transforms in R}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -338,8 +338,8 @@ affect the efficiency of the DFT calculator.
 \hlfunctioncall{sessionInfo}()
 \end{alltt}
 \begin{verbatim}
-## R version 2.15.3 (2013-03-01)
-## Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+## R Under development (unstable) (2013-09-18 r63944)
+## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
 ## [1] C
@@ -349,10 +349,10 @@ affect the efficiency of the DFT calculator.
 ##  [8] utils     methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.1
+## [1] knitr_1.2
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.3 formatR_0.7    stringr_0.6.2
+## [1] digest_0.6.3   evaluate_0.4.4 formatR_0.8    stringr_0.6.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
