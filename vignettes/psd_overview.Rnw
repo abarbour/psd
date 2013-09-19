@@ -509,7 +509,7 @@ An intriguing method for producing power spectral density estimates
 
 <<eval=TRUE, echo=TRUE, label=BSPEC>>=
 require(bspec)
-print(Bspec <- bspec(magnet$clean))
+print(Bspec <- bspec(ts(magnet$clean)))
 @
 
 \begin{figure}[htb!]
@@ -842,10 +842,10 @@ It may be informative to investigate cross correlation
 coefficients between the stages;
 but, in this case, only the PSD estimates are significantly correlated:
 <<eval=TRUE, echo=TRUE, label=SYMCORT>>=
-symnum( cT <- cor(StgTap) )
+suppressWarnings(symnum( cT <- cor(StgTap) ))
 @
 <<eval=TRUE, echo=TRUE, label=SYMCORP>>=
-symnum( cP <- cor(StgPsd) )
+suppressWarnings(symnum( cP <- cor(StgPsd) ))
 @
 
 %\section{Acknowledgements}
