@@ -9,6 +9,27 @@
 \name{psd}
 \title{News for package 'psd'}
 \encoding{UTF-8}
+
+% template vim:5Y
+%
+%\section{CHANGES IN \psd{} VERSION 0.3-2 (2013-03-27)}{
+%  \itemize{ \item \code{} }
+%}
+%
+
+%
+%
+\section{CHANGES IN \psd{} VERSION 0.4-0 (2013-09-19)}{
+  \itemize{
+    \item The taper-constraint methods \code{ctap_markov} and \code{ctap_friedman} are now defunct.
+    \item Removed 'units.sty' dependency in vignettes (was causing NOTES and unhappiness).
+    \item \code{VignetteEngine} added, and \code{:::}'s removed, in order
+    to ensure compatibility with R-devel.
+    \item Added citation information for upcoming paper in Computers and Geoscience.
+  }
+}
+%
+%
 \section{CHANGES IN \psd{} VERSION 0.3-2 (2013-03-27)}{
   \itemize{
     \item Revised discussions regarding AR response spectrum.
@@ -21,6 +42,7 @@
           was changed to 3 and 7 respectively.
   }
 }
+%
 \section{CHANGES IN \psd{} VERSION 0.3-1 (2013-03-12)}{
   \itemize{
     \item This marks the first release to CRAN: \psd{}.

@@ -50,7 +50,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      psd:::psd_envRefresh(verbose=verbose)
+      psd::psd_envRefresh(verbose=verbose)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){
@@ -61,16 +61,16 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
       pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
                  remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       # ensure it's in the environment
-      Pspec <- psd:::psd_envGet("pilot_psd")
-      xo <- psd:::psd_envAssignGet("original_series", x)
+      Pspec <- psd::psd_envGet("pilot_psd")
+      xo <- psd::psd_envAssignGet("original_series", x)
       # starting spec variance
       dvar.o <- varddiff(Pspec$spec)
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
       if (save_hist){
-        psd:::new_adapt_history(niter)
-        psd:::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
+        psd::new_adapt_history(niter)
+        psd::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
       xo <- 0 # to prevent passing orig data back/forth
     } else {
@@ -95,11 +95,11 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
                        preproc=FALSE, plotpsd=plotpsd_, verbose=FALSE)
       if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
       ## update history
-      if (save_hist) psd:::update_adapt_history(stage, Pspec$taper, Pspec$spec)
+      if (save_hist) psd::update_adapt_history(stage, Pspec$taper, Pspec$spec)
     }
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "psd", verbose=verbose)
-  return(invisible(psd:::psd_envAssignGet("final_psd", Pspec)))
+  return(invisible(psd::psd_envAssignGet("final_psd", Pspec)))
 }
 
 #' Calculate the pilot power spectral densities.
@@ -219,7 +219,7 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     Ospec <- Pspec
     Pspec$spec <- Pspec$spec / Pspec_ar$spec
     # reup the spectrum
-    psd:::psd_envAssignGet("AR_psd", Pspec_ar)
+    psd::psd_envAssignGet("AR_psd", Pspec_ar)
   }
   if (plot){
     if (REMAR){
@@ -238,5 +238,5 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
       plot(Pspec, log="dB", main="Pilot spectrum estimation")
     }
   }
-  return(invisible(psd:::psd_envAssignGet("pilot_psd", Pspec)))
+  return(invisible(psd::psd_envAssignGet("pilot_psd", Pspec)))
 }

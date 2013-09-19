@@ -1,8 +1,8 @@
 Package: psd
 Type: Package
 Title: Adaptive, sine-multitaper power spectral density estimation
-Version: 0.3-2
-Date: 2013-03-27
+Version: 0.4-0
+Date: 2013-09-27
 Author: Robert L. Parker and Andrew J. Barbour
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
@@ -12,8 +12,8 @@ Description: Power spectral density estimates
     method of Riedel and Sidorenko (1995), which applies
     smoothing that varies with frequency to minimize the sum
     of variance and bias at each point.
-License: GPL (>= 2)
-URL: http://abarbour.github.com/psd/
+License: GPL
+URL: http://abarbour.github.io/psd/
 Depends:
     R (>= 2.14.1),
     stats,
@@ -35,6 +35,7 @@ Suggests:
     RSEIS,
     rbenchmark,
     reshape2
+VignetteBuilder: knitr
 Collate:
     'psd-package.R'
     'func_envir.R'

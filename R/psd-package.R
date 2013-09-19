@@ -50,8 +50,7 @@
 #' 
 #' @author Robert L. Parker and Andrew J. Barbour <andy.barbour@@gmail.com> 
 #' 
-#' @import Peaks RColorBrewer signal zoo
-# not needed since specified in DESCRIPTION:DEPENDS stats utils graphics grDevices
+#' @import fftw RColorBrewer signal zoo
 #' @useDynLib psd
 #'
 #' @references Parker, R. L., \emph{PSD}, Program documentation. \emph{Maintained Software}, N.p. 11 Nov. 2011,

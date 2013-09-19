@@ -88,7 +88,7 @@ riedsid.default <- function(PSD, ntaper,
   ## spectral values
   PSD <- as.vector(PSD)
   # num freqs
-  nf <- psd:::psd_envAssignGet("num_freqs", length(PSD))
+  nf <- psd::psd_envAssignGet("num_freqs", length(PSD))
   # prelims
   eps <- 1e-78 
   # .Machine$double.eps #  A small number to protect against zeros
@@ -147,9 +147,12 @@ riedsid.default <- function(PSD, ntaper,
       return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))
     }
     DX <- seq_len(nf) #1:nf
+    ##
+    ## Here is the workhorse:
     RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
+    ##
     attr(RSS, which="lsderiv") <- lsmeth
-    RSS <- psd:::psd_envAssignGet("spectral_derivatives.ls", RSS)
+    RSS <- psd::psd_envAssignGet("spectral_derivatives.ls", RSS)
     RSS <- abs(colSums(RSS))
     # sums:
     #[ ,1] fdY2
@@ -161,7 +164,7 @@ riedsid.default <- function(PSD, ntaper,
                       dsig=log10(PSD),
                       plot.derivs=FALSE, ...) #, spar=1)
     attr(RSS, which="lsderiv") <- lsmeth
-    RSS <- psd:::psd_envAssignGet("spectral_derivatives", RSS) 
+    RSS <- psd::psd_envAssignGet("spectral_derivatives", RSS) 
     #returns log
     RSS[,2:4] <- 10**RSS[,2:4]
     RSS <- abs(eps + RSS[,4] + RSS[,3]**2)

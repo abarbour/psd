@@ -72,13 +72,13 @@ NULL
 #' @rdname psd-environment
 #' @name get_psd_env_pointer
 #' @export
-get_psd_env_pointer <- function() psd:::.psdEnv
+get_psd_env_pointer <- function() .psdEnv
   #as.name(formals(psd_envPointers)$envpoint)
 #' @description \code{get_psd_env_name} is a convenience wrapper to get the environment name.
 #' @rdname psd-environment
 #' @name get_psd_env_name
 #' @export
-get_psd_env_name <- function() psd:::.psdEnvName
+get_psd_env_name <- function() .psdEnvName
   #eval(get_psd_env_pointer())
 
 #' @description \code{psd_envRefresh} will clear any variables in the enviroment and reset the initialization stamp.
@@ -91,21 +91,22 @@ psd_envRefresh <- function(verbose=TRUE) {
   # env params
   envname <- get_psd_env_name()
   # rm all in envir
-  psd:::psd_envClear()
-  psd:::psd_envAssign("init", sprintf("refreshed at %s", Sys.time()))
+  psd::psd_envClear()
+  psd::psd_envAssign("init", sprintf("refreshed at %s", Sys.time()))
   if (verbose) {
     message(sprintf("\tenvironment  ** %s **  refreshed", envname))
   }
-  return(invisible(psd:::psd_envStatus()))
+  return(invisible(psd::psd_envStatus()))
 }
 
 #' @description \code{psd_envClear} clears the contents of the environment.
 #' @note \code{psd_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname psd-environment
 #' @name psd_envClear
+#' @export
 psd_envClear <- function(){
   ENV <- get_psd_env_pointer()
-  listing <- psd:::psd_envList()
+  listing <- psd::psd_envList()
   rm(list=listing, envir=ENV)
 }
                                    
@@ -121,8 +122,8 @@ psd_envStatus <- function(){
   return(list(env_name=envname, 
               env_pointer=envir, 
               env_is_env=is.environment(envir), 
-              listing=psd:::psd_envList(),
-              env_init=psd:::psd_envGet("init"),
+              listing=psd::psd_envList(),
+              env_init=psd::psd_envGet("init"),
               env_status_stamp=Sys.time() ))
   
 }
@@ -171,8 +172,8 @@ psd_envAssign <- function(variable, value){
 #' @export
 psd_envAssignGet <- function(variable, value){
   ## set contents of envir::variable to value
-  psd:::psd_envAssign(variable, value)
-  psd:::psd_envGet(variable)
+  psd::psd_envAssign(variable, value)
+  psd::psd_envGet(variable)
 }
 
 #' @description \code{new_adapt_history} initializes a nested-list object to store the 
@@ -195,11 +196,11 @@ new_adapt_history <- function(adapt_stages){
   names(histlist) <- c("freq", "stg_kopt", "stg_psd")
   num_pos <- 1 + adapt_stages # pilot + adapts
   histlist[[2]] <- histlist[[3]] <- vector("list", adapt_stages+1)
-  psd:::psd_envAssignGet("histlist", histlist)
+  psd::psd_envAssignGet("histlist", histlist)
 }
 #' @export
 #' @rdname psd-environment
-get_adapt_history <- function() psd:::psd_envGet("histlist")
+get_adapt_history <- function() psd::psd_envGet("histlist")
 
 #' @description \code{update_adapt_history} updates the adaptive estimation history list.
 #' @rdname psd-environment
@@ -217,5 +218,5 @@ update_adapt_history <- function(stage, ntap, PSD, freq=NULL){
   histlist$stg_kopt[[stg_ind]] <- ntap
   histlist$stg_psd[[stg_ind]] <- PSD
   if (is.null(histlist$freq) & stage>0) warning("freqs absent despite non-pilot stage update")
-  psd:::psd_envAssignGet("histlist",histlist)
+  psd::psd_envAssignGet("histlist",histlist)
 }

@@ -81,7 +81,7 @@ psdcore.default <- function(X.d,
                             ...
                            ) {
   #
-  if (refresh) psd:::psd_envRefresh(verbose=verbose)
+  if (refresh) psd::psd_envRefresh(verbose=verbose)
   #
   series <- deparse(substitute(X.d))
   if (is.null(X.frq)){
@@ -109,24 +109,24 @@ psdcore.default <- function(X.d,
   # only one taper: usually means a first run
   lt <- length(ntaper)
   # onle one variable in the env (init): it hasn't been added to yet
-  nenvar <- length(psd:::psd_envStatus()$listing)
+  nenvar <- length(psd::psd_envStatus()$listing)
   if (lt == 1 | nenvar == 1 | refresh){
     # original series length
-    n.o <- psd:::psd_envAssignGet("len_orig", length(X.d))
+    n.o <- psd::psd_envAssignGet("len_orig", length(X.d))
     #
     X <- X.d
     if (preproc) X <- prewhiten(X, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
     #
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
-    n.e <- psd:::psd_envAssignGet("len_even", n.o - n.o %% 2 )
+    n.e <- psd::psd_envAssignGet("len_even", n.o - n.o %% 2 )
     X.even <- as.matrix(X[seq_len(n.e)])
-    psd:::psd_envAssign("ser_orig", X)
-    psd:::psd_envAssign("ser_orig_even", X.even)
+    psd::psd_envAssign("ser_orig", X)
+    psd::psd_envAssign("ser_orig_even", X.even)
     # half length of even series
-    nhalf <- psd:::psd_envAssignGet("len_even_half", n.e/2)
+    nhalf <- psd::psd_envAssignGet("len_even_half", n.e/2)
     # variance of even series
-    varx <- psd:::psd_envAssignGet("ser_even_var", drop(stats::var(X.even)))
+    varx <- psd::psd_envAssignGet("ser_even_var", drop(stats::var(X.even)))
     # create uniform tapers
     nt <- nhalf + 1
     if (lt < nt) {
@@ -137,16 +137,16 @@ psdcore.default <- function(X.d,
     ## zero pad and take double-length fft
     # fftw is faster (becomes apparent for long series)
     fftz <- fftw::FFT(as.numeric(c(X.even, zeros(n.e))))
-    fftz <- psd:::psd_envAssignGet("fft_even_demeaned_padded", fftz)
+    fftz <- psd::psd_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
     if (verbose){warning("Working environment *not* refreshed. Results may be bogus.")}
     X <- X.d
     ntap <- ntaper
     #stopifnot(length(X)==length(ntap))
-    n.e <- psd:::psd_envGet("len_even")
-    nhalf <- psd:::psd_envGet("len_even_half")
-    varx <- psd:::psd_envGet("ser_even_var")
-    fftz <- psd:::psd_envGet("fft_even_demeaned_padded")
+    n.e <- psd::psd_envGet("len_even")
+    nhalf <- psd::psd_envGet("len_even_half")
+    varx <- psd::psd_envGet("ser_even_var")
+    fftz <- psd::psd_envGet("fft_even_demeaned_padded")
   }
   #
   # if ntaper is a vector, this doesn't work [ ] ?
@@ -224,9 +224,9 @@ psdcore.default <- function(X.d,
     PSD <- vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     if (verbose) message("zero taper result == raw periodogram")
-    Xfft <- psd:::psd_envGet("fft_even_demeaned_padded")
+    Xfft <- psd::psd_envGet("fft_even_demeaned_padded")
     ff <- Xfft[NF]
-    N0. <- psd:::psd_envGet("len_orig")
+    N0. <- psd::psd_envGet("len_orig")
     PSD <- base::abs(ff * base::Conj(ff)) / N0.
   }
   ##  Interpolate if necessary to uniform freq sampling
@@ -336,8 +336,8 @@ psdcore.default <- function(X.d,
                   df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
                   numfreq = nfreq,
                   bandwidth = bandwidth, 
-                  n.used = psd:::psd_envGet("len_even"), 
-                  orig.n = psd:::psd_envGet("len_orig"), 
+                  n.used = psd::psd_envGet("len_even"), 
+                  orig.n = psd::psd_envGet("len_orig"), 
                   series = series, 
                   snames = colnames(X), 
                   method = sprintf("Sine multitaper\n%s",funcall), 

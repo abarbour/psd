@@ -1,0 +1,31 @@
+#year = sub('.*(2[[:digit:]]{3})-.*', '\\1', meta$Date, perl = TRUE)
+#vers = paste('R package version', meta$Version)
+#ttl = paste("psd:", meta$Title)
+#tvers = sprintf("R. L. Parker and A. J. Barbour (%s), %s, %s", year, ttl, vers)
+#
+#bibentry('Manual',
+#  title = ttl,
+#  author = meta$Author,
+#  year = year,
+#  note = vers,
+#  key = paste0("Rpsd",year),
+#  url = meta$URL,
+#  textVersion = tvers,
+#  mheader = "To cite 'psd' in publications use:",
+#  mfooter = "We also have a peer-reviewer article documenting the software:"
+#)
+
+bibentry("Article",
+  title = '{psd: Adaptive, sine multitaper power spectral density estimation for R}',
+  author = 'Andrew J Barbour and Robert L Parker',
+  journal = 'Computers and Geosciences',
+  volume = 'Accepted',
+  year = '2013',
+  note = 'in revision',
+  key = "barbour2013psd",
+  mheader = "To cite 'psd' in publications, please use:",
+  textVersion = paste('Barbour, A. J. and R. L. Parker (2013)', 
+  	'psd: Adaptive, sine multitaper power spectral density estimation for R',
+	'Computers and Geosciences', 'Accepted (in revision).',sep=", ")
+)
+
