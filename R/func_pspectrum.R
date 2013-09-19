@@ -101,6 +101,11 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "psd", verbose=verbose)
   return(invisible(psd::psd_envAssignGet("final_psd", Pspec)))
 }
+#' @rdname pspectrum
+#' @method pspectrum spec
+#' @S3method pspectrum spec
+pspectrum.spec <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) .NotYetImplemented()
+  
 
 #' Calculate the pilot power spectral densities.
 #'

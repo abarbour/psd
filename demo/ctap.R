@@ -8,7 +8,7 @@ x <- rnorm(nd, sd=10) + c(1:(nd/2),(nd/2 + 1):2)
 ntap <- as.tapers(rep(x,3))
 
 op <- par(no.readonly = TRUE)
-par(mfrow=c(3,4))
+par(mfrow=c(1,4))
 ylim <- c(0,200)
 
 ## Raw tapers

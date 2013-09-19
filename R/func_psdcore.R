@@ -348,6 +348,6 @@ psdcore.default <- function(X.d,
                   timebp=timebp,
                   nyquist.frequency=Nyq
                   )
-  if (as.spec){class(PSD.out) <- "spec"}
+  if (as.spec){class(PSD.out) <- c("spec","amt")}
   return(invisible(PSD.out))
 }

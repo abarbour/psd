@@ -1,6 +1,7 @@
 \name{pspectrum}
 \alias{pspectrum}
 \alias{pspectrum.default}
+\alias{pspectrum.spec}
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
   pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
@@ -8,6 +9,11 @@
     no.history = FALSE, plot = FALSE, ...)
 
   \method{pspectrum}{default} (x, x.frqsamp = 1,
+    ntap.init = 7, niter = 3, AR = FALSE,
+    Nyquist.normalize = TRUE, verbose = TRUE,
+    no.history = FALSE, plot = FALSE, ...)
+
+  \method{pspectrum}{spec} (x, x.frqsamp = 1,
     ntap.init = 7, niter = 3, AR = FALSE,
     Nyquist.normalize = TRUE, verbose = TRUE,
     no.history = FALSE, plot = FALSE, ...)

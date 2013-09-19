@@ -2,7 +2,7 @@ Package: psd
 Type: Package
 Title: Adaptive, sine-multitaper power spectral density estimation
 Version: 0.4-0
-Date: 2013-09-27
+Date: 2013-09-19
 Author: Robert L. Parker and Andrew J. Barbour
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
@@ -22,7 +22,6 @@ Depends:
     grDevices,
     fftw (>= 1.0-3)
 Imports:
-    Peaks,
     RColorBrewer,
     signal,
     zoo

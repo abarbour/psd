@@ -2,6 +2,9 @@
 # A list of future action items,
 # reverse sorted by desirability.
 #
+[ ] prewhiten:
+*** implement fastLM in RcppEigen, instead of plain lm
+
 [ ] History and derivatives plotter.
 
 [ ] reidsid "local_qls" spectral derivatives as callable .c [.cpp?] code
