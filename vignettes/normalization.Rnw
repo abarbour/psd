@@ -21,7 +21,7 @@
 \usepackage{natbib}
 \usepackage{geometry}
 \usepackage{hyperref}
-\usepackage{units}
+%\usepackage{units}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 %captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
@@ -396,7 +396,7 @@ calculate the integrated spectrum.
 For example, the \idx{single-sided}
 PSD for a realization of a $\mathcal{N}(0, 1)$ process, 
 sampled at 1 Hz, 
-will be flat at \unitfrac[2]{units$^2$}{Hz}
+will be flat at 2 units$^2$ Hz$^{-1}$
 across the frequency band $[0, \half]$,
 and will have
 an area equal to one.
@@ -563,7 +563,7 @@ In Figure \ref{fig:psdsamp} we
 plot the PSD with new normalization, and compare it to
 the previous normalization.
 Spectral values are shown as
-decibels (relative to \unitfrac[1]{units$^2$}{Hz}), using:
+decibels (relative to 1 units$^2$ Hz$^{-1}$), using:
 
 <<eval=TRUE, echo=TRUE, label="DB">>=
 # decibel function
