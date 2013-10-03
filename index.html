@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>PSD by abarbour</title>
+    <title>psd by abarbour</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>PSD</h1>
+        <h1>psd</h1>
         <p>Adaptive sine-multitaper power spectral density estimation in R</p>
 
         <p class="view"><a href="https://github.com/abarbour/psd">View the Project on GitHub <small>abarbour/psd</small></a></p>
@@ -28,34 +28,105 @@
         </ul>
       </header>
       <section>
-        <p>This work is a port of Robert Parker's (Matlab version of) PSD*</p>
+        <h1>
+<a name="psd-adaptive-sine-multitaper-power-spectral-density-estimation-in-r" class="anchor" href="#psd-adaptive-sine-multitaper-power-spectral-density-estimation-in-r"><span class="octicon octicon-link"></span></a>psd: Adaptive, sine multitaper power spectral density estimation in R</h1>
 
-<p>From Parker's site:</p>
+<h2>
+<a name="by-andrew-j-barbour-and-robert-l-parker" class="anchor" href="#by-andrew-j-barbour-and-robert-l-parker"><span class="octicon octicon-link"></span></a>by Andrew J Barbour and Robert L Parker</h2>
 
-<pre><code>P.S.D. stands for the Power Spectral Density, often simply
-referred to as the power spectrum, a property of stationary
-stochastic time series that usually provides remarkable insights
-into the physical processes in question. Loosely speaking, the
-PSD gives the energy density in each frequency band; it is a
-statistic of the underlying random process, and so it can only
-be estimated from a given realization, that is, a given finite
-collection of data. There are probably dozens of different
-estimation algorithms for the job. The program psd provides a
-small number of easily used methods, with the intent of providing
-a good spectral estimate without requiring the user to set too
-many tuning parameters.
+<h3>
+<a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>Description</h3>
 
-Specifically, psd is based on the sine
-multitaper approach of Riedel and Sidorenko to spectral estimation.
-All spectral estimators smooth the spectrum in order to reduce
-variance; the S-R method applies smoothing that varies with
-frequency to minimize the sum of variance and bias at each
-point.
+<p>This is an <code>R</code>
+package for computing univariate power spectral density
+estimates with little or no tuning effort.
+We employ sine multitapers, allowing the number to vary with frequency
+in order to reduce mean square error, the sum of squared bias and
+variance, at each point.  The approximate criterion of
+<a href="http://dx.doi.org/10.1109/78.365298">Riedel and Sidorenko (1995)</a>
+is modified to prevent runaway averaging that otherwise occurs when
+the curvature of the spectrum goes to zero.  An iterative procedure
+refines the number of tapers employed at each frequency.  The resultant
+power spectra possess significantly lower variances 
+than those of traditional, non-adaptive estimators.  The sine tapers also provide
+useful spectral leakage suppression.  Resolution and uncertainty can
+be estimated from the number of degrees of freedom (twice the number
+of tapers).</p>
+
+<p>This technique is particularly suited to long time series, because
+it demands only one numerical Fourier transform, and requires no
+costly additional computation of taper functions, like the Slepian
+functions.  It also avoids the degradation of the low-frequency
+performance associated with record segmentation 
+in Welch's method.
+Above all, the adaptive process relieves the user of the need to set
+a tuning parameter, such as time-bandwidth product or segment length,
+that fixes frequency resolution for the entire frequency interval; instead
+it provides frequency-dependent spectral resolution tailored to the
+shape of the spectrum itself.</p>
+
+<p><code>psd</code> elegantly handles
+spectra with large dynamic range and mixed-bandwidth features|features
+typically found in geophysical datasets.  </p>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Firstly you'll need to install the package and it's dependencies
+from <a href="http://cran.r-project.org/web/packages/psd/">CRAN</a>
+(from within the <code>R</code> environment):</p>
+
+<pre><code>install.packages("psd", dependencies=TRUE)
 </code></pre>
 
-<ul>
-<li><a href="http://igppweb.ucsd.edu/%7Eparker/Software/index.html">http://igppweb.ucsd.edu/~parker/Software/index.html</a></li>
-</ul>
+<p>then load the package library</p>
+
+<pre><code>library(psd)
+</code></pre>
+
+<p>We have included a dataset to play with, named <code>Tohoku</code>, which represents
+recordings of
+high-frequency borehole strainmeter data during
+teleseismic waves from the 2011 Mw 9.0 Tohoku 
+earthquake (<a href="http://goo.gl/Gx7Ww">source</a>).
+Access and inspect these data with:</p>
+
+<pre><code>data(Tohoku)
+print(str(Tohoku))
+</code></pre>
+
+<p>The 'preseismic' data has interesting spectral features, so we
+subset it, and use the areal strain (the change in borehole
+diameter):</p>
+
+<pre><code>Dat &lt;- subset(Tohoku, epoch=="preseismic")
+Areal &lt;- ts(Dat$areal)
+</code></pre>
+
+<p>For the purposes of spectral estimation, we remove a linear trend:</p>
+
+<pre><code>Dat &lt;- prewhiten(Areal, plot=FALSE)
+</code></pre>
+
+<p>Now we can calculate the adaptive PSD:</p>
+
+<pre><code>mtpsd &lt;- pspectrum(Dat$prew_lm, plot=TRUE)
+print(class(mtpsd))
+</code></pre>
+
+<p>We can visualize the spectrum with builtin methods:</p>
+
+<pre><code>plot(mtpsd, log="dB")
+</code></pre>
+
+<p>and the spectral uncertainty:</p>
+
+<pre><code>sprop &lt;- spectral_properties(mtpsd)
+Ntap &lt;- sprop$taper/max(sprop$taper)
+plot(Ntap, type="h", ylim=c(0,2), col="dark grey") 
+lines(sprop$stderr.chi.lower)
+lines(sprop$stderr.chi.upper)
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/abarbour">abarbour</a></p>
