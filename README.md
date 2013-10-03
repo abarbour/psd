@@ -51,27 +51,29 @@ We have included a dataset to play with, named `Tohoku`, which represents
 recordings of
 high-frequency borehole strainmeter data during
 teleseismic waves from the 2011 Mw 9.0 Tohoku 
-earthquake ([source](http://goo.gl/Gx7Ww)):
+earthquake ([source](http://goo.gl/Gx7Ww)).
+Access and inspect these data with:
 
     data(Tohoku)
     print(str(Tohoku))
 
-The 'preseismic' data has interesting spectral features, so
-subset it, and use the areal strain:
+The 'preseismic' data has interesting spectral features, so we
+subset it, and use the areal strain (the change in borehole
+diameter):
 
     Dat <- subset(Tohoku, epoch=="preseismic")
     Areal <- ts(Dat$areal)
 
-Remove a linear trend:
+For the purposes of spectral estimation, we remove a linear trend:
 
     Dat <- prewhiten(Areal, plot=FALSE)
 
-And calculate the adaptive PSD:
+Now we can calculate the adaptive PSD:
 
     mtpsd <- pspectrum(Dat$prew_lm, plot=TRUE)
     print(class(mtpsd))
 
-Visualize the spectrum with builtin methods:
+We can visualize the spectrum with builtin methods:
 
     plot(mtpsd, log="dB")
 
