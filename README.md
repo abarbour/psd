@@ -9,7 +9,7 @@ estimates with little or no tuning effort.
 We employ sine multitapers, allowing the number to vary with frequency
 in order to reduce mean square error, the sum of squared bias and
 variance, at each point.  The approximate criterion of
-Riedel and Sidorenko (1995)
+[Riedel and Sidorenko (1995)](http://dx.doi.org/10.1109/78.365298)
 is modified to prevent runaway averaging that otherwise occurs when
 the curvature of the spectrum goes to zero.  An iterative procedure
 refines the number of tapers employed at each frequency.  The resultant
@@ -38,7 +38,8 @@ typically found in geophysical datasets.
 ##Getting Started##
 
 Firstly you'll need to install the package and it's dependencies
-from CRAN (from within the R environment):
+from [CRAN](http://cran.r-project.org/web/packages/psd/)
+(from within the `R` environment):
 
     install.packages("psd", dependencies=TRUE)
 
