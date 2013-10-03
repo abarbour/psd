@@ -47,7 +47,11 @@ then load the package library
 
     library(psd)
 
-We have included a dataset to play with, named `Tohoku`:
+We have included a dataset to play with, named `Tohoku`, which represents
+recordings of
+high-frequency borehole strainmeter data during
+teleseismic waves from the 2011 Mw 9.0 Tohoku 
+earthquake ([source](http://goo.gl/Gx7Ww)):
 
     data(Tohoku)
     print(str(Tohoku))
