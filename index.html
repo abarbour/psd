@@ -19,20 +19,20 @@
         <p>Adaptive sine-multitaper power spectral density estimation in R</p>
 
 <p>We have published a paper in Computers & Geosciences
-(<a href="http://dx.doi.org/10.1016/j.cageo.2013.09.015">here</a>)
+(<a href="http://dx.doi.org/10.1016/j.cageo.2013.09.015" target="_blank">here</a>)
 to accompany this software; it describes the theory behind
 the estimation process, and how we apply it in practice.</p>
 
  <p class="view">
 View the Project on
-<br><a href="https://github.com/abarbour/psd"> GitHub<small>abarbour/psd</small></a>
-<br><a href="http://cran.r-project.org/web/packages/psd/"> CRAN<small>psd</small></a>
+<br><a href="https://github.com/abarbour/psd" target="_blank"> GitHub<small>abarbour/psd</small></a>
+<br><a href="http://cran.r-project.org/web/packages/psd/" target="_blank"> CRAN<small>psd</small></a>
 </p>
 
         <ul>
           <li><a href="https://github.com/abarbour/psd/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/abarbour/psd/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/abarbour/psd">Development at<strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/abarbour/psd" target="_blank">Development at<strong>GitHub</strong></a></li>
         </ul>
 
       </header>
@@ -52,7 +52,7 @@ estimates with little or no tuning effort.
 We employ sine multitapers, allowing the number to vary with frequency
 in order to reduce mean square error, the sum of squared bias and
 variance, at each point.  The approximate criterion of
-<a href="http://dx.doi.org/10.1109/78.365298">Riedel and Sidorenko (1995)</a>
+<a href="http://dx.doi.org/10.1109/78.365298" target="_blank">Riedel and Sidorenko (1995)</a>
 is modified to prevent runaway averaging that otherwise occurs when
 the curvature of the spectrum goes to zero.  An iterative procedure
 refines the number of tapers employed at each frequency.  The resultant
@@ -82,7 +82,7 @@ typically found in geophysical datasets.  </p>
 <a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <p>Firstly you'll need to install the package and it's dependencies
-from <a href="http://cran.r-project.org/web/packages/psd/">CRAN</a>
+from <a href="http://cran.r-project.org/web/packages/psd/" target="_blank">CRAN</a>
 (from within the <code>R</code> environment):</p>
 
 <pre><code>install.packages("psd", dependencies=TRUE)
@@ -97,7 +97,7 @@ from <a href="http://cran.r-project.org/web/packages/psd/">CRAN</a>
 recordings of
 high-frequency borehole strainmeter data during
 teleseismic waves from the 2011 Mw 9.0 Tohoku 
-earthquake (<a href="http://goo.gl/Gx7Ww">source</a>).
+earthquake (<a href="http://goo.gl/Gx7Ww" target="_blank">source</a>).
 Access and inspect these data with:</p>
 
 <pre><code>data(Tohoku)
@@ -123,7 +123,7 @@ Areal &lt;- ts(Dat$areal)
 print(class(mtpsd))
 </code></pre>
 
-<p>We can visualize the spectrum with builtin methods:</p>
+<p>We can visualize the spectrum with built-in methods:</p>
 
 <pre><code>plot(mtpsd, log="dB")
 </code></pre>
@@ -136,9 +136,23 @@ plot(Ntap, type="h", ylim=c(0,2), col="dark grey")
 lines(sprop$stderr.chi.lower)
 lines(sprop$stderr.chi.upper)
 </code></pre>
-      </section>
+
+<h2>
+<a name="dev-install" class="anchor" href="#dev-install"><span class="octicon octicon-link"></span></a>Installing the Development Version</h2>
+
+<p>Should you wish to install the development version
+of this software, the 
+<a href="http://cran.r-project.org/web/packages/devtools/" target="_blank"><code>devtools</code></a>
+library
+will be useful:</p>
+<pre><code>install.packages("devtools", dependencies=TRUE)
+library(devtools)
+install_github("psd", username = "abarbour")
+</code></pre>
+
+</section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/abarbour">abarbour</a></p>
+        <p>This project is maintained by <a href="https://github.com/abarbour" target="_blank">abarbour</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
