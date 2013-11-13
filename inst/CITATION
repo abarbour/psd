@@ -18,14 +18,17 @@
 bibentry("Article",
   title = '{psd: Adaptive, sine multitaper power spectral density estimation for R}',
   author = 'Andrew J Barbour and Robert L Parker',
-  journal = 'Computers and Geosciences',
-  volume = 'Accepted',
-  year = '2013',
-  note = 'in revision',
-  key = "barbour2013psd",
+  journal = 'Computers & Geosciences',
+  month = 'February',
+  volume = '63',
+  pages = '1-8',
+  year = '2014',
+  key = "barbour2014psd",
   mheader = "To cite 'psd' in publications, please use:",
-  textVersion = paste('Barbour, A. J. and R. L. Parker (2013)', 
+  textVersion = paste('Barbour, A. J. and R. L. Parker (2014)', 
   	'psd: Adaptive, sine multitaper power spectral density estimation for R',
-	'Computers and Geosciences', 'Accepted (in revision).',sep=", ")
+	'Computers & Geosciences', 'Volume 63', 'February 2014', 'Pages 1-8', 
+	'ISSN 0098-3004', 'http://dx.doi.org/10.1016/j.cageo.2013.09.015',sep=", "),
+  mfooter = "If you cannot access the article, please contact the author for re-prints."
 )
 

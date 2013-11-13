@@ -1,8 +1,8 @@
 Package: psd
 Type: Package
 Title: Adaptive, sine-multitaper power spectral density estimation
-Version: 0.4-0
-Date: 2013-09-19
+Version: 0.4-1
+Date: 2013-11-13
 Author: Robert L. Parker and Andrew J. Barbour
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Power spectral density estimates
@@ -14,6 +14,9 @@ Description: Power spectral density estimates
     of variance and bias at each point.
 License: GPL
 URL: http://abarbour.github.io/psd/
+    and
+    http://dx.doi.org/10.1016/j.cageo.2013.09.015
+    for the citation.
 Depends:
     R (>= 2.14.1),
     stats,

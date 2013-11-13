@@ -5,6 +5,7 @@
 %%\newcommand{\Rlogo}{\if{html}{\figure{../../html/logo.jpg}}\if{latex}{\figure{logo.jpg}{options: width=0.5in}}}
 \newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 \newcommand{\psd}{\CRANpkg{psd}}
+\newcommand{\citation}{\href{http://dx.doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
 \title{News for package 'psd'}
@@ -17,6 +18,14 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 0.4-1 (2013-11-12)}{
+  \itemize{
+  	\item A paper associated with the software has been
+	published through Computers \& Geosciences: \citation{}.
+	If you cannot access the publication, contact A.~J.~Barbour
+	for a reprint.
+  }
+}
 %
 %
 \section{CHANGES IN \psd{} VERSION 0.4-0 (2013-09-19)}{
