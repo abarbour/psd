@@ -1,4 +1,4 @@
-#psd: Adaptive, sine multitaper power spectral density estimation in R#
+#psd: Adaptive, sine multitaper power spectral density estimation for R#
 
 ##by Andrew J Barbour and Robert L Parker##
 
@@ -34,6 +34,15 @@ shape of the spectrum itself.
 `psd` elegantly handles
 spectra with large dynamic range and mixed-bandwidth features|features
 typically found in geophysical datasets.  
+
+##Citation##
+
+Bob and I have published a 
+[paper in Computers & Geosciences][1]
+to accompany this software; it describes the theory behind
+the estimation process, and how we apply it in practice.
+If you find `psd` useful in your research, we kindly request
+you cite this work.
 
 ##Getting Started##
 
@@ -85,3 +94,4 @@ and the spectral uncertainty:
     lines(sprop$stderr.chi.lower)
     lines(sprop$stderr.chi.upper)
 
+[1]: http://dx.doi.org/10.1016/j.cageo.2013.09.015

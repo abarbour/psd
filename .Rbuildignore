@@ -8,6 +8,7 @@
 ^src/.gitignore$
 ^.*/.gitignore$
 
+paper/
 NOBUILD/
 
 README.md
