@@ -98,4 +98,15 @@ and the spectral uncertainty:
     lines(sprop$stderr.chi.lower)
     lines(sprop$stderr.chi.upper)
 
+##Installing the Development Version##
+
+Should you wish to install the development version
+of this software, the [devtools][2] library
+will be useful:
+
+    install.packages("devtools", dependencies=TRUE)
+    library(devtools)
+    install_github("psd", username = "abarbour")
+
 [1]: http://dx.doi.org/10.1016/j.cageo.2013.09.015
+[2]: http://cran.r-project.org/web/packages/devtools
