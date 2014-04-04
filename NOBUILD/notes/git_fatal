@@ -1,3 +1,0 @@
-thanks to 
-http://blog.lukebennett.com/2011/07/25/git-broken-pipe-error-when-pushing-to-a-repository/
-	git config http.postBuffer 209715200

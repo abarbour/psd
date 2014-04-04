@@ -1,2 +1,0 @@
-wget -O bsmnm.txt "http://www.seismosoc.org/publications/BSSA_html/bssa_101-5/2011062-esupp/BSSA-D-11-00062_S1_noisemod-bsm.txt"
-wget -O lsmnm.txt "http://www.seismosoc.org/publications/BSSA_html/bssa_101-5/2011062-esupp/BSSA-D-11-00062_S2_noisemod-lsm.txt"
