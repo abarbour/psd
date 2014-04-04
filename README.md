@@ -35,14 +35,18 @@ shape of the spectrum itself.
 spectra with large dynamic range and mixed-bandwidth features|features
 typically found in geophysical datasets.  
 
-##Citation##
+##How to Cite##
 
 Bob and I have published a 
 [paper in Computers & Geosciences][1]
 to accompany this software; it describes the theory behind
 the estimation process, and how we apply it in practice.
 If you find `psd` useful in your research, we kindly request
-you cite this work.
+you cite our paper.
+
+
+    citation("psd")
+
 
 ##Getting Started##
 
