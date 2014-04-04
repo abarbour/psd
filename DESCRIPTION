@@ -38,16 +38,3 @@ Suggests:
     rbenchmark,
     reshape2
 VignetteBuilder: knitr
-Collate:
-    'psd-package.R'
-    'func_envir.R'
-    'zzz.R'
-    'func_pspectrum.R'
-    'func_psdcore.R'
-    'func_riedsid.R'
-    'func_tapers.R'
-    'func_whiten.R'
-    'func_utils.R'
-    'func_norm.R'
-    'func_specprops.R'
-    'func_spec.R'

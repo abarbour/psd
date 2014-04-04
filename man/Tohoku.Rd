@@ -32,51 +32,51 @@ traveltimes for P and S waves, and the geodetic information used in the travelti
 calculation.}
 }}
 \source{
-  PBO High Frequency archive:
+PBO High Frequency archive:
 
-  \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
+\url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
 }
 \description{
-  The \eqn{M_w 9} Tohoku earthquake happend on March 11,
-  2011.  The seismic waves were recorded at stations across
-  the globe, including by strainmeters in the Plate
-  Boundary Observatory (PBO) borehole strainmeters.
+The \eqn{M_w 9} Tohoku earthquake happend on March 11,
+2011.  The seismic waves were recorded at stations across
+the globe, including by strainmeters in the Plate Boundary
+Observatory (PBO) borehole strainmeters.
 }
 \details{
-  These data are for station B084, which is located
-  approximately 8500 km away from the epicenter. Because
-  this distance is large, the seismic waves didn't arrive
-  at this station for more than 700 seconds after the
-  origin time.  So there is a record of pre-seismic noise
-  included, the timeseries extends 6784 seconds prior to
-  the origin time, and 9215 seconds after.
+These data are for station B084, which is located
+approximately 8500 km away from the epicenter. Because this
+distance is large, the seismic waves didn't arrive at this
+station for more than 700 seconds after the origin time.
+So there is a record of pre-seismic noise included, the
+timeseries extends 6784 seconds prior to the origin time,
+and 9215 seconds after.
 
-  The data are classified with the \code{"epoch"} variable,
-  which separates the series into pre-seismic and seismic
-  data; this is defined relative to the predicted P-wave
-  arrival time from a traveltime model.
+The data are classified with the \code{"epoch"} variable,
+which separates the series into pre-seismic and seismic
+data; this is defined relative to the predicted P-wave
+arrival time from a traveltime model.
 
-  The original dataset contained \code{NA} values, which
-  were imputed using \code{zoo::na.locf}, which fills
-  \code{NA} with the last previous observation.
+The original dataset contained \code{NA} values, which were
+imputed using \code{zoo::na.locf}, which fills \code{NA}
+with the last previous observation.
 }
 \examples{
 data(Tohoku)
 str(Tohoku)
 }
 \references{
-  USGS summary page:
+USGS summary page:
 
-  \url{http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/}
+\url{http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/}
 }
 \seealso{
-  \code{\link{pspectrum}}, \code{\link{hfsnm}},
-  \code{\link{magnet}}
+\code{\link{pspectrum}}, \code{\link{hfsnm}},
+\code{\link{magnet}}
 
-  \code{TauP.R} for an R-implementation of the traveltime
-  calculations:
+\code{TauP.R} for an R-implementation of the traveltime
+calculations:
 
-  \url{http://cran.r-project.org/web/packages/TauP.R/}
+\url{http://cran.r-project.org/web/packages/TauP.R/}
 }
 \keyword{datasets}
 

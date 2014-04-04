@@ -15,37 +15,35 @@
 \alias{tapers-constraints}
 \title{Taper constraint methods.}
 \usage{
-  minspan(tapvec, ...)
+minspan(tapvec, ...)
 
-  \method{minspan}{tapers} (tapvec, ...)
+\method{minspan}{tapers}(tapvec, ...)
 
-  constrain_tapers(tapvec, tapseq = NULL,
-    constraint.method = c("simple.slope", "loess.smooth", "none"),
-    verbose = TRUE, ...)
+constrain_tapers(tapvec, tapseq = NULL,
+  constraint.method = c("simple.slope", "loess.smooth", "none"),
+  verbose = TRUE, ...)
 
-  \method{constrain_tapers}{tapers} (tapvec, tapseq = NULL,
-    constraint.method = c("simple.slope", "loess.smooth", "none"),
-    verbose = TRUE, ...)
+\method{constrain_tapers}{tapers}(tapvec, tapseq = NULL,
+  constraint.method = c("simple.slope", "loess.smooth", "none"),
+  verbose = TRUE, ...)
 
-  ctap_simple(tapvec, tapseq = NA, maxslope = 1, ...)
+ctap_simple(tapvec, tapseq = NA, maxslope = 1, ...)
 
-  \method{ctap_simple}{tapers} (tapvec, tapseq = NA,
-    maxslope = 1, ...)
+\method{ctap_simple}{tapers}(tapvec, tapseq = NA, maxslope = 1, ...)
 
-  ctap_loess(tapvec, tapseq = NULL, loess.span = 0.3,
-    loess.degree = 1, verbose = TRUE, ...)
+ctap_loess(tapvec, tapseq = NULL, loess.span = 0.3, loess.degree = 1,
+  verbose = TRUE, ...)
 
-  \method{ctap_loess}{tapers} (tapvec, tapseq = NULL,
-    loess.span = 0.3, loess.degree = 1, verbose = TRUE,
-    ...)
+\method{ctap_loess}{tapers}(tapvec, tapseq = NULL, loess.span = 0.3,
+  loess.degree = 1, verbose = TRUE, ...)
 
-  ctap_markov()
+ctap_markov()
 
-  \method{ctap_markov}{tapers} ()
+\method{ctap_markov}{tapers}()
 
-  ctap_friedman()
+ctap_friedman()
 
-  \method{ctap_friedman}{tapers} ()
+\method{ctap_friedman}{tapers}()
 }
 \arguments{
   \item{tapvec}{\code{'tapers'} object; the number of
@@ -70,36 +68,34 @@
   \item{...}{optional arguments (unused)}
 }
 \value{
-  An object with class \code{'tapers'}.
+An object with class \code{'tapers'}.
 }
 \description{
-  In the Riedel-Sidorenko recipe, the number of optimal
-  tapers at each frequency is strongly dependent on the
-  first and second derivatives of the spectrum. It is
-  crucial to enforce constraints on the number of actual
-  tapers applied; this is because the derivatives of
-  "noisy" series can be bogus.
+In the Riedel-Sidorenko recipe, the number of optimal
+tapers at each frequency is strongly dependent on the first
+and second derivatives of the spectrum. It is crucial to
+enforce constraints on the number of actual tapers applied;
+this is because the derivatives of "noisy" series can be
+bogus.
 
-  \code{\link{minspan}} sets the maximum span a tapers
-  object may have, which is necessary because it would be
-  nonsense to have more tapers than the length of the
-  series.
+\code{\link{minspan}} sets the maximum span a tapers object
+may have, which is necessary because it would be nonsense
+to have more tapers than the length of the series.
 
-  \code{\link{constrain_tapers}} refines the number of
-  tapers; the method by which it does this is chosen with
-  the \code{constraint.method} parameter. See
-  \strong{Constraint methods} section for descriptions of
-  each method. Below is a summary of the function
-  associated with each \code{constraint.method}: \itemize{
-  \item \code{'simple.slope'} uses
-  \code{\link{ctap_simple}} \item \code{'loess.smooth'}
-  uses \code{\link{ctap_loess}} \item \code{'none'} returns
-  unbounded tapers. }
+\code{\link{constrain_tapers}} refines the number of
+tapers; the method by which it does this is chosen with the
+\code{constraint.method} parameter. See \strong{Constraint
+methods} section for descriptions of each method. Below is
+a summary of the function associated with each
+\code{constraint.method}: \itemize{ \item
+\code{'simple.slope'} uses \code{\link{ctap_simple}} \item
+\code{'loess.smooth'} uses \code{\link{ctap_loess}} \item
+\code{'none'} returns unbounded tapers. }
 }
 \details{
-  \code{\link{minspan}} bounds the number of tapers to
-  within the minimum of either the maximum number of tapers
-  found in the object, or the half-length of the series.
+\code{\link{minspan}} bounds the number of tapers to within
+the minimum of either the maximum number of tapers found in
+the object, or the half-length of the series.
 }
 \section{Details of Constraint Methods}{
   \subsection{via first differencing (the default)}{
@@ -136,7 +132,7 @@
   needed.
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Taper constraint procedures
@@ -155,16 +151,16 @@ lines(kopt.loess, log="y", col="green")
 ## To compare all the methods at once:
 demo("ctap")
 ##
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com> and R.L.Parker. AJB
-  adapted some of RLP's original code, and wrote the main
-  function in \code{\link{ctap_simple}} for dynamic loading
-  C-code.
+A.J. Barbour <andy.barbour@gmail.com> and R.L.Parker. AJB
+adapted some of RLP's original code, and wrote the main
+function in \code{\link{ctap_simple}} for dynamic loading
+C-code.
 }
 \seealso{
-  \code{\link{splineGrad}}, \code{\link{riedsid}}
+\code{\link{splineGrad}}, \code{\link{riedsid}}
 }
 \keyword{riedel-sidorenko}
 \keyword{tapers}

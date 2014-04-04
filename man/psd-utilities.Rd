@@ -25,46 +25,43 @@
 \alias{zeros.default}
 \title{Various utility functions.}
 \usage{
-  vardiff(Xd, double.diff = FALSE)
+vardiff(Xd, double.diff = FALSE)
 
-  varddiff(Xd)
+varddiff(Xd)
 
-  dB(Rat, invert = FALSE, pos.only = TRUE,
-    is.power = FALSE)
+dB(Rat, invert = FALSE, pos.only = TRUE, is.power = FALSE)
 
-  char2envir(envchar)
+char2envir(envchar)
 
-  envir2char(envir)
+envir2char(envir)
 
-  vector_reshape(x,
-    vec.shape = c("horizontal", "vertical"))
+vector_reshape(x, vec.shape = c("horizontal", "vertical"))
 
-  \method{vector_reshape}{default} (x,
-    vec.shape = c("horizontal", "vertical"))
+\method{vector_reshape}{default}(x, vec.shape = c("horizontal", "vertical"))
 
-  colvec(x)
+colvec(x)
 
-  rowvec(x)
+rowvec(x)
 
-  is.spec(Obj)
+is.spec(Obj)
 
-  is.tapers(Obj)
+is.tapers(Obj)
 
-  na_mat(nrow, ncol = 1)
+na_mat(nrow, ncol = 1)
 
-  \method{na_mat}{default} (nrow, ncol = 1)
+\method{na_mat}{default}(nrow, ncol = 1)
 
-  zeros(nrow)
+zeros(nrow)
 
-  \method{zeros}{default} (nrow)
+\method{zeros}{default}(nrow)
 
-  ones(nrow)
+ones(nrow)
 
-  \method{ones}{default} (nrow)
+\method{ones}{default}(nrow)
 
-  mod(X, Y)
+mod(X, Y)
 
-  \method{mod}{default} (X, Y)
+\method{mod}{default}(X, Y)
 }
 \arguments{
   \item{Xd}{object to difference}
@@ -106,97 +103,97 @@
   division}
 }
 \value{
-  \code{char2envir} returns the result of evaluating the
-  object: an environment object; \code{envir2char} returns
-  the result of deparsing the environment name: a character
-  string.
+\code{char2envir} returns the result of evaluating the
+object: an environment object; \code{envir2char} returns
+the result of deparsing the environment name: a character
+string.
 
-  \code{vector_reshape} returns a "reshaped" vector,
-  meaning it has had it's dimensions changes so that it has
-  either one row (if \code{vec.shape=="horizontal"}), or
-  one column (\code{"vertical"}).
+\code{vector_reshape} returns a "reshaped" vector, meaning
+it has had it's dimensions changes so that it has either
+one row (if \code{vec.shape=="horizontal"}), or one column
+(\code{"vertical"}).
 
-  \code{is.spec} and \code{is.tapers} both return logicals
-  about whether or not the object does have class 'spec' or
-  'tapers', respectively
+\code{is.spec} and \code{is.tapers} both return logicals
+about whether or not the object does have class 'spec' or
+'tapers', respectively
 
-  \code{na_mat} returns a matrix of dimensions
-  \code{(nrow,ncol)} with \code{NA} values, the
-  representation of which is set by \code{NA_real_}
+\code{na_mat} returns a matrix of dimensions
+\code{(nrow,ncol)} with \code{NA} values, the
+representation of which is set by \code{NA_real_}
 
-  For \code{zeros} or \code{ones} respectively, a matrix
-  vector with \code{nrow} zeros or ones.
+For \code{zeros} or \code{ones} respectively, a matrix
+vector with \code{nrow} zeros or ones.
 
-  \code{mod} returns the result of a modulo division, which
-  is equivalent to \code{(X) \%\% (Y)}.
+\code{mod} returns the result of a modulo division, which
+is equivalent to \code{(X) \%\% (Y)}.
 }
 \description{
-  \emph{The various utility functions are:}
+\emph{The various utility functions are:}
 
-  \code{vardiff} returns the variance of the first (or
-  second) difference of the series. \code{varddiff} is a
-  convenience wrapper to return variance for the second
-  difference.
+\code{vardiff} returns the variance of the first (or
+second) difference of the series. \code{varddiff} is a
+convenience wrapper to return variance for the second
+difference.
 
-  \code{dB} returns an object converted to decibels.
+\code{dB} returns an object converted to decibels.
 
-  \code{char2envir} converts a character string of an
-  environment name to an evaluated name; whereas,
-  \code{envir2char} converts an environment name to a
-  character string.
+\code{char2envir} converts a character string of an
+environment name to an evaluated name; whereas,
+\code{envir2char} converts an environment name to a
+character string.
 
-  \code{vector_reshape} reshapes a vector into another
-  vector.
+\code{vector_reshape} reshapes a vector into another
+vector.
 
-  \code{colvec} returns the object as a vertically long
-  vector; whereas \code{rowvec} returns the object as a
-  horizontally long vector.
+\code{colvec} returns the object as a vertically long
+vector; whereas \code{rowvec} returns the object as a
+horizontally long vector.
 
-  \code{is.spec} reports whether an object has class S3
-  class 'spec', as would one returned by, for example,
-  \code{spectrum}.
+\code{is.spec} reports whether an object has class S3 class
+'spec', as would one returned by, for example,
+\code{spectrum}.
 
-  \code{is.tapers} reports whether an object has S3 class
-  'tapers', as would one returned by, for example,
-  \code{\link{as.tapers}}.
+\code{is.tapers} reports whether an object has S3 class
+'tapers', as would one returned by, for example,
+\code{\link{as.tapers}}.
 
-  \code{na_mat} populates a matrix of specified dimensions
-  with \code{NA} values.
+\code{na_mat} populates a matrix of specified dimensions
+with \code{NA} values.
 
-  \code{zeros} populate a column-wise matrix with zeros;
-  whereas, \code{ones} populates a column-wise matrix with
-  ones.  \emph{Note that \code{nrow} is enforced to be at
-  least 1 for both functions.}
+\code{zeros} populate a column-wise matrix with zeros;
+whereas, \code{ones} populates a column-wise matrix with
+ones.  \emph{Note that \code{nrow} is enforced to be at
+least 1 for both functions.}
 
-  \code{mod} finds the modulo division of X and Y.
+\code{mod} finds the modulo division of X and Y.
 }
 \details{
-  Decibels are defined as \eqn{10 \log{}_{10}
-  \frac{X_1}{X_2}}, unless \code{is.power=TRUE} in which
-  \eqn{\mathrm{db} X^2 \equiv 20 \log{}_{10} X^2}
+Decibels are defined as \eqn{10 \log{}_{10}
+\frac{X_1}{X_2}}, unless \code{is.power=TRUE} in which
+\eqn{\mathrm{db} X^2 \equiv 20 \log{}_{10} X^2}
 
-  \code{colvec, rowvec} are simple wrapper functions to
-  \code{vector_reshape}.
+\code{colvec, rowvec} are simple wrapper functions to
+\code{vector_reshape}.
 
-  Modulo division has higher order-of-operations ranking
-  than other arithmetic operations; hence, \code{x + 1 \%\%
-  y} is equivalent to \code{x + (1 \%\% y)} which can
-  produce confusing results. \code{mod} is simply a series
-  of \code{trunc} commands which reduces the chance for
-  unintentionally erroneous results.
+Modulo division has higher order-of-operations ranking than
+other arithmetic operations; hence, \code{x + 1 \%\% y} is
+equivalent to \code{x + (1 \%\% y)} which can produce
+confusing results. \code{mod} is simply a series of
+\code{trunc} commands which reduces the chance for
+unintentionally erroneous results.
 }
 \note{
-  \code{char2envir} ensures the \code{envchar} object is a
-  character, so that something is not unintentionally
-  evaluated; \code{envir2char} simply deparses the object
-  name.
+\code{char2envir} ensures the \code{envchar} object is a
+character, so that something is not unintentionally
+evaluated; \code{envir2char} simply deparses the object
+name.
 
-  The performance of \code{mod} has not been tested against
-  the \code{\%\%} arithmetic method -- it may or may not be
-  slower for large numeric vectors.
+The performance of \code{mod} has not been tested against
+the \code{\%\%} arithmetic method -- it may or may not be
+slower for large numeric vectors.
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Various utilities
@@ -266,19 +263,19 @@ all.equal(mc1a, mc1b) # TRUE
 all.equal(mc2a, mc2b) # "Mean absolute difference: 2"
 all.equal(mc2a, mc2c) # TRUE
 ##
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour <andy.barbour@gmail.com>
 }
 \references{
-  For \code{\link{mod}}: see Peter Dalgaard's explanation
-  of the non-bug (#14771) I raised (instead I should've
-  asked it on R-help):
-  \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
+For \code{\link{mod}}: see Peter Dalgaard's explanation of
+the non-bug (#14771) I raised (instead I should've asked it
+on R-help):
+\url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
 }
 \seealso{
-  \code{\link{psd-package}}, \code{\link{as.tapers}}
+\code{\link{psd-package}}, \code{\link{as.tapers}}
 }
 \keyword{S3methods}
 \keyword{arithmetic-operations}

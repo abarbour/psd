@@ -4,19 +4,15 @@
 \alias{riedsid.spec}
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.}
 \usage{
-  riedsid(PSD, ntaper, tapseq = NULL,
-    Deriv.method = c("local_qls", "spg"),
-    Local.loss = c("Optim", "Less", "More"),
-    constrained = TRUE, c.method = NULL, verbose = TRUE,
-    ...)
+riedsid(PSD, ntaper, tapseq = NULL, Deriv.method = c("local_qls", "spg"),
+  Local.loss = c("Optim", "Less", "More"), constrained = TRUE,
+  c.method = NULL, verbose = TRUE, ...)
 
-  \method{riedsid}{spec} (PSD, ...)
+\method{riedsid}{spec}(PSD, ...)
 
-  \method{riedsid}{default} (PSD, ntaper, tapseq = NULL,
-    Deriv.method = c("local_qls", "spg"),
-    Local.loss = c("Optim", "Less", "More"),
-    constrained = TRUE, c.method = NULL, verbose = TRUE,
-    ...)
+\method{riedsid}{default}(PSD, ntaper, tapseq = NULL,
+  Deriv.method = c("local_qls", "spg"), Local.loss = c("Optim", "Less",
+  "More"), constrained = TRUE, c.method = NULL, verbose = TRUE, ...)
 }
 \arguments{
   \item{PSD}{vector or class 'spec'; the spectral values
@@ -46,41 +42,39 @@
   \code{\link{constrain_tapers}}}
 }
 \value{
-  Object with class 'tapers'.
+Object with class 'tapers'.
 }
 \description{
-  Estimates the optimal number of tapers at each frequency
-  of given PSD, using a modified Riedel-Sidorenko MSE
-  recipe (RS-RLP).
+Estimates the optimal number of tapers at each frequency of
+given PSD, using a modified Riedel-Sidorenko MSE recipe
+(RS-RLP).
 }
 \details{
-  The optimization is as follows. First, weighted
-  derivatives of the input PSD are computed. Using those
-  derivates the optimal number of tapers is found through
-  the RS-RLP formulation. Constraints are then placed on
-  the practicable number of tapers.
+The optimization is as follows. First, weighted derivatives
+of the input PSD are computed. Using those derivates the
+optimal number of tapers is found through the RS-RLP
+formulation. Constraints are then placed on the practicable
+number of tapers.
 
-  \subsection{Taper constraints}{ The parameter
-  \code{c.method} provides an option to change the method
-  of taper constraints.  A description of each may be found
-  in the documentation for \code{\link{constrain_tapers}}.
+\subsection{Taper constraints}{ The parameter
+\code{c.method} provides an option to change the method of
+taper constraints.  A description of each may be found in
+the documentation for \code{\link{constrain_tapers}}.
 
-  Once can use \code{constrained=FALSE} to turn off all
-  taper constraints; this could lead to strange behavior
-  though. }
+Once can use \code{constrained=FALSE} to turn off all taper
+constraints; this could lead to strange behavior though. }
 
-  \subsection{Spectral derivatives}{ The parameter
-  \code{Deriv.method} determines which method is used to
-  estimate derivatives. \itemize{
-  \item{\code{"local_qls"}}{ (\strong{default}) uses
-  quadratic weighting and local least-squares estimation;
-  then, \code{Local.loss} can alter slightly the weighting
-  to make the derivatives more or less succeptible to
-  changes in spectral values. Can be slower than
-  \code{"spg"}.} \item{\code{"spg"}}{ uses
-  \code{\link{splineGrad}}; then, additional arguments may
-  be passed to control the smoothness of the derivatives
-  (e.g \code{spar} in \code{smooth.spline}).} } }
+\subsection{Spectral derivatives}{ The parameter
+\code{Deriv.method} determines which method is used to
+estimate derivatives. \itemize{ \item{\code{"local_qls"}}{
+(\strong{default}) uses quadratic weighting and local
+least-squares estimation; then, \code{Local.loss} can alter
+slightly the weighting to make the derivatives more or less
+succeptible to changes in spectral values. Can be slower
+than \code{"spg"}.} \item{\code{"spg"}}{ uses
+\code{\link{splineGrad}}; then, additional arguments may be
+passed to control the smoothness of the derivatives (e.g
+\code{spar} in \code{smooth.spline}).} } }
 }
 \section{Warning}{
   The \code{"spg"} can become numerically unstable, and
@@ -89,7 +83,7 @@
   sake.
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Riedel-Sidorenko--Parker taper optimization
@@ -122,15 +116,15 @@ plot(rtap, log="y")
 # original tapers:
 lines(as.tapers(rep.int(ntap,nd)), col="blue")
 par(op)
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com> adapted original by
-  R.L. Parker.
+A.J. Barbour <andy.barbour@gmail.com> adapted original by
+R.L. Parker.
 }
 \seealso{
-  \code{\link{constrain_tapers}}, \code{\link{psdcore}},
-  \code{smooth.spline}
+\code{\link{constrain_tapers}}, \code{\link{psdcore}},
+\code{smooth.spline}
 }
 \keyword{riedel-sidorenko}
 \keyword{tapers}

@@ -4,19 +4,17 @@
 \alias{pspectrum.spec}
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
-  pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
-    AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
-    no.history = FALSE, plot = FALSE, ...)
+pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3, AR = FALSE,
+  Nyquist.normalize = TRUE, verbose = TRUE, no.history = FALSE,
+  plot = FALSE, ...)
 
-  \method{pspectrum}{default} (x, x.frqsamp = 1,
-    ntap.init = 7, niter = 3, AR = FALSE,
-    Nyquist.normalize = TRUE, verbose = TRUE,
-    no.history = FALSE, plot = FALSE, ...)
+\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
+  AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
+  no.history = FALSE, plot = FALSE, ...)
 
-  \method{pspectrum}{spec} (x, x.frqsamp = 1,
-    ntap.init = 7, niter = 3, AR = FALSE,
-    Nyquist.normalize = TRUE, verbose = TRUE,
-    no.history = FALSE, plot = FALSE, ...)
+\method{pspectrum}{spec}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
+  AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
+  no.history = FALSE, plot = FALSE, ...)
 }
 \arguments{
   \item{x}{vector; series to estimate PSD for.}
@@ -47,22 +45,22 @@
   \code{\link{riedsid}}}
 }
 \value{
-  Object with class 'spec', invisibly. It also assigns the
-  object to \code{"final_psd"} in the working environment.
+Object with class 'spec', invisibly. It also assigns the
+object to \code{"final_psd"} in the working environment.
 }
 \description{
-  This is the primary function to be used in this package,
-  and returns power spectral density estimates where the
-  number of tapers at each frequency has been iteratively
-  optimized (\code{niter} times).
+This is the primary function to be used in this package,
+and returns power spectral density estimates where the
+number of tapers at each frequency has been iteratively
+optimized (\code{niter} times).
 }
 \details{
-  See the \strong{Adaptive estimation} section in the
-  description of the \code{\link{psd-package}} for details
-  regarding adaptive estimation.
+See the \strong{Adaptive estimation} section in the
+description of the \code{\link{psd-package}} for details
+regarding adaptive estimation.
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Adaptive multitaper PSD estimation
@@ -106,7 +104,7 @@ rm(Dat, AH)
 ## plot psd history
 seqcols <- 1:numit
 itseq <- seqcols - 1
-toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
+toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=TRUE)
 par(xpd=TRUE)
 matplot(Freqs, StgPsd + (sc<-9)*toadd, type="l", lty=1, lwd=2, col="black",
              main="PSD estimation history", ylab="", xlab="Spatial frequency",
@@ -135,15 +133,15 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
 }
 )) # end of invisible lapply
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com> adapted original by
-  R.L. Parker.
+A.J. Barbour <andy.barbour@gmail.com> adapted original by
+R.L. Parker.
 }
 \seealso{
-  \code{\link{psdcore}}, \code{\link{pilot_spec}},
-  \code{\link{riedsid}}, \code{\link{prewhiten}}
+\code{\link{psdcore}}, \code{\link{pilot_spec}},
+\code{\link{riedsid}}, \code{\link{prewhiten}}
 }
 \keyword{numerical-derivative}
 \keyword{riedel-sidorenko}

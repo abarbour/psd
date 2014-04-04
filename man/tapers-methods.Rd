@@ -11,23 +11,22 @@
 \alias{tapers-methods}
 \title{Generic methods for objects with class \code{'tapers'}.}
 \usage{
-  \method{as.data.frame}{tapers} (x, ...)
+\method{as.data.frame}{tapers}(x, ...)
 
-  \method{data.frame}{tapers} (x, ...)
+\method{data.frame}{tapers}(x, ...)
 
-  \method{print}{tapers} (x, ...)
+\method{print}{tapers}(x, ...)
 
-  \method{summary}{tapers} (object, ...)
+\method{summary}{tapers}(object, ...)
 
-  \method{print}{summary.tapers} (x, ...)
+\method{print}{summary.tapers}(x, ...)
 
-  \method{lines}{tapers} (x, lwd = 1.8, col = "red", ...)
+\method{lines}{tapers}(x, lwd = 1.8, col = "red", ...)
 
-  \method{points}{tapers} (x, pch = "_", cex = 1, ...)
+\method{points}{tapers}(x, pch = "_", cex = 1, ...)
 
-  \method{plot}{tapers} (x, xi = NULL,
-    color.pal = c("Blues", "Spectral"), ylim = NULL,
-    hv.lines = FALSE, ...)
+\method{plot}{tapers}(x, xi = NULL, color.pal = c("Blues", "Spectral"),
+  ylim = NULL, hv.lines = FALSE, ...)
 }
 \arguments{
   \item{x}{tapers object}
@@ -55,11 +54,11 @@
   \item{...}{optional arguments}
 }
 \value{
-  \code{plot} returns a list with names: \code{line.colors}
-  (hex values)
+\code{plot} returns a list with names: \code{line.colors}
+(hex values)
 }
 \description{
-  Generic methods for objects with class \code{'tapers'}.
+Generic methods for objects with class \code{'tapers'}.
 }
 \examples{
 ##
@@ -72,11 +71,11 @@ tap <- as.tapers(tap/2)
 lines(tap)
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{as.tapers}}, \code{\link{constrain_tapers}},
-  \code{par}
+\code{\link{as.tapers}}, \code{\link{constrain_tapers}},
+\code{par}
 }
 \keyword{S3methods}
 \keyword{methods}

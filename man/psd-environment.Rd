@@ -15,29 +15,29 @@
 \alias{update_adapt_history}
 \title{Various environment manipulation functions.}
 \usage{
-  get_psd_env_pointer()
+get_psd_env_pointer()
 
-  get_psd_env_name()
+get_psd_env_name()
 
-  psd_envRefresh(verbose = TRUE)
+psd_envRefresh(verbose = TRUE)
 
-  psd_envClear()
+psd_envClear()
 
-  psd_envStatus()
+psd_envStatus()
 
-  psd_envList()
+psd_envList()
 
-  psd_envGet(variable)
+psd_envGet(variable)
 
-  psd_envAssign(variable, value)
+psd_envAssign(variable, value)
 
-  psd_envAssignGet(variable, value)
+psd_envAssignGet(variable, value)
 
-  new_adapt_history(adapt_stages)
+new_adapt_history(adapt_stages)
 
-  get_adapt_history()
+get_adapt_history()
 
-  update_adapt_history(stage, ntap, PSD, freq = NULL)
+update_adapt_history(stage, ntap, PSD, freq = NULL)
 }
 \arguments{
   \item{verbose}{logical; should messages be given?}
@@ -61,56 +61,55 @@
   \item{freq}{vector; the frequencies}
 }
 \value{
-  \code{psd_envRefresh} returns (invisibly) the result of
-  \code{psd_envStatus()}.
+\code{psd_envRefresh} returns (invisibly) the result of
+\code{psd_envStatus()}.
 
-  the object represented by \code{variable} in the
-  \code{psd} environment.
+the object represented by \code{variable} in the \code{psd}
+environment.
 }
 \description{
-  The computation of \emph{adaptive} power spectral density
-  estimates requires bookkeeping and non-destructive
-  manipulation of variables. The functions here are mainly
-  convenience wrappers designed to maintain variable
-  separation from the \code{.GlobalEnv} environment so that
-  no innocent variable is destroyed in the process of
-  iteratively computing spectra. \strong{The user should
-  generally not be using the \emph{setters} even though all
-  functions exist in the namespace.}
+The computation of \emph{adaptive} power spectral density
+estimates requires bookkeeping and non-destructive
+manipulation of variables. The functions here are mainly
+convenience wrappers designed to maintain variable
+separation from the \code{.GlobalEnv} environment so that
+no innocent variable is destroyed in the process of
+iteratively computing spectra. \strong{The user should
+generally not be using the \emph{setters} even though all
+functions exist in the namespace.}
 
-  \code{get_psd_env_pointer} is a convenience wrapper to
-  get the environment pointer.
+\code{get_psd_env_pointer} is a convenience wrapper to get
+the environment pointer.
 
-  \code{get_psd_env_name} is a convenience wrapper to get
-  the environment name.
+\code{get_psd_env_name} is a convenience wrapper to get the
+environment name.
 
-  \code{psd_envRefresh} will clear any variables in the
-  enviroment and reset the initialization stamp.
+\code{psd_envRefresh} will clear any variables in the
+enviroment and reset the initialization stamp.
 
-  \code{psd_envClear} clears the contents of the
-  environment.
+\code{psd_envClear} clears the contents of the environment.
 
-  \code{psd_envStatus} returns a list of some information
-  regarding the status of the environment.
+\code{psd_envStatus} returns a list of some information
+regarding the status of the environment.
 
-  \code{psd_envList} returns a listing of any assignments.
+\code{psd_envList} returns a listing of any assignments.
 
-  \code{psd_envGet} returns the value of \code{variable}.
+\code{psd_envGet} returns the value of \code{variable}.
 
-  \code{psd_envAssign} assigns \code{value} to
-  \code{variable}, but does not return it.
+\code{psd_envAssign} assigns \code{value} to
+\code{variable}, but does not return it.
 
-  \code{psd_envAssignGet} both assigns and returns a value.
+\code{psd_envAssignGet} both assigns and returns a value.
 
-  \code{new_adapt_history} initializes a nested-list object
-  to store the data from each iteration.
+\code{new_adapt_history} initializes a nested-list object
+to store the data from each iteration.
 
-  \code{update_adapt_history} updates the adaptive
-  estimation history list.
+\code{update_adapt_history} updates the adaptive estimation
+history list.
 }
 \note{
-  \code{psd_envClear} does \emph{not} remove the
-  environment--simply the assignments within it.
+\code{psd_envClear} does \emph{not} remove the
+environment--simply the assignments within it.
 }
 \section{Defaults and Initialization}{
   One can use \code{get_psd_env_pointer()} and
@@ -166,7 +165,7 @@
   of \code{stg_kopt} and \code{stg_psd}.} }
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## psd working environment
@@ -182,9 +181,9 @@ print(x <- psd_envGet("init"))
 #
 # Pull the adaptive history into .GlobalEnv
 get_adapt_history()
-}
+#RDEX#}
 }
 \seealso{
-  \code{\link{psd-utilities}}, \code{\link{pspectrum}}
+\code{\link{psd-utilities}}, \code{\link{pspectrum}}
 }
 

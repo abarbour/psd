@@ -42,7 +42,7 @@ rm(Dat, AH)
 ## plot psd history
 seqcols <- 1:numit
 itseq <- seqcols - 1
-toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
+toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=TRUE)
 par(xpd=TRUE)
 matplot(Freqs, StgPsd + (sc<-9)*toadd, type="l", lty=1, lwd=2, col="black",
              main="PSD estimation history", ylab="", xlab="Spatial frequency",

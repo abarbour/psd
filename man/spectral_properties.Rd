@@ -4,13 +4,13 @@
 \alias{spectral_properties.tapers}
 \title{Calculate spectral properties.}
 \usage{
-  spectral_properties(tapvec, f.samp = 1, n.freq = NULL,
-    p = 0.95, db.ci = FALSE, ...)
+spectral_properties(tapvec, f.samp = 1, n.freq = NULL, p = 0.95,
+  db.ci = FALSE, ...)
 
-  \method{spectral_properties}{spec} (tapvec, ...)
+\method{spectral_properties}{spec}(tapvec, ...)
 
-  \method{spectral_properties}{tapers} (tapvec, f.samp = 1,
-    n.freq = NULL, p = 0.95, db.ci = FALSE, ...)
+\method{spectral_properties}{tapers}(tapvec, f.samp = 1, n.freq = NULL,
+  p = 0.95, db.ci = FALSE, ...)
 }
 \arguments{
   \item{tapvec}{object with class \code{tapers} or
@@ -32,19 +32,18 @@
   \item{...}{additional arguments (unused)}
 }
 \value{
-  A list with the following properties (and names):
-  \itemize{ \item{\code{taper}: The original taper vector.}
-  \item{\code{stderr.chi .upper, .lower, .median}: results
-  returned from \code{\link{spec_confint}}.}
-  \item{\code{resolution}: The effective spectral
-  resolution.} \item{\code{dof}: The number of degrees of
-  freedom.} \item{\code{bw}: The effective bandwidth of the
-  spectrum.} }
+A list with the following properties (and names): \itemize{
+\item{\code{taper}: The original taper vector.}
+\item{\code{stderr.chi .upper, .lower, .median}: results
+returned from \code{\link{spec_confint}}.}
+\item{\code{resolution}: The effective spectral
+resolution.} \item{\code{dof}: The number of degrees of
+freedom.} \item{\code{bw}: The effective bandwidth of the
+spectrum.} }
 }
 \description{
-  Various spectral properties may be computed from the
-  vector of tapers, and if necessary the sampling
-  frequency.
+Various spectral properties may be computed from the vector
+of tapers, and if necessary the sampling frequency.
 }
 \section{Parameter Details}{
   \subsection{Uncertainty}{ See \code{\link{spec_confint}}
@@ -67,7 +66,7 @@
   \eqn{N \cdot W} the approximate time-bandwidth product. }
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Spectral properties from the number of tapers used
@@ -157,20 +156,20 @@ lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
 abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 
 ##
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour <andy.barbour@gmail.com>
 }
 \references{
-  Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon,
-  and R. L. Graham (2007), Reducing the bias of multitaper
-  spectrum estimates, \emph{Geophysical Journal
-  International}, \strong{171}, 1269--1281, doi:
-  10.1111/j.1365-246X.2007.03592.x
+Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon,
+and R. L. Graham (2007), Reducing the bias of multitaper
+spectrum estimates, \emph{Geophysical Journal
+International}, \strong{171}, 1269--1281, doi:
+10.1111/j.1365-246X.2007.03592.x
 }
 \seealso{
-  \code{\link{spec_confint}}, \code{\link{psd-package}}
+\code{\link{spec_confint}}, \code{\link{psd-package}}
 }
 \keyword{bandwidth}
 \keyword{degrees-of-freedom}

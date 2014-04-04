@@ -11,40 +11,39 @@
 \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
 }}
 \source{
-  Project MAGNET page:
-  \url{http://www.ngdc.noaa.gov/geomag/proj_mag.shtml}
+Project MAGNET page:
+\url{http://www.ngdc.noaa.gov/geomag/proj_mag.shtml}
 }
 \description{
-  The Project MAGNET mission provided a wealth of
-  airborne-magnetometer data spanning the globe (Coleman,
-  1992). This dataset represents a single track of
-  horizontal field intensities (a very small subset of the
-  full collection!).
+The Project MAGNET mission provided a wealth of
+airborne-magnetometer data spanning the globe (Coleman,
+1992). This dataset represents a single track of horizontal
+field intensities (a very small subset of the full
+collection!).
 }
 \details{
-  \subsection{Raw and Clean Sets}{ There are non-real data
-  points in raw MAGNET series; these are instrumental
-  artefacts, and can severely affect power spectral density
-  (PSD) estimates. A clean series has been included so that
-  a comparison of PSDs may be made.
+\subsection{Raw and Clean Sets}{ There are non-real data
+points in raw MAGNET series; these are instrumental
+artefacts, and can severely affect power spectral density
+(PSD) estimates. A clean series has been included so that a
+comparison of PSDs may be made.
 
-  Some command like \code{subset(magnet, abs(mdiff) > 0)}
-  can be used to identify the rows where edits have been
-  made. }
+Some command like \code{subset(magnet, abs(mdiff) > 0)} can
+be used to identify the rows where edits have been made. }
 }
 \examples{
 data(magnet)
 summary(magnet)
 }
 \references{
-  Coleman, R. J. (1992), Project Magnet high-level vector
-  survey data reduction. In \emph{Types and Characteristics
-  of Data for Geomagnetic Field Modeling}, \strong{3153},
-  pp. 215-248.
+Coleman, R. J. (1992), Project Magnet high-level vector
+survey data reduction. In \emph{Types and Characteristics
+of Data for Geomagnetic Field Modeling}, \strong{3153}, pp.
+215-248.
 }
 \seealso{
-  \code{\link{pspectrum}}, \code{\link{Tohoku}},
-  \code{\link{hfsnm}}
+\code{\link{pspectrum}}, \code{\link{Tohoku}},
+\code{\link{hfsnm}}
 }
 \keyword{datasets}
 

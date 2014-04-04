@@ -17,23 +17,23 @@ and 2 attributes:
 \item{\code{generator}}{The structure of a function which will refresh the values from the supplemental files of the original publication.}
 }}
 \source{
-  Barbour, A. J., and Agnew, D. C. (2011), Noise Levels on
-  Plate Boundary Observatory Borehole Strainmeters in
-  Southern California, \emph{Bulletin of the Seismological
-  Society of America}, \strong{101}(5), 2453-2466,
-  doi:10.1785/0120110062
+Barbour, A. J., and Agnew, D. C. (2011), Noise Levels on
+Plate Boundary Observatory Borehole Strainmeters in
+Southern California, \emph{Bulletin of the Seismological
+Society of America}, \strong{101}(5), 2453-2466,
+doi:10.1785/0120110062
 }
 \description{
-  These values represent noise levels in high frequency
-  data (\eqn{10^{-3} - 10} Hz) from 2009, averaged over all
-  stations in the Anza cluster of the Plate Boundary
-  Observatory (PBO) borehole strainmeter network, and the
-  UCSD-style longbase laser strainmeters.
+These values represent noise levels in high frequency data
+(\eqn{10^{-3} - 10} Hz) from 2009, averaged over all
+stations in the Anza cluster of the Plate Boundary
+Observatory (PBO) borehole strainmeter network, and the
+UCSD-style longbase laser strainmeters.
 }
 \details{
-  \code{NA} values in the series highlight frequency bands
-  where the noise levels are unreliable, due to a
-  instrumental artifact.
+\code{NA} values in the series highlight frequency bands
+where the noise levels are unreliable, due to a
+instrumental artifact.
 }
 \examples{
 data(hfsnm)
@@ -43,8 +43,8 @@ try(dat <- FUN(molten=FALSE)) # may fail without library-access to BSSA
 try(all.equal(dat[,1:4], hfsnm[,1:4]))
 }
 \seealso{
-  \code{\link{pspectrum}}, \code{\link{Tohoku}},
-  \code{\link{magnet}}
+\code{\link{pspectrum}}, \code{\link{Tohoku}},
+\code{\link{magnet}}
 }
 \keyword{datasets}
 

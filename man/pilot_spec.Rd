@@ -5,12 +5,11 @@
 \alias{spec.pilot}
 \title{Calculate the pilot power spectral densities.}
 \usage{
-  pilot_spec(x, x.frequency = 1, ntap = 7, remove.AR = 0,
-    plot = FALSE, verbose = FALSE, ...)
+pilot_spec(x, x.frequency = 1, ntap = 7, remove.AR = 0, plot = FALSE,
+  verbose = FALSE, ...)
 
-  \method{pilot_spec}{default} (x, x.frequency = 1,
-    ntap = 7, remove.AR = 0, plot = FALSE, verbose = FALSE,
-    ...)
+\method{pilot_spec}{default}(x, x.frequency = 1, ntap = 7, remove.AR = 0,
+  plot = FALSE, verbose = FALSE, ...)
 }
 \arguments{
   \item{x}{vector; the data series to find a pilot spectrum
@@ -33,30 +32,29 @@
   \code{\link{psdcore}}}
 }
 \value{
-  An object with class 'spec', invisibly.  It also assigns
-  the object to \code{"pilot_psd"} in the working
-  environment.
+An object with class 'spec', invisibly.  It also assigns
+the object to \code{"pilot_psd"} in the working
+environment.
 }
 \description{
-  This PSD -- the pilot spectrum -- is used as the starting
-  point for the adaptive estimation routine.
+This PSD -- the pilot spectrum -- is used as the starting
+point for the adaptive estimation routine.
 }
 \details{
-  A fixed number of tapers is applied across all
-  frequencies using \code{\link{psdcore}}, and subsequent
-  taper-refinements are based on the spectral derivatives
-  of this spectrum; hence, changes in the number of tapers
-  can affect how many adaptive stages may be needed (though
-  there are no formal convergence criteria to speak of).
+A fixed number of tapers is applied across all frequencies
+using \code{\link{psdcore}}, and subsequent
+taper-refinements are based on the spectral derivatives of
+this spectrum; hence, changes in the number of tapers can
+affect how many adaptive stages may be needed (though there
+are no formal convergence criteria to speak of).
 
-  The taper series of the returned spectrum is constrained
-  using \code{as.tapers(..., minspan=TRUE)}.
+The taper series of the returned spectrum is constrained
+using \code{as.tapers(..., minspan=TRUE)}.
 
-  The default behaviour (\code{remove.AR <= 0}) is to
-  remove the standard linear model \eqn{[f(x) = \alpha x +
-  \beta]} from the data; however, the user can model the
-  effect of an autoregressive process by specifiying
-  \code{remove.AR}.
+The default behaviour (\code{remove.AR <= 0}) is to remove
+the standard linear model \eqn{[f(x) = \alpha x + \beta]}
+from the data; however, the user can model the effect of an
+autoregressive process by specifiying \code{remove.AR}.
 }
 \section{Removing an AR effect from the spectrum}{
   If \code{remove.AR > 0} the argument is used as
@@ -80,7 +78,7 @@
   misleading.}}
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Pilot spectrum
@@ -93,14 +91,14 @@ plot(pilot_spec(xc <-  magnet$clean), log="dB",
 ## well for the Project MAGNET data:
 plot(pilot_spec(xc, remove.AR=10), log="dB", add=TRUE, col="red")
 ##
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{\link{psdcore}}, \code{\link{prewhiten}}
+\code{\link{psdcore}}, \code{\link{prewhiten}}
 
-  Documentation for \code{spec.ar}.
+Documentation for \code{spec.ar}.
 }
 

@@ -3,10 +3,9 @@
 \alias{splineGrad.default}
 \title{Numerical derivatives of a series based on a weighted, smooth spline representation.}
 \usage{
-  splineGrad(dseq, dsig, plot.derivs = FALSE, ...)
+splineGrad(dseq, dsig, plot.derivs = FALSE, ...)
 
-  \method{splineGrad}{default} (dseq, dsig,
-    plot.derivs = FALSE, ...)
+\method{splineGrad}{default}(dseq, dsig, plot.derivs = FALSE, ...)
 }
 \arguments{
   \item{dseq}{numeric; a vector of positions for
@@ -22,22 +21,21 @@
   \code{smooth.spline}.}
 }
 \value{
-  A matrix with columns representing \eqn{x, f(x), f'(x),
-  f''(x)}.
+A matrix with columns representing \eqn{x, f(x), f'(x),
+f''(x)}.
 }
 \description{
-  \code{splineGrad} computes the numerical derivatives of a
-  spline representation of the input series;
-  differentiation of spline curves is numerically
-  efficient.
+\code{splineGrad} computes the numerical derivatives of a
+spline representation of the input series; differentiation
+of spline curves is numerically efficient.
 
-  With smoothing, the numerical instability for "noisy"
-  data can be drastically reduced, since spline curves are
-  inherently (at least) twice differentiable. See the
-  \strong{Examples} for an illustration of this.
+With smoothing, the numerical instability for "noisy" data
+can be drastically reduced, since spline curves are
+inherently (at least) twice differentiable. See the
+\strong{Examples} for an illustration of this.
 }
 \examples{
-\dontrun{
+#RDEX#\dontrun{
 require(psd)
 ##
 ## Spline gradient
@@ -55,13 +53,13 @@ splineGrad(x, y, TRUE, spar=0.2)
 splineGrad(x, y, TRUE, spar=0.6)
 splineGrad(x, y, TRUE, spar=1.0)
 ##
-}
+#RDEX#}
 }
 \author{
-  A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-  \code{smooth.spline}
+\code{smooth.spline}
 }
 \keyword{numerical-derivative}
 \keyword{spline-gradient}
