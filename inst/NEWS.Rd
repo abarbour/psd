@@ -13,17 +13,21 @@
 
 % template vim:5Y
 %
-%\section{CHANGES IN \psd{} VERSION 0.3-2 (2013-03-27)}{
+%\section{CHANGES IN \psd{} VERSION X.Y-Z (XXXX-YY-ZZ)}{
 %  \itemize{ \item \code{} }
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 0.4-1 (2013-11-12)}{
+\section{CHANGES IN \psd{} VERSION 0.4-1 (2014-04-08)}{
   \itemize{
+  	\item Fixed an example which was causing CRAN-buildcheck errors.
+	\item Fixed a small error in the normalization vignette.
+              Thanks to Richard Gaal for spotting this.
   	\item A paper associated with the software has been
-	published through Computers \& Geosciences: \citation{}.
+	published through Computers \& Geosciences.
 	If you cannot access the publication, contact A.~J.~Barbour
 	for a reprint.
+  	\item Updated the citation: \code{citation('psd')}
   }
 }
 %
