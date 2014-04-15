@@ -8,3 +8,4 @@
 \contentsline {section}{\numberline {3}A from-scratch example: White noise.}{5}{section.3}
 \contentsline {section}{\numberline {4}Normalization used in \texttt {stats::spectrum}}{10}{section.4}
 \contentsline {section}{\numberline {5}PSD estimators in R}{12}{section.5}
+\contentsline {section}{\numberline {6}Acknowlegements}{13}{section.6}

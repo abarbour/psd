@@ -454,7 +454,7 @@ fsamp <- 1  # sampling freq, e.g. Hz
 fNyq <- fsamp/2   # Nyquist freq
 Nf <- N/2  # number of freqs
 nyfreqs <- seq.int(from=0, to=fNyq, length.out=Nf)
-S <- Se[1:Nf] * 2 / N   # Finally, the PSD!
+S <- Se[2:(Nf+1)] * 2 / N   # Finally, the PSD!
 @
 
 To approximate the integrated spectrum in the case of a ``flat" spectrum, we need
@@ -483,9 +483,9 @@ Schi <- Chifit(S)
 # Get 'df', the degrees of freedom
 print(dof <- Schi$par[[1]]) 
 @
-While the optimal degrees of freedom is very nearly two, the
-value produced by \Rcmd{mean} is different by merely one percent (certainly
-an acceptable bias for our purposes).
+While the optimal degrees of freedom is very nearly the correct value of two (2), 
+the value produced by \Rcmd{mean} is different by merely one percent (this is
+certainly an acceptable bias for our purposes).
 <<eval=TRUE, echo=TRUE, label=MEAN_EXPECT>>=
 # compare with the mean and median
 c(mSn <- mean(S), median(S))
@@ -543,7 +543,7 @@ all.equal(xv_1, xv_2)
 @
 
 But what if the sampling frequency \texttt{fsamp} changes? An obvious change will be
-the actual Nyquist frequency, which means the variance--normalization test will
+the actual Nyquist frequency, which means the variance-normalization test will
 fail if the PSD estimates are not re-scaled.  We simply re-scale the frequencies
 and PSD
 with the sampling rate
@@ -658,7 +658,7 @@ the assumption of a
 \idx{double-sided} spectrum, which 
 is at odds with our definition of the 
 \idx{single-sided} spectrum
-by--you guessed it--a factor of two.
+by (you guessed it) a factor of two.
 We can illustrate this with the following example, where
 we compare the PSDs from \Rcmd{spec.pgram} for a real
 and complex series:
@@ -685,13 +685,17 @@ similar functionality to \psd{}
 is relatively limited; however, there are at least four which
 can produce sophisticated PSD estimates.   We have
 summarized the available functions in Table \ref{tbl:methods}
-so far as we know\footnote{
-As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
-}.
+so far as we know.
+%\footnote{
+%As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
+%}.
 
 \input{tbl_specprogs}
 
-\pagebreak
+\section{Acknowlegements}
+We thank Richard Gaal for catching a subtle error in the from-scratch example.
+
+%\pagebreak
 \section*{Session Info}
 <<eval=TRUE, echo=TRUE, label=SI>>=
 sessionInfo()

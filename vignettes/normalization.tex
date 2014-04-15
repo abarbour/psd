@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}\usepackage{graphicx, color}
+\documentclass[10pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
 %% maxwidth is the original width if it is less than linewidth
 %% otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -11,21 +11,16 @@
 }
 \makeatother
 
-\definecolor{fgcolor}{rgb}{0.2, 0.2, 0.2}
-\newcommand{\hlnumber}[1]{\textcolor[rgb]{0,0,0}{#1}}%
-\newcommand{\hlfunctioncall}[1]{\textcolor[rgb]{0.501960784313725,0,0.329411764705882}{\textbf{#1}}}%
-\newcommand{\hlstring}[1]{\textcolor[rgb]{0.6,0.6,1}{#1}}%
-\newcommand{\hlkeyword}[1]{\textcolor[rgb]{0,0,0}{\textbf{#1}}}%
-\newcommand{\hlargument}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
-\newcommand{\hlcomment}[1]{\textcolor[rgb]{0.180392156862745,0.6,0.341176470588235}{#1}}%
-\newcommand{\hlroxygencomment}[1]{\textcolor[rgb]{0.43921568627451,0.47843137254902,0.701960784313725}{#1}}%
-\newcommand{\hlformalargs}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
-\newcommand{\hleqformalargs}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
-\newcommand{\hlassignement}[1]{\textcolor[rgb]{0,0,0}{\textbf{#1}}}%
-\newcommand{\hlpackage}[1]{\textcolor[rgb]{0.588235294117647,0.709803921568627,0.145098039215686}{#1}}%
-\newcommand{\hlslot}[1]{\textit{#1}}%
-\newcommand{\hlsymbol}[1]{\textcolor[rgb]{0,0,0}{#1}}%
-\newcommand{\hlprompt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}%
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
 
 \usepackage{framed}
 \makeatletter
@@ -261,32 +256,32 @@ edges of the pass-band.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{set.seed}(1234)
-N <- 1028
-x <- \hlfunctioncall{rnorm}(N, mean = 0, sd = 1)
-\hlcomment{# Load signal processing}
-\hlfunctioncall{library}(signal, warn.conflicts = FALSE)
+\hlkwd{set.seed}\hlstd{(}\hlnum{1234}\hlstd{)}
+\hlstd{N} \hlkwb{<-} \hlnum{1028}
+\hlstd{x} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(N,} \hlkwc{mean} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlcom{# Load signal processing}
+\hlkwd{library}\hlstd{(signal,} \hlkwc{warn.conflicts} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: MASS}}\begin{alltt}
-\hlcomment{# Construct an FIR filter}
-f <- \hlfunctioncall{c}(0, 0.2, 0.2, 0.3, 0.3, 0.5) * 2
-m <- \hlfunctioncall{c}(0, 0, 1, 1, 0, 0)
-fw <- signal::\hlfunctioncall{fir2}(N, f, m)
-\hlcomment{# complex filter response}
-fh <- signal::\hlfunctioncall{freqz}(fw, Fs = 1)
-f <- \hlfunctioncall{c}(0, 0.12, 0.12, 0.22, 0.22, 0.5) * 2
-fwl <- signal::\hlfunctioncall{fir2}(N, f, m)
-fhl <- signal::\hlfunctioncall{freqz}(fwl, Fs = 1)
-f <- \hlfunctioncall{c}(0, 0.28, 0.28, 0.38, 0.38, 0.5) * 2
-fwu <- signal::\hlfunctioncall{fir2}(N, f, m)
-fhu <- signal::\hlfunctioncall{freqz}(fwu, Fs = 1)
-\hlcomment{# convolution}
-xf <- signal::\hlfunctioncall{filter}(fw, x)
-\hlcomment{# PSD using stats::spectrum}
-Sx <- \hlfunctioncall{spectrum}(x, pad = 1, plot = FALSE, taper = 0.2)
-Sxf <- \hlfunctioncall{spectrum}(xf, pad = 1, plot = FALSE, taper = 0.2)
+\hlcom{# Construct an FIR filter}
+\hlstd{f} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.2}\hlstd{,} \hlnum{0.2}\hlstd{,} \hlnum{0.3}\hlstd{,} \hlnum{0.3}\hlstd{,} \hlnum{0.5}\hlstd{)} \hlopt{*} \hlnum{2}
+\hlstd{m} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlstd{fw} \hlkwb{<-} \hlstd{signal::}\hlkwd{fir2}\hlstd{(N, f, m)}
+\hlcom{# complex filter response}
+\hlstd{fh} \hlkwb{<-} \hlstd{signal::}\hlkwd{freqz}\hlstd{(fw,} \hlkwc{Fs} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{f} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.12}\hlstd{,} \hlnum{0.12}\hlstd{,} \hlnum{0.22}\hlstd{,} \hlnum{0.22}\hlstd{,} \hlnum{0.5}\hlstd{)} \hlopt{*} \hlnum{2}
+\hlstd{fwl} \hlkwb{<-} \hlstd{signal::}\hlkwd{fir2}\hlstd{(N, f, m)}
+\hlstd{fhl} \hlkwb{<-} \hlstd{signal::}\hlkwd{freqz}\hlstd{(fwl,} \hlkwc{Fs} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{f} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.28}\hlstd{,} \hlnum{0.28}\hlstd{,} \hlnum{0.38}\hlstd{,} \hlnum{0.38}\hlstd{,} \hlnum{0.5}\hlstd{)} \hlopt{*} \hlnum{2}
+\hlstd{fwu} \hlkwb{<-} \hlstd{signal::}\hlkwd{fir2}\hlstd{(N, f, m)}
+\hlstd{fhu} \hlkwb{<-} \hlstd{signal::}\hlkwd{freqz}\hlstd{(fwu,} \hlkwc{Fs} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlcom{# convolution}
+\hlstd{xf} \hlkwb{<-} \hlstd{signal::}\hlkwd{filter}\hlstd{(fw, x)}
+\hlcom{# PSD using stats::spectrum}
+\hlstd{Sx} \hlkwb{<-} \hlkwd{spectrum}\hlstd{(x,} \hlkwc{pad} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{taper} \hlstd{=} \hlnum{0.2}\hlstd{)}
+\hlstd{Sxf} \hlkwb{<-} \hlkwd{spectrum}\hlstd{(xf,} \hlkwc{pad} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{taper} \hlstd{=} \hlnum{0.2}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -487,16 +482,16 @@ efficiency's sake.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcomment{# using x from the filter analogy section}
-xv <- \hlfunctioncall{var}(x)
-X <- \hlfunctioncall{fft}(x)
-\hlfunctioncall{class}(X)
+\hlcom{# using x from the filter analogy section}
+\hlstd{xv} \hlkwb{<-} \hlkwd{var}\hlstd{(x)}
+\hlstd{X} \hlkwb{<-} \hlkwd{fft}\hlstd{(x)}
+\hlkwd{class}\hlstd{(X)}
 \end{alltt}
 \begin{verbatim}
 ## [1] "complex"
 \end{verbatim}
 \begin{alltt}
-\hlfunctioncall{length}(X)
+\hlkwd{length}\hlstd{(X)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 1028
@@ -514,10 +509,10 @@ between the complex conjugate based estimates.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-Sa <- \hlfunctioncall{Mod}(X)  \hlcomment{# Amplitude spectrum}
-Sp <- \hlfunctioncall{Arg}(X)  \hlcomment{# Phase spectrum}
-XC <- \hlfunctioncall{Conj}(X)
-\hlfunctioncall{all.equal}(Se <- Sa^2, Se_2 <- \hlfunctioncall{Mod}(XC * X), Se_2R <- \hlfunctioncall{Mod}(X * XC))
+\hlstd{Sa} \hlkwb{<-} \hlkwd{Mod}\hlstd{(X)}  \hlcom{# Amplitude spectrum}
+\hlstd{Sp} \hlkwb{<-} \hlkwd{Arg}\hlstd{(X)}  \hlcom{# Phase spectrum}
+\hlstd{XC} \hlkwb{<-} \hlkwd{Conj}\hlstd{(X)}
+\hlkwd{all.equal}\hlstd{(Se} \hlkwb{<-} \hlstd{Sa}\hlopt{^}\hlnum{2}\hlstd{, Se_2} \hlkwb{<-} \hlkwd{Mod}\hlstd{(XC} \hlopt{*} \hlstd{X), Se_2R} \hlkwb{<-} \hlkwd{Mod}\hlstd{(X} \hlopt{*} \hlstd{XC))}
 \end{alltt}
 \begin{verbatim}
 ## [1] TRUE
@@ -532,11 +527,11 @@ defined as half the sampling rate:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-fsamp <- 1  \hlcomment{# sampling freq, e.g. Hz}
-fNyq <- fsamp/2  \hlcomment{# Nyquist freq}
-Nf <- N/2  \hlcomment{# number of freqs}
-nyfreqs <- \hlfunctioncall{seq.int}(from = 0, to = fNyq, length.out = Nf)
-S <- Se[1:Nf] * 2/N  \hlcomment{# Finally, the PSD!}
+\hlstd{fsamp} \hlkwb{<-} \hlnum{1}  \hlcom{# sampling freq, e.g. Hz}
+\hlstd{fNyq} \hlkwb{<-} \hlstd{fsamp}\hlopt{/}\hlnum{2}  \hlcom{# Nyquist freq}
+\hlstd{Nf} \hlkwb{<-} \hlstd{N}\hlopt{/}\hlnum{2}  \hlcom{# number of freqs}
+\hlstd{nyfreqs} \hlkwb{<-} \hlkwd{seq.int}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{= fNyq,} \hlkwc{length.out} \hlstd{= Nf)}
+\hlstd{S} \hlkwb{<-} \hlstd{Se[}\hlnum{2}\hlopt{:}\hlstd{(Nf} \hlopt{+} \hlnum{1}\hlstd{)]} \hlopt{*} \hlnum{2}\hlopt{/}\hlstd{N}  \hlcom{# Finally, the PSD!}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -561,35 +556,35 @@ is shown in Figure \ref{fig:qqchi}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcomment{# 0) Setup optimization function for dof, using conjugate gradients\textbackslash{}\textbackslash{}}
-\hlcomment{# min L1 |PSD - Chi^2(dof)|}
-Chifit <- \hlfunctioncall{function}(PSD) \{
-    \hlfunctioncall{optim}(\hlfunctioncall{list}(df = \hlfunctioncall{mean}(PSD)), \hlfunctioncall{function}(dof) \{
-        \hlfunctioncall{sum}(\hlfunctioncall{log}(PSD)) - \hlfunctioncall{sum}(\hlfunctioncall{log}(\hlfunctioncall{dchisq}(PSD, dof)))
-    \}, method = \hlstring{"CG"})
-\}
-\hlcomment{# 1) run optimization}
-Schi <- \hlfunctioncall{Chifit}(S)
-\hlcomment{# Get 'df', the degrees of freedom}
-\hlfunctioncall{print}(dof <- Schi$par[[1]])
+\hlcom{# 0) Setup optimization function for dof, using conjugate gradients\textbackslash{}\textbackslash{} min}
+\hlcom{# L1 |PSD - Chi^2(dof)|}
+\hlstd{Chifit} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{PSD}\hlstd{) \{}
+    \hlkwd{optim}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{df} \hlstd{=} \hlkwd{mean}\hlstd{(PSD)),} \hlkwa{function}\hlstd{(}\hlkwc{dof}\hlstd{) \{}
+        \hlkwd{sum}\hlstd{(}\hlkwd{log}\hlstd{(PSD))} \hlopt{-} \hlkwd{sum}\hlstd{(}\hlkwd{log}\hlstd{(}\hlkwd{dchisq}\hlstd{(PSD, dof)))}
+    \hlstd{\},} \hlkwc{method} \hlstd{=} \hlstr{"CG"}\hlstd{)}
+\hlstd{\}}
+\hlcom{# 1) run optimization}
+\hlstd{Schi} \hlkwb{<-} \hlkwd{Chifit}\hlstd{(S)}
+\hlcom{# Get 'df', the degrees of freedom}
+\hlkwd{print}\hlstd{(dof} \hlkwb{<-} \hlstd{Schi}\hlopt{$}\hlstd{par[[}\hlnum{1}\hlstd{]])}
 \end{alltt}
 \begin{verbatim}
-## [1] 2.005
+## [1] 1.993
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-While the optimal degrees of freedom is very nearly two, the
-value produced by \Rcmd{mean} is different by merely one percent (certainly
-an acceptable bias for our purposes).
+While the optimal degrees of freedom is very nearly the correct value of two (2), 
+the value produced by \Rcmd{mean} is different by merely one percent (this is
+certainly an acceptable bias for our purposes).
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcomment{# compare with the mean and median}
-\hlfunctioncall{c}(mSn <- \hlfunctioncall{mean}(S), \hlfunctioncall{median}(S))
+\hlcom{# compare with the mean and median}
+\hlkwd{c}\hlstd{(mSn} \hlkwb{<-} \hlkwd{mean}\hlstd{(S),} \hlkwd{median}\hlstd{(S))}
 \end{alltt}
 \begin{verbatim}
-## [1] 1.989 1.406
+## [1] 1.985 1.400
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -641,29 +636,29 @@ test:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-mSn <- dof
-test_norm <- \hlfunctioncall{function}(sval, nyq, xvar) \{
-    svar <- sval * nyq
-    \hlfunctioncall{return}(svar/xvar)
-\}
-\hlfunctioncall{print}(xv_1 <- \hlfunctioncall{test_norm}(mSn, fNyq, xv))
+\hlstd{mSn} \hlkwb{<-} \hlstd{dof}
+\hlstd{test_norm} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{sval}\hlstd{,} \hlkwc{nyq}\hlstd{,} \hlkwc{xvar}\hlstd{) \{}
+    \hlstd{svar} \hlkwb{<-} \hlstd{sval} \hlopt{*} \hlstd{nyq}
+    \hlkwd{return}\hlstd{(svar}\hlopt{/}\hlstd{xvar)}
+\hlstd{\}}
+\hlkwd{print}\hlstd{(xv_1} \hlkwb{<-} \hlkwd{test_norm}\hlstd{(mSn, fNyq, xv))}
 \end{alltt}
 \begin{verbatim}
-## [1] 1.009
+## [1] 1.003
 \end{verbatim}
 \begin{alltt}
-xv_2 <- \hlfunctioncall{sum}(S)/Nf * fNyq/xv  \hlcomment{# an alternate test}
-\hlfunctioncall{all.equal}(xv_1, xv_2)
+\hlstd{xv_2} \hlkwb{<-} \hlkwd{sum}\hlstd{(S)}\hlopt{/}\hlstd{Nf} \hlopt{*} \hlstd{fNyq}\hlopt{/}\hlstd{xv}  \hlcom{# an alternate test}
+\hlkwd{all.equal}\hlstd{(xv_1, xv_2)}
 \end{alltt}
 \begin{verbatim}
-## [1] "Mean relative difference: 0.007985"
+## [1] "Mean relative difference: 0.004166"
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
 
 But what if the sampling frequency \texttt{fsamp} changes? An obvious change will be
-the actual Nyquist frequency, which means the variance--normalization test will
+the actual Nyquist frequency, which means the variance-normalization test will
 fail if the PSD estimates are not re-scaled.  We simply re-scale the frequencies
 and PSD
 with the sampling rate
@@ -672,16 +667,16 @@ to obtain the properly-normalized spectra.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-fsamp <- 20
-fNyq <- fsamp/2
-freqs <- fsamp * nyfreqs
-Snew <- S/fsamp
-\hlcomment{# Test variance crudely}
-mSn <- \hlfunctioncall{mean}(Snew)
-\hlfunctioncall{test_norm}(mSn, fNyq, xv)
+\hlstd{fsamp} \hlkwb{<-} \hlnum{20}
+\hlstd{fNyq} \hlkwb{<-} \hlstd{fsamp}\hlopt{/}\hlnum{2}
+\hlstd{freqs} \hlkwb{<-} \hlstd{fsamp} \hlopt{*} \hlstd{nyfreqs}
+\hlstd{Snew} \hlkwb{<-} \hlstd{S}\hlopt{/}\hlstd{fsamp}
+\hlcom{# Test variance crudely}
+\hlstd{mSn} \hlkwb{<-} \hlkwd{mean}\hlstd{(Snew)}
+\hlkwd{test_norm}\hlstd{(mSn, fNyq, xv)}
 \end{alltt}
 \begin{verbatim}
-## [1] 1.001
+## [1] 0.999
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -696,8 +691,8 @@ decibels (relative to 1 units$^2$ Hz$^{-1}$), using:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcomment{# decibel function}
-dB <- \hlfunctioncall{function}(y) 10 * \hlfunctioncall{log10}(y)
+\hlcom{# decibel function}
+\hlstd{dB} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{y}\hlstd{)} \hlnum{10} \hlopt{*} \hlkwd{log10}\hlstd{(y)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -741,10 +736,10 @@ object from the series prior to spectrum estimation:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-fsamp <- 20
-xt <- \hlfunctioncall{ts}(x, frequency = fsamp)
-pgram20 <- \hlfunctioncall{spec.pgram}(xt, pad = 1, taper = 0, plot = FALSE)
-pgram01 <- \hlfunctioncall{spec.pgram}(\hlfunctioncall{ts}(xt, frequency = 1), pad = 1, taper = 0, plot = FALSE)
+\hlstd{fsamp} \hlkwb{<-} \hlnum{20}
+\hlstd{xt} \hlkwb{<-} \hlkwd{ts}\hlstd{(x,} \hlkwc{frequency} \hlstd{= fsamp)}
+\hlstd{pgram20} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(xt,} \hlkwc{pad} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{taper} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pgram01} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(}\hlkwd{ts}\hlstd{(xt,} \hlkwc{frequency} \hlstd{=} \hlnum{1}\hlstd{),} \hlkwc{pad} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{taper} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -757,10 +752,10 @@ the sampling rate, which puts the spectra about a factor of 2 too low:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-mSn/\hlfunctioncall{mean}(pgram20$spec)
+\hlstd{mSn}\hlopt{/}\hlkwd{mean}\hlstd{(pgram20}\hlopt{$}\hlstd{spec)}
 \end{alltt}
 \begin{verbatim}
-## [1] 2.004
+## [1] 2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -793,13 +788,13 @@ again too low:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{test_norm}(\hlfunctioncall{mean}(pgram01$spec), 0.5, xv)
+\hlkwd{test_norm}\hlstd{(}\hlkwd{mean}\hlstd{(pgram01}\hlopt{$}\hlstd{spec),} \hlnum{0.5}\hlstd{, xv)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 0.4994
 \end{verbatim}
 \begin{alltt}
-\hlfunctioncall{test_norm}(\hlfunctioncall{mean}(pgram20$spec), 10, xv)
+\hlkwd{test_norm}\hlstd{(}\hlkwd{mean}\hlstd{(pgram20}\hlopt{$}\hlstd{spec),} \hlnum{10}\hlstd{, xv)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 0.4994
@@ -813,7 +808,7 @@ the assumption of a
 \idx{double-sided} spectrum, which 
 is at odds with our definition of the 
 \idx{single-sided} spectrum
-by--you guessed it--a factor of two.
+by (you guessed it) a factor of two.
 We can illustrate this with the following example, where
 we compare the PSDs from \Rcmd{spec.pgram} for a real
 and complex series:
@@ -821,17 +816,17 @@ and complex series:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-psd1 <- \hlfunctioncall{spec.pgram}(x, plot = FALSE)
-psd2 <- \hlfunctioncall{spec.pgram}(xc <- \hlfunctioncall{complex}(real = x, imag = x), plot = FALSE, demean = TRUE)
-mx <- \hlfunctioncall{mean}(\hlfunctioncall{Mod}(x))
-mxc <- \hlfunctioncall{mean}(\hlfunctioncall{Mod}(xc))
-(mxc/mx)^2
+\hlstd{psd1} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(x,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{psd2} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(xc} \hlkwb{<-} \hlkwd{complex}\hlstd{(}\hlkwc{real} \hlstd{= x,} \hlkwc{imag} \hlstd{= x),} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{demean} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlstd{mx} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{Mod}\hlstd{(x))}
+\hlstd{mxc} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{Mod}\hlstd{(xc))}
+\hlstd{(mxc}\hlopt{/}\hlstd{mx)}\hlopt{^}\hlnum{2}
 \end{alltt}
 \begin{verbatim}
 ## [1] 2
 \end{verbatim}
 \begin{alltt}
-\hlfunctioncall{mean}(psd2$spec/psd1$spec)
+\hlkwd{mean}\hlstd{(psd2}\hlopt{$}\hlstd{spec}\hlopt{/}\hlstd{psd1}\hlopt{$}\hlstd{spec)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 2
@@ -853,35 +848,39 @@ similar functionality to \psd{}
 is relatively limited; however, there are at least four which
 can produce sophisticated PSD estimates.   We have
 summarized the available functions in Table \ref{tbl:methods}
-so far as we know\footnote{
-As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
-}.
+so far as we know.
+%\footnote{
+%As of this writing (Feb 2013), \Rcmd{sapa} appears to be orphaned.
+%}.
 
 \input{tbl_specprogs}
 
-\pagebreak
+\section{Acknowlegements}
+We thank Richard Gaal for catching a subtle error in the from-scratch example.
+
+%\pagebreak
 \section*{Session Info}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlfunctioncall{sessionInfo}()
+\hlkwd{sessionInfo}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## R Under development (unstable) (2013-09-18 r63944)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-apple-darwin10.8.0 (64-bit)
 ## 
 ## locale:
-## [1] C
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
 ##  [1] parallel  datasets  grDevices grid      graphics  tools     stats    
 ##  [8] utils     methods   base     
 ## 
 ## other attached packages:
-## [1] signal_0.7-3 MASS_7.3-27  knitr_1.2   
+## [1] signal_0.7-3 MASS_7.3-31  knitr_1.5   
 ## 
 ## loaded via a namespace (and not attached):
-## [1] digest_0.6.3   evaluate_0.4.4 formatR_0.8    stringr_0.6.2
+## [1] evaluate_0.5.3 formatR_0.10   highr_0.3      stringr_0.6.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
