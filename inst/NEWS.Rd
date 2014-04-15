@@ -18,16 +18,15 @@
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 0.4-1 (2014-04-08)}{
+\section{CHANGES IN \psd{} VERSION 0.4-1 (2014-04-15)}{
   \itemize{
-  	\item Fixed an example which was causing CRAN-buildcheck errors.
-	\item Fixed a small error in the normalization vignette.
-              Thanks to Richard Gaal for spotting this.
-  	\item A paper associated with the software has been
-	published through Computers \& Geosciences.
+  	\item We have published a paper in Computers \& Geosciences regarding
+	\psd{}, and the citation is up to date: \code{citation('psd')}
 	If you cannot access the publication, contact A.~J.~Barbour
 	for a reprint.
-  	\item Updated the citation: \code{citation('psd')}
+  	\item Fixed an example which was causing CRAN-buildcheck errors.
+	\item Fixed a small error in the normalization vignette -- thanks 
+	      to Richard Gaal for spotting this.
   }
 }
 %
