@@ -48,7 +48,8 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     int i_min_r = i_max_f - 1, i_max_r = 0;
     // num-tapers and slopes
     double slope;
-    int ntap_c, ntap_p, ntap_fix;
+    // not sure why this was here:
+    //int ntap_c, ntap_p, ntap_fix;
     if(maxslope <= 0)
         Rf_error( "max slope must greater than zero" );
     //

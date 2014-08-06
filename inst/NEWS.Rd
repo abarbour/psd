@@ -18,6 +18,10 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 0.4-2 (2014-08-05)}{
+  \itemize{ \item Removed unused variables in \code{ctap_simple.c} }
+}
+
 \section{CHANGES IN \psd{} VERSION 0.4-1 (2014-04-15)}{
   \itemize{
   	\item We have published a paper in Computers \& Geosciences regarding

@@ -30,6 +30,6 @@ bibentry("Article",
   	'psd: Adaptive, sine multitaper power spectral density estimation for R',
 	'Computers & Geosciences', 'Volume 63', 'February 2014', 'Pages 1-8', 
 	'ISSN 0098-3004', 'http://dx.doi.org/10.1016/j.cageo.2013.09.015',sep=", "),
-  mfooter = "If you cannot access the article, please contact the A. Barbour for re-prints."
+  mfooter = "If you cannot access the article, please contact A. Barbour for re-prints."
 )
 

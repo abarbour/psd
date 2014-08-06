@@ -2,6 +2,9 @@
 # A list of future action items,
 # reverse sorted by desirability.
 #
+
+[ ] method to 'adapt' a class 'spec' produced by spectrum
+
 [ ] prewhiten:
 *** implement fastLM in RcppEigen, instead of plain lm
 
@@ -11,8 +14,7 @@
 *** This is likely the bottleneck of the entire operation, besides the FFT
 
 [ ] cross spectral density estimation
-
- something like the methods in ifultools/src/fra_sdf.c
+*** something like the methods in ifultools/src/fra_sdf.c
 
  * @param result      Pointer to a universal matrix of type
  *   MUTIL\_DCOMPLEX containing the cross-spectral density function estimates.
