@@ -19,7 +19,10 @@
 %
 
 \section{CHANGES IN \psd{} VERSION 0.4-2 (2014-08-05)}{
-  \itemize{ \item Removed unused variables in \code{ctap_simple.c} }
+  \itemize{ 
+    \item Removed unused variables in \code{ctap_simple.c} 
+    \item Removed deprecated \code{@S3method} statements
+  }
 }
 
 \section{CHANGES IN \psd{} VERSION 0.4-1 (2014-04-15)}{

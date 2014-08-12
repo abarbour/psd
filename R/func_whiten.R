@@ -104,7 +104,7 @@
 prewhiten <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...) UseMethod("prewhiten")
 #' @rdname prewhiten
 #' @method prewhiten default
-#' @S3method prewhiten default
+#' @export
 prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=1, x.start=c(1, 1), ...){
   Xts <- stats::ts(tser, frequency=x.fsamp, start=x.start)
   prewhiten(Xts, AR.max=AR.max, 
@@ -117,7 +117,7 @@ prewhiten.default <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute
 #' @rdname prewhiten
 #' @aliases prewhiten.ts
 #' @method prewhiten ts
-#' @S3method prewhiten ts
+#' @export
 prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, x.fsamp=NA, x.start=NA, ...){
   # prelims
   stopifnot(stats::is.ts(tser))

@@ -23,7 +23,7 @@ NULL
 #' @rdname spec-methods
 #' @name as.data.frame.spec
 #' @method as.data.frame spec
-#' @S3method as.data.frame spec
+#' @export
 as.data.frame.spec <- function(x, ...){
   # [1]  "freq"      "spec"      "coh"       "phase"     "kernel"    
   #      "df"        "bandwidth" "n.used"    "orig.n"   
@@ -49,5 +49,5 @@ as.data.frame.spec <- function(x, ...){
 #' @rdname spec-methods
 #' @name data.frame.spec
 #' @method data.frame spec
-#' @S3method data.frame spec
+#' @export
 data.frame.spec <- as.data.frame.spec

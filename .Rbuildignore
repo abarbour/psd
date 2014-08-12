@@ -10,26 +10,20 @@
 
 paper/
 NOBUILD/
-
 README.md
-
 fix_rd
 install_rlp
 data/.assemb_data
-
 inst/Makefile
 inst/NEWS.pdf
 inst/Examples/.test
 inst/Examples/test_results_rdex
 inst/Examples/Makefile
-
 BUGS
 BUGS.description
-
 Rprof.out
 WISHLISH
 TODO
-
 vignettes/.Rhistory
 vignettes/.knitr*
 vignettes/.knitr2*
@@ -44,3 +38,4 @@ vignettes/psd_overview.tex
 vignettes/tmp.R
 vignettes/yuml.fawk*
 vignettes/yuml.sh*
+^packrat/

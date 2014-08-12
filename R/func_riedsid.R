@@ -66,7 +66,7 @@ riedsid <- function(PSD, ntaper,
 #' @rdname riedsid
 #' @aliases riedsid.spec
 #' @method riedsid spec
-#' @S3method riedsid spec
+#' @export
 riedsid.spec <- function(PSD, ...){
   stopifnot(is.spec(PSD))
   Pspec <- PSD$spec
@@ -78,7 +78,7 @@ riedsid.spec <- function(PSD, ...){
 
 #' @rdname riedsid
 #' @method riedsid default
-#' @S3method riedsid default
+#' @export
 riedsid.default <- function(PSD, ntaper, 
                             tapseq=NULL, 
                             Deriv.method=c("local_qls","spg"),

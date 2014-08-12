@@ -64,14 +64,14 @@ normalize <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...) UseMethod("nor
 #' @rdname psd-normalization
 #' @aliases normalize.default
 #' @method normalize default
-#' @S3method normalize default
+#' @export
 normalize.default <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   .NotYetImplemented()
 }
 #' @rdname psd-normalization
 #' @aliases normalize.list
 #' @method normalize list
-#' @S3method normalize list
+#' @export
 normalize.list <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   stopifnot(exists("freq", where=Spec) & exists("spec", where=Spec))
   class(Spec) <- "spec"
@@ -82,7 +82,7 @@ normalize.list <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
 #' @rdname psd-normalization
 #' @aliases normalize.spec
 #' @method normalize spec
-#' @S3method normalize spec
+#' @export
 normalize.spec <- function(Spec, Fsamp=1, src=NULL, verbose=TRUE, ...){
   stopifnot(is.spec(Spec))
   #

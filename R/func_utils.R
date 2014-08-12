@@ -108,7 +108,7 @@ envir2char <- function(envir){
 vector_reshape <- function(x, vec.shape=c("horizontal","vertical")) UseMethod("vector_reshape")
 #' @rdname psd-utilities
 #' @method vector_reshape default
-#' @S3method vector_reshape default
+#' @export
 vector_reshape.default <- function(x, vec.shape=c("horizontal","vertical")){
   x <- as.vector(x)
   vec.shape <- match.arg(vec.shape)
@@ -174,7 +174,7 @@ is.tapers <- function(Obj) inherits(Obj, "tapers")
 splineGrad <- function(dseq, dsig, plot.derivs=FALSE, ...) UseMethod("splineGrad")
 #' @rdname splineGrad
 #' @method splineGrad default
-#' @S3method splineGrad default
+#' @export
 splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
   #
   # Use spline interpolation to help find an emprirical gradient
@@ -267,7 +267,7 @@ splineGrad.default <- function(dseq, dsig, plot.derivs=FALSE, ...){
 na_mat <- function(nrow, ncol=1) UseMethod("na_mat")
 #' @rdname psd-utilities
 #' @method na_mat default
-#' @S3method na_mat default
+#' @export
 na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 
 #' @description \code{zeros} populate a column-wise matrix with zeros; whereas,
@@ -282,7 +282,7 @@ na_mat.default <- function(nrow, ncol=1){matrix(NA_real_, nrow, ncol)}
 zeros <- function(nrow) UseMethod("zeros")
 #' @rdname psd-utilities
 #' @method zeros default
-#' @S3method zeros default
+#' @export
 zeros.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow)); matrix(rep.int(0, nrow), nrow=nrow)}
 
 #' @rdname psd-utilities
@@ -291,7 +291,7 @@ zeros.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nro
 ones <- function(nrow) UseMethod("ones")
 #' @rdname psd-utilities
 #' @method ones default
-#' @S3method ones default
+#' @export
 ones.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow)); matrix(rep.int(1, nrow), nrow=nrow)}
 
 #' @description \code{mod} finds the modulo division of X and Y.
@@ -321,7 +321,7 @@ ones.default <- function(nrow){stopifnot(!is.null(nrow)); nrow <- max(1,abs(nrow
 mod <- function(X, Y) UseMethod("mod")
 #' @rdname psd-utilities
 #' @method mod default
-#' @S3method mod default
+#' @export
 mod.default <- function(X, Y){
   stopifnot(is.numeric(c(X, Y)))
   ## modulo division

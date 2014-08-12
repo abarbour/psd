@@ -30,7 +30,7 @@
 pspectrum <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @method pspectrum default
-#' @S3method pspectrum default
+#' @export
 pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
@@ -103,7 +103,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Ny
 }
 #' @rdname pspectrum
 #' @method pspectrum spec
-#' @S3method pspectrum spec
+#' @export
 pspectrum.spec <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) .NotYetImplemented()
   
 
@@ -167,7 +167,7 @@ pspectrum.spec <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyqui
 pilot_spec <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @method pilot_spec default
-#' @S3method pilot_spec default
+#' @export
 pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
   stopifnot(length(ntap)==1)
   stopifnot(length(remove.AR)==1)

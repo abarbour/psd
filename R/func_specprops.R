@@ -64,7 +64,7 @@ spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FAL
 #' @rdname spectral_properties
 #' @aliases spectral_properties.spec
 #' @method spectral_properties spec
-#' @S3method spectral_properties spec
+#' @export
 spectral_properties.spec <- function(tapvec, ...){
   stopifnot(is.spec(Pspec <- tapvec))
   n.freq <- length(Pspec$freq)
@@ -76,7 +76,7 @@ spectral_properties.spec <- function(tapvec, ...){
 #' @rdname spectral_properties
 #' @aliases spectral_properties.tapers
 #' @method spectral_properties tapers
-#' @S3method spectral_properties tapers
+#' @export
 spectral_properties.tapers <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
   stopifnot(is.tapers(tapvec))
   K <- unclass(tapvec)
@@ -143,7 +143,7 @@ spec_confint <- function(dof, p = 0.95, as.db=FALSE) UseMethod("spec_confint")
 #' @rdname spec_confint
 #' @aliases spec_confint.spec
 #' @method spec_confint spec
-#' @S3method spec_confint spec
+#' @export
 spec_confint.spec <- function(dof, p = 0.95, as.db=FALSE){
   stopifnot(is.spec(dof))
   dof <- dof$df
@@ -152,7 +152,7 @@ spec_confint.spec <- function(dof, p = 0.95, as.db=FALSE){
 #' @rdname spec_confint
 #' @aliases spec_confint.tapers
 #' @method spec_confint tapers
-#' @S3method spec_confint tapers
+#' @export
 spec_confint.tapers <- function(dof, p = 0.95, as.db=FALSE){
   stopifnot(is.tapers(dof))
   # two degrees of freedom per taper 
@@ -162,7 +162,7 @@ spec_confint.tapers <- function(dof, p = 0.95, as.db=FALSE){
 #' @rdname spec_confint
 #' @aliases spec_confint.default
 #' @method spec_confint default
-#' @S3method spec_confint default
+#' @export
 spec_confint.default <- function(dof, p = 0.95, as.db=FALSE) {
   # Mostly from spec.ci, lifted from plot.spec
   if (p < 0 || p >= 1) stop("coverage probability out of range [0,1)")

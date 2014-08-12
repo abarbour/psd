@@ -11,3 +11,6 @@ psd.Rproj
 README.html
 Rprof.out
 NOBUILD/
+packrat/lib*/
+*.so
+*.o

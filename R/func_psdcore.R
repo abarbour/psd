@@ -66,7 +66,7 @@
 psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, preproc=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
 #' @rdname psdcore
 #' @method psdcore default
-#' @S3method psdcore default
+#' @export
 psdcore.default <- function(X.d, 
                             X.frq=NULL, 
                             ntaper=as.tapers(1), 
