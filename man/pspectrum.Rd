@@ -52,19 +52,21 @@ See the \strong{Adaptive estimation} section in the description of
 the \code{\link{psd-package}} for details regarding adaptive estimation.
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
+library(RColorBrewer)
 ##
 ## Adaptive multitaper PSD estimation
 ## (portions extracted from overview vignette)
+## for the Project MAGNET dataset
 ##
-require(RColorBrewer)
-##
-## adaptive estimation for the Project MAGNET dataset
+
 data(magnet)
+
 # adaptive psd estimation (turn off diagnostic plot)
 PSDr <- pspectrum(Xr <- magnet$raw, plot=FALSE)
 PSDc <- pspectrum(Xc <- magnet$clean, plot=FALSE)
+
 # plot them on the same scale
 plot(PSDc, log="dB", main="Raw and Clean Project MAGNET power spectral density",
      lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
@@ -125,7 +127,7 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
 }
 )) # end of invisible lapply
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.

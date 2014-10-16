@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## psd working environment
 ##
@@ -14,4 +14,4 @@ print(x <- psd_envGet("init"))
 #
 # Pull the adaptive history into .GlobalEnv
 get_adapt_history()
-#RDEX#}
+}#REX

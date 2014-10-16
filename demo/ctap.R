@@ -1,6 +1,7 @@
 ##
 ## Show usage of taper constaint procedures
 ##
+
 # fake taper series
 set.seed(1234)
 nd <- 2e2

@@ -27,8 +27,8 @@ all other information will be retained as an attribute.
 \code{data.frame} is an alias.
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Objects with class 'spec'
 ##
@@ -45,7 +45,7 @@ x <- psdcore(xn)
 xdf <- as.data.frame(x)
 str(xdf)
 is.tapers(xdf$taper)
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com>

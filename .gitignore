@@ -1,3 +1,4 @@
+*.Rout
 .Rproj.user
 .Rhistory
 .RData
@@ -6,6 +7,7 @@
 .git_commit_messages
 .pull
 .push
+inst/Examples/plots
 vignettes/figure/
 psd.Rproj
 README.html

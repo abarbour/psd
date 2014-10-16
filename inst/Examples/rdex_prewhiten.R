@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Using prewhiten to improve spectral estimates
 ##
@@ -25,4 +25,4 @@ PSD$spec <- PSD$spec / PSD.ar$spec
 plot(PSD, log=ylog, add=TRUE, lwd=2, col="red")
 plot(PSD.ar, log=ylog, add=TRUE, col="blue", lwd=2)
 ##
-#RDEX#}
+}#REX

@@ -32,8 +32,8 @@ inherently (at least) twice differentiable. See the \strong{Examples} for
 an illustration of this.
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Spline gradient
 ##
@@ -50,7 +50,7 @@ splineGrad(x, y, TRUE, spar=0.2)
 splineGrad(x, y, TRUE, spar=0.6)
 splineGrad(x, y, TRUE, spar=1.0)
 ##
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com>

@@ -71,8 +71,8 @@ approximate time-bandwidth product.
 }
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Spectral properties from the number of tapers used
 ## (portions extracted from overview vignette)
@@ -161,7 +161,7 @@ lines(frq, spa$stderr.chi.upper+relp, lwd=3, lty=2)
 abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 
 ##
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com>

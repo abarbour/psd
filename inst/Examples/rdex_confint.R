@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Confidence intervals from taper numbers
 ##
@@ -21,4 +21,4 @@ legend("topright",
           "approximation"),
 lwd=c(1,3,3), col=c("black","black","red"), bg="white")
 ##
-#RDEX#}
+}#REX

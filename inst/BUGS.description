@@ -1,5 +1,5 @@
 [OPEN] 002_preprocflag
-The preprocessing flags are not reflective of the
+The preprocessing flags (e.g., in 'plot') are not reflective of the
 actual preprocessing in the final product.
 
 [OPEN] 001_firstlast

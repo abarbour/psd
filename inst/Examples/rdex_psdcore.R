@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Multitaper PSD estimation
 ##
@@ -15,4 +15,4 @@ psdcore(X, ntapers=10, plotpsd=TRUE, refresh=TRUE)
 #
 # change the sampling frequency to 20
 psdcore(X, 20, 10, plotpsd=TRUE, refresh=TRUE) 
-#RDEX#}
+}#REX

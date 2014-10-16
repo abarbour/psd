@@ -18,6 +18,16 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 0.4-3 (2014-10-16)}{
+  \itemize{ 
+    \item Thanks to David Myer for catching a number of mistakes
+    in the code and documentation,
+    including a bug in \code{riedsid} from an improper choice
+    of logarithm base.
+    \item Removed the \code{Local.loss} argument from \code{riedsid}
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 0.4-2 (2014-08-05)}{
   \itemize{ 
     \item Removed unused variables in \code{ctap_simple.c} 

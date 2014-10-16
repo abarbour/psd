@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Taper constraint procedures
 ##
@@ -17,4 +17,4 @@ lines(kopt.loess, log="y", col="green")
 ## To compare all the methods at once:
 demo("ctap")
 ##
-#RDEX#}
+}#REX

@@ -4,7 +4,6 @@
 \alias{parabolic_weights.tapers}
 \alias{parabolic_weights_fast}
 \alias{parabolic_weights_fast.default}
-\alias{parabolic_weights_fast.tapers}
 \title{Calculate parabolic weighting factors.}
 \usage{
 parabolic_weights(tapvec, tap.index = 1L)
@@ -23,7 +22,7 @@ parabolic_weights_fast(ntap = 1L)
 \item{ntap}{integer; the number of tapers to provide weightings for.}
 }
 \value{
-A list with taper indices, and the weights \eqn{W_N}.
+A list with taper indices, and the weights \eqn{W_N}{w}.
 }
 \description{
 The resampled spectrum involves summing weighted tapers; this produces
@@ -34,14 +33,18 @@ If one has a \code{tapers} object, specify the \code{taper.index} to
 produce a sequence of weights up to the value at that index; the user
 is likely to never need to use this function.
 
-Weighting factors are calculated as follows:
-\deqn{W_N \equiv n_T^2 - \frac{3  K_N^2}{2 n_T (n_T - 1/4) (n_T + 1)}}
-where \eqn{n_T} is the total number of tapers, and
-\eqn{K_N} is the integer sequence \eqn{[0,n_T-1]}
+Weighting factors, \eqn{W_N}{w}, are calculated as follows:
+\deqn{
+ W_N \equiv \frac{3 (n_T^2 -   K_N^2)}{2 n_T (n_T - 1/4) (n_T + 1)}
+}{
+ w = 3 (K^2 - (k-1)^2) / (2 K (K - 1/4) (K + 1))
+}
+where \eqn{n_T}{K} is the total number of tapers, and
+\eqn{K_N}{k} is the integer sequence \eqn{[0,n_T-1]}{[0,K-1]}
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Show parabolic weighting factors
 ##
@@ -95,7 +98,7 @@ invisible(lapply(round(10**xseq), FUN=WFUN))
 WFUN(maxx)
 
 ##
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L.Parker,

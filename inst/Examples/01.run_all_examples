@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# run all the scripts to test them
+#
+set -e
+#
+mkdir -vp plots
+#
+ls rdex_*.R |\
+awk '{
+	scpt = $1
+	tmpscpt = "tmpscpt.R"
+	printf"clear\n"
+	printf"echo \"running  %s  ...\"\n",scpt
+	printf"fix_R %s > %s\n",scpt,tmpscpt
+	printf"R CMD BATCH --no-save %s\n",tmpscpt
+	printf"mv -f %sout results.%sout\n",tmpscpt,scpt
+	printf"mv -f Rplots.pdf plots/%s.pdf\n",scpt
+}END{
+	printf"cat results.rdex_*.Rout > test_results_rdex\n"
+	printf"rm -f results.rdex_*.Rout %s\n",tmpscpt
+	printf"grep Error test_results_rdex | cat\n"
+}'  > g.c.test
+chmod +x g.c.test
+g.c.test
+exit 0

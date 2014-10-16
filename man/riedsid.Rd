@@ -6,14 +6,13 @@
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.}
 \usage{
 riedsid(PSD, ntaper, tapseq = NULL, Deriv.method = c("local_qls", "spg"),
-  Local.loss = c("Optim", "Less", "More"), constrained = TRUE,
-  c.method = NULL, verbose = TRUE, ...)
+  constrained = TRUE, c.method = NULL, verbose = TRUE, ...)
 
 \method{riedsid}{spec}(PSD, ...)
 
 \method{riedsid}{default}(PSD, ntaper, tapseq = NULL,
-  Deriv.method = c("local_qls", "spg"), Local.loss = c("Optim", "Less",
-  "More"), constrained = TRUE, c.method = NULL, verbose = TRUE, ...)
+  Deriv.method = c("local_qls", "spg"), constrained = TRUE,
+  c.method = NULL, verbose = TRUE, ...)
 }
 \arguments{
 \item{PSD}{vector or class 'spec'; the spectral values used to optimize taper numbers}
@@ -23,8 +22,6 @@ riedsid(PSD, ntaper, tapseq = NULL, Deriv.method = c("local_qls", "spg"),
 \item{tapseq}{vector; representing positions or frequencies (same length as \code{PSD})}
 
 \item{Deriv.method}{character string; choice of gradient estimation method}
-
-\item{Local.loss}{string; sets how sensitive the spectral derivatives are}
 
 \item{constrained}{logical; should the taper constraints be applied to the optimum tapers?}
 
@@ -63,24 +60,21 @@ The parameter \code{Deriv.method} determines which method is used
 to estimate derivatives.
 \itemize{
 \item{\code{"local_qls"}}{ (\strong{default}) uses quadratic weighting and
-local least-squares estimation;
-then, \code{Local.loss} can alter slightly the weighting to make the derivatives more
-or less succeptible to changes in spectral values. Can be slower than \code{"spg"}.}
+local least-squares estimation; this can be slower than \code{"spg"}.}
 \item{\code{"spg"}}{ uses \code{\link{splineGrad}}; then, additional arguments
-may be passed to
-control the smoothness of the derivatives
+may be passed to control the smoothness of the derivatives
 (e.g \code{spar} in \code{smooth.spline}).}
 }
 }
 }
 \section{Warning}{
 
-The \code{"spg"} can become numerically unstable, and it's not clean when it will
-be preferred to the \code{"local_qls"} method other than for efficiency's sake.
+The \code{"spg"} can become numerically unstable, and it's not clear when it will
+be the preferred over the \code{"local_qls"} method, other than for efficiency's sake.
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Riedel-Sidorenko--Parker taper optimization
 ##
@@ -112,7 +106,7 @@ plot(rtap, log="y")
 # original tapers:
 lines(as.tapers(rep.int(ntap,nd)), col="blue")
 par(op)
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.

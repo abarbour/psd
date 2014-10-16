@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Objects with class 'spec'
 ##
@@ -16,4 +16,4 @@ x <- psdcore(xn)
 xdf <- as.data.frame(x)
 str(xdf)
 is.tapers(xdf$taper)
-#RDEX#}
+}#REX

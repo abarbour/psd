@@ -75,8 +75,8 @@ Some estimators producing single-sided spectra:
 }
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Normalization
 ##
@@ -106,7 +106,7 @@ plot(PSD, add=TRUE, col="red", log="dB")
 mean(pgram$spec)*max(pgram$freq)
 mean(PSD$spec)*max(PSD$freq)
 #
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com>

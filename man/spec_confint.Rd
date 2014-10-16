@@ -51,8 +51,8 @@ Additive uncertainties \eqn{\delta S} are returned, such that
 the spectrum with confidence interval is \eqn{S \pm \delta S}.
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Confidence intervals from taper numbers
 ##
@@ -74,7 +74,7 @@ legend("topright",
           "approximation"),
 lwd=c(1,3,3), col=c("black","black","red"), bg="white")
 ##
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com>, modified from the

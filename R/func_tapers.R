@@ -252,10 +252,14 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' produce a sequence of weights up to the value at that index; the user
 #' is likely to never need to use this function.
 #'
-#' Weighting factors are calculated as follows:
-#' \deqn{W_N \equiv n_T^2 - \frac{3  K_N^2}{2 n_T (n_T - 1/4) (n_T + 1)}}
-#' where \eqn{n_T} is the total number of tapers, and 
-#' \eqn{K_N} is the integer sequence \eqn{[0,n_T-1]} 
+#' Weighting factors, \eqn{W_N}{w}, are calculated as follows:
+#' \deqn{
+#'  W_N \equiv \frac{3 (n_T^2 -   K_N^2)}{2 n_T (n_T - 1/4) (n_T + 1)}
+#' }{
+#'  w = 3 (K^2 - (k-1)^2) / (2 K (K - 1/4) (K + 1))
+#' }
+#' where \eqn{n_T}{K} is the total number of tapers, and 
+#' \eqn{K_N}{k} is the integer sequence \eqn{[0,n_T-1]}{[0,K-1]} 
 #'
 #' @export
 #' @keywords tapers tapers-weighting
@@ -266,7 +270,7 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' @param tapvec \code{'tapers'} object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to produce a sequence of weights for
 #' @param ntap integer; the number of tapers to provide weightings for.
-#' @return A list with taper indices, and the weights \eqn{W_N}.
+#' @return A list with taper indices, and the weights \eqn{W_N}{w}.
 #'
 #' @example inst/Examples/rdex_parabolicweights.R
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
@@ -280,23 +284,21 @@ parabolic_weights.tapers <- function(tapvec, tap.index=1L){
   return(kWeights)
 }
 #' @rdname parabolic_weights
-#' @aliases parabolic_weights_fast
 #' @export
 #' @keywords tapers tapers-weighting
 parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
 #' @rdname parabolic_weights
-#' @aliases parabolic_weights_fast.tapers
 #' @method parabolic_weights_fast default
 #' @export
 parabolic_weights_fast.default <- function(ntap=1L){
-  #ntap <- max(1, as.integer(ntap[1]))
-  kseq <- K2 <- TW <- seq_len(ntap) - 1 #
+  kseq <- K2 <- TW <- seq_len(ntap) - 1
   toret <- list(taper_seq=matrix(kseq+1, ncol=ntap), taper_weights=numeric(ntap))
   K2 <- kseq * kseq # vector
   NT2 <- ntap * ntap # scalar
   NT3 <- NT2 * ntap # scalar
   #w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
-  toret$taper_weights <- matrix((NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2), ncol=ntap)
+  w <- (NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2)
+  toret$taper_weights <- matrix(w, ncol=ntap)
   return(toret)
 }
 
@@ -430,15 +432,15 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
   stopifnot(is.tapers(tapvec))
   # choose the appropriate method to apply taper constraints
   cmeth <- match.arg(constraint.method) 
-  if (cmeth=="none"){
+  tapvec.adj <- if (cmeth=="none"){
     if (verbose) warning("no taper optimization constraints applied")
-    tapvec.adj <- tapvec
+    tapvec
   } else {
     if (verbose) message(sprintf("Constraining tapers with  ...  %s  ...  method",cmeth))
     CTAPFUN <- switch(cmeth,
                       "simple.slope"=ctap_simple,
                       "loess.smooth"=ctap_loess)
-    tapvec.adj <- CTAPFUN(tapvec, tapseq, ...)
+    CTAPFUN(tapvec, tapseq, ...)
   }
   # MAX/MIN bounds
   # set the maximim tapers: Never average over more than the length of the spectrum!
@@ -456,7 +458,6 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
 }
 
 #' @rdname tapers-constraints
-#' @aliases constrain_taper_simple_slope ctap_simple
 #' @export
 #' @keywords tapers tapers-constraints
 ctap_simple <- function(tapvec, tapseq=NA, maxslope=1, ...) UseMethod("ctap_simple")
@@ -486,7 +487,7 @@ ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1
   stopifnot(is.tapers(tapvec))
   # having an x-sequence is absolutely critical to obtaining useful results
   if (is.null(tapseq)){
-    tapseq <- 1:length(tapvec)
+    tapseq <- seq_along(tapvec)
     if (verbose) warning("Generated a position sequence; results may be bogus.")
   }
   lt <- length(tapvec)
@@ -501,7 +502,6 @@ ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1
 }
 
 #' @rdname tapers-constraints
-# @export
 #' @keywords tapers tapers-constraints
 ctap_markov <- function() UseMethod("ctap_markov")
 #' @rdname tapers-constraints
@@ -510,11 +510,9 @@ ctap_markov <- function() UseMethod("ctap_markov")
 ctap_markov.tapers <- function() .Defunct("ctap_simple", package="psd")
 
 #' @rdname tapers-constraints
-# @export
 #' @keywords tapers tapers-constraints
 ctap_friedman <- function(){ UseMethod("ctap_friedman") }
 #' @rdname tapers-constraints
 #' @method ctap_friedman tapers
 #' @export
 ctap_friedman.tapers <- function()  .Defunct("ctap_simple", package="psd")
-###

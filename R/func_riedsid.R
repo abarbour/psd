@@ -25,19 +25,16 @@
 #' to estimate derivatives.
 #' \itemize{
 #' \item{\code{"local_qls"}}{ (\strong{default}) uses quadratic weighting and
-#' local least-squares estimation; 
-#' then, \code{Local.loss} can alter slightly the weighting to make the derivatives more
-#' or less succeptible to changes in spectral values. Can be slower than \code{"spg"}.}
+#' local least-squares estimation; this can be slower than \code{"spg"}.}
 #' \item{\code{"spg"}}{ uses \code{\link{splineGrad}}; then, additional arguments
-#' may be passed to
-#' control the smoothness of the derivatives
+#' may be passed to control the smoothness of the derivatives
 #' (e.g \code{spar} in \code{smooth.spline}).}
 #' }
 #' }
 #'
 #' @section Warning:
-#' The \code{"spg"} can become numerically unstable, and it's not clean when it will
-#' be preferred to the \code{"local_qls"} method other than for efficiency's sake.
+#' The \code{"spg"} can become numerically unstable, and it's not clear when it will
+#' be the preferred over the \code{"local_qls"} method, other than for efficiency's sake.
 #'
 #' @export
 #' @keywords tapers tapers-constraints riedel-sidorenko
@@ -47,7 +44,6 @@
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as \code{PSD})
 #' @param Deriv.method character string; choice of gradient estimation method 
-#' @param Local.loss string; sets how sensitive the spectral derivatives are
 #' @param constrained logical; should the taper constraints be applied to the optimum tapers?
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
@@ -59,7 +55,6 @@
 riedsid <- function(PSD, ntaper, 
                     tapseq=NULL, 
                     Deriv.method=c("local_qls","spg"),
-                    Local.loss=c("Optim","Less","More"),
                     constrained=TRUE, c.method=NULL,
                     verbose=TRUE, ...) UseMethod("riedsid")
 
@@ -82,7 +77,6 @@ riedsid.spec <- function(PSD, ...){
 riedsid.default <- function(PSD, ntaper, 
                             tapseq=NULL, 
                             Deriv.method=c("local_qls","spg"),
-                            Local.loss=c("Optim","Less","More"),
                             constrained=TRUE, c.method=NULL,
                             verbose=TRUE, ...) {
   ## spectral values
@@ -95,10 +89,10 @@ riedsid.default <- function(PSD, ntaper,
   # vectorize initial estimate
   Zeros <- zeros(nf)
   nt <- length(ntaper)
-  if (nt==1){
-    ntap <- ntaper + Zeros
+  ntap <- if (nt==1){
+    ntaper + Zeros
   } else {
-    ntap <- ntaper
+    ntaper
   }
   if (!is.tapers(ntap)) ntap <- as.tapers(ntap)
   
@@ -110,13 +104,13 @@ riedsid.default <- function(PSD, ntaper,
   nadd <- 1 + max(nspan)
   Y <- c(PSD[nadd:2], PSD, PSD[(nf-1):(nf-nadd)])
   Y[Y <= 0] <- eps
-  lY <- log10(Y) # log in matlab is log_10
+  lY <- log(Y)
   dY <- d2Y <- Zeros
   #
-  if (is.null(tapseq) | (length(tapseq) != nf)){
-    kseq <- seq.int(from=0, to=1/2, length.out=length(PSD))
+  kseq <- if (is.null(tapseq) | (length(tapseq) != nf)){
+    seq.int(from=0, to=1/2, length.out=length(PSD))
   } else {
-    kseq <- tapseq
+    tapseq
   }
   #
   # Smooth spectral derivatives
@@ -124,7 +118,7 @@ riedsid.default <- function(PSD, ntaper,
   lsmeth <- switch(match.arg(Deriv.method), local_qls=TRUE, spg=FALSE)
   stopifnot(exists("lsmeth"))
   if (lsmeth){
-    dsens <- switch(match.arg(Local.loss), Optim=12, More=6, Less=24) # 12 is optim
+    dsens <- 12 # optimal
     DFUN <- function(j, 
                      j1=j-nspan[j]+nadd-1, 
                      j2=j+nspan[j]+nadd-1, 
@@ -160,13 +154,13 @@ riedsid.default <- function(PSD, ntaper,
     #[ ,3] fdEps
     msg <- "local quadratic regression"
   } else {
-    RSS <- splineGrad(dseq=log10(0.5+kseq), #seq.int(0,.5,length.out=length(PSD))), 
-                      dsig=log10(PSD),
+    RSS <- splineGrad(dseq=log(0.5+kseq), #seq.int(0,.5,length.out=length(PSD))), 
+                      dsig=log(PSD),
                       plot.derivs=FALSE, ...) #, spar=1)
     attr(RSS, which="lsderiv") <- lsmeth
     RSS <- psd::psd_envAssignGet("spectral_derivatives", RSS) 
     #returns log
-    RSS[,2:4] <- 10**RSS[,2:4]
+    RSS[,2:4] <- exp(RSS[,2:4])
     RSS <- abs(eps + RSS[,4] + RSS[,3]**2)
     msg <- "weighted cubic spline"
   }

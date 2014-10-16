@@ -87,8 +87,8 @@ linear \emph{extrapolation} to correct these values.
 \strong{The feature will be deprecated if the supposed bug is both identified and fixed.}
 }
 \examples{
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Multitaper PSD estimation
 ##
@@ -104,7 +104,7 @@ psdcore(X, ntapers=10, plotpsd=TRUE, refresh=TRUE)
 #
 # change the sampling frequency to 20
 psdcore(X, 20, 10, plotpsd=TRUE, refresh=TRUE) 
-#RDEX#}
+}#REX
 }
 \author{
 A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L.Parker.

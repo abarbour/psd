@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Various utilities
 ##
@@ -25,6 +25,7 @@ is.tapers(as.tapers(X))
 ## Check for spec object:
 ##
 PSD <- spectrum(X, plot=FALSE)
+plot(PSD)
 # return is class 'spec'
 is.spec(PSD) # TRUE
 # but the underlying structure is just a list
@@ -68,4 +69,4 @@ all.equal(mc1a, mc1b) # TRUE
 all.equal(mc2a, mc2b) # "Mean absolute difference: 2"
 all.equal(mc2a, mc2c) # TRUE
 ##
-#RDEX#}
+}#REX

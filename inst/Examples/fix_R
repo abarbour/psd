@@ -1,0 +1,16 @@
+#!/bin/sh
+##
+## 
+## This is an important script to remove the '\dontrun' commands
+## so that these can also be included in the documentation via
+## roxygen2
+##
+##
+set -e
+#
+case $# in
+1) FI=$1;;
+*) echo "input: name-of-file-to-fix"; exit;;
+esac
+#
+sed -e 's/^\\dontrun{#REX/##----/g' -e 's/^}#REX/##----/g' ${FI}

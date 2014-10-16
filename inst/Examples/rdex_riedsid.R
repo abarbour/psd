@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Riedel-Sidorenko--Parker taper optimization
 ##
@@ -31,4 +31,4 @@ plot(rtap, log="y")
 # original tapers:
 lines(as.tapers(rep.int(ntap,nd)), col="blue")
 par(op)
-#RDEX#}
+}#REX

@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Objects with class 'tapers'
 ##
@@ -11,4 +11,4 @@ as.tapers(x<-data.frame(x=1:10,y=10:19))
 as.tapers(x, min_taper=3, max_taper=10)
 # class 'character' is in-coercible; raise error
 try(as.tapers(c("a","b")), silent=TRUE)
-#RDEX#}
+}#REX

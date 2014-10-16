@@ -1,17 +1,16 @@
 Package: psd
 Type: Package
 Title: Adaptive, sine-multitaper power spectral density estimation
-Version: 0.4-2
-Date: 2014-08-12
-Author: Robert L. Parker and Andrew J. Barbour
+Version: 0.4-3
+Date: 2014-10-16
+Author: Andrew J. Barbour and Robert L. Parker, with contributions from David
+    Myer
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
-Description: Power spectral density estimates
-    are produced through iterative refinement of the
-    optimal number of sine-tapers at each frequency.
-    The optimization procedure is based on the
-    method of Riedel and Sidorenko (1995), which applies
-    smoothing that varies with frequency to minimize the sum
-    of variance and bias at each point.
+Description: Power spectral density estimates are produced through iterative
+    refinement of the optimal number of sine-tapers at each frequency. The
+    optimization procedure is based on the method of Riedel and Sidorenko
+    (1995), which applies smoothing that varies with frequency to minimize the
+    sum of variance and bias at each point.
 License: GPL
 URL: http://abarbour.github.io/psd/
     and

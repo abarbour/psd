@@ -4,12 +4,12 @@
 ## between psdcore and spec.mtm
 ##
 ##
-require(ggplot2)
-require(plyr)
-require(multitaper)
-require(rbenchmark)
-require(reshape2)
-require(psd)
+library(ggplot2)
+library(plyr)
+library(multitaper)
+library(rbenchmark)
+library(reshape2)
+library(psd)
 #
 reps <- 10
 PSD <- psdcore
@@ -33,6 +33,8 @@ nds <- round(10**seq.int(from=1,to=5,by=0.15))
 allbench <- lapply(X=nds, FUN=function(x) run.bench(nd=x))
 # manipulate into data.frame
 allbench.df <- plyr::ldply(allbench)
+# save
+save(allbench.df, file="benchmarking_data.rda")
 tests <- unique(allbench.df$test)
 # drop some info
 allbench.df.drp <- subset(allbench.df, select = c(test, num_terms, user.self, sys.self, elapsed, relative))

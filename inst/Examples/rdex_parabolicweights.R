@@ -1,5 +1,5 @@
-#RDEX#\dontrun{
-require(psd)
+\dontrun{#REX
+library(psd)
 ##
 ## Show parabolic weighting factors
 ##
@@ -53,4 +53,4 @@ invisible(lapply(round(10**xseq), FUN=WFUN))
 WFUN(maxx)
 
 ##
-#RDEX#}
+}#REX
