@@ -41,7 +41,8 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     //--------------------------------------------//
     //
     //--------------------------------------------//
-    int state, i, l;
+    int state, i;
+    //, l; //unused
     // forward indices
     int i_min_f = 1, i_max_f = ssize - 1;
     // reverse indices
@@ -53,7 +54,7 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     if(maxslope <= 0)
         Rf_error( "max slope must greater than zero" );
     //
-    double working_space[ssize];
+    // double working_space[ssize]; // unused
     //
     // RLPs algorithm
     //  #  Scan forward to bound slopes >= 1
