@@ -20,7 +20,9 @@ inst/Examples/01.run_all_examples
 inst/Examples/test_results_rdex
 inst/Examples/Makefile
 inst/Examples/plots
+inst/Examples/g.c.*
 inst/Examples/*.Rout
+inst/Examples/.Rhistory
 
 BUGS
 BUGS.description
@@ -30,6 +32,7 @@ Rprof.out
 WISHLISH
 TODO
 
+vignettes/.gitignore
 vignettes/.Rhistory
 vignettes/.knitr*
 vignettes/.knitr2*

@@ -110,7 +110,7 @@ psdcore(X, 20, 10, plotpsd=TRUE, refresh=TRUE)
 A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L.Parker.
 }
 \seealso{
-\code{\link{pspectrum}}, \code{\link{riedsid}}
+\code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}
 }
 \keyword{normalization}
 \keyword{prewhiten}

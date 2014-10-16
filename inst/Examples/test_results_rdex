@@ -46,7 +46,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.325   0.025   0.343 
+  0.329   0.025   0.347 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -149,7 +149,7 @@ Warning messages:
 > 
 > proc.time()
    user  system elapsed 
-  0.462   0.031   0.493 
+  0.461   0.029   0.492 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -212,7 +212,7 @@ Normalized  single-sided PSD  (PSD)  to single-sided PSD for sampling-freq.  1
 > 
 > proc.time()
    user  system elapsed 
-  0.364   0.029   0.395 
+  0.356   0.027   0.385 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -305,7 +305,7 @@ Loading required package: RColorBrewer
 > 
 > proc.time()
    user  system elapsed 
-  0.364   0.028   0.385 
+  0.352   0.026   0.371 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -343,7 +343,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.505   0.032   0.530 
+  0.489   0.030   0.513 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -398,7 +398,7 @@ autoregressive model fit (returning innovations)
 > 
 > proc.time()
    user  system elapsed 
-  0.490   0.034   0.525 
+  0.488   0.031   0.520 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -441,7 +441,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.441   0.029   0.474 
+  0.434   0.028   0.463 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -474,7 +474,7 @@ $env_name
 [1] ".psdEnv"
 
 $env_pointer
-<environment: 0x7fc7ba158190>
+<environment: 0x7fa0ba959190>
 
 $env_is_env
 [1] TRUE
@@ -486,7 +486,7 @@ $env_init
 [1] "initialized upon attach"
 
 $env_status_stamp
-[1] "2014-10-16 13:46:58 PDT"
+[1] "2014-10-16 14:55:40 PDT"
 
 > #
 > # Get a list of all variables
@@ -507,7 +507,7 @@ In psd::psd_envGet("histlist") :
 > 
 > proc.time()
    user  system elapsed 
-  0.266   0.024   0.283 
+  0.274   0.026   0.292 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -637,7 +637,7 @@ Normalized  single-sided PSD  (PSD)  to single-sided PSD for sampling-freq.  1
 > 
 > proc.time()
    user  system elapsed 
-  1.581   0.049   1.633 
+  1.544   0.047   1.601 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -698,7 +698,7 @@ Constraining tapers with  ...  simple.slope  ...  method
 > 
 > proc.time()
    user  system elapsed 
-  0.342   0.027   0.362 
+  0.336   0.025   0.355 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -774,7 +774,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.311   0.025   0.330 
+  0.311   0.026   0.330 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -898,7 +898,7 @@ Normalized  single-sided PSD  (PSD)  to single-sided PSD for sampling-freq.  1
 > 
 > proc.time()
    user  system elapsed 
-  0.737   0.036   0.776 
+  0.722   0.036   0.760 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -942,7 +942,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.379   0.029   0.410 
+  0.372   0.028   0.402 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -996,7 +996,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.268   0.024   0.286 
+  0.270   0.025   0.288 
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
@@ -1085,7 +1085,7 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > print(envname <- get_psd_env_name())
 [1] ".psdEnv"
 > print(envir <- char2envir(envname))
-<environment: 0x7ff8151c2790>
+<environment: 0x7ff31c959190>
 > try(char2envir("some nonexistent environment"), silent=TRUE) # error
 > # and environment objects:
 > print(.GlobalEnv)
@@ -1135,4 +1135,4 @@ Loaded psd (0.4.3) -- Adaptive multitaper spectrum estimation.
 > 
 > proc.time()
    user  system elapsed 
-  0.330   0.026   0.350 
+  0.326   0.025   0.345 

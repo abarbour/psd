@@ -60,10 +60,11 @@
 #' @export
 #' @keywords spectrum-estimation normalization prewhiten
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
-#' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}
+#' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}
 #'
 #' @example inst/Examples/rdex_psdcore.R
 psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, preproc=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
+
 #' @rdname psdcore
 #' @method psdcore default
 #' @export
@@ -86,9 +87,10 @@ psdcore.default <- function(X.d,
   series <- deparse(substitute(X.d))
   if (is.null(X.frq)){
     # make some assumptions about the sampling rate
-    X.frq <- 1
-    if (is.ts(X.d)){
-      X.frq <- stats::frequency(X.d)
+    X.frq <- if (is.ts(X.d)){
+      stats::frequency(X.d)
+    } else {
+      1
     }
     if (verbose) message(sprintf("Sampling frequency assumed to be  %f", X.frq))
   } else if (X.frq > 0){
@@ -110,12 +112,15 @@ psdcore.default <- function(X.d,
   lt <- length(ntaper)
   # onle one variable in the env (init): it hasn't been added to yet
   nenvar <- length(psd::psd_envStatus()$listing)
-  if (lt == 1 | nenvar == 1 | refresh){
+  fftz <- if (lt == 1 | nenvar == 1 | refresh){
     # original series length
     n.o <- psd::psd_envAssignGet("len_orig", length(X.d))
     #
-    X <- X.d
-    if (preproc) X <- prewhiten(X, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
+    X <- if (preproc){
+      prewhiten(X.d, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
+    } else {
+      X.d
+    }
     #
     # Force series to be even in length (modulo division)
     # nextn(factors=2) ?
@@ -137,7 +142,7 @@ psdcore.default <- function(X.d,
     ## zero pad and take double-length fft
     # fftw is faster (becomes apparent for long series)
     fftz <- fftw::FFT(as.numeric(c(X.even, zeros(n.e))))
-    fftz <- psd::psd_envAssignGet("fft_even_demeaned_padded", fftz)
+    psd::psd_envAssignGet("fft_even_demeaned_padded", fftz)
   } else {
     if (verbose){warning("Working environment *not* refreshed. Results may be bogus.")}
     X <- X.d
@@ -146,7 +151,7 @@ psdcore.default <- function(X.d,
     n.e <- psd::psd_envGet("len_even")
     nhalf <- psd::psd_envGet("len_even_half")
     varx <- psd::psd_envGet("ser_even_var")
-    fftz <- psd::psd_envGet("fft_even_demeaned_padded")
+    psd::psd_envGet("fft_even_demeaned_padded")
   }
   #
   # if ntaper is a vector, this doesn't work [ ] ?
@@ -158,12 +163,11 @@ psdcore.default <- function(X.d,
   } else {
     if (!(is.tapers(ntap))) DOAS <- TRUE
   }
-  ##TMP <<- ntap
   if (DOAS) ntap <- as.tapers(ntap, setspan=TRUE)
   
   ## interpolation
   ###  Select frequencies for PSD evaluation
-  if  (lt > 1 && ndecimate > 1){
+  f <- if  (lt > 1 && ndecimate > 1){
     stopifnot(!is.integer(ndecimate))
     if (verbose) message("decim stage 1")
     # interp1 requires strict monotonicity (for solution stability)
@@ -174,19 +178,18 @@ psdcore.default <- function(X.d,
     tmp.xi <- seq.int(0, nhalf, by=ndecimate)
     # linear interplate (x,y) to (xi,yi) where xi is decimated sequence
     tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
-    f <- c(round(tmp.yi), nhalf)
-    #iuniq <- 1 + which(diff(f) > 0)
-    f <- unique(c(0, f))   #  Remove repeat frequencies in the list
+    # Remove repeat frequencies in the list
+    unique(c(0, round(tmp.yi), nhalf))
   } else {
-    f <- base::seq.int(0, nhalf, by=1)
+    base::seq.int(0, nhalf, by=1)
   }
   ##
   ###  Calculate the PSD by averaging over tapered estimates
   nfreq <- length(f)
   NF <- seq_len(nfreq) # faster or slower than 1:nfreq?
   ##
-  if (sum(ntap) > 0) {
-    PSD <- 0 * NF
+  PSD <- if (sum(ntap) > 0) {
+    #PSD <- 0 * NF
     n2e <- n.e * 2
     fjs <- f[NF]
     fjs2 <- fjs * 2
@@ -221,14 +224,15 @@ psdcore.default <- function(X.d,
     # ** foreach is easier to follow, but foreach solution is actually slower :(
     #     PSD <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
-    PSD <- vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
+    vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
   } else {
     if (verbose) message("zero taper result == raw periodogram")
     Xfft <- psd::psd_envGet("fft_even_demeaned_padded")
     ff <- Xfft[NF]
     N0. <- psd::psd_envGet("len_orig")
-    PSD <- base::abs(ff * base::Conj(ff)) / N0.
+    base::abs(ff * base::Conj(ff)) / N0.
   }
+  
   ##  Interpolate if necessary to uniform freq sampling
   if (lt > 1 && ndecimate > 1){
     ## check [ ]
@@ -238,12 +242,12 @@ psdcore.default <- function(X.d,
     tmp.y <- PSD
     # x y x_interp --> y_interp
     tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
-    PSD <- tmp.yi
+    tmp.yi
   }
-  ##
+  
   # should not be complex at this point!!
   stopifnot(!is.complex(PSD))
-  #PSD <- as.rowvec(PSD)
+  
   ## Normalize by variance, 
   trap.area <- base::sum(PSD) - PSD[1]/2 - PSD[length(PSD)]/2 # Trapezoidal rule
   bandwidth <- 1 / nhalf
@@ -303,7 +307,6 @@ psdcore.default <- function(X.d,
          xaxs="i", xlab="", xlim=xlims,
          ylab="dB, units^2 * delta", ylim=ylims)
     mtext("log10 frequency", side=1, line=1.6)
-    #mtext(, cex=0.6)
     abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
     lines(lfrq, db_PSD, type="l")
     legend("bottomleft",c("spec.pgram (20% cosine taper)",sprintf("psdcore (max %i tapers)",max(taps))), col=c("red","black"), lty=1, lwd=2, cex=0.9)
@@ -323,10 +326,11 @@ psdcore.default <- function(X.d,
     ## reset params
     par(opar)
   }
+  
   ## Plot it
   if (plotpsd) pltpsd(Xser=X, frqs=frq, PSDS=PSD.n, taps=ntap, nyq=Nyq, detrend=preproc, demean=preproc, ...)
+  
   ##
- ## paste(as.character(match.call()[]),collapse=" ") 
   PSD.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(PSD.n), 
                   coh = NULL, 

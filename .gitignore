@@ -8,6 +8,9 @@
 .pull
 .push
 inst/Examples/plots
+vignettes/*.tex
+vignettes/*.ilg
+vignettes/*.out
 vignettes/figure/
 psd.Rproj
 README.html
@@ -16,3 +19,4 @@ NOBUILD/
 packrat/lib*/
 *.so
 *.o
+

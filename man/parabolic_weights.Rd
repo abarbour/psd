@@ -33,14 +33,14 @@ If one has a \code{tapers} object, specify the \code{taper.index} to
 produce a sequence of weights up to the value at that index; the user
 is likely to never need to use this function.
 
-Weighting factors, \eqn{W_N}{w}, are calculated as follows:
+Weighting factors, \eqn{W}{w}, are calculated as follows:
 \deqn{
- W_N \equiv \frac{3 (n_T^2 -   K_N^2)}{2 n_T (n_T - 1/4) (n_T + 1)}
+ W \equiv \frac{3 (n^2 - K^2)}{2 n (n - 1/4) (n + 1)}
 }{
- w = 3 (K^2 - (k-1)^2) / (2 K (K - 1/4) (K + 1))
+ w = 3 (k^2 - (K-1)^2) / (2 k (k - 1/4) (k + 1))
 }
-where \eqn{n_T}{K} is the total number of tapers, and
-\eqn{K_N}{k} is the integer sequence \eqn{[0,n_T-1]}{[0,K-1]}
+where \eqn{n}{k} is the total number of tapers, and
+\eqn{K}{K} is the integer sequence \eqn{[0,n-1]}{[0,K-1]}
 }
 \examples{
 \dontrun{#REX
