@@ -21,6 +21,6 @@
   psd::psd_envAssign("init", "initialized upon attach")
   ##
   packageStartupMessage(
-    sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation.",
+    sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation",
             utils::packageVersion("psd")))
 }
