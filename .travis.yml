@@ -11,7 +11,8 @@ language: c
 
 env:
   global:
-    - WARNINGS_ARE_ERRORS=1
+    # set to 1 to fail with warnings
+    - WARNINGS_ARE_ERRORS=0
     - _R_CHECK_FORCE_SUGGESTS_=0
     - BOOTSTRAP_LATEX=1
     - R_BUILD_ARGS="--no-build-vignettes --no-manual"
@@ -24,8 +25,8 @@ before_install:
   - ./travis-tool.sh bootstrap
 
 install:
+  - ./travis-tool.sh install_aptget libfftw3-dev
   - ./travis-tool.sh install_aptget r-cran-runit
-  - ./travis-tool.sh install_aptget libfftw3-dev libfftw3-doc
   - ./travis-tool.sh install_r fftw
   - ./travis-tool.sh install_r RColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2
 #  - ./travis-tool.sh install_github hadley/devtools
