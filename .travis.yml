@@ -5,14 +5,17 @@
 #   https://github.com/craigcitro/r-travis/wiki
 
 # Nabbed from https://github.com/RcppCore/Rcpp/blob/master/.travis.yml
+# modified from devtools
 
 language: c
 
 env:
   global:
+    - WARNINGS_ARE_ERRORS=1
+    - _R_CHECK_FORCE_SUGGESTS_=0
+    - BOOTSTRAP_LATEX=1
     - R_BUILD_ARGS="--no-build-vignettes --no-manual"
     - R_CHECK_ARGS="--no-build-vignettes --no-manual --as-cran"
-    - RunAllRcppTests="yes"
     - CRAN="http://cran.us.r-project.org"
 
 before_install:
@@ -22,7 +25,10 @@ before_install:
 
 install:
   - ./travis-tool.sh install_aptget r-cran-runit
-  - ./travis-tool.sh install_r inline rbenchmark highlight pkgKitten
+  - ./travis-tool.sh install_r fftw
+  - ./travis-tool.sh install_rRColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2
+#  - ./travis-tool.sh install_github hadley/devtools
+#  - ./travis-tool.sh install_github hadley/testthat
 
 script: 
   - ./travis-tool.sh run_tests
@@ -34,3 +40,4 @@ notifications:
   email:
     on_success: change
     on_failure: change
+
