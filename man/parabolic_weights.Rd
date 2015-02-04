@@ -107,6 +107,4 @@ and authored the optimized version.
 \seealso{
 \code{\link{psdcore}}, \code{\link{riedsid}}
 }
-\keyword{tapers}
-\keyword{tapers-weighting}
 

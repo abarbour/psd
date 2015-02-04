@@ -1,109 +1,32 @@
-datasets
---------
-[ ] add more fields to hfsnm: meter.type== bsm or lsm, location=anza,pfo, etc
-[X] Fix km in magnet (currently all zeros)
-[X] bsm + pp
-*** find large teleseism: list with ambient and seismic times
-*** include BSM & LSM noise model
-[-] scarb
-*** should not include? <- proprietary?
-[X] magnet
-
-performance
------------
-[ ] vapply to C
-*** riedsid [ ]
-*** psdcore [ ]
-
 Miscellany
 ----------
+[ ] Move this stuff to github (as issues/etc)
 [ ] remove untested or unstable options
 *** is there a function for deprecation?
 *** ctap_markov?
 [ ] add option for tapcap in pspectrum, rather than hardwire
 [ ] work on bugs
-[ ] revisit draft for Comp. Geosc.
-[ ] test on R 3.0, CRAN update if necessary
-*** I think CRAN checks with devel, which is 3.0.0alpha
-[X] make sure ?plot doesn't conflict
-[X] fix cran check warnings
-[X] final build/check for new CRAN submission
-[X] rename? ... to 'psd'
-[X] replace rlpSpec refs to psd
-[X] change .rlpenv to .psdenv
-[X] remove magsat documentation? where?? during build:
-	Undocumented data sets:
-	‘magsat’
-	All user-level objects in a package should have documentation entries.
-	See the chapter ‘Writing R documentation files’ in the ‘Writing R
-	Extensions’ manual.
-	*** offendor was leftover magsat.rda in ./data/
-[X] migrate examples in functions to ./inst/Examples/
-*** remove --no-examples and get to build [NA]
-*** *** why do they not build?? [X]
-*** *** because there's some environment thing going on: during example
-*** *** checking there is no pointer available to .psdenv.
-*** *** Not worth the effort to track down, so just \dontrun{} stuff
-[X] normalization function
-[X] build --as-cran --no-multiarch --no-examples
-[X] remove references to src/ctap_simple.c and test build {[X]}
 
-manual
-------
-[X] reword AR spectrum section
-
-vignettes
+Vignettes
 ---------
-[X] reword AR spectrum section
-[X] revise normalization with RLPs suggestions
-[X] check out resolution
-*** is it just uncertainty?
-[X] revise overview with DCAs suggestions
-[-] create pdfs to replace <eval=TRUE> statements with <includegraphics>
-[X] finish norm
-[X] develop overview
+[ ] migrate to Rmd format (knitr)
+
+Functions
+---------
+[ ] write new function, `update`
+*** .spec method, to replace contents in pspectrum for loop and to allow for `updating" results from `spectrum` [ ]
 
 `spectral_properties`
 ---------------------
-[X] check formulas for various quantities
-*** finish documentation [X]
-*** consult Bob
+[?] function to plot
 
-Examples
+Datasets
 --------
-[X] test examples
-[X] constrain_tapers
-[X] parabolic_weights
-[X] prewhiten
-[X] pilot_spec
-[X] psd-environment
-[X] psd-normalization
-[X] spectral_properties
-[X] spec_confint
-[X] psdcore
-[X] pspectrum (improve)
+[?] add more fields to hfsnm: meter.type== bsm or lsm, location=anza,pfo, etc
 
-`psdcore`
+performance
 -----------
-[X] option to prevent environment clashes
-
-`pspectrum`
------------
-[X] ensure normalization occurs only once!
-*** in pilot spec or not?!  [X]
-[X] option to show final with raw periodogram
-*** ensure Nyquist.normalize affects pgram too [X]
-[X] improve function documentation
-[X] add option to change constraint method for riedsid
-
-`riedsid`
----------
-[X] riedsid.spec method
-***  test it [X] (looks fine)
-
-demos
------
-[-] fix mag (now in vignette)
-*** remove demo file
-*** plotting adaptive history [X] (in overview vign)
+[ ] vapply to c++
+*** riedsid [ ]
+*** psdcore [ ]
 

@@ -125,8 +125,6 @@ tapers <- as.tapers
 NULL
 
 #' @rdname tapers-methods
-# @name as.data.frame.tapers
-#' @method as.data.frame tapers
 #' @export
 as.data.frame.tapers <- function(x, ...){
   df <- as.data.frame.numeric(x)
@@ -134,15 +132,11 @@ as.data.frame.tapers <- function(x, ...){
   return(df)
 }
 #' @rdname tapers-methods
-# @name data.frame.tapers
-#' @method data.frame tapers
 #' @export
 data.frame.tapers <- as.data.frame.tapers
 
 #' @rdname tapers-methods
-# @name print
 #' @aliases print.tapers
-#' @method print tapers
 #' @export
 print.tapers <- function(x, ...){
   stopifnot(is.tapers(x))
@@ -152,9 +146,7 @@ print.tapers <- function(x, ...){
 }
 
 #' @rdname tapers-methods
-# @name summary
 #' @aliases summary.tapers
-#' @method summary tapers
 #' @export
 summary.tapers <- function(object, ...){
   stopifnot(is.tapers(object))
@@ -164,9 +156,7 @@ summary.tapers <- function(object, ...){
 }
 
 #' @rdname tapers-methods
-# @name print
 #' @aliases print.summary.tapers
-#' @method print summary.tapers
 #' @export
 print.summary.tapers <- function(x, ...){
   cat("summary of tapers:\n")
@@ -174,9 +164,7 @@ print.summary.tapers <- function(x, ...){
 }
 
 #' @rdname tapers-methods
-# @name lines
 #' @aliases lines.tapers
-#' @method lines tapers
 #' @export
 lines.tapers <- function(x, lwd=1.8, col="red", ...){
   stopifnot(is.tapers(x))
@@ -187,9 +175,7 @@ lines.tapers <- function(x, lwd=1.8, col="red", ...){
 }
 
 #' @rdname tapers-methods
-# @name points
 #' @aliases points.tapers
-#' @method points tapers
 #' @export
 points.tapers <- function(x, pch="_", cex=1, ...){
   stopifnot(is.tapers(x))
@@ -200,9 +186,7 @@ points.tapers <- function(x, pch="_", cex=1, ...){
 }
 
 #' @rdname tapers-methods
-# @name plot
 #' @aliases plot.tapers
-#' @method plot tapers
 #' @export
 plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, hv.lines=FALSE, ...){
   stopifnot(is.tapers(x))
@@ -262,7 +246,6 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' \eqn{K}{K} is the integer sequence \eqn{[0,n-1]}{[0,K-1]} 
 #'
 #' @export
-#' @keywords tapers tapers-weighting
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker,
 #' and authored the optimized version.
 #' @seealso \code{\link{psdcore}}, \code{\link{riedsid}}
@@ -276,7 +259,6 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
 #' @rdname parabolic_weights
 #' @aliases parabolic_weights.tapers
-#' @method parabolic_weights tapers
 #' @export
 parabolic_weights.tapers <- function(tapvec, tap.index=1L){
   stopifnot(is.tapers(tapvec) | ((tap.index > 0L) & (tap.index <= length(tapvec))))
@@ -285,10 +267,8 @@ parabolic_weights.tapers <- function(tapvec, tap.index=1L){
 }
 #' @rdname parabolic_weights
 #' @export
-#' @keywords tapers tapers-weighting
 parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
 #' @rdname parabolic_weights
-#' @method parabolic_weights_fast default
 #' @export
 parabolic_weights_fast.default <- function(ntap=1L){
   kseq <- K2 <- TW <- seq_len(ntap) - 1
@@ -315,7 +295,6 @@ parabolic_weights_fast.default <- function(ntap=1L){
 #' constraints on the number of actual tapers applied; this is
 #' because the derivatives of "noisy" series can be bogus.
 #'
-#' @keywords tapers tapers-constraints riedel-sidorenko
 #' @rdname tapers-constraints
 #' @name tapers-constraints
 NULL
@@ -346,7 +325,6 @@ NULL
 minspan <- function(tapvec, ...) UseMethod("minspan")
 #' @rdname tapers-constraints
 #' @aliases minspan.tapers
-#' @method minspan tapers
 #' @export
 minspan.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
@@ -422,7 +400,6 @@ constrain_tapers <- function(tapvec, tapseq=NULL,
                              verbose=TRUE, ...) UseMethod("constrain_tapers")
 #' @rdname tapers-constraints
 #' @aliases constrain_tapers.tapers
-#' @method constrain_tapers tapers
 #' @export
 constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
                                    constraint.method=c("simple.slope",
@@ -459,11 +436,9 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
 
 #' @rdname tapers-constraints
 #' @export
-#' @keywords tapers tapers-constraints
 ctap_simple <- function(tapvec, tapseq=NA, maxslope=1, ...) UseMethod("ctap_simple")
 #' @rdname tapers-constraints
 #' @aliases ctap_simple.tapers
-#' @method ctap_simple tapers
 #' @export
 ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
   stopifnot(is.tapers(tapvec))
@@ -478,10 +453,8 @@ ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
 
 #' @rdname tapers-constraints
 #' @export
-#' @keywords tapers tapers-constraints
 ctap_loess <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){ UseMethod("ctap_loess") }
 #' @rdname tapers-constraints
-#' @method ctap_loess tapers
 #' @export
 ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
   stopifnot(is.tapers(tapvec))
@@ -502,17 +475,10 @@ ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1
 }
 
 #' @rdname tapers-constraints
-#' @keywords tapers tapers-constraints
 ctap_markov <- function() UseMethod("ctap_markov")
 #' @rdname tapers-constraints
-#' @method ctap_markov tapers
-#' @export
 ctap_markov.tapers <- function() .Defunct("ctap_simple", package="psd")
 
 #' @rdname tapers-constraints
-#' @keywords tapers tapers-constraints
 ctap_friedman <- function(){ UseMethod("ctap_friedman") }
-#' @rdname tapers-constraints
-#' @method ctap_friedman tapers
-#' @export
 ctap_friedman.tapers <- function()  .Defunct("ctap_simple", package="psd")

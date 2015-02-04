@@ -3,7 +3,6 @@
 \alias{constrain_tapers}
 \alias{constrain_tapers.tapers}
 \alias{ctap_friedman}
-\alias{ctap_friedman.tapers}
 \alias{ctap_loess}
 \alias{ctap_loess.tapers}
 \alias{ctap_markov}
@@ -42,8 +41,6 @@ ctap_markov()
 \method{ctap_markov}{tapers}()
 
 ctap_friedman()
-
-\method{ctap_friedman}{tapers}()
 }
 \arguments{
 \item{tapvec}{\code{'tapers'} object; the number of tapers at each frequency}
@@ -158,7 +155,6 @@ and wrote the main function in \code{\link{ctap_simple}} for dynamic loading C-c
 \seealso{
 \code{\link{splineGrad}}, \code{\link{riedsid}}
 }
-\keyword{riedel-sidorenko}
 \keyword{tapers}
 \keyword{tapers-constraints}
 

@@ -3,11 +3,18 @@
 \alias{pspectrum}
 \alias{pspectrum.default}
 \alias{pspectrum.spec}
+\alias{pspectrum.ts}
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
 pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3, AR = FALSE,
   Nyquist.normalize = TRUE, verbose = TRUE, no.history = FALSE,
   plot = FALSE, ...)
+
+\method{pspectrum}{ts}(x, ...)
+
+\method{pspectrum}{spec}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
+  AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
+  no.history = FALSE, plot = FALSE, ...)
 
 \method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
@@ -20,7 +27,7 @@ pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3, AR = FALSE,
 \arguments{
 \item{x}{vector; series to estimate PSD for.}
 
-\item{x.frqsamp}{scalar; the sampling rate (e.g. Hz) of the series \code{x}.}
+\item{x.frqsamp}{scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.}
 
 \item{ntap.init}{scalar; the number of sine tapers to use in the pilot spectrum estimation.}
 

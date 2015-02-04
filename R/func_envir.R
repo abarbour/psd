@@ -201,6 +201,13 @@ new_adapt_history <- function(adapt_stages){
 #' @export
 #' @rdname psd-environment
 get_adapt_history <- function() psd::psd_envGet("histlist")
+#' @export
+#' @rdname psd-environment
+last_psd <- function(){
+  fp <- psd::psd_envGet("final_psd")
+  if (is.null(fp)) stop('last psd not available')
+  return(fp)
+}
 
 #' @description \code{update_adapt_history} updates the adaptive estimation history list.
 #' @rdname psd-environment

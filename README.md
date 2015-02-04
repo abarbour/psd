@@ -106,7 +106,7 @@ will be useful:
 
     install.packages("devtools", dependencies=TRUE)
     library(devtools)
-    install_github("psd", username = "abarbour")
+    install_github("abarbour/psd")
 
 [1]: http://dx.doi.org/10.1016/j.cageo.2013.09.015
 [2]: http://cran.r-project.org/web/packages/devtools

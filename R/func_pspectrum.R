@@ -14,7 +14,7 @@
 #' @keywords spectrum-estimation riedel-sidorenko tapers tapers-constraints tapers-weighting numerical-derivative
 #' 
 #' @param x vector; series to estimate PSD for.
-#' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}.
+#' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.
 #' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation.
 #' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum.
 #' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
@@ -29,7 +29,17 @@
 #' @example inst/Examples/rdex_pspectrum.R
 pspectrum <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
-#' @method pspectrum default
+#' @export
+pspectrum.ts <- function(x, ...){
+  frq <- frequency(x)
+  pspectrum(as.vector(x), x.frqsamp=frq)  
+}
+#' @rdname pspectrum
+#' @export
+pspectrum.spec <- function(x, ...){
+  .NotYetImplemented()
+}
+#' @rdname pspectrum
 #' @export
 pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)

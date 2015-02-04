@@ -4,6 +4,7 @@
 \alias{get_adapt_history}
 \alias{get_psd_env_name}
 \alias{get_psd_env_pointer}
+\alias{last_psd}
 \alias{new_adapt_history}
 \alias{psd-environment}
 \alias{psd_envAssign}
@@ -37,6 +38,8 @@ psd_envAssignGet(variable, value)
 new_adapt_history(adapt_stages)
 
 get_adapt_history()
+
+last_psd()
 
 update_adapt_history(stage, ntap, PSD, freq = NULL)
 }

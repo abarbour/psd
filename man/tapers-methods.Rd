@@ -14,7 +14,7 @@
 \usage{
 \method{as.data.frame}{tapers}(x, ...)
 
-\method{data.frame}{tapers}(x, ...)
+data.frame.tapers(x, ...)
 
 \method{print}{tapers}(x, ...)
 
