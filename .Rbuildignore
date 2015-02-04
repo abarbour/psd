@@ -45,6 +45,9 @@ vignettes/normalization.pdf
 vignettes/normalization.tex
 vignettes/psd_overview.pdf
 vignettes/psd_overview.tex
+vignettes/*.ilg
+vignettes/*.out
+vignettes/*.toc
 vignettes/tmp.R
 vignettes/yuml.fawk*
 vignettes/yuml.sh*

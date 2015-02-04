@@ -11,6 +11,7 @@ inst/Examples/plots
 vignettes/*.tex
 vignettes/*.ilg
 vignettes/*.out
+vignettes/*.toc
 vignettes/figure/
 psd.Rproj
 README.html

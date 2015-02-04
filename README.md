@@ -3,7 +3,7 @@
 
 Adaptive, sine multitaper power spectral density estimation for R
 
-##by Andrew J Barbour and Robert L Parker##
+by Andrew J Barbour and Robert L Parker
 
 ###Description###
 This is an `R`
