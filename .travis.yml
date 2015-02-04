@@ -26,7 +26,7 @@ before_install:
 install:
   - ./travis-tool.sh install_aptget r-cran-runit
   - ./travis-tool.sh install_r fftw
-  - ./travis-tool.sh install_rRColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2
+  - ./travis-tool.sh install_r RColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2
 #  - ./travis-tool.sh install_github hadley/devtools
 #  - ./travis-tool.sh install_github hadley/testthat
 
