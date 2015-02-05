@@ -54,7 +54,7 @@
 #' @useDynLib psd
 #'
 #' @references Parker, R. L., \emph{PSD}, Program documentation. \emph{Maintained Software}, N.p. 11 Nov. 2011,
-#' Web. 17 Jan. 2013, <\url{http://igppweb.ucsd.edu/\%7Eparker/Software/\#PSD}>.
+#' Web. 17 Jan. 2013, <\url{http://igppweb.ucsd.edu/\%7Eparker/Software}>
 #'
 #' @references Percival, D. B., and A.T. Walden (1993),
 #' Spectral analysis for physical applications,

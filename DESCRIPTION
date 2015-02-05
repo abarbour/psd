@@ -12,9 +12,9 @@ Description: Produces power spectral density estimates through iterative
     (1995), which minimizes the Mean Square Error (sum of variance and bias)
     at each frequency, but modified for computational stability.
 License: GPL (>= 2)
-URL: https://github.com/abarbour/psd
-Citation: http://dx.doi.org/10.1016/j.cageo.2013.09.015
-BugRepots: https://github.com/abarbour/psd/issues
+URL: https://github.com/abarbour/psd,
+    http://dx.doi.org/10.1016/j.cageo.2013.09.015
+BugReports: https://github.com/abarbour/psd/issues
 Depends:
     R (>= 2.14.1),
     stats,

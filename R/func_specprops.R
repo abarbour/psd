@@ -168,7 +168,7 @@ spec_confint.default <- function(dof, p = 0.95, as.db=FALSE) {
   if (p < 0 || p >= 1) stop("coverage probability out of range [0,1)")
   ptail <- (1 - p)
   # qchisq gives distribution function
-  # if TRUE (default), probabilities are P[X ≤ x], otherwise, P[X > x]
+  # if TRUE (default), probabilities are P[X <= x], otherwise, P[X > x]
   upper.qp <- 1 - ptail * pchisq(dof, dof, lower.tail = FALSE)
   med.qp <-  0.5 * pchisq(dof, dof, lower.tail = TRUE)
   lower.qp <- ptail * pchisq(dof, dof, lower.tail = TRUE)
