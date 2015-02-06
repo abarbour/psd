@@ -23,6 +23,7 @@ Depends:
     grDevices,
     fftw (>= 1.0-3)
 Imports:
+    Rcpp,
     RColorBrewer,
     signal,
     zoo
