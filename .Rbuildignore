@@ -21,6 +21,7 @@ inst/Examples/01.run_all_examples
 inst/Examples/test_results_rdex
 inst/Examples/Makefile
 inst/Examples/plots
+inst/Examples/tmp*
 inst/Examples/g.c.*
 inst/Examples/*.Rout
 inst/Examples/.Rhistory

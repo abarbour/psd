@@ -1,9 +1,7 @@
-#' Perform adaptive estimation 
-#' of the power spectral density (PSD) using the sine multitapers in which
-#' the number of tapers (and hence the resolution and uncertainty) 
-#' vary according to spectral shape. 
-#' The main function to be used 
-#' is \code{\link{pspectrum}}.
+#' Perform adaptive estimation of the power spectral density (PSD) 
+#' using the sine multitapers in which the number of tapers 
+#' (and hence the resolution and uncertainty) vary according to 
+#' spectral shape. The main function to be used is \code{\link{pspectrum}}.
 #'
 #' @details
 #' In frequency ranges where the spectrum  (\eqn{S})
@@ -46,13 +44,22 @@
 #' @docType package
 #' @name psd-package
 #' @aliases psd spec.psd
-#' @title Adaptively estimate power spectral densities of an optimally tapered series.
+#' @title Power spectral density estimates using optimal sine tapers
 #' 
-#' @author Robert L. Parker and Andrew J. Barbour <andy.barbour@@gmail.com> 
+#' @author Andrew J. Barbour and Robert L. Parker<andy.barbour@@gmail.com> 
 #' 
-#' @import fftw RColorBrewer signal zoo
+#' 
 #' @useDynLib psd
+#' @exportPattern "^[[:alpha:]]+"
+#' @import fftw RColorBrewer signal zoo
+#' @importFrom Rcpp evalCpp
 #'
+#'
+#' @references Barbour, A. J. and R. L. Parker, (2014), 
+#' psd: Adaptive, sine multitaper power spectral density estimation for R,
+#' \emph{Computers and Geosciences}, \strong{63}, 1--8,
+#' <\url{http://dx.doi.org/10.1016/j.cageo.2013.09.015}>
+#' 
 #' @references Parker, R. L., \emph{PSD}, Program documentation. \emph{Maintained Software}, N.p. 11 Nov. 2011,
 #' Web. 17 Jan. 2013, <\url{http://igppweb.ucsd.edu/\%7Eparker/Software}>
 #'

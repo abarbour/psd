@@ -238,9 +238,9 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #'
 #' Weighting factors, \eqn{W}{w}, are calculated as follows:
 #' \deqn{
-#'  W \equiv \frac{3 (n^2 - K^2)}{2 n (n - 1/4) (n + 1)}
+#'  W \equiv \frac{6 (n^2 - K^2)}{n (4 * n - 1) (n + 1)}
 #' }{
-#'  w = 3 (k^2 - (K-1)^2) / (2 k (k - 1/4) (k + 1))
+#'  w = 6 (k^2 - (K-1)^2) / (k (4 * k - 1) (k + 1))
 #' }
 #' where \eqn{n}{k} is the total number of tapers, and 
 #' \eqn{K}{K} is the integer sequence \eqn{[0,n-1]}{[0,K-1]} 
@@ -268,17 +268,26 @@ parabolic_weights.tapers <- function(tapvec, tap.index=1L){
 #' @rdname parabolic_weights
 #' @export
 parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
+
 #' @rdname parabolic_weights
 #' @export
 parabolic_weights_fast.default <- function(ntap=1L){
-  kseq <- K2 <- TW <- seq_len(ntap) - 1
-  toret <- list(taper_seq=matrix(kseq+1, ncol=ntap), taper_weights=numeric(ntap))
-  K2 <- kseq * kseq # vector
-  NT2 <- ntap * ntap # scalar
-  NT3 <- NT2 * ntap # scalar
-  #w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
-  w <- (NT2 - K2) * 3/(2*NT3 + NT2*3/2 - ntap/2)
-  toret$taper_weights <- matrix(w, ncol=ntap)
+  # Must be long-integer, otherwise overflow for ntap > 1e3
+  K <- as.double(ntap)
+  kseq <- seq_len(ntap) - 1
+  #
+  ksq <- kseq * kseq # vector
+  K2 <- K * K   	   # scalar
+  K3 <- K2 * K 		   # scalar
+  #
+  # orig: w = (tapers^2 - (k-1).^2) * (1.5/(tapers*(tapers-0.25)*(tapers+1)));
+  # or:       (tapers^2 - (k-1).^2) * 3/(2*K3 + K2*3/2 - K/2)
+  # or:
+  w <- (K2 - ksq) * 6 / ( 4 * K3  +  3 * K2  -  K )
+  #
+  toret <- list(taper_seq = matrix(kseq + 1, ncol=ntap),
+                taper_weights = matrix(w, ncol=ntap)
+  )
   return(toret)
 }
 

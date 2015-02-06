@@ -7,7 +7,11 @@
 .git_commit_messages
 .pull
 .push
+
 inst/Examples/plots
+inst/Examples/g.c.*
+inst/Examples/tmpscpt.R
+
 vignettes/*.tex
 vignettes/*.ilg
 vignettes/*.out
@@ -20,4 +24,3 @@ NOBUILD/
 packrat/lib*/
 *.so
 *.o
-

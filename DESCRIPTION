@@ -36,3 +36,4 @@ Suggests:
     rbenchmark,
     reshape2
 VignetteBuilder: knitr
+LinkingTo: Rcpp

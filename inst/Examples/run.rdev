@@ -1,0 +1,6 @@
+echo "running  rdex_parabolicweights.R  ..."
+fix_R rdex_parabolicweights.R > tmpscpt.R
+R CMD BATCH --no-save tmpscpt.R
+mv -f tmpscpt.Rout results.rdex_parabolicweights.Rout
+mv -f Rplots.pdf plots/rdex_parabolicweights.R.pdf
+open plots/rdex_parabolicweights.R.pdf
