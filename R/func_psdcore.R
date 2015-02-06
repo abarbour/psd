@@ -200,6 +200,10 @@ psdcore.default <- function(X.d,
     #KPWM <- parabolic_weights_fast(max(ntap))
     
     PSDFUN <- function(fj, fi=fj+1, fj2=fjs2[fi], n2.e=n2e, ntaps=ntap, Xfft=fftz){
+      #
+      # goes through fj frequency index, and reweights spectra based on
+      # quadratic weighting scheme
+      #
       # number tapers (for subsetting)
       NT <- ntaps[fi]
       #NT <- base::seq_len(NT)
