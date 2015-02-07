@@ -490,4 +490,5 @@ ctap_markov.tapers <- function() .Defunct("ctap_simple", package="psd")
 
 #' @rdname tapers-constraints
 ctap_friedman <- function(){ UseMethod("ctap_friedman") }
+#' @rdname tapers-constraints
 ctap_friedman.tapers <- function()  .Defunct("ctap_simple", package="psd")

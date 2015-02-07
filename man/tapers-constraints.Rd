@@ -3,6 +3,7 @@
 \alias{constrain_tapers}
 \alias{constrain_tapers.tapers}
 \alias{ctap_friedman}
+\alias{ctap_friedman.tapers}
 \alias{ctap_loess}
 \alias{ctap_loess.tapers}
 \alias{ctap_markov}
@@ -41,6 +42,8 @@ ctap_markov()
 \method{ctap_markov}{tapers}()
 
 ctap_friedman()
+
+\method{ctap_friedman}{tapers}()
 }
 \arguments{
 \item{tapvec}{\code{'tapers'} object; the number of tapers at each frequency}
