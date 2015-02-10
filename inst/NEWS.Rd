@@ -3,20 +3,43 @@
 % -*- coding: utf-8 -*-
 %%\newcommand{\PR}{\Sexpr[results=rd]{tools:::Rd_expr_PR(#1)}}
 %%\newcommand{\Rlogo}{\if{html}{\figure{../../html/logo.jpg}}\if{latex}{\figure{logo.jpg}{options: width=0.5in}}}
-\newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
-\newcommand{\psd}{\CRANpkg{psd}}
+\newcommand{\GITpkg}{\href{http://www.github.com/abarbour/#1}{github}}
+\newcommand{\CRANpkg}{\href{http://cran.r-project.org/package=#1}{CRAN}}
+\newcommand{\psd}{\pkg{psd}}
+\newcommand{\gitpsd}{\GITpkg{psd} page}
 \newcommand{\citation}{\href{http://dx.doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
-\title{News for package 'psd'}
+\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \href{https://travis-ci.org/abarbour/psd}{Travis-CI}}
+
 \encoding{UTF-8}
 
-% template vim:5Y
+% template vim:6Y from below here
 %
 %\section{CHANGES IN \psd{} VERSION X.Y-Z (XXXX-YY-ZZ)}{
 %  \itemize{ \item \code{} }
 %}
 %
+
+% 0.5 -- the Rcpp era begins
+\section{CHANGES IN \psd{} VERSION 0.5-0 (2015-02-10)}{
+  \itemize{
+    \item \code{psdcore} now uses \code{resample_fft_rcpp} which
+    is a lightning-fast (by comparison with pure-R) implementation
+    of the fft-resampling/reweighting method we use; this new function
+    leverages the power of \href{http://cran.r-project.org/package=Rcpp}{\pkg{Rcpp}}
+    and \href{http://cran.r-project.org/package=RcppArmadillo}{\pkg{RcppArmadillo}}
+    
+    \item \href{https://travis-ci.org/abarbour/psd}{Travis-CI} is now used to track builds; see 
+    also the \gitpsd{}.
+    
+    \item Some known issues have been moved to the \href{https://github.com/abarbour/psd/issues}{Issues} page.
+    
+    \item I'm considering deprecating and reworking a lot of things soon; be prepared
+    for backwards compatibility issues starting with the next major version bump.
+  }
+}
+
 
 \section{CHANGES IN \psd{} VERSION 0.4-3 (2014-10-16)}{
   \itemize{ 
@@ -24,6 +47,7 @@
     in the code and documentation,
     including a bug in \code{riedsid} from an improper choice
     of logarithm base.
+    
     \item Removed the \code{Local.loss} argument from \code{riedsid}
   }
 }
@@ -31,16 +55,16 @@
 \section{CHANGES IN \psd{} VERSION 0.4-2 (2014-08-05)}{
   \itemize{ 
     \item Removed unused variables in \code{ctap_simple.c} 
-    \item Removed deprecated \code{@S3method} statements
+    \item Removed deprecated \code{@S3method} statements.
   }
 }
 
 \section{CHANGES IN \psd{} VERSION 0.4-1 (2014-04-15)}{
   \itemize{
-  	\item We have published a paper in Computers \& Geosciences regarding
+  	\item We have published a paper in Computers & Geosciences regarding
 	\psd{}, and the citation is up to date: \code{citation('psd')}
-	If you cannot access the publication, contact A.~J.~Barbour
-	for a reprint.
+	If you cannot access the publication (\citaton{}), 
+	contact Andy for a reprint.
   	\item Fixed an example which was causing CRAN-buildcheck errors.
 	\item Fixed a small error in the normalization vignette -- thanks 
 	      to Richard Gaal for spotting this.

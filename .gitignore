@@ -1,4 +1,6 @@
+*.Rapp.history
 *.Rout
+Rprof.out
 .Rproj.user
 .Rhistory
 .RData
@@ -17,10 +19,12 @@ vignettes/*.ilg
 vignettes/*.out
 vignettes/*.toc
 vignettes/figure/
+
 psd.Rproj
+
 README.html
-Rprof.out
 NOBUILD/
 packrat/lib*/
+
 *.so
 *.o

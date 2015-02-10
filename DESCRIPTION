@@ -1,8 +1,8 @@
 Package: psd
 Type: Package
 Title: Adaptive, sine-multitaper power spectral density estimation
-Version: 0.4-3
-Date: 2015-02-09
+Version: 0.5-0
+Date: 2015-02-10
 Author: Andrew J. Barbour and Robert L. Parker, with contributions from David
     Myer
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
@@ -17,10 +17,9 @@ URL: https://github.com/abarbour/psd,
 BugReports: https://github.com/abarbour/psd/issues
 Depends:
     R (>= 2.14.1),
-    fftw (>= 1.0-3),
-    Rcpp (>= 0.9.10),
-    RcppArmadillo (>= 0.3.2.4)
+    fftw (>= 1.0-3)
 Imports:
+    Rcpp (>= 0.11.4),
     RColorBrewer,
     signal,
     zoo

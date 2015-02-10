@@ -63,10 +63,9 @@
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}
 #'
 #' @example inst/Examples/rdex_psdcore.R
-psdcore <- function(X.d, X.frq=NULL, ntaper=as.tapers(1), ndecimate=1L, preproc=TRUE, na.action = stats::na.fail, first.last=TRUE, plotpsd=FALSE, as.spec=TRUE, refresh=FALSE, verbose=FALSE, ...) UseMethod("psdcore")
+psdcore <- function(X.d, ...) UseMethod("psdcore")
 
 #' @rdname psdcore
-#' @method psdcore default
 #' @export
 psdcore.default <- function(X.d, 
                             X.frq=NULL, 
@@ -133,11 +132,11 @@ psdcore.default <- function(X.d,
     # variance of even series
     varx <- psd::psd_envAssignGet("ser_even_var", drop(stats::var(X.even)))
     # create uniform tapers
-    nt <- nhalf + 1
-    if (lt < nt) {
-      ntap <- ntaper * ones(nt) 
+    nt <- nhalf + 1  # check this [ ]
+    ntap <- if (lt < nt) {
+      rep.int(ntaper, nt)
     } else {
-      ntap <- ntaper[seq_len(nt)] #1:nt]
+      ntaper[seq_len(nt)]
     }
     ## zero pad and take double-length fft
     # fftw is faster (becomes apparent for long series)
@@ -157,17 +156,18 @@ psdcore.default <- function(X.d,
   # if ntaper is a vector, this doesn't work [ ] ?
   ##
   # if the user wants a raw periodogram: by all means
-  DOAS <- FALSE
-  if (lt == 1){
-    if (ntaper > 0) DOAS <- TRUE
+  DOAS <- if (lt == 1){
+    ifelse(ntaper > 0, TRUE, FALSE)
   } else {
-    if (!(is.tapers(ntap))) DOAS <- TRUE
+    ifelse(!is.tapers(ntap), TRUE, FALSE)
   }
   if (DOAS) ntap <- as.tapers(ntap, setspan=TRUE)
   
-  ## interpolation
   ###  Select frequencies for PSD evaluation
   f <- if  (lt > 1 && ndecimate > 1){
+    #
+    # interpolation -- can help with speed.  considering Deprecation for simplicity's sake
+    #
     stopifnot(!is.integer(ndecimate))
     if (verbose) message("decim stage 1")
     # interp1 requires strict monotonicity (for solution stability)
@@ -186,51 +186,50 @@ psdcore.default <- function(X.d,
   ##
   ###  Calculate the PSD by averaging over tapered estimates
   nfreq <- length(f)
-  NF <- seq_len(nfreq) # faster or slower than 1:nfreq?
+  NF <- seq_len(nfreq)
   ##
-  PSD <- if (sum(ntap) > 0) {
-    #PSD <- 0 * NF
-    n2e <- n.e * 2
-    fjs <- f[NF]
-    fjs2 <- fjs * 2
-    # get a set of all possible weights for the current taper-vector
-    # then the function need only subset the master set
-    # faster? YES
-    # BUT this is wrong, because it normalizes by the max taper!!
-    #KPWM <- parabolic_weights_fast(max(ntap))
-    
-    PSDFUN <- function(fj, fi=fj+1, fj2=fjs2[fi], n2.e=n2e, ntaps=ntap, Xfft=fftz){
-      #
-      # goes through fj frequency index, and reweights spectra based on
-      # quadratic weighting scheme
-      #
-      # number tapers (for subsetting)
-      NT <- ntaps[fi]
-      #NT <- base::seq_len(NT)
-      # sequence
-      KPW <- parabolic_weights_fast(NT)
-      Kseq <- KPW$taper_seq
-      # weights
-      Kwgt <- KPW$taper_weights
-      #rm(KPW)
-      # Resampling weighted spectral values:
-      j1 <- (fj2 + n2.e - Kseq) %% n2.e
-      j2 <- (fj2 + Kseq) %% n2.e
-      # select spectra
-      af12. <- abs(Xfft[j1+1] - Xfft[j2+1])
-      af12. <- matrix(af12. * af12., ncol=1)
-      # reweighted spectra
-      PSDv <- Kwgt %*% af12.
-      return(PSDv)
-    }
+  PSD <- if (sum(as.numeric(ntap)) > 0) {
+    #
+    #     n2e <- n.e * 2
+    #     fjs <- f[NF]
+    #     fjs2 <- fjs * 2
+    #     PSDFUN <- function(fj, fi=fj+1, fj2=fjs2[fi], n2.e=n2e, ntaps=ntap, Xfft=fftz){
+    #       #
+    #       # goes through fj frequency index, and reweights spectra based on
+    #       # quadratic weighting scheme
+    #       #
+    #       # number tapers (for subsetting)
+    #       NT <- ntaps[fi]
+    #       #NT <- base::seq_len(NT)
+    #       # sequence
+    #       KPW <- parabolic_weights_fast(NT)
+    #       Kseq <- KPW$taper_seq
+    #       # weights
+    #       Kwgt <- KPW$taper_weights
+    #       #rm(KPW)
+    #       # Resampling weighted spectral values:
+    #       j1 <- (fj2 + n2.e - Kseq) %% n2.e
+    #       j2 <- (fj2 + Kseq) %% n2.e
+    #       # select spectra
+    #       af12. <- abs(Xfft[j1+1] - Xfft[j2+1])
+    #       af12. <- matrix(af12. * af12., ncol=1)
+    #       # reweighted spectra
+    #       PSDv <- Kwgt %*% af12.
+    #       return(PSDv)
+    #     }
+    #
     # ** compiled code doesn't appear to help speed
     #     PSDFUNc <- compiler::cmpfun(PSDFUN)
     # ** foreach is easier to follow, but foreach solution is actually slower :(
     #     PSD <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
     # ** vapply is much faster than even lapply
-    vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
+    # vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
+    #    but
+    # ** Rcpp version is lightning fast and hides frequency indices
+    rres <- resample_fft_rcpp(fftz, ntap, verbose=verbose)
+    rres[['psd']]
   } else {
-    if (verbose) message("zero taper result == raw periodogram")
+    if (verbose) warning("zero taper result --> raw periodogram. careful with these results!")
     Xfft <- psd::psd_envGet("fft_even_demeaned_padded")
     ff <- Xfft[NF]
     N0. <- psd::psd_envGet("len_orig")

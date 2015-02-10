@@ -3,6 +3,9 @@
 # reverse sorted by desirability.
 #
 
+[ ] All bottlenecks to c++ 
+*** Riedsid 'local_qls' spectral derivatives?
+
 [ ] method to 'adapt' a class 'spec' produced by spectrum
 
 [ ] prewhiten:
@@ -10,8 +13,8 @@
 
 [ ] History and derivatives plotter.
 
-[ ] reidsid "local_qls" spectral derivatives as callable .c [.cpp?] code
-*** This is likely the bottleneck of the entire operation, besides the FFT
+[ ] Unified argument names
+*** psdcore
 
 [ ] cross spectral density estimation
 *** something like the methods in ifultools/src/fra_sdf.c
@@ -43,13 +46,5 @@
 
 [ ] logsmoo
 
-[ ] Unified argument names
-
-[ ] A well-tested decimation option.
-
-[X] as.data.frame.tapers
-
-[X] zero pad or predict for AR > 0 in prewhiten
-
-[X] option for prewhitening in pilot_spec and thus pspectrum
+[ ] A well-tested decimation option, or just deprecate it.
 

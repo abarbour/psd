@@ -1,3 +1,4 @@
+// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 //
 //   fft resampling with parabolic weighting, in c++ with Rcpp/RcppArmadillo 
 //
@@ -58,10 +59,17 @@ List parabolic_weights_rcpp(int ntap) {
     return weights_out;
 }
 
-//' @rdname psdcore
+//' @title Resample an fft using varying tapers
+//' @param fftz complex; a vector representing the dual-length \code{\link[fftw]{FFT}}; see also \code{dbl}.
+//' @param tapers integer; a vector of tapers
+//' @param verbose logical; should messages be given?
+//' @param dbl logical; should the code assume \code{fftz} is dual-length or singl-length?
+//' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
+//' automatically limited by the length of the series.
 //' @export
 // [[Rcpp::export]]
-List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers) {
+List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers, 
+  bool verbose = true, bool dbl = true, const int tapcap=1000 ) {
   
   //
   // resample and reweight an fft estimates for a given number of tapers
@@ -74,22 +82,44 @@ List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers) {
   
   //Function warning("warning"); // use Rf_warning instead
   
-  int nf, ne, ne2, nhalf, nfreq, m, m2, mleft1, mleft2, j1, j2, Kc, ki, ik, tapcap=1000;
+  int sc, nf, nt, ne, ne2, nhalf, nfreq, m, m2, mleft1, mleft2, j1, j2, Kc, ki, ik;
   Rcomplex fdc;
   List bw;
   
-  // !careful: double-length fft estimates
-  // perhaps Ill add a logical flag later [ ]
-  nf = fftz.size() / 2;
+  // double-length fft estimates assumed by default
+  if (dbl){
+  	sc = 2;
+  } else {
+	  sc = 1;
+  }
   
+  nf = fftz.size() / sc;
+  nt = tapers.size();
+
   // even, double, and half lengths
   ne = nf - (nf % 2);
+  
+  if (verbose){
+    Function msg("message");
+    //Rcout << "fft resampling: nf = " << nf << ", ne = " << ne << ", nt = " << nt;
+    msg(std::string("fft resampling"));
+  }
+  
   if (ne < nf){
-    // this hasnt been tested [ ]
     Rf_warning("fft was not done on an even length series");
   }
+  
   ne2 = 2 * ne;
   nhalf = ne / 2;
+
+  if (nhalf < 1){
+    stop("cannot operate on length-1 series");
+  }
+  
+  if (nt == 1){
+    Rf_warning("forced taper length");
+    tapers = rep(tapers, nhalf);
+  }
   
   // %  Select frequencies for PSD evaluation [0:nhalf]
   NumericVector Freqs = abs(seq_len(nhalf)) - 1; // add one since c++ indexes at zero
@@ -105,7 +135,8 @@ List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers) {
     
     m = Freqs[j];
     m2 = 2*m;
-    Kc = tapers[m + 1]; // number of tapers applied at a given frequency                    
+    Kc = tapers[m]; // number of tapers applied at a given frequency
+    //^^^ is it ok that I removed the (m + 1) index? [  ]
     
     if (Kc > nhalf){
       Kc = nhalf;
@@ -145,7 +176,7 @@ List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers) {
   }
   
   List psd_out = List::create(
-    Named("freq.inds") = Freqs,
+    Named("freq.inds") = Freqs + 1,
     Named("k.capped") = K,
     Named("psd") = psd
     );

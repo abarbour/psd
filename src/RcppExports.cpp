@@ -22,15 +22,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // resample_fft_rcpp
-List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers);
-RcppExport SEXP psd_resample_fft_rcpp(SEXP fftzSEXP, SEXP tapersSEXP) {
+List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers, bool verbose = true, bool dbl = true, const int tapcap = 1000);
+RcppExport SEXP psd_resample_fft_rcpp(SEXP fftzSEXP, SEXP tapersSEXP, SEXP verboseSEXP, SEXP dblSEXP, SEXP tapcapSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< ComplexVector >::type fftz(fftzSEXP );
         Rcpp::traits::input_parameter< IntegerVector >::type tapers(tapersSEXP );
-        List __result = resample_fft_rcpp(fftz, tapers);
+        Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP );
+        Rcpp::traits::input_parameter< bool >::type dbl(dblSEXP );
+        Rcpp::traits::input_parameter< const int >::type tapcap(tapcapSEXP );
+        List __result = resample_fft_rcpp(fftz, tapers, verbose, dbl, tapcap);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

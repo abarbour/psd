@@ -1,9 +1,0 @@
-[OPEN] 002_preprocflag
-The preprocessing flags (e.g., in 'plot') are not reflective of the
-actual preprocessing in the final product.
-
-[OPEN] 001_firstlast
-The first and last values of the spectra are strangely very low. The solution
-thus far is to extrapolate values, which is precarious; however, those points
-are very nearly useless for most applications of power spectral density
-estimates.

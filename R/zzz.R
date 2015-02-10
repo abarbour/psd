@@ -23,4 +23,6 @@
   packageStartupMessage(
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation",
             utils::packageVersion("psd")))
+  ##
+  options(psd.ops=list(tapcap=1000))
 }

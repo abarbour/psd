@@ -6,26 +6,22 @@
 \alias{pspectrum.ts}
 \title{Adaptive sine multitaper power spectral density estimation.}
 \usage{
-pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3, AR = FALSE,
-  Nyquist.normalize = TRUE, verbose = TRUE, no.history = FALSE,
-  plot = FALSE, ...)
+pspectrum(x, ...)
 
 \method{pspectrum}{ts}(x, ...)
 
-\method{pspectrum}{spec}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
-  AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
-  no.history = FALSE, plot = FALSE, ...)
+\method{pspectrum}{spec}(x, ...)
 
 \method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
   no.history = FALSE, plot = FALSE, ...)
 
-\method{pspectrum}{spec}(x, x.frqsamp = 1, ntap.init = 7, niter = 3,
-  AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
-  no.history = FALSE, plot = FALSE, ...)
+\method{pspectrum}{spec}(x, ...)
 }
 \arguments{
 \item{x}{vector; series to estimate PSD for.}
+
+\item{...}{Optional parameters passed to \code{\link{riedsid}}}
 
 \item{x.frqsamp}{scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.}
 
@@ -42,8 +38,6 @@ pspectrum(x, x.frqsamp = 1, ntap.init = 7, niter = 3, AR = FALSE,
 \item{no.history}{logical; Should the adaptive history \emph{not} be saved?}
 
 \item{plot}{logical; Should the results be plotted?}
-
-\item{...}{Optional parameters passed to \code{\link{riedsid}}}
 }
 \value{
 Object with class 'spec', invisibly. It also assigns the object to

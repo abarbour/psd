@@ -7,9 +7,15 @@ parabolic_weights_rcpp <- function(ntap) {
     .Call('psd_parabolic_weights_rcpp', PACKAGE = 'psd', ntap)
 }
 
-#' @rdname psdcore
+#' @title Resample an fft using varying tapers
+#' @param fftz complex; a vector representing the dual-length \code{\link[fftw]{FFT}}; see also \code{dbl}.
+#' @param tapers integer; a vector of tapers
+#' @param verbose logical; should messages be given?
+#' @param dbl logical; should the code assume \code{fftz} is dual-length or singl-length?
+#' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
+#' automatically limited by the length of the series.
 #' @export
-resample_fft_rcpp <- function(fftz, tapers) {
-    .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers)
+resample_fft_rcpp <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap = 1000L) {
+    .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers, verbose, dbl, tapcap)
 }
 
