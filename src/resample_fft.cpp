@@ -135,8 +135,8 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     
     m = Freqs[j];
     m2 = 2*m;
-    Kc = tapers[m]; // number of tapers applied at a given frequency
-    //^^^ is it ok that I removed the (m + 1) index? [  ]
+    Kc = tapers[m + 1]; // number of tapers applied at a given frequency
+    //^^^ is it ok that I removed the (m + 1) index? [no, it's not!]
     
     if (Kc > nhalf){
       Kc = nhalf;

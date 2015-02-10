@@ -14,12 +14,6 @@ inst/Examples/plots
 inst/Examples/g.c.*
 inst/Examples/tmpscpt.R
 
-vignettes/*.tex
-vignettes/*.ilg
-vignettes/*.out
-vignettes/*.toc
-vignettes/figure/
-
 psd.Rproj
 
 README.html
