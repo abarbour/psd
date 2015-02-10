@@ -7,3 +7,9 @@ parabolic_weights_rcpp <- function(ntap) {
     .Call('psd_parabolic_weights_rcpp', PACKAGE = 'psd', ntap)
 }
 
+#' @rdname psdcore
+#' @export
+resample_fft_rcpp <- function(fftz, tapers) {
+    .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers)
+}
+

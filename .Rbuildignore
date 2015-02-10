@@ -5,8 +5,12 @@
 .DS_Store
 .git/
 .gitignore
+
 ^src/.gitignore$
+src/deprecated
+
 ^.*/.gitignore$
+
 .travis.yml
 
 paper/

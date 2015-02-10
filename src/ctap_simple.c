@@ -1,7 +1,7 @@
 /*
 #   psd: 
 #
-#   Copyright (C) 2013,2014  Andrew J. Barbour andy.barbour @ gmail.com
+#   Copyright (C) 2013-2015  Andrew J. Barbour andy.barbour @ gmail.com
 #
 #   Robert L. Parker authored the original algorithm.
 #

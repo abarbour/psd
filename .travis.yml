@@ -27,9 +27,10 @@ before_install:
 
 install:
   - ./travis-tool.sh install_aptget libfftw3-dev
-  - ./travis-tool.sh install_aptget r-cran-runit
+  - ./travis-tool.sh install_aptget r-cran-runit  r-cran-matrix 
+  - ./travis-tool.sh install_r Rcpp pkgKitten
   - ./travis-tool.sh install_r fftw
-  - ./travis-tool.sh install_r Rcpp RColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2
+  - ./travis-tool.sh install_r RColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2
 #  - ./travis-tool.sh install_github hadley/devtools
 
 script: 
