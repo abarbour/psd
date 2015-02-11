@@ -22,15 +22,12 @@
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{color}
-\usepackage{makeidx} % for indexing
-%\usepackage{showidx} % shows page (remove when complete)
-\makeindex % comment to have no index
 %
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://abarbour.github.com/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 %% path, filename, caption, label
 \newcommand{\listing}[4]{        %
   \begin{figure}[H]              %
@@ -145,11 +142,10 @@ to the raw periodogram estimate is shown after the final iterative stage.
 Note that if the user forgets to assign the results of
 \Rcmd{pspectrum} to the global environment, this can be
 done with the \Rcmd{psd\_envGet} function:
-<<echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE, label=FINALPSDS>>=
 psdc_recovered <- psd_envGet("final_psd")
 all.equal(psdc, psdc_recovered)
 @
-%stopifnot(!is.null("psdc"))
 
 In general, spectral variance is reduced
 with sequential refinements\footnote{
@@ -184,16 +180,11 @@ for 10 kilometer wavelengths and longer; whereas, the
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which could be difficult to judge if the spectral variance was higher.
 
-%<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
-%#psdc_ar <- pspectrum(magnet$clean, AR=TRUE, plot=FALSE)
-%@
-%
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, label=RAWvCLEAN>>=
 plot(psdc, log="dB", main="Raw and Clean Project MAGNET power spectral density", 
        lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
-#plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")
 plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
 text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 @
@@ -217,7 +208,7 @@ Unfortunately the suite of extensions with similar functionality
 is relatively limited, but hopefully we have
 summarized most, if not all, the available functions in Table \ref{tbl:methods}.
 
-\input{tbl_specprogs}
+\input{supp_specprogs}
 
 We compare results from
 \psd{} with those from a few of the methods in Table \ref{tbl:methods},
@@ -235,10 +226,10 @@ The user can optionally apply a single cosine taper, and/or a smoothing kernel.
 Our method is non-parametric; hence, we will compare to the latter.
 
 Included in \Rcmd{psdcore} is an option to compare the 
-results with a 20\% tapered periodogram.
-The cosine estimator is found with the following command:
-<<eval=FALSE, echo=TRUE, label="Naive spectrum estimation.">>=
-spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=F)
+results with a 20\% cosine-tapered periodogram,
+found with the following command:
+<<eval=FALSE, echo=TRUE, label="Naive spectrum estimation">>=
+spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=FALSE)
 @
 Within \Rcmd{psdcore} the comparison is
 made with
@@ -257,7 +248,7 @@ re-calculate the multitaper PSD and the
 raw periodogram with \Rcmd{plotpsd=TRUE}; these
 results are shown in Figure \ref{fig:two}.
 %
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 %% Project MAGNET compare
 <<eval=TRUE, echo=TRUE,  label=MAGNETNAIVE>>=
@@ -295,7 +286,7 @@ double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods:
-<<eval=TRUE, echo=TRUE, label="Load RSEIS package.">>=
+<<eval=TRUE, echo=TRUE, label="Load RSEIS package">>=
 require(RSEIS)
 dt=1 # km
 # prewhiten the data after adding a linear trend + offset
@@ -322,7 +313,7 @@ ats_ar <- atsar$prew_ar
 @
 \label{sxn:prew}
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.height=5, fig.width=5.5, label=ARFITPLT>>=
 plot(ts.union(orig.plus.trend=mc, linear=ats_lm, ar=ats_ar), yax.flip=TRUE, 
@@ -344,14 +335,14 @@ with which \Rcmd{psdcore}
 would interpret as
 an interval (instead of a frequency). 
 A quick example highlights the equivalency:
-<<eval=TRUE, echo=TRUE, label="Sampling rate versus interval.">>=
+<<eval=TRUE, echo=TRUE, label="Sampling rate versus interval">>=
 a <- rnorm(32)
 all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
 @
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
 estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
-<<eval=TRUE, echo=TRUE, label="Compute PSD with mtapspec.">>=
+<<eval=TRUE, echo=TRUE, label="Compute PSD with mtapspec">>=
 tapinit <- 10
 Mspec <- mtapspec(ats_lm, deltat(ats_lm), MTP=list(kind=2, inorm=3, nwin=tapinit, npi=0))
 @
@@ -360,7 +351,7 @@ where \Rcmd{nwin} is the number of tapers taken and
 leave it out for the sake of comparison). 
 Note that the object returned
 is not of class \Rcmd{spec}:
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Structure of mtapspec-psd">>=
 str(Mspec)
 @
 
@@ -376,7 +367,7 @@ and we will need to correct for normalization factors, as necessary, with
 set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
-<<eval=TRUE, echo=TRUE, label="Comparative spectra.">>=
+<<eval=TRUE, echo=TRUE, label="Comparative spectra: mtapspec vs pspectrum">>=
 Xspec <- spec.pgram(ats_lm, pad=1, taper=0.2, detr=TRUE, dem=TRUE, plot=FALSE)
 Pspec <- psdcore(ats_lm, dt, tapinit)
 Aspec <- pspectrum(ats_lm, dt, tapinit, plot=FALSE)
@@ -391,7 +382,7 @@ Xspec <- normalize(Xspec, dt, "spectrum")
 These estimates are shown on the same scale in
 Figure \ref{fig:psdcomp}.
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=RSEIS>>=
 require(RColorBrewer)
@@ -417,7 +408,7 @@ Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
-<<eval=TRUE, echo=TRUE, label="Interpolate results.">>=
+<<eval=TRUE, echo=TRUE, label="Interpolate results">>=
 require(signal)
 pltpi <- interp1(pltf, pltp, Pspec$freq)
 @
@@ -425,7 +416,7 @@ We regress the spectral values from \Rcmd{mtapspec} against
 the \Rcmd{psdcore} results because we have used them to
 produce uniformly tapered spectra
 with an equal number of sine tapers.
-<<eval=TRUE, echo=TRUE, label="Summarize regression statistics.">>=
+<<eval=TRUE, echo=TRUE, label="Summarize regression statistics">>=
 df <- data.frame(x=dB(Pspec$spec), y=pltpi, tap=unclass(Aspec$taper))
 summary(dflm <- lm(y ~ x + 0, df))
 df$res <- residuals(dflm)
@@ -437,7 +428,7 @@ the \Rcmd{mtapspec} results, which
 manifests at short wavelengths
 in Figure \ref{fig:psdcomp}.
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
 require(ggplot2)
@@ -505,7 +496,7 @@ require(bspec)
 print(Bspec <- bspec(ts(magnet$clean)))
 @
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=5, label=BSPECFIG>>=
 Bspec_plt <- plot(Bspec)
@@ -548,7 +539,7 @@ The non-AR component (labelled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=MAGPSDAR>>=
 pilot_spec(ats_lm, ntap=ntap, remove.AR=100, plot=TRUE)
@@ -592,7 +583,7 @@ a few tapers becomes obvious, though the spectral uncertainty
 is asymptotically decreasing with taper numbers and yields
 only slight improvements with logarithmic number of tapers.
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=5, fig.height=4.5, label=SPECERR>>=
 sp <- spectral_properties(as.tapers(1:50), p=0.95, db.ci=TRUE)
@@ -633,7 +624,7 @@ spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
 the Bayesian method, for a coverage probability of
 95\%. Figure \ref{fig:magerr} shows the uncertainties as bounded polygons,
 which we calculate here:
-<<eval=TRUE, echo=TRUE, label="Compute spectral properties.">>=
+<<eval=TRUE, echo=TRUE, label="Compute spectral properties">>=
 spp <- spectral_properties(Pspec$taper, db.ci=TRUE)
 spa <- spectral_properties(Aspec$taper, db.ci=TRUE)
 str(spa)
@@ -652,7 +643,7 @@ pspau <- create_poly(Aspec$freq, dB(Aspec$spec), spa$stderr.chi.upper)
 pspb <- create_poly(Bspec_plt$freq, Bspec_plt$spectrum[,1], Bspec_plt$spectrum[,3], from.lower=TRUE)
 @
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4.5, label=MAGERR>>=
 plot(c(0,0.5),c(-5,40),col="white", 
@@ -686,7 +677,8 @@ to visualize the actual
 differences in resolution for the Project MAGNET PSD estimates; these
 are shown
 in Figure \ref{fig:magres}.
-\begin{figure}[htb!]
+
+\begin{figure}[h!]
 \begin{center}
 %relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
 %relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
@@ -698,8 +690,8 @@ layout(matrix(c(1,2),1,2,byrow=TRUE), heights=c(2,2), widths=c(3,0.5), respect=T
 plot(frq, relp,
      main="Percent change in spectral resolution",
      col="light grey", 
-     ylim=yl<-c(0,35),
-     type="h", xaxs="i", yaxs="i", 
+     ylim=yl<-range(pretty(relp)),
+     type="h", xaxs="i", #yaxs="i", 
      ylab="dB", xlab="frequency, 1/km")
 lines(frq, relp)
 text(0.25, 45, "Adaptive relative to fixed", cex=0.9)
@@ -731,12 +723,12 @@ uncertainties change with each iteration.
  add a few more iterations to visualize, 
 we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
-<<eval=TRUE, echo=TRUE, label="Get adaptive history.">>=
+<<eval=TRUE, echo=TRUE, label="Get adaptive history">>=
 pspectrum(ats_lm, niter=4, plot=FALSE)
 str(AH <- get_adapt_history())
 @
 Followed by some trivial manipulation:
-<<eval=TRUE, echo=TRUE, label="Some manipulation.">>=
+<<eval=TRUE, echo=TRUE, label="and manipulate it a bit">>=
 Freqs <- (AH$freq)
 Dat <- AH$stg_psd
 numd <- length(Freqs)
@@ -744,40 +736,42 @@ numit <- length(Dat)
 StgPsd <- dB(matrix(unlist(Dat), ncol=numit))
 Dat <- AH$stg_kopt
 StgTap <- matrix(unlist(Dat), ncol=numit)
-rm(Dat, AH)
 @
 We can plot these easily with \Rcmd{matplot} or other tools.  We show
 the adaptive history in
 Figure \ref{fig:psdhist}.  
 
-\begin{figure}[htb!]
+\begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.3, label=HIST1>>=
 seqcols <- seq_len(numit)
 itseq <- seqcols - 1
-toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=T)
-par(xpd=TRUE, oma=rep(0,4), mar=c(1,4,3,2))
-matplot(Freqs, StgPsd + (sc<-6)*toadd, type="l", lty=1, lwd=2, col="black",
-             main="Adaptive estimation history", ylab="", xlab="",
-             yaxt="n", frame.plot=FALSE)
+toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=TRUE)
+PltStg <- StgPsd + (sc<-6)*toadd
+par(xpd=TRUE, oma=rep(0,4), mar=c(1,4,3,2), tcl=0.4)
+matplot(Freqs, PltStg, type="l", lty=1, lwd=2, col="black",
+        main="Adaptive estimation history", ylab="", xlab="",
+        yaxt="n", frame.plot=FALSE,
+        ylim=range(pretty(PltStg)*c(0.85,1)))
 text(0.52, 1.06*sc*itseq, itseq, cex=0.9)
 lines(-1*c(1.5,1,1,1.5)*0.02,c(0,0,7,7))
 text(-.06, 3.5, "7 dB", cex=0.8)
-mtext("(a)", font=2, adj=0, line=0.6)
-mtext("PSDs by stage", line=-0.4)
+mtext("(a)", font=2, adj=0, line=-0.8)
+mtext("PSDs by stage", line=-0.8, font=4)
 @
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.1, label=HIST2>>=
-par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(1,4,2,2))
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(1,4,2,2), tcl=0.4)
 Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
   y <- Dat[,mcol]
   icol <- Cols[mcol]
+  ylm <- max(pretty(max(StgTap)*1.1))
   if (iter==1){
     plot(Frq, y, type="h", col=icol, 
            main="", ylab="", 
            xlab="", #Spatial frequency",
-           ylim=c(0,650), yaxs="i", frame.plot=FALSE)
+           ylim=c(0,ylm), yaxs="i", frame.plot=FALSE)
   } else {
     lines(Frq, y, type="h", col=icol)
   }
@@ -789,15 +783,15 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   lines(Frq, y)
   #print(c(iter,mcol)) #1 5, 2 4, 3 3, 4 2, 5 1.
   x <- (c(0,1)+mcol)*.05+0.075
-  y <- c(600,600,655,655,600)
-  text(mean(x),max(y)-1.65*diff(range(y)), mcol-1, cex=0.9)
+  y <- c(0.95, 0.95, 1, 1, 0.95) * 0.95 * ylm
+  text(mean(x), ylm*0.95**2, mcol-1, cex=0.9, pos=1, font=2)
   polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
 }))
 mtext("(b)", font=2, adj=0, line=0.5)
-mtext("Tapers by stage", line=0.5)
+mtext("Tapers by stage", line=0.5, font=4)
 @
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.7, label=HIST3>>=
-par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(3.5,4,2,2))
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(3.5,4,2,2), tcl=0.4)
 #Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Tap=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
@@ -807,18 +801,18 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Tap=St
   psppu <- create_poly(Frq, tap*0-(iter*0.76)**2, spp$stderr.chi.upper)
   if (iter==1){
 	 plot(psppu$xx, psppu$yy, type="l", col=NA,
-	 	main="", ylab="", xlab="", yaxt="n",
-	    ylim=18*c(-1,0), 
-	    yaxs="i", frame.plot=FALSE)
+        main="", ylab="", xlab="", yaxt="n",
+        ylim=18*c(-1,0.02), 
+        yaxs="i", frame.plot=FALSE)
   }
   polygon(psppu$xx, psppu$yy, col=icol, border = "black") #, lwd = 0.2)
 }))
 mtext("(c)", font=2, adj=0, line=0.6)
 lines(-1*c(1.5,1,1,1.5)*0.02, -1*c(0,0,7,7)-10)
 text(-0.06, -3.5-10, "7 dB", cex=0.8)
-mtext("Uncertainties by stage", line=0.6)
+mtext("Uncertainties by stage", line=0.6, font=4)
 mtext("Spatial frequency, 1/km", side=1, line=2.3)
-text(0.25, -14.5, "(uniform tapers)", font=3, cex=0.7)
+text(0.25, -14.5, "(pilot spectrum -- uniform tapers)", font=3, cex=0.8)
 @
 
 \caption{Adaptive spectral estimation history.
@@ -867,7 +861,7 @@ process. The primary function is \Rcmd{pspectrum}.
 \pagebreak
 \section*{Session Info}
 <<eval=TRUE, echo=TRUE, label=SI>>=
-sessionInfo()
+utils::sessionInfo()
 @
 
 %%

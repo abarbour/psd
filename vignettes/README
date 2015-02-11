@@ -6,36 +6,33 @@ http://www.mail-archive.com/r-devel@r-project.org/msg26748.html
 	* do not use \include (use \input)
 	(build creates aux files and CRAN checks NOTE/COMPLAIN)
 
-	* Sweave build removes saved pdfs!
-
 ##
 ## DFT benchmark vignette [DONE]
 ##
 	fftw.Rnw
-	# see /Users/abarbour/Google\ Drive/PUB/psd
-	fftw_bench_even.pdf
-	fftw_bench_odd.pdf
+		fftw_bench_even.pdf
+		fftw_bench_odd.pdf
+		# see /Users/abarbour/Google\ Drive/PUB/psd
 ##
 ## Normalization vignette [ ]
 ##
 	normalization.Rnw
-	tbl_norms.tex		normalization definitions
+	supp_norms.tex		normalization definitions
 ##
 ## Overview benchmark vignette [DONE]
 ##
 	psd_overview.Rnw
-	yuml.fawk*
-	yuml.sh*
-	yuml_d.png
-	yuml_n.png
+		yuml.sh*
+			yuml.fawk*
+				yuml_d.png
+				yuml_n.png
 ##
 ## Common files
 ##
-	symdefs.tex		math symbol definitions
-	tbl_specprogs.tex	spectral estimation programs
+	supp_symdefs.tex	math symbol definitions
+	supp_specprogs.tex	spectral estimation programs
 	REFS.bib		references
 
 ##
 ## Misc.
 ##
-tmp.R

@@ -27,17 +27,14 @@
 %
 \usepackage{color}
 %
-\usepackage{makeidx} % for indexing
-%\usepackage{showidx} % shows page (remove when complete)
-\makeindex % comment to have no index
 %%
-\input{mathsyms}
+\input{supp_mathsyms}
 %%
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://abarbour.github.com/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
@@ -245,12 +242,11 @@ affect the efficiency of the DFT calculator.
 
 \section*{Session Info}
 <<eval=TRUE, echo=TRUE, label=SI>>=
-sessionInfo()
+utils::sessionInfo()
 @
 
 %% bib and index
 \bibliographystyle{apalike}
 \bibliography{REFS}
 
-\printindex
 \end{document}
