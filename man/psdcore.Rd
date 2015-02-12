@@ -21,7 +21,7 @@ psdcore(X.d, ...)
 
 \item{ntaper}{scalar, or vector; the number of tapers}
 
-\item{ndecimate}{scalar; decimation factor}
+\item{ndecimate}{now ignored}
 
 \item{preproc}{logical; should \code{X.d} have a linear trend removed?}
 

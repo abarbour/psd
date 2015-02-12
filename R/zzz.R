@@ -24,5 +24,20 @@
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation",
             utils::packageVersion("psd")))
   ##
-  options(psd.ops=list(tapcap=1000))
+  options(psd.ops=list(
+    tapmin=1,
+    tapcap=1000,
+    names=list(
+      fft = "fft_even_demeaned_padded",
+      fft.extrap = "fft_even_demeaned_padded_extrap",
+      last.taper = "last_taper_sequence",
+      last.psdcore = "last_psdcore_psd",
+      series.even = "ser_orig_even",
+      var.even = "ser_even_var",
+      n.even = "len_even",
+      n.even.half = "len_even_half",
+      series.orig = "ser_orig",
+      n.orig = "len_orig"
+      )
+  ))
 }

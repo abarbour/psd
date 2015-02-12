@@ -41,7 +41,7 @@ pspectrum.spec <- function(x, ...){
 }
 #' @rdname pspectrum
 #' @export
-pspectrum.default <- function(x, x.frqsamp=1, ntap.init=7, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=14, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
   adapt_message <- function(stage, dvar=NULL){
@@ -229,12 +229,14 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
   num_frq <- length(Pspec[['freq']])
   Ptap <- Pspec[['taper']]
   num_tap <- length(Ptap)
-  stopifnot(num_tap <= num_frq)
-  # generate a series, if necessary
+  #stopifnot(num_tap <= num_frq)
+  
+  ## generate a series, if necessary
   if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
-  # return tapers object
+  
+  ## return tapers object
   Pspec[['taper']] <- as.tapers(Ptap, setspan=TRUE)
-  ##
+  
   ## remove the spectrum of the AR process
   if (REMAR){
     stopifnot(exists("Pspec") & exists("Pspec_ar"))

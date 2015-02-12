@@ -135,7 +135,7 @@
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
 %% libload
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{library}\hlstd{(psd)}
@@ -155,7 +155,7 @@ The sampling interval is
 once every kilometer (km), so the data will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% Project MAGNET data
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{data}\hlstd{(magnet)}
@@ -165,7 +165,7 @@ crustal magnetization with wavelengths longer than 2 km.
 The format of the data set is a \Rcmd{data.frame} with four
 sets of information:
 %%
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{names}\hlstd{(magnet)}
@@ -181,10 +181,10 @@ and edited intensities respectively, expressed in units of nanotesla;
 The difference between them is a matter of just a few points
 attributable to instrumental malfunction. 
 %% edits
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{subset}\hlstd{(magnet,} \hlkwd{abs}\hlstd{(mdiff)}\hlopt{>}\hlnum{0}\hlstd{)}
+\hlkwd{subset}\hlstd{(magnet,} \hlkwd{abs}\hlstd{(mdiff)} \hlopt{>} \hlnum{0}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ##      km    raw   clean     mdiff
@@ -200,23 +200,157 @@ multitaper or otherwise.
 We can find power spectral density (PSD)
 estimates for the two series quite simply with \Rcmd{pspectrum}:
 %% pspectrum 5 iters
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{psdr} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(magnet}\hlopt{$}\hlstd{raw)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 14
+\end{verbatim}
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: min\_taper * max\_taper >= 1 \& max\_taper >= min\_taper is not TRUE}}\begin{alltt}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeec77e600
+## cpp  4:1024
+## cpp  5:(0)0 14 -1011.58 -16.7858
+## cpp  5:(0)1 14 -98.1488 300.164
+## cpp  5:(0)2 14 815.278 617.114
+## cpp  5:(0)3 14 1329.47 -911.147
+## cpp  5:(0)4 14 -387.976 -1489.23
+## [1] 22.1659
+## [1] 58.44037
+## [1] -36.27447
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeec5b3200
+## cpp  4:1024
+## cpp  5:(0)0 42 -1.25056e-12 0
+## cpp  5:(0)1 43 -98.1488 300.164
+## cpp  5:(0)2 44 815.278 617.114
+## cpp  5:(0)3 45 1329.47 -911.147
+## cpp  5:(0)4 46 -387.976 -1489.23
+## [1] 22.1659
+## [1] 58.32732
+## [1] -36.16142
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -18.8 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeea0fea00
+## cpp  4:1024
+## cpp  5:(0)0 106 -1.25056e-12 0
+## cpp  5:(0)1 105 -98.1488 300.164
+## cpp  5:(0)2 104 815.278 617.114
+## cpp  5:(0)3 103 1329.47 -911.147
+## cpp  5:(0)4 102 -387.976 -1489.23
+## [1] 22.1659
+## [1] 58.28626
+## [1] -36.12036
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -23.6 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeeab81200
+## cpp  4:1024
+## cpp  5:(0)0 162 -1.25056e-12 0
+## cpp  5:(0)1 163 -98.1488 300.164
+## cpp  5:(0)2 164 815.278 617.114
+## cpp  5:(0)3 165 1329.47 -911.147
+## cpp  5:(0)4 166 -387.976 -1489.23
+## [1] 22.1659
+## [1] 58.25526
+## [1] -36.08936
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -24.2 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 \hlstd{psdc} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(magnet}\hlopt{$}\hlstd{clean)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 14
+\end{verbatim}
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: min\_taper * max\_taper >= 1 \& max\_taper >= min\_taper is not TRUE}}\end{kframe}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeeaa1be00
+## cpp  4:1024
+## cpp  5:(0)0 14 -791.427 -115.093
+## cpp  5:(0)1 14 -93.2315 227.168
+## cpp  5:(0)2 14 604.964 569.429
+## cpp  5:(0)3 14 1159.71 -664.567
+## cpp  5:(0)4 14 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.77368
+## [1] -36.2378
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeeac1e400
+## cpp  4:1024
+## cpp  5:(0)0 51 2.41585e-13 0
+## cpp  5:(0)1 50 -93.2315 227.168
+## cpp  5:(0)2 49 604.964 569.429
+## cpp  5:(0)3 48 1159.71 -664.567
+## cpp  5:(0)4 47 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.69873
+## [1] -36.16285
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -15.1 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeeb268800
+## cpp  4:1024
+## cpp  5:(0)0 91 2.41585e-13 0
+## cpp  5:(0)1 90 -93.2315 227.168
+## cpp  5:(0)2 89 604.964 569.429
+## cpp  5:(0)3 88 1159.71 -664.567
+## cpp  5:(0)4 87 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.67791
+## [1] -36.14202
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -22.6 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed0d4200
+## cpp  4:1024
+## cpp  5:(0)0 175 2.41585e-13 0
+## cpp  5:(0)1 176 -93.2315 227.168
+## cpp  5:(0)2 177 604.964 569.429
+## cpp  5:(0)3 177 1159.71 -664.567
+## cpp  5:(0)4 176 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.61941
+## [1] -36.08353
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -26.8 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\end{kframe}
 \end{knitrout}
 Each application of \Rcmd{pspectrum} calculates a pilot PSD, followed by 
 \Rcmd{niter}
@@ -232,19 +366,16 @@ to the raw periodogram estimate is shown after the final iterative stage.
 Note that if the user forgets to assign the results of
 \Rcmd{pspectrum} to the global environment, this can be
 done with the \Rcmd{psd\_envGet} function:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{psdc_recovered} \hlkwb{<-} \hlkwd{psd_envGet}\hlstd{(}\hlstr{"final_psd"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in psd\_envGet("{}final\_psd"{}): Variable\ \ 'final\_psd'\ \ not found! See psd\_envList()}}\begin{alltt}
 \hlkwd{all.equal}\hlstd{(psdc, psdc_recovered)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in all.equal(psdc, psdc\_recovered): object 'psdc' not found}}\end{kframe}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\end{kframe}
 \end{knitrout}
 
 In general, spectral variance is reduced
@@ -282,25 +413,17 @@ features which could be difficult to judge if the spectral variance was higher.
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{plot}\hlstd{(psdc,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{main}\hlstd{=}\hlstr{"Raw and Clean Project MAGNET power spectral density"}\hlstd{,}
-       \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{ci.col}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{32}\hlstd{),} \hlkwc{yaxs}\hlstd{=}\hlstr{"i"}\hlstd{)}
+\hlkwd{plot}\hlstd{(psdc,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Raw and Clean Project MAGNET power spectral density"}\hlstd{,}
+    \hlkwc{lwd} \hlstd{=} \hlnum{3}\hlstd{,} \hlkwc{ci.col} \hlstd{=} \hlnum{NA}\hlstd{,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{32}\hlstd{),} \hlkwc{yaxs} \hlstd{=} \hlstr{"i"}\hlstd{)}
+\hlkwd{plot}\hlstd{(psdr,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{3}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{5}\hlstd{)}
+\hlkwd{text}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0.25}\hlstd{,} \hlnum{0.34}\hlstd{),} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{,} \hlnum{24}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"Clean"}\hlstd{,} \hlstr{"Raw"}\hlstd{),} \hlkwc{cex} \hlstd{=} \hlnum{1}\hlstd{)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/RAWvCLEAN-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(psdc, log = "{}dB"{}, main = "{}Raw and Clean Project MAGNET power spectral density"{}, : object 'psdc' not found}}\begin{alltt}
-\hlkwd{plot}\hlstd{(psdr,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{5}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(psdr, log = "{}dB"{}, add = TRUE, lwd = 3, lty = 5): object 'psdr' not found}}\begin{alltt}
-\hlkwd{text}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0.25}\hlstd{,}\hlnum{0.34}\hlstd{),} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{,}\hlnum{24}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"Clean"}\hlstd{,}\hlstr{"Raw"}\hlstd{),} \hlkwc{cex}\hlstd{=}\hlnum{1}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(c(0.25, 0.34), c(11, 24), c("{}Clean"{}, "{}Raw"{}), cex = 1): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 \caption{Power spectral density estimates for the raw and cleaned
              \Rcmd{Project MAGNET} data bundled with \psd{}. Note that
@@ -342,10 +465,10 @@ Our method is non-parametric; hence, we will compare to the latter.
 Included in \Rcmd{psdcore} is an option to compare the 
 results with a 20\% cosine-tapered periodogram,
 found with the following command:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{spec.pgram}\hlstd{(X,} \hlkwc{pad}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{taper}\hlstd{=}\hlnum{0.2}\hlstd{,} \hlkwc{detrend}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{demean}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlkwd{spec.pgram}\hlstd{(X,} \hlkwc{pad} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{taper} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{detrend} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{demean} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -369,19 +492,37 @@ results are shown in Figure \ref{fig:two}.
 \begin{figure}[h!]
 \begin{center}
 %% Project MAGNET compare
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{ntap} \hlkwb{<-} \hlstd{psdc}\hlopt{$}\hlstd{taper}
+\hlkwd{psdcore}\hlstd{(magnet}\hlopt{$}\hlstd{clean,} \hlkwc{ntaper} \hlstd{= ntap,} \hlkwc{refresh} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{plotpsd} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'psdc' not found}}\begin{alltt}
-\hlkwd{psdcore}\hlstd{(magnet}\hlopt{$}\hlstd{clean,} \hlkwc{ntaper}\hlstd{=ntap,} \hlkwc{refresh}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{plotpsd}\hlstd{=}\hlnum{TRUE}\hlstd{)}
-\end{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c B \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1 2048
+## cpp  2:4096 1024
+\end{verbatim}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in psdcore.default(magnet\$clean, ntaper = ntap, refresh = TRUE, : object 'ntap' not found}}\end{kframe}
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in resample\_fft\_rcpp(fftz, kseq, verbose = verbose): forced taper length}}\begin{verbatim}
+## cpp  3:0x7ffeebdf7a00
+## cpp  4:1024
+## cpp  5:(0)0 1 -791.427 -115.093
+## cpp  5:(0)1 1 -93.2315 227.168
+## cpp  5:(0)2 1 604.964 569.429
+## cpp  5:(0)3 1 1159.71 -664.567
+## cpp  5:(0)4 1 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.63675
+## [1] -36.10087
+\end{verbatim}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y, xlabel, ylabel, log): 'x' and 'y' lengths differ}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/MAGNETNAIVE-1} 
+
 \end{knitrout}
 \caption{A summary plot produced by \Rcmd{psdcore} when
 \Rcmd{plotpsd=TRUE}.  
@@ -414,7 +555,7 @@ double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{require}\hlstd{(RSEIS)}
@@ -422,9 +563,10 @@ input series.  We can do this easily with the \Rcmd{prewhiten} methods:
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RSEIS}}\begin{alltt}
-\hlstd{dt}\hlkwb{=}\hlnum{1} \hlcom{# km}
+\hlstd{dt} \hlkwb{=} \hlnum{1}  \hlcom{# km}
 \hlcom{# prewhiten the data after adding a linear trend + offset}
-\hlkwd{summary}\hlstd{(}\hlkwd{prewhiten}\hlstd{(mc} \hlkwb{<-} \hlstd{(}\hlkwd{ts}\hlstd{(magnet}\hlopt{$}\hlstd{clean}\hlopt{+}\hlnum{1e3}\hlstd{,}\hlkwc{deltat}\hlstd{=dt)}\hlopt{+}\hlkwd{seq_along}\hlstd{(magnet}\hlopt{$}\hlstd{clean)),} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{))}
+\hlkwd{summary}\hlstd{(}\hlkwd{prewhiten}\hlstd{(mc} \hlkwb{<-} \hlstd{(}\hlkwd{ts}\hlstd{(magnet}\hlopt{$}\hlstd{clean} \hlopt{+} \hlnum{1000}\hlstd{,} \hlkwc{deltat} \hlstd{= dt)} \hlopt{+} \hlkwd{seq_along}\hlstd{(magnet}\hlopt{$}\hlstd{clean)),}
+    \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{))}
 \end{alltt}
 
 
@@ -451,10 +593,10 @@ and the residuals from this fit are also returned.
 This fit uses the Akaike infomation criterion (AIC) to select
 the highest order appropriate for the data.
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{summary}\hlstd{(atsar} \hlkwb{<-} \hlkwd{prewhiten}\hlstd{(mc,} \hlkwc{AR.max}\hlstd{=}\hlnum{100}\hlstd{,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{))}
+\hlkwd{summary}\hlstd{(atsar} \hlkwb{<-} \hlkwd{prewhiten}\hlstd{(mc,} \hlkwc{AR.max} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{))}
 \end{alltt}
 
 
@@ -490,12 +632,12 @@ the highest order appropriate for the data.
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{plot}\hlstd{(}\hlkwd{ts.union}\hlstd{(}\hlkwc{orig.plus.trend}\hlstd{=mc,} \hlkwc{linear}\hlstd{=ats_lm,} \hlkwc{ar}\hlstd{=ats_ar),} \hlkwc{yax.flip}\hlstd{=}\hlnum{TRUE}\hlstd{,}
-     \hlkwc{main}\hlstd{=}\hlkwd{sprintf}\hlstd{(}\hlstr{"Prewhitened Project MAGNET series"}\hlstd{))}
-\hlkwd{mtext}\hlstd{(}\hlkwd{sprintf}\hlstd{(}\hlstr{"linear and linear+AR(%s)"}\hlstd{, atsar}\hlopt{$}\hlstd{ardfit}\hlopt{$}\hlstd{order),} \hlkwc{line}\hlstd{=}\hlnum{1.1}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwd{ts.union}\hlstd{(}\hlkwc{orig.plus.trend} \hlstd{= mc,} \hlkwc{linear} \hlstd{= ats_lm,} \hlkwc{ar} \hlstd{= ats_ar),} \hlkwc{yax.flip} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+    \hlkwc{main} \hlstd{=} \hlkwd{sprintf}\hlstd{(}\hlstr{"Prewhitened Project MAGNET series"}\hlstd{))}
+\hlkwd{mtext}\hlstd{(}\hlkwd{sprintf}\hlstd{(}\hlstr{"linear and linear+AR(%s)"}\hlstd{, atsar}\hlopt{$}\hlstd{ardfit}\hlopt{$}\hlstd{order),} \hlkwc{line} \hlstd{=} \hlnum{1.1}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/ARFITPLT-1} 
@@ -516,24 +658,72 @@ with which \Rcmd{psdcore}
 would interpret as
 an interval (instead of a frequency). 
 A quick example highlights the equivalency:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{a} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlnum{32}\hlstd{)}
-\hlkwd{all.equal}\hlstd{(}\hlkwd{psdcore}\hlstd{(a,}\hlnum{1}\hlstd{)}\hlopt{$}\hlstd{spec,} \hlkwd{psdcore}\hlstd{(a,}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{$}\hlstd{spec)}
+\hlkwd{all.equal}\hlstd{(}\hlkwd{psdcore}\hlstd{(a,} \hlnum{1}\hlstd{)}\hlopt{$}\hlstd{spec,} \hlkwd{psdcore}\hlstd{(a,} \hlopt{-}\hlnum{1}\hlstd{)}\hlopt{$}\hlstd{spec)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in .Call("{}psd\_resample\_fft\_rcpp"{}, PACKAGE = "{}psd"{}, fftz, tapers, : negative length vectors are not allowed}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c A 1 16}}\begin{verbatim}
+## 'tapers' object: num. tapers applied by index
+## 	head:  1
+## 		...
+## 	tail:  1
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:32 16 17 32
+## cpp  2:64 16
+## cpp  3:0x7ffeec71b158
+## cpp  4:16
+## cpp  5:(0)0 1 1.32153 0.915948
+## cpp  5:(0)1 1 0.309161 -0.0926227
+## cpp  5:(0)2 1 -0.703206 -1.10119
+## cpp  5:(0)3 1 0.117808 2.44293
+## cpp  5:(0)4 1 4.82892 -2.99637
+## [1] 0.7412527
+## [1] 17.72907
+## [1] -16.98782
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c A 1 16}}\begin{verbatim}
+## 'tapers' object: num. tapers applied by index
+## 	head:  1
+## 		...
+## 	tail:  1
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:32 16 17 32
+## cpp  2:64 16
+## cpp  3:0x7ffeec744e00
+## cpp  4:16
+## cpp  5:(0)0 1 1.32153 0.915948
+## cpp  5:(0)1 1 0.309161 -0.0926227
+## cpp  5:(0)2 1 -0.703206 -1.10119
+## cpp  5:(0)3 1 0.117808 2.44293
+## cpp  5:(0)4 1 4.82892 -2.99637
+## [1] 0.7412527
+## [1] 17.72907
+## [1] -16.98782
+## [1] TRUE
+\end{verbatim}
+\end{kframe}
 \end{knitrout}
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
 estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{tapinit} \hlkwb{<-} \hlnum{10}
-\hlstd{Mspec} \hlkwb{<-} \hlkwd{mtapspec}\hlstd{(ats_lm,} \hlkwd{deltat}\hlstd{(ats_lm),} \hlkwc{MTP}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{kind}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{inorm}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{nwin}\hlstd{=tapinit,} \hlkwc{npi}\hlstd{=}\hlnum{0}\hlstd{))}
+\hlstd{Mspec} \hlkwb{<-} \hlkwd{mtapspec}\hlstd{(ats_lm,} \hlkwd{deltat}\hlstd{(ats_lm),} \hlkwc{MTP} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{kind} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{inorm} \hlstd{=} \hlnum{3}\hlstd{,}
+    \hlkwc{nwin} \hlstd{= tapinit,} \hlkwc{npi} \hlstd{=} \hlnum{0}\hlstd{))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -542,7 +732,7 @@ where \Rcmd{nwin} is the number of tapers taken and
 leave it out for the sake of comparison). 
 Note that the object returned
 is not of class \Rcmd{spec}:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{str}\hlstd{(Mspec)}
@@ -585,22 +775,221 @@ and we will need to correct for normalization factors, as necessary, with
 set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{Xspec} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(ats_lm,} \hlkwc{pad}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{taper}\hlstd{=}\hlnum{0.2}\hlstd{,} \hlkwc{detr}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{dem}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlstd{Xspec} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(ats_lm,} \hlkwc{pad} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{taper} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{detr} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{dem} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+    \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \hlstd{Pspec} \hlkwb{<-} \hlkwd{psdcore}\hlstd{(ats_lm, dt, tapinit)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1024}}\begin{alltt}
-\hlstd{Aspec} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(ats_lm, dt, tapinit,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 10
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed0fa600
+## cpp  4:1024
+## cpp  5:(0)0 10 -791.427 -115.093
+## cpp  5:(0)1 10 -93.2315 227.168
+## cpp  5:(0)2 10 604.964 569.429
+## cpp  5:(0)3 10 1159.71 -664.567
+## cpp  5:(0)4 10 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.80048
+## [1] -36.2646
+\end{verbatim}
+\begin{alltt}
+\hlstd{Aspec} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(ats_lm, dt, tapinit,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 1
+\end{verbatim}
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: min\_taper * max\_taper >= 1 \& max\_taper >= min\_taper is not TRUE}}\begin{alltt}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed611600
+## cpp  4:1024
+## cpp  5:(0)0 1 -791.427 -115.093
+## cpp  5:(0)1 1 -93.2315 227.168
+## cpp  5:(0)2 1 604.964 569.429
+## cpp  5:(0)3 1 1159.71 -664.567
+## cpp  5:(0)4 1 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.63675
+## [1] -36.10087
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed66e400
+## cpp  4:1024
+## cpp  5:(0)0 3 2.13163e-14 0
+## cpp  5:(0)1 2 -93.2315 227.168
+## cpp  5:(0)2 2 604.964 569.429
+## cpp  5:(0)3 2 1159.71 -664.567
+## cpp  5:(0)4 3 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.84493
+## [1] -36.30904
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -11.2 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed5dcc00
+## cpp  4:1024
+## cpp  5:(0)0 5 2.13163e-14 0
+## cpp  5:(0)1 5 -93.2315 227.168
+## cpp  5:(0)2 5 604.964 569.429
+## cpp  5:(0)3 6 1159.71 -664.567
+## cpp  5:(0)4 7 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.79174
+## [1] -36.25586
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -20.4 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed5d9800
+## cpp  4:1024
+## cpp  5:(0)0 18 2.13163e-14 0
+## cpp  5:(0)1 18 -93.2315 227.168
+## cpp  5:(0)2 17 604.964 569.429
+## cpp  5:(0)3 18 1159.71 -664.567
+## cpp  5:(0)4 19 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.76308
+## [1] -36.2272
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -33.3 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeec7d4600
+## cpp  4:1024
+## cpp  5:(0)0 58 2.13163e-14 0
+## cpp  5:(0)1 58 -93.2315 227.168
+## cpp  5:(0)2 57 604.964 569.429
+## cpp  5:(0)3 56 1159.71 -664.567
+## cpp  5:(0)4 55 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.69992
+## [1] -36.16404
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -41.6 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed535200
+## cpp  4:1024
+## cpp  5:(0)0 85 2.13163e-14 0
+## cpp  5:(0)1 84 -93.2315 227.168
+## cpp  5:(0)2 83 604.964 569.429
+## cpp  5:(0)3 82 1159.71 -664.567
+## cpp  5:(0)4 81 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.6447
+## [1] -36.10882
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 5 est. (Ave. S.V.R. -47.0 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeed0d9800
+## cpp  4:1024
+## cpp  5:(0)0 143 2.13163e-14 0
+## cpp  5:(0)1 142 -93.2315 227.168
+## cpp  5:(0)2 141 604.964 569.429
+## cpp  5:(0)3 140 1159.71 -664.567
+## cpp  5:(0)4 139 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.64201
+## [1] -36.10612
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 6 est. (Ave. S.V.R. -58.8 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeee09d400
+## cpp  4:1024
+## cpp  5:(0)0 163 2.13163e-14 0
+## cpp  5:(0)1 162 -93.2315 227.168
+## cpp  5:(0)2 162 604.964 569.429
+## cpp  5:(0)3 161 1159.71 -664.567
+## cpp  5:(0)4 161 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.61591
+## [1] -36.08002
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 7 est. (Ave. S.V.R. -69.9 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeee07fc00
+## cpp  4:1024
+## cpp  5:(0)0 164 2.13163e-14 0
+## cpp  5:(0)1 164 -93.2315 227.168
+## cpp  5:(0)2 164 604.964 569.429
+## cpp  5:(0)3 164 1159.71 -664.567
+## cpp  5:(0)4 164 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.61834
+## [1] -36.08246
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 8 est. (Ave. S.V.R. -73.0 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeee29a400
+## cpp  4:1024
+## cpp  5:(0)0 166 2.13163e-14 0
+## cpp  5:(0)1 166 -93.2315 227.168
+## cpp  5:(0)2 166 604.964 569.429
+## cpp  5:(0)3 166 1159.71 -664.567
+## cpp  5:(0)4 166 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.62527
+## [1] -36.08939
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 9 est. (Ave. S.V.R. -74.1 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeec7d4600
+## cpp  4:1024
+## cpp  5:(0)0 166 2.13163e-14 0
+## cpp  5:(0)1 166 -93.2315 227.168
+## cpp  5:(0)2 166 604.964 569.429
+## cpp  5:(0)3 167 1159.71 -664.567
+## cpp  5:(0)4 167 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.63289
+## [1] -36.09701
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 10 est. (Ave. S.V.R. -71.9 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 \hlcom{# Correct for double-sidedness of spectrum and mtapspec results}
 \hlkwd{class}\hlstd{(Mspec)}
 \end{alltt}
@@ -632,26 +1021,21 @@ Figure \ref{fig:psdcomp}.
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{library}\hlstd{(RColorBrewer)}
-\hlstd{cols} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"dark grey"}\hlstd{,} \hlkwd{brewer.pal}\hlstd{(}\hlnum{8}\hlstd{,} \hlstr{"Set1"}\hlstd{)[}\hlkwd{c}\hlstd{(}\hlnum{5}\hlopt{:}\hlnum{4}\hlstd{,}\hlnum{2}\hlstd{)])}
-\hlstd{lwds} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{5}\hlstd{)}
-\hlkwd{par}\hlstd{(}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{)}
-\hlkwd{plot}\hlstd{(Xspec,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{ylim}\hlstd{=}\hlnum{40}\hlopt{*}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.4}\hlstd{,}\hlnum{1}\hlstd{),} \hlkwc{ci.col}\hlstd{=}\hlnum{NA}\hlstd{,}
-       \hlkwc{col}\hlstd{=cols[}\hlnum{1}\hlstd{],} \hlkwc{lwd}\hlstd{=lwds[}\hlnum{1}\hlstd{],} \hlkwc{main}\hlstd{=}\hlstr{"PSD Comparisons"}\hlstd{)}
+\hlstd{cols} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"dark grey"}\hlstd{,} \hlkwd{brewer.pal}\hlstd{(}\hlnum{8}\hlstd{,} \hlstr{"Set1"}\hlstd{)[}\hlkwd{c}\hlstd{(}\hlnum{5}\hlopt{:}\hlnum{4}\hlstd{,} \hlnum{2}\hlstd{)])}
+\hlstd{lwds} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{5}\hlstd{)}
+\hlkwd{par}\hlstd{(}\hlkwc{las} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlkwd{plot}\hlstd{(Xspec,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{ylim} \hlstd{=} \hlnum{40} \hlopt{*} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.4}\hlstd{,} \hlnum{1}\hlstd{),} \hlkwc{ci.col} \hlstd{=} \hlnum{NA}\hlstd{,} \hlkwc{col} \hlstd{= cols[}\hlnum{1}\hlstd{],}
+    \hlkwc{lwd} \hlstd{= lwds[}\hlnum{1}\hlstd{],} \hlkwc{main} \hlstd{=} \hlstr{"PSD Comparisons"}\hlstd{)}
 \hlstd{pltf} \hlkwb{<-} \hlstd{Mspec}\hlopt{$}\hlstd{freq}
-\hlkwd{lines}\hlstd{(pltf, pltp} \hlkwb{<-} \hlkwd{dB}\hlstd{(mspec),} \hlkwc{col}\hlstd{=cols[}\hlnum{2}\hlstd{],} \hlkwc{lwd}\hlstd{=lwds[}\hlnum{2}\hlstd{])}
-\hlkwd{plot}\hlstd{(Pspec,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,}  \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{col}\hlstd{=cols[}\hlnum{3}\hlstd{],} \hlkwc{lwd}\hlstd{=lwds[}\hlnum{3}\hlstd{])}
-\hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{col}\hlstd{=cols[}\hlnum{4}\hlstd{],} \hlkwc{lwd}\hlstd{=lwds[}\hlnum{4}\hlstd{])}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(Aspec, log = "{}dB"{}, add = TRUE, col = cols[4], lwd = lwds[4]): object 'Aspec' not found}}\begin{alltt}
-\hlkwd{legend}\hlstd{(}\hlstr{"topright"}\hlstd{,}
-  \hlkwd{c}\hlstd{(}\hlstr{"spec.pgram"}\hlstd{,}\hlstr{"RSEIS::mtapspec"}\hlstd{,}\hlstr{"psdcore"}\hlstd{,}\hlstr{"pspectrum"}\hlstd{),}
-  \hlkwc{title}\hlstd{=}\hlstr{"Estimator"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{cex}\hlstd{=}\hlnum{1.1}\hlstd{,} \hlkwc{col}\hlstd{=cols)}
+\hlkwd{lines}\hlstd{(pltf, pltp} \hlkwb{<-} \hlkwd{dB}\hlstd{(mspec),} \hlkwc{col} \hlstd{= cols[}\hlnum{2}\hlstd{],} \hlkwc{lwd} \hlstd{= lwds[}\hlnum{2}\hlstd{])}
+\hlkwd{plot}\hlstd{(Pspec,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{col} \hlstd{= cols[}\hlnum{3}\hlstd{],} \hlkwc{lwd} \hlstd{= lwds[}\hlnum{3}\hlstd{])}
+\hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{col} \hlstd{= cols[}\hlnum{4}\hlstd{],} \hlkwc{lwd} \hlstd{= lwds[}\hlnum{4}\hlstd{])}
+\hlkwd{legend}\hlstd{(}\hlstr{"topright"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"spec.pgram"}\hlstd{,} \hlstr{"RSEIS::mtapspec"}\hlstd{,} \hlstr{"psdcore"}\hlstd{,} \hlstr{"pspectrum"}\hlstd{),}
+    \hlkwc{title} \hlstd{=} \hlstr{"Estimator"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{3}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{1.1}\hlstd{,} \hlkwc{col} \hlstd{= cols)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/RSEIS-1} 
@@ -666,10 +1050,10 @@ Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{library}\hlstd{(signal,} \hlkwc{warn.conflicts}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlkwd{library}\hlstd{(signal,} \hlkwc{warn.conflicts} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \hlstd{pltpi} \hlkwb{<-} \hlkwd{interp1}\hlstd{(pltf, pltp, Pspec}\hlopt{$}\hlstd{freq)}
 \end{alltt}
 \end{kframe}
@@ -678,24 +1062,35 @@ We regress the spectral values from \Rcmd{mtapspec} against
 the \Rcmd{psdcore} results because we have used them to
 produce uniformly tapered spectra
 with an equal number of sine tapers.
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x}\hlstd{=}\hlkwd{dB}\hlstd{(Pspec}\hlopt{$}\hlstd{spec),} \hlkwc{y}\hlstd{=pltpi,} \hlkwc{tap}\hlstd{=}\hlkwd{unclass}\hlstd{(Aspec}\hlopt{$}\hlstd{taper))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in data.frame(x = dB(Pspec\$spec), y = pltpi, tap = unclass(Aspec\$taper)): object 'Aspec' not found}}\begin{alltt}
+\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{dB}\hlstd{(Pspec}\hlopt{$}\hlstd{spec),} \hlkwc{y} \hlstd{= pltpi,} \hlkwc{tap} \hlstd{=} \hlkwd{unclass}\hlstd{(Aspec}\hlopt{$}\hlstd{taper))}
 \hlkwd{summary}\hlstd{(dflm} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x} \hlopt{+} \hlnum{0}\hlstd{, df))}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in as.data.frame.default(data, optional = TRUE): cannot coerce class "{}"{}function"{}"{} to a data.frame}}\begin{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = y ~ x + 0, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.2466 -0.3368  0.1776  0.9687  5.5773 
+## 
+## Coefficients:
+##   Estimate Std. Error t value Pr(>|t|)    
+## x 0.992488   0.002047   484.9   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.196 on 1023 degrees of freedom
+## Multiple R-squared:  0.9957,	Adjusted R-squared:  0.9957 
+## F-statistic: 2.352e+05 on 1 and 1023 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\begin{alltt}
 \hlstd{df}\hlopt{$}\hlstd{res} \hlkwb{<-} \hlkwd{residuals}\hlstd{(dflm)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in residuals(dflm): object 'dflm' not found}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 We show the regression residuals in Figure \ref{fig:psdreg}.  
 The structure visible
@@ -706,24 +1101,18 @@ in Figure \ref{fig:psdcomp}.
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{library}\hlstd{(ggplot2)}
-\hlstd{gr} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=res))} \hlopt{+} \hlkwd{geom_abline}\hlstd{(}\hlkwc{intercept}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{slope}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{color}\hlstd{=}\hlstr{"salmon"}\hlstd{)} \hlopt{+}
-\hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=tap))}
+\hlstd{gr} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= x,} \hlkwc{y} \hlstd{= res))} \hlopt{+} \hlkwd{geom_abline}\hlstd{(}\hlkwc{intercept} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{slope} \hlstd{=} \hlnum{0}\hlstd{,}
+    \hlkwc{size} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{color} \hlstd{=} \hlstr{"salmon"}\hlstd{)} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color} \hlstd{= tap))}
+\hlkwd{print}\hlstd{(gr} \hlopt{+} \hlkwd{theme_bw}\hlstd{()} \hlopt{+} \hlkwd{ggtitle}\hlstd{(}\hlstr{"Regression residuals, colored by optimized tapers"}\hlstd{)} \hlopt{+}
+    \hlkwd{xlab}\hlstd{(}\hlstr{"Power levels, dB"}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{""}\hlstd{))}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/RSEISvsRLP2-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: ggplot2 doesn't know how to deal with data of class function}}\begin{alltt}
-\hlkwd{print}\hlstd{(gr} \hlopt{+} \hlkwd{theme_bw}\hlstd{()} \hlopt{+}
-\hlkwd{ggtitle}\hlstd{(}\hlstr{"Regression residuals, colored by optimized tapers"}\hlstd{)}\hlopt{+}
-\hlkwd{xlab}\hlstd{(}\hlstr{"Power levels, dB"}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{""}\hlstd{)}
-\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in print(gr + theme\_bw() + ggtitle("{}Regression residuals, colored by optimized tapers"{}) + : object 'gr' not found}}\end{kframe}
 \end{knitrout}
 \caption{Linear regression residuals of
 \Rcmd{mtapspec} against \Rcmd{psdcore} for Project MAGNET PSD estimates.}
@@ -777,7 +1166,7 @@ An intriguing method for producing power spectral density estimates
  In Figure \ref{fig:bayes} we have used the \Rcmd{plot.bspec} method
  and overlain the results found previously by \Rcmd{psdcore}.
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{library}\hlstd{(bspec)}
@@ -800,11 +1189,11 @@ An intriguing method for producing power spectral density estimates
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{Bspec_plt} \hlkwb{<-} \hlkwd{plot}\hlstd{(Bspec)}
-\hlkwd{lines}\hlstd{(Pspec}\hlopt{$}\hlstd{freq, Pspec}\hlopt{$}\hlstd{spec,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{lines}\hlstd{(Pspec}\hlopt{$}\hlstd{freq, Pspec}\hlopt{$}\hlstd{spec,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/BSPECFIG-1} 
@@ -834,19 +1223,38 @@ is flat (as we expect), this variance translates to power levels
 of about $~16$ decibels
 for a 1 km sampling interval.  
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{ntap} \hlkwb{<-} \hlnum{7}
-\hlstd{psd_ar} \hlkwb{<-} \hlkwd{psdcore}\hlstd{(ats_ar,} \hlkwc{ntaper}\hlstd{=ntap,} \hlkwc{refresh}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlstd{psd_ar} \hlkwb{<-} \hlkwd{psdcore}\hlstd{(ats_ar,} \hlkwc{ntaper} \hlstd{= ntap,} \hlkwc{refresh} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1024}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 7
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeef29b800
+## cpp  4:1024
+## cpp  5:(0)0 7 -152.395 -8.20045
+## cpp  5:(0)1 7 -17.311 47.8793
+## cpp  5:(0)2 7 117.773 103.959
+## cpp  5:(0)3 7 206.522 -110.781
+## cpp  5:(0)4 7 -35.875 -199.514
+## [1] 12.81241
+## [1] 49.03806
+## [1] -36.22565
+\end{verbatim}
+\begin{alltt}
 \hlkwd{dB}\hlstd{(}\hlkwd{mean}\hlstd{(psd_ar}\hlopt{$}\hlstd{spec))}
 \end{alltt}
 \begin{verbatim}
-## [1] 15.82885
+## [1] 15.82778
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -861,31 +1269,61 @@ Overlain on these series is the adaptive spectrum found previously.
 % ERROR HERE
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{pilot_spec}\hlstd{(ats_lm,} \hlkwc{ntap}\hlstd{=ntap,} \hlkwc{remove.AR}\hlstd{=}\hlnum{100}\hlstd{,} \hlkwc{plot}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlkwd{pilot_spec}\hlstd{(ats_lm,} \hlkwc{ntap} \hlstd{= ntap,} \hlkwc{remove.AR} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1024}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 7
+\end{verbatim}
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in .Call("{}psd\_resample\_fft\_rcpp"{}, PACKAGE = "{}psd"{}, fftz, tapers, : negative length vectors are not allowed}}\begin{alltt}
-\hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"grey"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{4}\hlstd{)}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeef042600
+## cpp  4:1024
+## cpp  5:(0)0 7 13.2137 0
+## cpp  5:(0)1 7 -11.9169 39.4713
+## cpp  5:(0)2 7 117.779 99.7275
+## cpp  5:(0)3 7 207.127 -113.584
+## cpp  5:(0)4 7 -35.8685 -201.63
+## [1] 12.81242
+## [1] 49.03509
+## [1] -36.22267
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 7
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeef89ce00
+## cpp  4:1024
+## cpp  5:(0)0 7 -791.427 -115.093
+## cpp  5:(0)1 7 -93.2315 227.168
+## cpp  5:(0)2 7 604.964 569.429
+## cpp  5:(0)3 7 1159.71 -664.567
+## cpp  5:(0)4 7 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.93057
+## [1] -36.39469
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"grey"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{4}\hlstd{)}
+\hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{3}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{3}\hlstd{)}
+\hlkwd{spec.ar}\hlstd{(ats_lm,} \hlkwc{log} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"grey40"}\hlstd{)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/MAGPSDAR-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(Aspec, log = "{}dB"{}, add = TRUE, col = "{}grey"{}, lwd = 4): object 'Aspec' not found}}\begin{alltt}
-\hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{3}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(Aspec, log = "{}dB"{}, add = TRUE, lwd = 3, lty = 3): object 'Aspec' not found}}\begin{alltt}
-\hlkwd{spec.ar}\hlstd{(ats_lm,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"grey40"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 \caption{AR response spectrum for the MAGNET dataset produced by 
 \Rcmd{pilot\_spec}. Overlain on the figure is the adaptive estimation 
@@ -925,26 +1363,23 @@ only slight improvements with logarithmic number of tapers.
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{sp} \hlkwb{<-} \hlkwd{spectral_properties}\hlstd{(}\hlkwd{as.tapers}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{50}\hlstd{),} \hlkwc{p}\hlstd{=}\hlnum{0.95}\hlstd{,} \hlkwc{db.ci}\hlstd{=}\hlnum{TRUE}\hlstd{)}
-\hlkwd{par}\hlstd{(}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{)}
-\hlkwd{plot}\hlstd{(stderr.chi.upper} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type}\hlstd{=}\hlstr{"s"}\hlstd{,}
-       \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{10}\hlstd{,}\hlnum{20}\hlstd{),} \hlkwc{yaxs}\hlstd{=}\hlstr{"i"}\hlstd{,} \hlkwc{xaxs}\hlstd{=}\hlstr{"i"}\hlstd{,}
-       \hlkwc{xlab}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlstr{"number of tapers ("}\hlopt{*} \hlstd{nu}\hlopt{/}\hlnum{2} \hlopt{*}\hlstr{")"}\hlstd{),} \hlkwc{ylab}\hlstd{=}\hlstr{"dB"}\hlstd{,}
-       \hlkwc{main}\hlstd{=}\hlstr{"Spectral uncertainties"}\hlstd{)}
-\hlkwd{mtext}\hlstd{(}\hlstr{"(additive factor)"}\hlstd{,} \hlkwc{line}\hlstd{=}\hlnum{.3}\hlstd{)}
-\hlkwd{lines}\hlstd{(stderr.chi.lower} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type}\hlstd{=}\hlstr{"s"}\hlstd{)}
-\hlkwd{lines}\hlstd{(stderr.chi.median} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type}\hlstd{=}\hlstr{"s"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{lines}\hlstd{(stderr.chi.approx} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type}\hlstd{=}\hlstr{"s"}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,}\hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlstd{sp} \hlkwb{<-} \hlkwd{spectral_properties}\hlstd{(}\hlkwd{as.tapers}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{50}\hlstd{),} \hlkwc{p} \hlstd{=} \hlnum{0.95}\hlstd{,} \hlkwc{db.ci} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{par}\hlstd{(}\hlkwc{las} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlkwd{plot}\hlstd{(stderr.chi.upper} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type} \hlstd{=} \hlstr{"s"}\hlstd{,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{10}\hlstd{,} \hlnum{20}\hlstd{),} \hlkwc{yaxs} \hlstd{=} \hlstr{"i"}\hlstd{,}
+    \hlkwc{xaxs} \hlstd{=} \hlstr{"i"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlkwd{expression}\hlstd{(}\hlstr{"number of tapers ("} \hlopt{*} \hlstd{nu}\hlopt{/}\hlnum{2} \hlopt{*} \hlstr{")"}\hlstd{),}
+    \hlkwc{ylab} \hlstd{=} \hlstr{"dB"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Spectral uncertainties"}\hlstd{)}
+\hlkwd{mtext}\hlstd{(}\hlstr{"(additive factor)"}\hlstd{,} \hlkwc{line} \hlstd{=} \hlnum{0.3}\hlstd{)}
+\hlkwd{lines}\hlstd{(stderr.chi.lower} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type} \hlstd{=} \hlstr{"s"}\hlstd{)}
+\hlkwd{lines}\hlstd{(stderr.chi.median} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type} \hlstd{=} \hlstr{"s"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
+\hlkwd{lines}\hlstd{(stderr.chi.approx} \hlopt{~} \hlstd{taper, sp,} \hlkwc{type} \hlstd{=} \hlstr{"s"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{)}
 \hlcom{# to reach 3 db width confidence interval at p=.95}
-\hlkwd{abline}\hlstd{(}\hlkwc{v}\hlstd{=}\hlnum{33}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{3}\hlstd{)}
-\hlkwd{legend}\hlstd{(}\hlstr{"topright"}\hlstd{,}
-        \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlstr{"Based on "}\hlopt{*} \hlstd{chi}\hlopt{^}\hlnum{2} \hlopt{*}\hlstr{"(p,"}\hlopt{*}\hlstd{nu}\hlopt{*}\hlstr{") and (1-p,"}\hlopt{*}\hlstd{nu}\hlopt{*}\hlstr{")"}\hlstd{),}
-          \hlkwd{expression}\hlstd{(}\hlstr{""}\hlopt{*} \hlstd{chi}\hlopt{^}\hlnum{2} \hlopt{*}\hlstr{"(p=0.5,"}\hlopt{*}\hlstd{nu}\hlopt{*}\hlstr{")"}\hlstd{),}
-          \hlstr{"approximation"}\hlstd{),}
-\hlkwc{lwd}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{),} \hlkwc{col}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"black"}\hlstd{,}\hlstr{"black"}\hlstd{,}\hlstr{"red"}\hlstd{),} \hlkwc{bg}\hlstd{=}\hlstr{"white"}\hlstd{)}
+\hlkwd{abline}\hlstd{(}\hlkwc{v} \hlstd{=} \hlnum{33}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{3}\hlstd{)}
+\hlkwd{legend}\hlstd{(}\hlstr{"topright"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlstr{"Based on "} \hlopt{*} \hlstd{chi}\hlopt{^}\hlnum{2} \hlopt{*} \hlstr{"(p,"} \hlopt{*} \hlstd{nu} \hlopt{*} \hlstr{") and (1-p,"} \hlopt{*}
+    \hlstd{nu} \hlopt{*} \hlstr{")"}\hlstd{),} \hlkwd{expression}\hlstd{(}\hlstr{""} \hlopt{*} \hlstd{chi}\hlopt{^}\hlnum{2} \hlopt{*} \hlstr{"(p=0.5,"} \hlopt{*} \hlstd{nu} \hlopt{*} \hlstr{")"}\hlstd{),} \hlstr{"approximation"}\hlstd{),}
+    \hlkwc{lwd} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"black"}\hlstd{,} \hlstr{"black"}\hlstd{,} \hlstr{"red"}\hlstd{),} \hlkwc{bg} \hlstd{=} \hlstr{"white"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/SPECERR-1} 
@@ -970,61 +1405,73 @@ spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
 the Bayesian method, for a coverage probability of
 95\%. Figure \ref{fig:magerr} shows the uncertainties as bounded polygons,
 which we calculate here:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{spp} \hlkwb{<-} \hlkwd{spectral_properties}\hlstd{(Pspec}\hlopt{$}\hlstd{taper,} \hlkwc{db.ci}\hlstd{=}\hlnum{TRUE}\hlstd{)}
-\hlstd{spa} \hlkwb{<-} \hlkwd{spectral_properties}\hlstd{(Aspec}\hlopt{$}\hlstd{taper,} \hlkwc{db.ci}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlstd{spp} \hlkwb{<-} \hlkwd{spectral_properties}\hlstd{(Pspec}\hlopt{$}\hlstd{taper,} \hlkwc{db.ci} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in spectral\_properties(Aspec\$taper, db.ci = TRUE): object 'Aspec' not found}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in UseMethod("{}spectral\_properties"{}): no applicable method for 'spectral\_properties' applied to an object of class "{}c('integer', 'numeric')"{}}}\begin{alltt}
+\hlstd{spa} \hlkwb{<-} \hlkwd{spectral_properties}\hlstd{(Aspec}\hlopt{$}\hlstd{taper,} \hlkwc{db.ci} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in UseMethod("{}spectral\_properties"{}): no applicable method for 'spectral\_properties' applied to an object of class "{}c('integer', 'numeric')"{}}}\begin{alltt}
 \hlkwd{str}\hlstd{(spa)}
 \end{alltt}
 
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in str(spa): object 'spa' not found}}\begin{alltt}
-\hlstd{create_poly} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{,} \hlkwc{dy}\hlstd{,} \hlkwc{from.lower}\hlstd{=}\hlnum{FALSE}\hlstd{)\{}
-  \hlstd{xx} \hlkwb{<-} \hlkwd{c}\hlstd{(x,} \hlkwd{rev}\hlstd{(x))}
-  \hlkwa{if} \hlstd{(from.lower)\{}
-    \hlstd{yy} \hlkwb{<-} \hlkwd{c}\hlstd{(y,} \hlkwd{rev}\hlstd{(y}\hlopt{+}\hlstd{dy))}
-  \hlstd{\}} \hlkwa{else} \hlstd{\{}
-    \hlstd{yy} \hlkwb{<-} \hlkwd{c}\hlstd{(y}\hlopt{+}\hlstd{dy,} \hlkwd{rev}\hlstd{(y}\hlopt{-}\hlstd{dy))}
-  \hlstd{\}}
-  \hlkwd{return}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{xx}\hlstd{=xx,} \hlkwc{yy}\hlstd{=yy))}
+\hlstd{create_poly} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{,} \hlkwc{dy}\hlstd{,} \hlkwc{from.lower} \hlstd{=} \hlnum{FALSE}\hlstd{) \{}
+    \hlstd{xx} \hlkwb{<-} \hlkwd{c}\hlstd{(x,} \hlkwd{rev}\hlstd{(x))}
+    \hlkwa{if} \hlstd{(from.lower) \{}
+        \hlstd{yy} \hlkwb{<-} \hlkwd{c}\hlstd{(y,} \hlkwd{rev}\hlstd{(y} \hlopt{+} \hlstd{dy))}
+    \hlstd{\}} \hlkwa{else} \hlstd{\{}
+        \hlstd{yy} \hlkwb{<-} \hlkwd{c}\hlstd{(y} \hlopt{+} \hlstd{dy,} \hlkwd{rev}\hlstd{(y} \hlopt{-} \hlstd{dy))}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{yy} \hlstd{= yy))}
 \hlstd{\}}
 \hlstd{psppu} \hlkwb{<-} \hlkwd{create_poly}\hlstd{(Pspec}\hlopt{$}\hlstd{freq,} \hlkwd{dB}\hlstd{(Pspec}\hlopt{$}\hlstd{spec), spp}\hlopt{$}\hlstd{stderr.chi.upper)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in create\_poly(Pspec\$freq, dB(Pspec\$spec), spp\$stderr.chi.upper): object 'spp' not found}}\begin{alltt}
 \hlstd{pspau} \hlkwb{<-} \hlkwd{create_poly}\hlstd{(Aspec}\hlopt{$}\hlstd{freq,} \hlkwd{dB}\hlstd{(Aspec}\hlopt{$}\hlstd{spec), spa}\hlopt{$}\hlstd{stderr.chi.upper)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in create\_poly(Aspec\$freq, dB(Aspec\$spec), spa\$stderr.chi.upper): object 'Aspec' not found}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in create\_poly(Aspec\$freq, dB(Aspec\$spec), spa\$stderr.chi.upper): object 'spa' not found}}\begin{alltt}
 \hlcom{# and the Bayesian spectrum 95% limits}
-\hlstd{pspb} \hlkwb{<-} \hlkwd{create_poly}\hlstd{(Bspec_plt}\hlopt{$}\hlstd{freq, Bspec_plt}\hlopt{$}\hlstd{spectrum[,}\hlnum{1}\hlstd{], Bspec_plt}\hlopt{$}\hlstd{spectrum[,}\hlnum{3}\hlstd{],} \hlkwc{from.lower}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlstd{pspb} \hlkwb{<-} \hlkwd{create_poly}\hlstd{(Bspec_plt}\hlopt{$}\hlstd{freq, Bspec_plt}\hlopt{$}\hlstd{spectrum[,} \hlnum{1}\hlstd{], Bspec_plt}\hlopt{$}\hlstd{spectrum[,}
+    \hlnum{3}\hlstd{],} \hlkwc{from.lower} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{plot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0.5}\hlstd{),}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{5}\hlstd{,}\hlnum{40}\hlstd{),}\hlkwc{col}\hlstd{=}\hlstr{"white"}\hlstd{,}
-       \hlkwc{main}\hlstd{=}\hlstr{"Project MAGNET Spectral Uncertainty (p > 0.95)"}\hlstd{,}
-       \hlkwc{ylab}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"spatial frequency, 1/km"}\hlstd{,} \hlkwc{yaxt}\hlstd{=}\hlstr{"n"}\hlstd{,} \hlkwc{frame.plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
-\hlkwd{lines}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)}\hlopt{*}\hlnum{0.01}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{7}\hlstd{,}\hlnum{7}\hlstd{))}
-\hlkwd{text}\hlstd{(}\hlnum{.04}\hlstd{,} \hlnum{3.5}\hlstd{,} \hlstr{"7 dB"}\hlstd{)}
-\hlkwd{polygon}\hlstd{(pspb}\hlopt{$}\hlstd{xx,} \hlkwd{dB}\hlstd{(pspb}\hlopt{$}\hlstd{yy),} \hlkwc{col}\hlstd{=}\hlstr{"light blue"}\hlstd{,} \hlkwc{border}\hlstd{=}\hlnum{NA}\hlstd{)}
-\hlkwd{text}\hlstd{(}\hlnum{0.26}\hlstd{,} \hlnum{37}\hlstd{,} \hlstr{"Bayesian (bspec)"}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"#0099FF"}\hlstd{,} \hlkwc{cex}\hlstd{=cx}\hlkwb{<-}\hlnum{0.9}\hlstd{)}
-\hlkwd{polygon}\hlstd{(psppu}\hlopt{$}\hlstd{xx, psppu}\hlopt{$}\hlstd{yy,} \hlkwc{col}\hlstd{=}\hlstr{"dark grey"}\hlstd{,} \hlkwc{border}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{0.2}\hlstd{)}
-\hlkwd{text}\hlstd{(}\hlnum{0.15}\hlstd{,} \hlnum{6}\hlstd{,} \hlstr{"Light: adaptive\textbackslash{}ntaper refinement\textbackslash{}n(pspectrum)"}\hlstd{,} \hlkwc{cex}\hlstd{=cx)}
-\hlkwd{polygon}\hlstd{(pspau}\hlopt{$}\hlstd{xx, pspau}\hlopt{$}\hlstd{yy,} \hlkwc{col}\hlstd{=}\hlstr{"light grey"}\hlstd{,} \hlkwc{border}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{0.2}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.5}\hlstd{),} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{5}\hlstd{,} \hlnum{40}\hlstd{),} \hlkwc{col} \hlstd{=} \hlstr{"white"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Project MAGNET Spectral Uncertainty (p > 0.95)"}\hlstd{,}
+    \hlkwc{ylab} \hlstd{=} \hlstr{""}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"spatial frequency, 1/km"}\hlstd{,} \hlkwc{yaxt} \hlstd{=} \hlstr{"n"}\hlstd{,} \hlkwc{frame.plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlkwd{lines}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{)} \hlopt{*} \hlnum{0.01}\hlstd{,} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{7}\hlstd{))}
+\hlkwd{text}\hlstd{(}\hlnum{0.04}\hlstd{,} \hlnum{3.5}\hlstd{,} \hlstr{"7 dB"}\hlstd{)}
+\hlkwd{polygon}\hlstd{(pspb}\hlopt{$}\hlstd{xx,} \hlkwd{dB}\hlstd{(pspb}\hlopt{$}\hlstd{yy),} \hlkwc{col} \hlstd{=} \hlstr{"light blue"}\hlstd{,} \hlkwc{border} \hlstd{=} \hlnum{NA}\hlstd{)}
+\hlkwd{text}\hlstd{(}\hlnum{0.26}\hlstd{,} \hlnum{37}\hlstd{,} \hlstr{"Bayesian (bspec)"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"#0099FF"}\hlstd{,} \hlkwc{cex} \hlstd{= cx} \hlkwb{<-} \hlnum{0.9}\hlstd{)}
+\hlkwd{polygon}\hlstd{(psppu}\hlopt{$}\hlstd{xx, psppu}\hlopt{$}\hlstd{yy,} \hlkwc{col} \hlstd{=} \hlstr{"dark grey"}\hlstd{,} \hlkwc{border} \hlstd{=} \hlstr{"black"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{0.2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y): object 'psppu' not found}}\begin{alltt}
+\hlkwd{text}\hlstd{(}\hlnum{0.15}\hlstd{,} \hlnum{6}\hlstd{,} \hlstr{"Light: adaptive\textbackslash{}ntaper refinement\textbackslash{}n(pspectrum)"}\hlstd{,} \hlkwc{cex} \hlstd{= cx)}
+\hlkwd{polygon}\hlstd{(pspau}\hlopt{$}\hlstd{xx, pspau}\hlopt{$}\hlstd{yy,} \hlkwc{col} \hlstd{=} \hlstr{"light grey"}\hlstd{,} \hlkwc{border} \hlstd{=} \hlstr{"black"}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{0.2}\hlstd{)}
 \end{alltt}
 
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y): object 'pspau' not found}}\begin{alltt}
-\hlkwd{text}\hlstd{(}\hlnum{0.40}\hlstd{,} \hlnum{22}\hlstd{,} \hlstr{"Dark: Uniform\textbackslash{}ntapering (psdcore)"}\hlstd{,} \hlkwc{cex}\hlstd{=cx)}
+\hlkwd{text}\hlstd{(}\hlnum{0.4}\hlstd{,} \hlnum{22}\hlstd{,} \hlstr{"Dark: Uniform\textbackslash{}ntapering (psdcore)"}\hlstd{,} \hlkwc{cex} \hlstd{= cx)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/MAGERR-1} 
@@ -1054,44 +1501,39 @@ in Figure \ref{fig:magres}.
 \begin{center}
 %relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
 %relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{frq} \hlkwb{<-} \hlstd{Aspec}\hlopt{$}\hlstd{freq}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'Aspec' not found}}\begin{alltt}
-\hlstd{relp} \hlkwb{<-} \hlstd{(spa}\hlopt{$}\hlstd{resolution} \hlopt{-} \hlstd{spp}\hlopt{$}\hlstd{resolution)} \hlopt{/} \hlstd{spp}\hlopt{$}\hlstd{resolution}
+\hlstd{relp} \hlkwb{<-} \hlstd{(spa}\hlopt{$}\hlstd{resolution} \hlopt{-} \hlstd{spp}\hlopt{$}\hlstd{resolution)}\hlopt{/}\hlstd{spp}\hlopt{$}\hlstd{resolution}
 \end{alltt}
 
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'spa' not found}}\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{oma}\hlstd{=}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{omi}\hlstd{=}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{mar}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{0}\hlstd{))}
-\hlkwd{layout}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{),}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlkwc{byrow}\hlstd{=}\hlnum{TRUE}\hlstd{),} \hlkwc{heights}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{),} \hlkwc{widths}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{0.5}\hlstd{),} \hlkwc{respect}\hlstd{=}\hlnum{TRUE}\hlstd{)}
-\hlkwd{plot}\hlstd{(frq, relp,}
-     \hlkwc{main}\hlstd{=}\hlstr{"Percent change in spectral resolution"}\hlstd{,}
-     \hlkwc{col}\hlstd{=}\hlstr{"light grey"}\hlstd{,}
-     \hlkwc{ylim}\hlstd{=yl}\hlkwb{<-}\hlkwd{range}\hlstd{(}\hlkwd{pretty}\hlstd{(relp)),}
-     \hlkwc{type}\hlstd{=}\hlstr{"h"}\hlstd{,} \hlkwc{xaxs}\hlstd{=}\hlstr{"i"}\hlstd{,}
-     \hlkwc{ylab}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"frequency, 1/km"}\hlstd{)}
+\hlkwd{par}\hlstd{(}\hlkwc{las} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{oma} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{4}\hlstd{),} \hlkwc{omi} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{4}\hlstd{),} \hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{0}\hlstd{))}
+\hlkwd{layout}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{),} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{byrow} \hlstd{=} \hlnum{TRUE}\hlstd{),} \hlkwc{heights} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{),} \hlkwc{widths} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}
+    \hlnum{0.5}\hlstd{),} \hlkwc{respect} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{plot}\hlstd{(frq, relp,} \hlkwc{main} \hlstd{=} \hlstr{"Percent change in spectral resolution"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"light grey"}\hlstd{,}
+    \hlkwc{ylim} \hlstd{= yl} \hlkwb{<-} \hlkwd{range}\hlstd{(}\hlkwd{pretty}\hlstd{(relp)),} \hlkwc{type} \hlstd{=} \hlstr{"h"}\hlstd{,} \hlkwc{xaxs} \hlstd{=} \hlstr{"i"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"dB"}\hlstd{,}
+    \hlkwc{xlab} \hlstd{=} \hlstr{"frequency, 1/km"}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(frq, relp, main = "{}Percent change in spectral resolution"{}, : object 'frq' not found}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y, xlabel, ylabel, log): object 'relp' not found}}\begin{alltt}
 \hlkwd{lines}\hlstd{(frq, relp)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in lines(frq, relp): object 'frq' not found}}\begin{alltt}
-\hlkwd{text}\hlstd{(}\hlnum{0.25}\hlstd{,} \hlnum{45}\hlstd{,} \hlstr{"Adaptive relative to fixed"}\hlstd{,} \hlkwc{cex}\hlstd{=}\hlnum{0.9}\hlstd{)}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y): object 'relp' not found}}\begin{alltt}
+\hlkwd{text}\hlstd{(}\hlnum{0.25}\hlstd{,} \hlnum{45}\hlstd{,} \hlstr{"Adaptive relative to fixed"}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{0.9}\hlstd{)}
 \end{alltt}
 
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(0.25, 45, "{}Adaptive relative to fixed"{}, cex = 0.9): plot.new has not been called yet}}\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mar}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{2}\hlstd{))}
 \hlcom{# empirical distribution of values}
-\hlkwd{boxplot}\hlstd{(relp,} \hlkwc{range}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{main}\hlstd{=}\hlkwd{sprintf}\hlstd{(}\hlstr{"%.01f"}\hlstd{,}\hlkwd{median}\hlstd{(relp)),} \hlkwc{axes}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{ylim}\hlstd{=yl,} \hlkwc{yaxs}\hlstd{=}\hlstr{"i"}\hlstd{,} \hlkwc{notch}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlkwd{boxplot}\hlstd{(relp,} \hlkwc{range} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{main} \hlstd{=} \hlkwd{sprintf}\hlstd{(}\hlstr{"%.01f"}\hlstd{,} \hlkwd{median}\hlstd{(relp)),} \hlkwc{axes} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+    \hlkwc{ylim} \hlstd{= yl,} \hlkwc{yaxs} \hlstd{=} \hlstr{"i"}\hlstd{,} \hlkwc{notch} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 
 
@@ -1125,71 +1567,138 @@ uncertainties change with each iteration.
  add a few more iterations to visualize, 
 we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{pspectrum}\hlstd{(ats_lm,} \hlkwc{niter}\hlstd{=}\hlnum{4}\hlstd{,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlkwd{pspectrum}\hlstd{(ats_lm,} \hlkwc{niter} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# tap c A 1 1024}}\begin{verbatim}
+## [1] 14
+\end{verbatim}
 
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in psdcore.default(X.d = xo, X.frq = x.frqsamp, ntaper = kopt, preproc = FALSE, : zero taper result. careful with these results!}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1025}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1025 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeecc50e00
+## cpp  4:1024
+## cpp  5:(0)0 14 -791.427 -115.093
+## cpp  5:(0)1 14 -93.2315 227.168
+## cpp  5:(0)2 14 604.964 569.429
+## cpp  5:(0)3 14 1159.71 -664.567
+## cpp  5:(0)4 14 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.77368
+## [1] -36.2378
+\end{verbatim}
 
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in psdcore.default(X.d = xo, X.frq = x.frqsamp, ntaper = kopt, preproc = FALSE, : psd ests.\ \ !=\ \ no. taps}}
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. 24.5 dB)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeecd7d200
+## cpp  4:1024
+## cpp  5:(0)0 51 2.13163e-14 0
+## cpp  5:(0)1 50 -93.2315 227.168
+## cpp  5:(0)2 49 604.964 569.429
+## cpp  5:(0)3 48 1159.71 -664.567
+## cpp  5:(0)4 47 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.69864
+## [1] -36.16275
+\end{verbatim}
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in j1:j2: NA/NaN argument}}\begin{alltt}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. -16.0 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeecb80200
+## cpp  4:1024
+## cpp  5:(0)0 91 2.13163e-14 0
+## cpp  5:(0)1 90 -93.2315 227.168
+## cpp  5:(0)2 89 604.964 569.429
+## cpp  5:(0)3 88 1159.71 -664.567
+## cpp  5:(0)4 87 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.6778
+## [1] -36.14192
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 2 est. (Ave. S.V.R. -27.2 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeecb04800
+## cpp  4:1024
+## cpp  5:(0)0 175 2.13163e-14 0
+## cpp  5:(0)1 176 -93.2315 227.168
+## cpp  5:(0)2 177 604.964 569.429
+## cpp  5:(0)3 177 1159.71 -664.567
+## cpp  5:(0)4 176 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.61905
+## [1] -36.08317
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 3 est. (Ave. S.V.R. -41.1 dB) \\\#\# f creation}}\begin{verbatim}
+## cpp  1:2048 1024 1024 2048
+## cpp  2:4096 1024
+## cpp  3:0x7ffeee7d6200
+## cpp  4:1024
+## cpp  5:(0)0 164 2.13163e-14 0
+## cpp  5:(0)1 164 -93.2315 227.168
+## cpp  5:(0)2 164 604.964 569.429
+## cpp  5:(0)3 164 1159.71 -664.567
+## cpp  5:(0)4 164 -296.747 -1156.83
+## [1] 20.53588
+## [1] 56.59701
+## [1] -36.06112
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 4 est. (Ave. S.V.R. -43.4 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
 \hlkwd{str}\hlstd{(AH} \hlkwb{<-} \hlkwd{get_adapt_history}\hlstd{())}
 \end{alltt}
 \begin{verbatim}
 ## List of 3
 ##  $ freq    : num [1:1024] 0 0.000489 0.000978 0.001466 0.001955 ...
 ##  $ stg_kopt:List of 5
-##   ..$ :Class 'tapers'  atomic [1:1024] 12 12 12 12 12 12 12 12 12 12 ...
-##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 12.6
+##   ..$ :Class 'tapers'  atomic [1:1025] 14 14 14 14 14 14 14 14 14 14 ...
+##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 14
 ##   .. .. ..- attr(*, "taper_positions")= logi NA
 ##   .. .. ..- attr(*, "span_was_set")= logi TRUE
-##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 9
-##   ..$ :Class 'tapers'  atomic [1:1024] 47 48 49 50 49 48 47 46 45 44 ...
-##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
-##   .. .. ..- attr(*, "taper_positions")= logi NA
-##   .. .. ..- attr(*, "span_was_set")= logi FALSE
-##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
-##   ..$ : NULL
-##   ..$ : NULL
-##   ..$ : NULL
+##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 14
+##   ..$ : int [1:1024] 52 51 50 49 48 47 46 45 44 43 ...
+##   ..$ : int [1:1024] 92 91 90 89 88 87 86 85 84 83 ...
+##   ..$ : int [1:1024] 174 175 176 177 177 176 175 174 173 172 ...
+##   ..$ : int [1:1024] 164 164 164 164 164 164 164 164 164 164 ...
 ##  $ stg_psd :List of 5
-##   ..$ : num [1:1024] 1297 1260 1223 1187 1170 ...
-##   ..$ : num [1:1025] 2.63 30.1 344.52 891.76 711.93 ...
-##   ..$ : NULL
-##   ..$ : NULL
-##   ..$ : NULL
+##   ..$ : num [1:1024] 1309 1698 1241 1075 1112 ...
+##   ..$ : num [1:1024] 1185 1190 1193 1192 1193 ...
+##   ..$ : num [1:1024] 1310 1307 1304 1300 1295 ...
+##   ..$ : num [1:1024] 1277 1277 1277 1277 1277 ...
+##   ..$ : num [1:1024] 1285 1286 1286 1286 1286 ...
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 Followed by some trivial manipulation:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{Freqs} \hlkwb{<-} \hlstd{(AH}\hlopt{$}\hlstd{freq)}
 \hlstd{Dat} \hlkwb{<-} \hlstd{AH}\hlopt{$}\hlstd{stg_psd}
 \hlstd{numd} \hlkwb{<-} \hlkwd{length}\hlstd{(Freqs)}
 \hlstd{numit} \hlkwb{<-} \hlkwd{length}\hlstd{(Dat)}
-\hlstd{StgPsd} \hlkwb{<-} \hlkwd{dB}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwd{unlist}\hlstd{(Dat),} \hlkwc{ncol}\hlstd{=numit))}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in matrix(unlist(Dat), ncol = numit): data length [2049] is not a sub-multiple or multiple of the number of rows [410]}}\begin{alltt}
+\hlstd{StgPsd} \hlkwb{<-} \hlkwd{dB}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwd{unlist}\hlstd{(Dat),} \hlkwc{ncol} \hlstd{= numit))}
 \hlstd{Dat} \hlkwb{<-} \hlstd{AH}\hlopt{$}\hlstd{stg_kopt}
-\hlstd{StgTap} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{unlist}\hlstd{(Dat),} \hlkwc{ncol}\hlstd{=numit)}
+\hlstd{StgTap} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{unlist}\hlstd{(Dat),} \hlkwc{ncol} \hlstd{= numit)}
 \end{alltt}
 
 
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in matrix(unlist(Dat), ncol = numit): data length [2048] is not a sub-multiple or multiple of the number of rows [410]}}\end{kframe}
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in matrix(unlist(Dat), ncol = numit): data length [5121] is not a sub-multiple or multiple of the number of rows [1025]}}\end{kframe}
 \end{knitrout}
 We can plot these easily with \Rcmd{matplot} or other tools.  We show
 the adaptive history in
@@ -1197,25 +1706,12 @@ Figure \ref{fig:psdhist}.
 
 \begin{figure}[h!]
 \begin{center}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/HIST1-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in StgPsd + (sc <- 6) * toadd: non-conformable arrays}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in as.matrix(y): object 'PltStg' not found}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(0.52, 1.06 * sc * itseq, itseq, cex = 0.9): plot.new has not been called yet}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(-0.06, 3.5, "{}7 dB"{}, cex = 0.8): plot.new has not been called yet}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}(a)"{}, font = 2, adj = 0, line = -0.8): plot.new has not been called yet}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}PSDs by stage"{}, line = -0.8, font = 4): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
@@ -1225,11 +1721,11 @@ Figure \ref{fig:psdhist}.
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}Tapers by stage"{}, line = 0.5, font = 4): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in data.frame(xx = xx, yy = yy): arguments imply differing number of rows: 2048, 820}}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in data.frame(xx = xx, yy = yy): arguments imply differing number of rows: 2048, 2050}}
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}(c)"{}, font = 2, adj = 0, line = 0.6): plot.new has not been called yet}}
 
@@ -1257,35 +1753,35 @@ and (C) the relative uncertainties of the PSDs.
 It may be informative to investigate cross correlation
 coefficients between the stages;
 but, in this case, only the PSD estimates are significantly correlated:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{suppressWarnings}\hlstd{(}\hlkwd{symnum}\hlstd{( cT} \hlkwb{<-} \hlkwd{cor}\hlstd{(StgTap) ))}
+\hlkwd{suppressWarnings}\hlstd{(}\hlkwd{symnum}\hlstd{(cT} \hlkwb{<-} \hlkwd{cor}\hlstd{(StgTap)))}
 \end{alltt}
 \begin{verbatim}
 ##               
 ## [1,] 1        
 ## [2,] ? 1      
-## [3,] ? ? 1    
-## [4,] ? ? . 1  
-## [5,] ? ?     1
+## [3,] ? , 1    
+## [4,] ? . , 1  
+## [5,] ?       1
 ## attr(,"legend")
 ## [1] 0 ' ' 0.3 '.' 0.6 ',' 0.8 '+' 0.9 '*' 0.95 'B' 1 \t    ## NA: '?'
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{suppressWarnings}\hlstd{(}\hlkwd{symnum}\hlstd{( cP} \hlkwb{<-} \hlkwd{cor}\hlstd{(StgPsd) ))}
+\hlkwd{suppressWarnings}\hlstd{(}\hlkwd{symnum}\hlstd{(cP} \hlkwb{<-} \hlkwd{cor}\hlstd{(StgPsd)))}
 \end{alltt}
 \begin{verbatim}
 ##               
 ## [1,] 1        
-## [2,] + 1      
-## [3,] , , 1    
-## [4,] .     1  
-## [5,] . .     1
+## [2,] B 1      
+## [3,] B B 1    
+## [4,] B B B 1  
+## [5,] B B B B 1
 ## attr(,"legend")
 ## [1] 0 ' ' 0.3 '.' 0.6 ',' 0.8 '+' 0.9 '*' 0.95 'B' 1
 \end{verbatim}
@@ -1317,7 +1813,7 @@ process. The primary function is \Rcmd{pspectrum}.
 
 \pagebreak
 \section*{Session Info}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{utils}\hlopt{::}\hlkwd{sessionInfo}\hlstd{()}
@@ -1330,7 +1826,8 @@ process. The primary function is \Rcmd{pspectrum}.
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices utils     datasets  methods  
+## [7] base     
 ## 
 ## other attached packages:
 ## [1] bspec_1.4          ggplot2_1.0.0      signal_0.7-4      
@@ -1338,11 +1835,13 @@ process. The primary function is \Rcmd{pspectrum}.
 ## [7] fftw_1.0-3         knitr_1.9         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] colorspace_1.2-4 digest_0.6.8     evaluate_0.5.5   formatR_1.0     
-##  [5] grid_3.1.2       gtable_0.1.2     highr_0.4        lattice_0.20-29 
-##  [9] MASS_7.3-37      munsell_0.4.2    plyr_1.8.1       proto_0.3-10    
-## [13] Rcpp_0.11.4      reshape2_1.4.1   RPMG_2.1-5       Rwave_2.2       
-## [17] scales_0.2.4     stringr_0.6.2    tools_3.1.2      zoo_1.7-11
+##  [1] colorspace_1.2-4 digest_0.6.8     evaluate_0.5.5  
+##  [4] formatR_1.0      grid_3.1.2       gtable_0.1.2    
+##  [7] highr_0.4        labeling_0.3     lattice_0.20-29 
+## [10] MASS_7.3-37      munsell_0.4.2    plyr_1.8.1      
+## [13] proto_0.3-10     Rcpp_0.11.4      reshape2_1.4.1  
+## [16] RPMG_2.1-5       Rwave_2.2        scales_0.2.4    
+## [19] stringr_0.6.2    tools_3.1.2      zoo_1.7-11
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

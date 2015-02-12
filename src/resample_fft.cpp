@@ -118,10 +118,12 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
   
   nf = fftz.size() / sc;
-  nt = tapers.size();
-
+  nt = tapers.size(); // this is supposed to be one greater [ ]
+  
   // even, double, and half lengths
   ne = nf - (nf % 2);
+
+  Rcout << "cpp  1:" << nf << " " << nf/2  << " " << nt << " " << ne << "\n";
   
   if (verbose){
     Function msg("message");
@@ -135,6 +137,8 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   ne2 = 2 * ne;
   nhalf = ne / 2;
 
+  Rcout << "cpp  2:" << ne2 << " " << nhalf << "\n";
+  
   if (nhalf < 1){
     stop("cannot operate on length-1 series");
   }
@@ -143,12 +147,16 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     Rf_warning("forced taper length");
     tapers = rep(tapers, nhalf);
   }
+
+  Rcout << "cpp  3:" << tapers << "\n";
   
   // %  Select frequencies for PSD evaluation [0:nhalf]
   NumericVector Freqs = abs(seq_len(nhalf)) - 1; // add one since c++ indexes at zero
   
   //%  Calculate the psd by averaging over tapered estimates
   nfreq = Freqs.size();
+
+  Rcout << "cpp  4:" << nfreq << "\n";
   
   //printf ("NF: %i %i\n", nf, nfreq);
   
@@ -158,17 +166,31 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     
     m = Freqs[j];
     m2 = 2*m;
-    Kc = tapers[m + 1]; // number of tapers applied at a given frequency
-    //^^^ is it ok that I removed the (m + 1) index? [no, it's not!]
+    // number of tapers applied at a given frequency (do not remove m+1 index!)
+    Kc = tapers[m + 1]; 
     
     if (Kc > nhalf){
       Kc = nhalf;
       if (Kc > tapcap){
         Kc = tapcap;
       }
+    } else if (Kc <= 0){
+      Kc = 1;
     }
     K[j] = Kc;
     
+    //if ((j >= (nfreq - 3)) || (j < 3) ){
+    //  int Kcc = tapers[m];
+    //  Rcout << "cpp  5: " << j << " " << Kcc  << " " << Kc << "\n";
+    //} 
+    
+    if (j <= 4) {
+      Rcomplex fftzc;
+      fftzc = fftz[j];
+      double ffr = fftzc.r, ffi = fftzc.i;
+      Rcout << "cpp  5:(0)" << j << " " << Kc << " " << ffr << " " << ffi << "\n";
+    }
+      
     NumericVector k(Kc);
     arma::rowvec sq_absdiff(Kc);
     

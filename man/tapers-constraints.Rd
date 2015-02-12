@@ -157,7 +157,7 @@ AJB adapted some of RLP's original code,
 and wrote the main function in \code{\link{ctap_simple}} for dynamic loading C-code.
 }
 \seealso{
-\code{\link{splineGrad}}, \code{\link{riedsid}}
+\code{\link{as.tapers}} and \code{\link{constrain_tapers}}
 }
 \keyword{tapers}
 \keyword{tapers-constraints}
