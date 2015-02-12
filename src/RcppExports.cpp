@@ -6,6 +6,22 @@
 
 using namespace Rcpp;
 
+// modulo_floor_rcpp
+IntegerVector modulo_floor_rcpp(IntegerVector n, int m = 2);
+RcppExport SEXP psd_modulo_floor_rcpp(SEXP nSEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< IntegerVector >::type n(nSEXP );
+        Rcpp::traits::input_parameter< int >::type m(mSEXP );
+        IntegerVector __result = modulo_floor_rcpp(n, m);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // parabolic_weights_rcpp
 List parabolic_weights_rcpp(int ntap);
 RcppExport SEXP psd_parabolic_weights_rcpp(SEXP ntapSEXP) {

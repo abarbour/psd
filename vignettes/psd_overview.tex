@@ -76,7 +76,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://abarbour.github.com/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 %% path, filename, caption, label
 \newcommand{\listing}[4]{        %
   \begin{figure}[H]              %
@@ -129,9 +129,11 @@
 \tableofcontents
 \pagebreak
 
+
+%opts_knit$set(verbose = TRUE)
+
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
-
 %% libload
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -205,12 +207,16 @@ estimates for the two series quite simply with \Rcmd{pspectrum}:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# Stage\ \ 1 est. (Ave. S.V.R. -17.4 dB) \\\#\# Stage\ \ 2 est. (Ave. S.V.R. -34.5 dB) \\\#\# Stage\ \ 3 est. (Ave. S.V.R. -44.6 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: min\_taper * max\_taper >= 1 \& max\_taper >= min\_taper is not TRUE}}\begin{alltt}
 \hlstd{psdc} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(magnet}\hlopt{$}\hlstd{clean)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# Stage\ \ 1 est. (Ave. S.V.R. -15.7 dB) \\\#\# Stage\ \ 2 est. (Ave. S.V.R. -30.0 dB) \\\#\# Stage\ \ 3 est. (Ave. S.V.R. -32.6 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: min\_taper * max\_taper >= 1 \& max\_taper >= min\_taper is not TRUE}}\end{kframe}
 \end{knitrout}
 Each application of \Rcmd{pspectrum} calculates a pilot PSD, followed by 
 \Rcmd{niter}
@@ -230,12 +236,15 @@ done with the \Rcmd{psd\_envGet} function:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{psdc_recovered} \hlkwb{<-} \hlkwd{psd_envGet}\hlstd{(}\hlstr{"final_psd"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in psd\_envGet("{}final\_psd"{}): Variable\ \ 'final\_psd'\ \ not found! See psd\_envList()}}\begin{alltt}
 \hlkwd{all.equal}\hlstd{(psdc, psdc_recovered)}
 \end{alltt}
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
-\end{kframe}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in all.equal(psdc, psdc\_recovered): object 'psdc' not found}}\end{kframe}
 \end{knitrout}
 
 In general, spectral variance is reduced
@@ -271,10 +280,6 @@ for 10 kilometer wavelengths and longer; whereas, the
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which could be difficult to judge if the spectral variance was higher.
 
-%<<eval=TRUE, echo=TRUE, label=MAGPSDAR>>=
-%#psdc_ar <- pspectrum(magnet$clean, AR=TRUE, plot=FALSE)
-%@
-%
 \begin{figure}[h!]
 \begin{center}
 \begin{knitrout}
@@ -282,13 +287,20 @@ features which could be difficult to judge if the spectral variance was higher.
 \begin{alltt}
 \hlkwd{plot}\hlstd{(psdc,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{main}\hlstd{=}\hlstr{"Raw and Clean Project MAGNET power spectral density"}\hlstd{,}
        \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{ci.col}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{32}\hlstd{),} \hlkwc{yaxs}\hlstd{=}\hlstr{"i"}\hlstd{)}
-\hlcom{#plot(psdc_ar, log="dB", add=TRUE, lwd=3, col="red")}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(psdc, log = "{}dB"{}, main = "{}Raw and Clean Project MAGNET power spectral density"{}, : object 'psdc' not found}}\begin{alltt}
 \hlkwd{plot}\hlstd{(psdr,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{5}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(psdr, log = "{}dB"{}, add = TRUE, lwd = 3, lty = 5): object 'psdr' not found}}\begin{alltt}
 \hlkwd{text}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0.25}\hlstd{,}\hlnum{0.34}\hlstd{),} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{,}\hlnum{24}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"Clean"}\hlstd{,}\hlstr{"Raw"}\hlstd{),} \hlkwc{cex}\hlstd{=}\hlnum{1}\hlstd{)}
 \end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/RAWvCLEAN-1} 
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(c(0.25, 0.34), c(11, 24), c("{}Clean"{}, "{}Raw"{}), cex = 1): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 \caption{Power spectral density estimates for the raw and cleaned
              \Rcmd{Project MAGNET} data bundled with \psd{}. Note that
@@ -361,11 +373,15 @@ results are shown in Figure \ref{fig:two}.
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{ntap} \hlkwb{<-} \hlstd{psdc}\hlopt{$}\hlstd{taper}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'psdc' not found}}\begin{alltt}
 \hlkwd{psdcore}\hlstd{(magnet}\hlopt{$}\hlstd{clean,} \hlkwc{ntaper}\hlstd{=ntap,} \hlkwc{refresh}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{plotpsd}\hlstd{=}\hlnum{TRUE}\hlstd{)}
 \end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/MAGNETNAIVE-1} 
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in psdcore.default(magnet\$clean, ntaper = ntap, refresh = TRUE, : object 'ntap' not found}}\end{kframe}
 \end{knitrout}
 \caption{A summary plot produced by \Rcmd{psdcore} when
 \Rcmd{plotpsd=TRUE}.  
@@ -506,10 +522,9 @@ A quick example highlights the equivalency:
 \hlstd{a} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlnum{32}\hlstd{)}
 \hlkwd{all.equal}\hlstd{(}\hlkwd{psdcore}\hlstd{(a,}\hlnum{1}\hlstd{)}\hlopt{$}\hlstd{spec,} \hlkwd{psdcore}\hlstd{(a,}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{$}\hlstd{spec)}
 \end{alltt}
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
-\end{kframe}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in .Call("{}psd\_resample\_fft\_rcpp"{}, PACKAGE = "{}psd"{}, fftz, tapers, : negative length vectors are not allowed}}\end{kframe}
 \end{knitrout}
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
@@ -575,11 +590,15 @@ is finished.
 \begin{alltt}
 \hlstd{Xspec} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(ats_lm,} \hlkwc{pad}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{taper}\hlstd{=}\hlnum{0.2}\hlstd{,} \hlkwc{detr}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{dem}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
 \hlstd{Pspec} \hlkwb{<-} \hlkwd{psdcore}\hlstd{(ats_lm, dt, tapinit)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1024}}\begin{alltt}
 \hlstd{Aspec} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(ats_lm, dt, tapinit,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: min\_taper * max\_taper >= 1 \& max\_taper >= min\_taper is not TRUE}}\begin{alltt}
 \hlcom{# Correct for double-sidedness of spectrum and mtapspec results}
@@ -616,11 +635,7 @@ Figure \ref{fig:psdcomp}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{require}\hlstd{(RColorBrewer)}
-\end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: RColorBrewer}}\begin{alltt}
+\hlkwd{library}\hlstd{(RColorBrewer)}
 \hlstd{cols} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"dark grey"}\hlstd{,} \hlkwd{brewer.pal}\hlstd{(}\hlnum{8}\hlstd{,} \hlstr{"Set1"}\hlstd{)[}\hlkwd{c}\hlstd{(}\hlnum{5}\hlopt{:}\hlnum{4}\hlstd{,}\hlnum{2}\hlstd{)])}
 \hlstd{lwds} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{5}\hlstd{)}
 \hlkwd{par}\hlstd{(}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{)}
@@ -654,11 +669,7 @@ of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{require}\hlstd{(signal)}
-\end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: signal\\\#\# \\\#\# Attaching package: 'signal'\\\#\# \\\#\# The following objects are masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  filter, poly}}\begin{alltt}
+\hlkwd{library}\hlstd{(signal,} \hlkwc{warn.conflicts}\hlstd{=}\hlnum{FALSE}\hlstd{)}
 \hlstd{pltpi} \hlkwb{<-} \hlkwd{interp1}\hlstd{(pltf, pltp, Pspec}\hlopt{$}\hlstd{freq)}
 \end{alltt}
 \end{kframe}
@@ -698,11 +709,7 @@ in Figure \ref{fig:psdcomp}.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{require}\hlstd{(ggplot2)}
-\end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: ggplot2}}\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
 \hlstd{gr} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=res))} \hlopt{+} \hlkwd{geom_abline}\hlstd{(}\hlkwc{intercept}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{slope}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{color}\hlstd{=}\hlstr{"salmon"}\hlstd{)} \hlopt{+}
 \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=tap))}
 \end{alltt}
@@ -773,11 +780,11 @@ An intriguing method for producing power spectral density estimates
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{require}\hlstd{(bspec)}
+\hlkwd{library}\hlstd{(bspec)}
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: bspec\\\#\# \\\#\# Attaching package: 'bspec'\\\#\# \\\#\# The following object is masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  acf\\\#\# \\\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  sample}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'bspec'\\\#\# \\\#\# The following object is masked from 'package:stats':\\\#\# \\\#\#\ \ \ \  acf\\\#\# \\\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  sample}}\begin{alltt}
 \hlkwd{print}\hlstd{(Bspec} \hlkwb{<-} \hlkwd{bspec}\hlstd{(}\hlkwd{ts}\hlstd{(magnet}\hlopt{$}\hlstd{clean)))}
 \end{alltt}
 \begin{verbatim}
@@ -832,10 +839,14 @@ for a 1 km sampling interval.
 \begin{alltt}
 \hlstd{ntap} \hlkwb{<-} \hlnum{7}
 \hlstd{psd_ar} \hlkwb{<-} \hlkwd{psdcore}\hlstd{(ats_ar,} \hlkwc{ntaper}\hlstd{=ntap,} \hlkwc{refresh}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1024}}\begin{alltt}
 \hlkwd{dB}\hlstd{(}\hlkwd{mean}\hlstd{(psd_ar}\hlopt{$}\hlstd{spec))}
 \end{alltt}
 \begin{verbatim}
-## [1] 15.82835
+## [1] 15.82885
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -847,6 +858,7 @@ The non-AR component (labelled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 
+% ERROR HERE
 \begin{figure}[h!]
 \begin{center}
 \begin{knitrout}
@@ -856,9 +868,9 @@ Overlain on these series is the adaptive spectrum found previously.
 \end{alltt}
 
 
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in Pspec\$spec/Pspec\_ar\$spec: longer object length is not a multiple of shorter object length}}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1024}}
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in matplot(x\$freq, x\$spec, type = type, add = TRUE, ...): 'x' and 'y' must have same number of rows}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in .Call("{}psd\_resample\_fft\_rcpp"{}, PACKAGE = "{}psd"{}, fftz, tapers, : negative length vectors are not allowed}}\begin{alltt}
 \hlkwd{plot}\hlstd{(Aspec,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"grey"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{4}\hlstd{)}
 \end{alltt}
 
@@ -871,9 +883,9 @@ Overlain on these series is the adaptive spectrum found previously.
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(Aspec, log = "{}dB"{}, add = TRUE, lwd = 3, lty = 3): object 'Aspec' not found}}\begin{alltt}
 \hlkwd{spec.ar}\hlstd{(ats_lm,} \hlkwc{log}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"grey40"}\hlstd{)}
 \end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/MAGPSDAR-1} 
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 \caption{AR response spectrum for the MAGNET dataset produced by 
 \Rcmd{pilot\_spec}. Overlain on the figure is the adaptive estimation 
@@ -1061,7 +1073,7 @@ in Figure \ref{fig:magres}.
      \hlkwc{main}\hlstd{=}\hlstr{"Percent change in spectral resolution"}\hlstd{,}
      \hlkwc{col}\hlstd{=}\hlstr{"light grey"}\hlstd{,}
      \hlkwc{ylim}\hlstd{=yl}\hlkwb{<-}\hlkwd{range}\hlstd{(}\hlkwd{pretty}\hlstd{(relp)),}
-     \hlkwc{type}\hlstd{=}\hlstr{"h"}\hlstd{,} \hlkwc{xaxs}\hlstd{=}\hlstr{"i"}\hlstd{,} \hlcom{#yaxs="i", }
+     \hlkwc{type}\hlstd{=}\hlstr{"h"}\hlstd{,} \hlkwc{xaxs}\hlstd{=}\hlstr{"i"}\hlstd{,}
      \hlkwc{ylab}\hlstd{=}\hlstr{"dB"}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"frequency, 1/km"}\hlstd{)}
 \end{alltt}
 
@@ -1120,44 +1132,42 @@ and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# Stage\ \ 1 est. (Ave. S.V.R. -15.8 dB) \\\#\# Stage\ \ 2 est. (Ave. S.V.R. -35.0 dB) \\\#\# Stage\ \ 3 est. (Ave. S.V.R. -44.1 dB) \\\#\# Stage\ \ 4 est. (Ave. S.V.R. -44.8 dB) \\\#\# Normalized\ \ single-sided PSD\ \ (PSD)\ \ to single-sided PSD for sampling-freq.\ \ 1}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 0 est. (pilot) \\\#\# 	environment\ \ ** .psdEnv **\ \ refreshed\\\#\# detrending (and demeaning)\\\#\# 1024 --> 1024}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in psdcore.default(X.d = xo, X.frq = x.frqsamp, ntaper = kopt, preproc = FALSE, : zero taper result. careful with these results!}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# 1024 --> 1025}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in psdcore.default(X.d = xo, X.frq = x.frqsamp, ntaper = kopt, preproc = FALSE, : psd ests.\ \ !=\ \ no. taps}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Stage\ \ 1 est. (Ave. S.V.R. 24.5 dB)}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in j1:j2: NA/NaN argument}}\begin{alltt}
 \hlkwd{str}\hlstd{(AH} \hlkwb{<-} \hlkwd{get_adapt_history}\hlstd{())}
 \end{alltt}
 \begin{verbatim}
 ## List of 3
-##  $ freq    : num [1:1025] 0 0.000488 0.000977 0.001465 0.001953 ...
+##  $ freq    : num [1:1024] 0 0.000489 0.000978 0.001466 0.001955 ...
 ##  $ stg_kopt:List of 5
-##   ..$ :Class 'tapers'  atomic [1:1025] 12 12 12 12 12 12 12 12 12 12 ...
+##   ..$ :Class 'tapers'  atomic [1:1024] 12 12 12 12 12 12 12 12 12 12 ...
 ##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 12.6
 ##   .. .. ..- attr(*, "taper_positions")= logi NA
 ##   .. .. ..- attr(*, "span_was_set")= logi TRUE
 ##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 9
-##   ..$ :Class 'tapers'  atomic [1:1025] 47 48 49 50 49 48 47 46 45 44 ...
+##   ..$ :Class 'tapers'  atomic [1:1024] 47 48 49 50 49 48 47 46 45 44 ...
 ##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
 ##   .. .. ..- attr(*, "taper_positions")= logi NA
 ##   .. .. ..- attr(*, "span_was_set")= logi FALSE
 ##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
-##   ..$ :Class 'tapers'  atomic [1:1025] 122 121 120 119 118 117 116 115 114 113 ...
-##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
-##   .. .. ..- attr(*, "taper_positions")= logi NA
-##   .. .. ..- attr(*, "span_was_set")= logi FALSE
-##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
-##   ..$ :Class 'tapers'  atomic [1:1025] 164 164 165 165 165 165 165 165 165 165 ...
-##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
-##   .. .. ..- attr(*, "taper_positions")= logi NA
-##   .. .. ..- attr(*, "span_was_set")= logi FALSE
-##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
-##   ..$ :Class 'tapers'  atomic [1:1025] 167 167 167 167 167 167 167 167 167 168 ...
-##   .. .. ..- attr(*, "n_taper_limits")= num [1:2] 1 512
-##   .. .. ..- attr(*, "taper_positions")= logi NA
-##   .. .. ..- attr(*, "span_was_set")= logi FALSE
-##   .. .. ..- attr(*, "n_taper_limits_orig")= num [1:2] 1 512
+##   ..$ : NULL
+##   ..$ : NULL
+##   ..$ : NULL
 ##  $ stg_psd :List of 5
-##   ..$ : num [1:1025] 1297 1260 1223 1187 1170 ...
-##   ..$ : num [1:1025] 1183 1193 1203 1202 1200 ...
-##   ..$ : num [1:1025] 1283 1283 1284 1285 1288 ...
-##   ..$ : num [1:1025] 1282 1282 1283 1283 1283 ...
-##   ..$ : num [1:1025] 1274 1274 1274 1275 1275 ...
+##   ..$ : num [1:1024] 1297 1260 1223 1187 1170 ...
+##   ..$ : num [1:1025] 2.63 30.1 344.52 891.76 711.93 ...
+##   ..$ : NULL
+##   ..$ : NULL
+##   ..$ : NULL
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1170,10 +1180,16 @@ Followed by some trivial manipulation:
 \hlstd{numd} \hlkwb{<-} \hlkwd{length}\hlstd{(Freqs)}
 \hlstd{numit} \hlkwb{<-} \hlkwd{length}\hlstd{(Dat)}
 \hlstd{StgPsd} \hlkwb{<-} \hlkwd{dB}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwd{unlist}\hlstd{(Dat),} \hlkwc{ncol}\hlstd{=numit))}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in matrix(unlist(Dat), ncol = numit): data length [2049] is not a sub-multiple or multiple of the number of rows [410]}}\begin{alltt}
 \hlstd{Dat} \hlkwb{<-} \hlstd{AH}\hlopt{$}\hlstd{stg_kopt}
 \hlstd{StgTap} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{unlist}\hlstd{(Dat),} \hlkwc{ncol}\hlstd{=numit)}
 \end{alltt}
-\end{kframe}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in matrix(unlist(Dat), ncol = numit): data length [2048] is not a sub-multiple or multiple of the number of rows [410]}}\end{kframe}
 \end{knitrout}
 We can plot these easily with \Rcmd{matplot} or other tools.  We show
 the adaptive history in
@@ -1182,19 +1198,50 @@ Figure \ref{fig:psdhist}.
 \begin{figure}[h!]
 \begin{center}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/HIST1-1} 
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in StgPsd + (sc <- 6) * toadd: non-conformable arrays}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in as.matrix(y): object 'PltStg' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(0.52, 1.06 * sc * itseq, itseq, cex = 0.9): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(-0.06, 3.5, "{}7 dB"{}, cex = 0.8): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}(a)"{}, font = 2, adj = 0, line = -0.8): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}PSDs by stage"{}, line = -0.8, font = 4): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/HIST2-1} 
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y, xlabel, ylabel, log): 'x' and 'y' lengths differ}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}(b)"{}, font = 2, adj = 0, line = 0.5): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}Tapers by stage"{}, line = 0.5, font = 4): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/HIST3-1} 
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in data.frame(xx = xx, yy = yy): arguments imply differing number of rows: 2048, 820}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}(c)"{}, font = 2, adj = 0, line = 0.6): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(-0.06, -3.5 - 10, "{}7 dB"{}, cex = 0.8): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}Uncertainties by stage"{}, line = 0.6, font = 4): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mtext("{}Spatial frequency, 1/km"{}, side = 1, line = 2.3): plot.new has not been called yet}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in text.default(0.25, -14.5, "{}(pilot spectrum -- uniform tapers)"{}, : plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
 
 \caption{Adaptive spectral estimation history.
@@ -1219,9 +1266,9 @@ but, in this case, only the PSD estimates are significantly correlated:
 ##               
 ## [1,] 1        
 ## [2,] ? 1      
-## [3,] ? , 1    
-## [4,] ?     1  
-## [5,] ?     . 1
+## [3,] ? ? 1    
+## [4,] ? ? . 1  
+## [5,] ? ?     1
 ## attr(,"legend")
 ## [1] 0 ' ' 0.3 '.' 0.6 ',' 0.8 '+' 0.9 '*' 0.95 'B' 1 \t    ## NA: '?'
 \end{verbatim}
@@ -1235,10 +1282,10 @@ but, in this case, only the PSD estimates are significantly correlated:
 \begin{verbatim}
 ##               
 ## [1,] 1        
-## [2,] B 1      
-## [3,] B B 1    
-## [4,] B B B 1  
-## [5,] B B B B 1
+## [2,] + 1      
+## [3,] , , 1    
+## [4,] .     1  
+## [5,] . .     1
 ## attr(,"legend")
 ## [1] 0 ' ' 0.3 '.' 0.6 ',' 0.8 '+' 0.9 '*' 0.95 'B' 1
 \end{verbatim}

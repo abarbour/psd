@@ -179,6 +179,7 @@ pspectrum.spec <- function(x, ...){
 #'
 #' @example inst/Examples/rdex_pilotspec.R
 pilot_spec <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
+
 #' @rdname pilot_spec
 #' @method pilot_spec default
 #' @export
@@ -197,65 +198,76 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
     return(toret)
   }
   # preprocess
-  REMAR <- FALSE
-  if (remove.AR > 0){
-    REMAR <- TRUE
+  REMAR <- if (remove.AR > 0){
     # restrict to within [1,100]
     remove.AR <- max(1, min(100, abs(remove.AR)))
+    TRUE
+  } else {
+    FALSE
   }
+  
   xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, 
                      impute=TRUE, plot=FALSE, verbose=verbose)
   if (REMAR){
     # AR fit
-    ordAR <- xprew$ardfit$order
+    ordAR <- xprew[['ardfit']][['order']]
     if (ordAR==0){
       warning("AR(0) was the highest model found!\n\t\tConsider fitting a linear model instead ( remove.AR = 0 ).")
     } else {
       if (verbose) message(sprintf("removed AR(%s) effects from the spectrum", ordAR))
     }
-    xar <- xprew$prew_ar
+    xar <- xprew[['prew_ar']]
     # PSD of the AR fit
     Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)
-    arvar <- var(Pspec_ar$spec)
-    Pspec_ar$spec <- Pspec_ar$spec / (mARs <- mean(Pspec_ar$spec))
+    arvar <- var(Pspec_ar[['spec']])
+    mARs <- mean(Pspec_ar[['spec']])
+    Pspec_ar[['spec']] <- Pspec_ar[['spec']] / mARs
   }
   #
   # Initial spectrum:
-  Pspec <- PSDFUN(xprew$prew_lm, x.frequency, ntap, AR=FALSE)
-  num_frq <- length(Pspec$freq)
-  num_tap <- length(Pspec$taper)
+  Pspec <- PSDFUN(xprew[['prew_lm']], x.frequency, ntap, AR=FALSE)
+  num_frq <- length(Pspec[['freq']])
+  Ptap <- Pspec[['taper']]
+  num_tap <- length(Ptap)
   stopifnot(num_tap <= num_frq)
-  Ptap <- Pspec$taper
   # generate a series, if necessary
   if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
   # return tapers object
-  Pspec$taper <- as.tapers(Ptap, setspan=TRUE)
+  Pspec[['taper']] <- as.tapers(Ptap, setspan=TRUE)
   ##
   ## remove the spectrum of the AR process
   if (REMAR){
-    stopifnot(exists("Pspec_ar"))
+    stopifnot(exists("Pspec") & exists("Pspec_ar"))
     if (verbose) message(sprintf("Removing AR(%s) effects from spectrum", ordAR))
-    Ospec <- Pspec
-    Pspec$spec <- Pspec$spec / Pspec_ar$spec
     # reup the spectrum
-    psd::psd_envAssignGet("AR_psd", Pspec_ar)
+    Ospec <- psd_envAssignGet("pre_AR_psd", Pspec)
+    psd_envAssign("AR_psd", Pspec_ar)
+    p.lin <- Pspec[['spec']]
+    p.ar <- Pspec_ar[['spec']]
+    Pspec[['spec']] <-  p.lin / p.ar
   }
   if (plot){
-    if (REMAR){
-      par(las=1)
-      plot(Ospec, log="dB", col="red", main="Pilot spectrum estimation")
-      mtext(sprintf("(with AR(%s) response)", ordAR), line=0.4)
-      Pspec_ar$spec <- Pspec_ar$spec * mARs
-      plot(Pspec_ar, log="dB", col="blue", add=TRUE)
-      plot(Pspec, log="dB", add=TRUE, lwd=2)
-      legend("bottomleft", 
-             c("original PSD",
-               sprintf("AR-innovations PSD\n(mean %.01f +- %.01f dB)", dB(mARs), dB(sqrt(arvar))/4),
-               "AR-filter response"), 
-             lwd=2, col=c("red","blue","black"))
-    } else {
-      plot(Pspec, log="dB", main="Pilot spectrum estimation")
-    }
+    ttl <- "Pilot spectrum estimation"
+    llog <- 'dB'
+    try({
+      if (REMAR){
+        if (verbose) message('Plotting,', tolower(ttl))
+        par(las=1)
+        plot(Ospec, log=llog, col="red", main=ttl)
+        mtext(sprintf("(with AR(%s) response)", ordAR), line=0.4)
+        # rescale
+        Pspec_ar[['spec']] <- Pspec_ar[['spec']] * mARs
+        plot(Pspec_ar, log=llog, col="blue", add=TRUE)
+        plot(Pspec, log=llog, add=TRUE, lwd=2)
+        legend("bottomleft", 
+               c("original PSD",
+                 sprintf("AR-innovations PSD\n(mean %.01f +- %.01f dB)", dB(mARs), dB(sqrt(arvar))/4),
+                 "AR-filter response"), 
+               lwd=2, col=c("red","blue","black"))
+      } else {
+        plot(Pspec, log=llog, main=ttl)
+      }
+    })
   }
-  return(invisible(psd::psd_envAssignGet("pilot_psd", Pspec)))
+  return(invisible(psd_envAssignGet("pilot_psd", Pspec)))
 }

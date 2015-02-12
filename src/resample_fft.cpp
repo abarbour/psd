@@ -29,6 +29,30 @@ using namespace Rcpp; // otherwise add Rcpp::
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' @rdname psd-utilities
+//' @export
+//' @description \code{modulo_floor} returns the nearest \code{m}-length
+//' value (downwards); this is different from \code{\link{nextn}}.
+//' For example:
+//' \code{1001} goes to \code{1000} for \code{m=2}
+//' @param n integer; the number of terms
+//' @param m integer; the modulo term
+// [[Rcpp::export]]
+IntegerVector modulo_floor_rcpp(IntegerVector n, int m = 2){
+
+  int i, ni, ntrunc;
+  int nn = n.size();
+  IntegerVector ne(nn);
+  
+  for (i = 0; i < nn; i++){
+  	ni = n[i];
+  	ntrunc = (ni % m);
+  	ne[i] = ni - ntrunc;
+  }
+  
+  return ne;
+}
+
 //' @rdname parabolic_weights
 //' @export
 // [[Rcpp::export]]
@@ -101,7 +125,6 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   
   if (verbose){
     Function msg("message");
-    //Rcout << "fft resampling: nf = " << nf << ", ne = " << ne << ", nt = " << nt;
     msg(std::string("fft resampling"));
   }
   

@@ -79,11 +79,16 @@
 \tableofcontents
 \pagebreak
 
-\section{Quick start: A minimal example.}
-First, we load the package into the namespace:
-<<eval=TRUE, echo=FALSE>>=
+<<eval=TRUE, echo=FALSE>>= 
+library(knitr)
+options(width=69)
+knitr::opts_chunk$set(tidy = TRUE, size="small")
 par(las=1)
 @
+%opts_knit$set(verbose = TRUE)
+
+\section{Quick start: A minimal example.}
+First, we load the package into the namespace:
 %% libload
 <<eval=TRUE, echo=TRUE, label="Load library.">>=
 library(psd)
@@ -385,7 +390,7 @@ Figure \ref{fig:psdcomp}.
 \begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=RSEIS>>=
-require(RColorBrewer)
+library(RColorBrewer)
 cols <- c("dark grey", brewer.pal(8, "Set1")[c(5:4,2)])
 lwds <- c(1,2,2,5)
 par(las=1)
@@ -409,7 +414,7 @@ we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
 <<eval=TRUE, echo=TRUE, label="Interpolate results">>=
-require(signal)
+library(signal, warn.conflicts=FALSE)
 pltpi <- interp1(pltf, pltp, Pspec$freq)
 @
 We regress the spectral values from \Rcmd{mtapspec} against
@@ -431,7 +436,7 @@ in Figure \ref{fig:psdcomp}.
 \begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
-require(ggplot2)
+library(ggplot2)
 gr <- ggplot(df, aes(x=x, y=res)) + geom_abline(intercept=0, slope=0, size=2, color="salmon") + 
 geom_point(aes(color=tap))
 print(gr + theme_bw() + 
@@ -492,7 +497,7 @@ An intriguing method for producing power spectral density estimates
  and overlain the results found previously by \Rcmd{psdcore}.
 
 <<eval=TRUE, echo=TRUE, label=BSPEC>>=
-require(bspec)
+library(bspec)
 print(Bspec <- bspec(ts(magnet$clean)))
 @
 
@@ -539,6 +544,7 @@ The non-AR component (labelled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 
+% ERROR HERE
 \begin{figure}[h!]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=MAGPSDAR>>=
@@ -691,7 +697,7 @@ plot(frq, relp,
      main="Percent change in spectral resolution",
      col="light grey", 
      ylim=yl<-range(pretty(relp)),
-     type="h", xaxs="i", #yaxs="i", 
+     type="h", xaxs="i",
      ylab="dB", xlab="frequency, 1/km")
 lines(frq, relp)
 text(0.25, 45, "Adaptive relative to fixed", cex=0.9)

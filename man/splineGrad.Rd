@@ -57,9 +57,6 @@ splineGrad(x, y, TRUE, spar=1.0)
 A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-\code{smooth.spline}
+\code{\link{smooth.spline}}
 }
-\keyword{numerical-derivative}
-\keyword{spline-gradient}
-\keyword{utilities}
 
