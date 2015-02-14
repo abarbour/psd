@@ -37,11 +37,21 @@ pspectrum.ts <- function(x, ...){
 #' @rdname pspectrum
 #' @export
 pspectrum.spec <- function(x, ...){
-  .NotYetImplemented()
+  if (inherits(x, "amt")){
+    name <- getOption("psd.ops")[['names']]
+    fft <- psd_envGet(name[['fft']])
+    if (is.null(fft)){
+      stop("cannot adapt  pspectrum  results without an fft in the psd environment. see ?pspectrum")
+    } else {
+      warning('updating  pspectrum  results is not (yet) supported') 
+    }
+  } else {
+    .NotYetImplemented()
+  }
 }
 #' @rdname pspectrum
 #' @export
-pspectrum.default <- function(x, x.frqsamp=1, ntap.init=14, niter=3, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=2, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
   adapt_message <- function(stage, dvar=NULL){
@@ -112,12 +122,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=14, niter=3, AR=FALSE, N
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "psd", verbose=verbose)
   return(invisible(psd::psd_envAssignGet("final_psd", Pspec)))
-}
-
-#' @rdname pspectrum
-#' @export
-pspectrum.spec <- function(x, ...){
-  .NotYetImplemented()
 }
   
 

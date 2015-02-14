@@ -13,11 +13,9 @@ pspectrum(x, ...)
 
 \method{pspectrum}{spec}(x, ...)
 
-\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = 14, niter = 3,
+\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = 10, niter = 2,
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
   no.history = FALSE, plot = FALSE, ...)
-
-\method{pspectrum}{spec}(x, ...)
 }
 \arguments{
 \item{x}{vector; series to estimate PSD for.}
