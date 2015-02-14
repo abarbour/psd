@@ -18,7 +18,6 @@ data(magnet)
 data(Tohoku)
 
 x <- subset(Tohoku, epoch=="preseismic")$areal * 1e-6
-#x <- c(x[1],x)
 n <- length(x)
 
 # detrend and demean
@@ -51,16 +50,11 @@ try(plot(normalize(pmn,src = 'spectrum'), log='dB'))
 p1 <- psdcore(x, verbose=TRUE) #, first.last=FALSE)
 #str(pl <- psd_envGet("last_psdcore_psd"))
 #print(table(is.finite(pl)))
-try(with(p2, lines(freq, dB(spec), col='red')))
+try(with(p1, lines(freq, dB(spec), col='blue')))
 
 p2 <- psdcore(x, ntaper = 10, verbose=TRUE) #, first.last=FALSE)
 #str(pl <- psd_envGet("last_psdcore_psd"))
 #print(table(is.finite(pl)))
 try(with(p2, lines(freq, dB(spec), col='red')))
-
-message("\t", psd_envGet('len_orig')/2, " ",
-        psd_envGet('len_even')/2, " ",
-        length(psd_envGet('fft_even_demeaned_padded'))/4, " "
-)
 
 message("\t-->\tdone.")
