@@ -73,7 +73,7 @@ mod(X, Y)
 
 \item{m}{integer; the modulo term}
 
-\item{x}{object to operate on}
+\item{x}{object}
 
 \item{double.diff}{logical; should the double difference be used instead?}
 
@@ -100,8 +100,6 @@ mod(X, Y)
 \item{X}{numeric; the "numerator" of the modulo division}
 
 \item{Y}{numeric; the "denominator" of the modulo division}
-
-\item{x}{An object to reshape (\code{vector_reshape}).}
 }
 \value{
 \code{char2envir} returns the result of evaluating the object: an

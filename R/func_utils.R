@@ -16,7 +16,7 @@ NULL
 #' to return variance for the second difference.
 #' @rdname psd-utilities
 #' @export
-#' @param x object to operate on
+#' @param x object
 #' @param double.diff logical; should the double difference be used instead?
 vardiff <- function(x, double.diff=FALSE){
   dorder <- ifelse(double.diff, 2, 1)
@@ -93,7 +93,6 @@ envir2char <- function(envir){
 #' @description \code{vector_reshape} reshapes a vector into another vector.
 #' @rdname psd-utilities
 #' @name vector_reshape
-#' @param x  An object to reshape (\code{vector_reshape}).
 #' @param vec.shape  choice between horizontally-long or vertically-long vector.
 #' @return \code{vector_reshape} returns a "reshaped" vector, meaning it has
 #' had it's dimensions changes so that it has either one row 

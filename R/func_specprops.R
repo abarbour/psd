@@ -60,7 +60,7 @@
 #' }
 #'
 #' @example inst/Examples/rdex_spectralproperties.R
-spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...) UseMethod("spectral_properties")
+spectral_properties <- function(tapvec, ...) UseMethod("spectral_properties")
 
 #' @rdname spectral_properties
 #' @aliases spectral_properties.spec
@@ -85,8 +85,8 @@ spectral_properties.tapers <- function(tapvec, ...){
 }
 
 #' @rdname spectral_properties
-#' @aliases spectral_properties.tapers
-#' @method spectral_properties tapers
+#' @aliases spectral_properties.default
+#' @method spectral_properties default
 #' @export
 spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
   
