@@ -14,8 +14,10 @@ library(psd)
 # fftz3 <- complex(real=1:8, imaginary = 1:8)
 # #try(resample_fft_rcpp(fftz3,2))
 
-data(Tohoku, package='psd')
-x <- subset(Tohoku, epoch=="preseismic")$areal #* 1e-6
+data(magnet)
+data(Tohoku)
+
+x <- subset(Tohoku, epoch=="preseismic")$areal * 1e-6
 #x <- c(x[1],x)
 n <- length(x)
 
@@ -24,23 +26,37 @@ t. <- 1L:n - (n + 1)/2
 sumt2. <- n * (n**2 - 1)/12
 x <- x - mean(x) - sum(x * t.) * t./sumt2.
 
-message("\t-->\tTohoku example:")
+message("\t-->\tProject Magnet example:")
 
-try(dev.off(dev.list()["RStudioGD"]))
+#try(dev.off(dev.list()["RStudioGD"]))
+
+pm1 <- psdcore(magnet$clean, verbose=TRUE)
+pm2 <- psdcore(magnet$clean, verbose=TRUE, first.last=FALSE)
+pmn <- spectrum(magnet$clean, plot=FALSE)
+try(with(normalize(pmn, src='spectrum'), plot(freq, dB(spec), type='l')))
+try(with(pm1, lines(freq, dB(spec), col='blue')))
+try(with(pm2, lines(freq, dB(spec), col='red')))
+
+print(summary(dB(pm2$spec) - dB(pm1$spec)))
+
+message("\t-->\tRandom-noise example:")
 
 plot(p1 <- psdcore(rnorm(n), verbose=TRUE), log='dB')
 
-try(rm(p))
-p <- psdcore(x, verbose=TRUE) #, first.last=FALSE)
-#str(pl <- psd_envGet("last_psdcore_psd"))
-#print(table(is.finite(pl)))
-try(plot(p, log='dB'))
+message("\t-->\tTohoku example:")
 
-try(rm(p))
-p <- psdcore(x, ntaper = 5, verbose=TRUE) #, first.last=FALSE)
+pmn <- spectrum(x, plot=FALSE)
+try(plot(normalize(pmn,src = 'spectrum'), log='dB'))
+
+p1 <- psdcore(x, verbose=TRUE) #, first.last=FALSE)
 #str(pl <- psd_envGet("last_psdcore_psd"))
 #print(table(is.finite(pl)))
-try(with(p, lines(freq, dB(spec), col='red')))
+try(with(p2, lines(freq, dB(spec), col='red')))
+
+p2 <- psdcore(x, ntaper = 10, verbose=TRUE) #, first.last=FALSE)
+#str(pl <- psd_envGet("last_psdcore_psd"))
+#print(table(is.finite(pl)))
+try(with(p2, lines(freq, dB(spec), col='red')))
 
 message("\t", psd_envGet('len_orig')/2, " ",
         psd_envGet('len_even')/2, " ",

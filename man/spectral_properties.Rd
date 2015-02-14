@@ -2,6 +2,7 @@
 % Please edit documentation in R/func_specprops.R
 \name{spectral_properties}
 \alias{spectral_properties}
+\alias{spectral_properties.default}
 \alias{spectral_properties.spec}
 \alias{spectral_properties.tapers}
 \title{Calculate spectral properties.}
@@ -10,6 +11,8 @@ spectral_properties(tapvec, f.samp = 1, n.freq = NULL, p = 0.95,
   db.ci = FALSE, ...)
 
 \method{spectral_properties}{spec}(tapvec, ...)
+
+\method{spectral_properties}{tapers}(tapvec, ...)
 
 \method{spectral_properties}{tapers}(tapvec, f.samp = 1, n.freq = NULL,
   p = 0.95, db.ci = FALSE, ...)

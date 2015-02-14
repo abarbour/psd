@@ -82,7 +82,7 @@
 <<eval=TRUE, echo=FALSE>>= 
 library(knitr)
 options(width=69)
-knitr::opts_chunk$set(tidy = TRUE, size="small")
+knitr::opts_chunk$set(tidy = TRUE, size="small", split=TRUE)
 par(las=1)
 @
 %opts_knit$set(verbose = TRUE)
@@ -342,7 +342,7 @@ an interval (instead of a frequency).
 A quick example highlights the equivalency:
 <<eval=TRUE, echo=TRUE, label="Sampling rate versus interval">>=
 a <- rnorm(32)
-all.equal(psdcore(a,1)$spec, psdcore(a,-1)$spec)
+all.equal(psdcore(a,1,1,first.last=FALSE)$spec, psdcore(a,-1,1,first.last=FALSE)$spec)
 @
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
@@ -697,7 +697,7 @@ plot(frq, relp,
      main="Percent change in spectral resolution",
      col="light grey", 
      ylim=yl<-range(pretty(relp)),
-     type="h", xaxs="i",
+     type="h", 
      ylab="dB", xlab="frequency, 1/km")
 lines(frq, relp)
 text(0.25, 45, "Adaptive relative to fixed", cex=0.9)

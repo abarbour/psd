@@ -82,7 +82,7 @@ riedsid.default <- function(PSD, ntaper,
   ## spectral values
   PSD <- as.vector(PSD)
   # num freqs
-  nf <- psd::psd_envAssignGet("num_freqs", length(PSD))
+  nf <- psd_envAssignGet("num_freqs", length(PSD))
   # prelims
   eps <- 1e-78 
   # .Machine$double.eps #  A small number to protect against zeros
@@ -118,22 +118,22 @@ riedsid.default <- function(PSD, ntaper,
   lsmeth <- switch(match.arg(Deriv.method), local_qls=TRUE, spg=FALSE)
   stopifnot(exists("lsmeth"))
   if (lsmeth){
-    dsens <- 12 # optimal
     DFUN <- function(j, 
                      j1=j-nspan[j]+nadd-1, 
                      j2=j+nspan[j]+nadd-1, 
                      jr=j1:j2, 
                      logY=lY[jr], 
-                     dEps=eps,
-                     CC=dsens){
+                     dEps=eps){
       u <- jr - (j1 + j2)/2 # rowvec 
       u2 <- u*u             # rowvec
       L <- j2-j1+1          # constant
       L2 <- L*L             # constant
       LL2 <- L*L2           # constant
       LL2L <- LL2 - L       # constant
-      #CC <- 12 # (orig)
+      #
+      CC <- 12
       uzero <- (L2 - 1)/CC  # constant
+      #
       # first deriv
       dY <- u %*% logY * CC / LL2L
       # second deriv
@@ -146,7 +146,7 @@ riedsid.default <- function(PSD, ntaper,
     RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
     ##
     attr(RSS, which="lsderiv") <- lsmeth
-    RSS <- psd::psd_envAssignGet("spectral_derivatives.ls", RSS)
+    RSS <- psd_envAssignGet("spectral_derivatives.ls", RSS)
     RSS <- abs(colSums(RSS))
     # sums:
     #[ ,1] fdY2
@@ -158,7 +158,7 @@ riedsid.default <- function(PSD, ntaper,
                       dsig=log(PSD),
                       plot.derivs=FALSE, ...) #, spar=1)
     attr(RSS, which="lsderiv") <- lsmeth
-    RSS <- psd::psd_envAssignGet("spectral_derivatives", RSS) 
+    RSS <- psd_envAssignGet("spectral_derivatives", RSS) 
     #returns log
     RSS[,2:4] <- exp(RSS[,2:4])
     RSS <- abs(eps + RSS[,4] + RSS[,3]**2)
@@ -177,39 +177,7 @@ riedsid.default <- function(PSD, ntaper,
   kopt <- as.tapers( KC / (RSS ** 0.4) ) #/
   rm(RSS)
   #
-  #   for (  j  in  1:nf ) {
-  #     j1 <- j - nspan[j] + nadd - 1
-  #     j2 <- j + nspan[j] + nadd - 1
-  #     #  Over an interval proportional to taper length, fit a least
-  #     #  squares quadratic to Y to estimate smoothed 1st, 2nd derivs
-  #     jr <- j1:j2           # rowvec
-  #     u <- jr - (j1 + j2)/2 # rowvec 
-  #     u2 <- u*u             # rowvec
-  #     L <- j2-j1+1          # constant
-  #     L2 <- L*L             # constant
-  #     LL2 <- L*L2           # constant
-  #     LL2L <- LL2 - L       # constant
-  #     uzero <- (L2 - 1)/12  # constant
-  #     # first deriv
-  #     dY[j] <- u %*% lY[jr] * 12 / LL2L
-  #     # second deriv (?)
-  #     d2Y[j] <- (u2 - uzero) %*% lY[jr] * 360 / LL2L / (L2-4)
-  #   }
-  #   #
-  #   #  R <- PSD"/PSD <- Y" + (Y')^2  2nd form preferred for consistent smoothing
-  #   #
-  #   #  Riedel-Sidorenko recipe (eq 13): 
-  #   #       kopt <- (12*abs(PSD ./ d2psd)).^0.4 
-  #   #  but parabolic weighting in psdcore requires: 
-  #   #               (480)^0.2*abs(PSD ./ d2psd).^0.4
-  #   #  Original form:  kopt <- 3.428*abs(PSD ./ d2psd).^0.4
-  #   #
-  #   # the optimal number of tapers (in an MSE sense):
-  #   kopt_old <- as.tapers( 3.437544 / abs(eps + d2Y + dY*dY) ^ 0.4 ) 
-  #   #
-  #print(all.equal(kopt_old,kopt)) # TRUE!
-  ##
-  ## Constrain tapers
+  # Constrain tapers
   stopifnot(diff(length(kopt), length(kseq))==0)
   if (constrained) kopt <- constrain_tapers(tapvec=kopt, 
                                             tapseq=kseq, 

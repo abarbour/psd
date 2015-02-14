@@ -26,6 +26,11 @@ parabolic_weights_rcpp <- function(ntap) {
 #' @param dbl logical; should the code assume \code{fftz} is dual-length or singl-length?
 #' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
 #' automatically limited by the length of the series.
+#' @examples
+#' fftz <- complex(real=1:8, imaginary = 1:8)
+#' taps <- 1:4
+#' try(resample_fft_rcpp(fftz, taps))
+#' 
 #' @export
 resample_fft_rcpp <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap = 1000L) {
     .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers, verbose, dbl, tapcap)

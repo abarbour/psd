@@ -28,7 +28,8 @@
     tapmin=1,
     tapcap=1000,
     names=list(
-      fft = "fft_even_demeaned_padded",
+      fft = "working_fft",
+      fft.padded = "fft_even_demeaned_padded",
       fft.extrap = "fft_even_demeaned_padded_extrap",
       last.taper = "last_taper_sequence",
       last.psdcore = "last_psdcore_psd",

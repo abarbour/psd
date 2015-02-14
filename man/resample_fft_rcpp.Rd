@@ -22,4 +22,9 @@ automatically limited by the length of the series.}
 \description{
 Resample an fft using varying tapers
 }
+\examples{
+fftz <- complex(real=1:8, imaginary = 1:8)
+taps <- 1:4
+try(resample_fft_rcpp(fftz, taps))
+}
 
