@@ -1,9 +1,9 @@
 /*
 #   Apply constraints on tapers using simple derivatives
 #
-#     Copyright (C) 2013-2015  Andrew J. Barbour andy.barbour @ gmail.com
+#     Copyright (C) 2013-2015  Andrew J. Barbour *
 #
-#     Robert L. Parker authored the original algorithm.
+#     Robert L. Parker authored the original matlab algorithm
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by

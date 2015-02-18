@@ -452,16 +452,6 @@ ctap_simple_rcpp.tapers <- function(tapvec, tapseq=NA, maxslope=1L, ...){
 
 #' @rdname ctap_simple
 #' @export
-#' @examples
-#' 
-#' # compare simple and rcpp implementations
-#' kcr <- ctap_simple_rcpp(xn, 2)
-#' kcs <- ctap_simple(xn, 2)
-#' 
-#' rbind(kcs, kcr)
-#' 
-#' try(all.equal(kcr, kcs))
-#' 
 ctap_simple <- function(tapvec, ...) UseMethod("ctap_simple")
 
 #' @rdname ctap_simple

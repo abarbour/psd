@@ -53,14 +53,13 @@ lines(xnc, type='b', col='red')
 lines(xnc2, type='b', col='blue')
 lines(0.2+as.vector(psd::ctap_simple(psd::as.tapers(xn))), type='b', pch=".", col='salmon')
 
-# more examples:
 # compare simple and rcpp implementations
 kcr <- ctap_simple_rcpp(xn, 2)
 kcs <- ctap_simple(xn, 2)
-
 rbind(kcs, kcr)
-
 try(all.equal(kcr, kcs))
+
+# more examples:
 }
 \seealso{
 \code{\link{constrain_tapers}}, \code{\link{ctap_loess}}

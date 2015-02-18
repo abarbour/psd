@@ -31,6 +31,12 @@
 #' lines(xnc2, type='b', col='blue')
 #' lines(0.2+as.vector(psd::ctap_simple(psd::as.tapers(xn))), type='b', pch=".", col='salmon')
 #'
+#' # compare simple and rcpp implementations
+#' kcr <- ctap_simple_rcpp(xn, 2)
+#' kcs <- ctap_simple(xn, 2)
+#' rbind(kcs, kcr)
+#' try(all.equal(kcr, kcs))
+#'
 #' # more examples:
 #' 
 ctap_simple_rcpp.default <- function(tapvec, maxslope = 1L) {

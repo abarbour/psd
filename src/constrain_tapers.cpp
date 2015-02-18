@@ -1,13 +1,10 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 //
-//   Taper constraints based on spectral derivatives
+//   Apply constraints on tapers using simple derivatives
 //
-//    -- initial tests indicate upwards of a factor of 10 speed improvement vs. pure R implementations
+//     Copyright (C) 2015  Andrew J. Barbour *
 //
-//   Copyright (C) 2015  Andrew J. Barbour *
-//
-//   * Robert L. Parker authored the original algorithm.
-//
+//     * Robert L. Parker authored the original matlab algorithm
 //
 //   This program is free software: you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -55,6 +52,12 @@ using namespace Rcpp;
 //' lines(xnc, type='b', col='red')
 //' lines(xnc2, type='b', col='blue')
 //' lines(0.2+as.vector(psd::ctap_simple(psd::as.tapers(xn))), type='b', pch=".", col='salmon')
+//'
+//' # compare simple and rcpp implementations
+//' kcr <- ctap_simple_rcpp(xn, 2)
+//' kcs <- ctap_simple(xn, 2)
+//' rbind(kcs, kcr)
+//' try(all.equal(kcr, kcs))
 //'
 //' # more examples:
 //' 
