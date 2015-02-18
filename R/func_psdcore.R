@@ -136,7 +136,7 @@ psdcore.default <- function(X.d,
     
     # Force series to be even in length (modulo division)
     #
-    n.e <- psd_envAssignGet(evars[['n.even']], modulo_floor_rcpp(n.o))
+    n.e <- psd_envAssignGet(evars[['n.even']], modulo_floor(n.o))
     even_seq <- seq_len(n.e)
     X.even <- psd_envAssignGet(evars[['series.even']], as.matrix(X[even_seq]))
     

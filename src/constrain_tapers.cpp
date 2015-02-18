@@ -1,5 +1,39 @@
+// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+//
+//   Taper constraints based on spectral derivatives
+//
+//    -- initial tests indicate upwards of a factor of 10 speed improvement vs. pure R implementations
+//
+//   Copyright (C) 2015  Andrew J. Barbour *
+//
+//   * Robert L. Parker authored the original algorithm.
+//
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
 #include <Rcpp.h>
 using namespace Rcpp;
+
+// http://gallery.rcpp.org/articles/reversing-a-vector/
+// [[Rcpp::export]]
+IntegerVector irev(IntegerVector x) {
+   IntegerVector revX = clone<IntegerVector>(x);
+   std::reverse(revX.begin(), revX.end());
+   ::Rf_copyMostAttrib(x, revX); 
+   return revX;
+}
 
 // Below is a simple example of exporting a C++ function to R. You can
 // source this function into an R session using the Rcpp::sourceCpp 
@@ -16,9 +50,12 @@ IntegerVector constrain_tapers_rcpp(IntegerVector tapvec, int maxslope = 1) {
   IntegerVector tapvec_c = clone(tapvec);
   
   bool state = true;
-  int i, im, valc, valo, slope, newval;
   int ssize = tapvec_c.size();
-  
+  int i, im, valc, valo, slope, newval, dsize = ssize - 1;
+
+  IntegerVector fdiff = diff( tapvec_c[seq(0,dsize)] );
+  IntegerVector rdiff = diff( irev( tapvec_c[seq(1,ssize)] ) );
+
   // indices (f - forward, r - reverse)
   int i_min_f = 0,         i_max_f = ssize - 1;
   int i_min_r = ssize - 1, i_max_r = 0;
@@ -82,7 +119,7 @@ IntegerVector constrain_tapers_rcpp(IntegerVector tapvec, int maxslope = 1) {
     
   }
   
-  return tapvec_c;
+  return fdiff; //tapvec_c;
 }
 
 /*** R

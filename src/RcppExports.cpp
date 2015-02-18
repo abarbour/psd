@@ -6,6 +6,21 @@
 
 using namespace Rcpp;
 
+// irev
+IntegerVector irev(IntegerVector x);
+RcppExport SEXP psd_irev(SEXP xSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP );
+        IntegerVector __result = irev(x);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // constrain_tapers_rcpp
 IntegerVector constrain_tapers_rcpp(IntegerVector tapvec, int maxslope = 1);
 RcppExport SEXP psd_constrain_tapers_rcpp(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
