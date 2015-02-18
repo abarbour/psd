@@ -42,7 +42,7 @@ typically found in geophysical datasets.
 
 Bob and I have published a 
 [paper in Computers & Geosciences][1]
-to accompany this software; it describes the theory behind
+to accompany this software [(1 MB pdf)][pdf]; it describes the theory behind
 the estimation process, and how we apply it in practice.
 If you find `psd` useful in your research, we kindly request
 you cite our paper.
@@ -113,3 +113,4 @@ will be useful:
 
 [1]: http://dx.doi.org/10.1016/j.cageo.2013.09.015
 [2]: http://cran.r-project.org/web/packages/devtools
+[pdf]: https://github.com/abarbour/psd/raw/master/paper/2014.barbour_parker.official.CAGEO3272.pdf

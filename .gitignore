@@ -16,7 +16,6 @@ inst/Examples/tmpscpt.R
 psd.Rproj
 
 README.html
-NOBUILD/
 packrat/lib*/
 
 *.so
