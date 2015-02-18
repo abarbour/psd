@@ -1,0 +1,15 @@
+Rplots.pdf
+
+*.ilg
+*.idx
+*.ind
+*.log
+*.bbl
+*.blg
+*.synctex.gz
+*.toc
+figure/
+
+fftw*.tex
+normalization*.tex
+psd_overview*.tex
