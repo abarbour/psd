@@ -29,20 +29,43 @@ using namespace Rcpp; // otherwise add Rcpp::
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' @rdname psd-utilities
+//' @title Nearest value below
 //' @export
-//' @description \code{modulo_floor} returns the nearest \code{m}-length
-//' value (downwards); this is different from \code{\link{nextn}}.
+//' @description 
+//' Returns the nearest \code{m}-length
+//' value (downwards from \code{n}), which is different from \code{\link{nextn}}.
 //' For example:
-//' \code{1001} goes to \code{1000} for \code{m=2}
-//' @param n integer; the number of terms
-//' @param m integer; the modulo term
+//' \code{10} is the result for \code{n=11,m=2} whereas \code{\link{nextn}} would give \code{12}
+//' @param n integer; the number of terms (can be a vector)
+//' @param m integer; the modulo term (cannot be zero)
+//' @author A.J. Barbour <andy.barbour@@gmail.com>
+//' @seealso \code{\link{psd-utilities}} and \code{\link{psdcore}}, 
+//' which truncates to the nearest even length (so, \code{m=2})
+//' @examples
+//' n <- 11
+//' nextn(n) # 12
+//' modulo_floor(n) # 10
+//' 
+//' # works on vectors too:
+//' # defaults to m=2
+//' modulo_floor(seq_len(n))
+//' #[1]  0  2  2  4  4  6  6  8  8 10 10
+//' 
+//' # change the floor factor
+//' modulo_floor(seq_len(n), 3)
+//' #[1] 0 0 3 3 3 6 6 6 9 9 9
+//' 
+//' # zeros are not allowed for m
+//' try(modulo_floor(n, 0))
+//' 
 // [[Rcpp::export]]
-IntegerVector modulo_floor_rcpp(IntegerVector n, int m = 2){
+IntegerVector modulo_floor(IntegerVector n, int m = 2){
 
   int i, ni, ntrunc;
   int nn = n.size();
   IntegerVector ne(nn);
+  
+  if (m == 0) stop("m = 0  is invalid");
   
   for (i = 0; i < nn; i++){
   	ni = n[i];
@@ -56,13 +79,12 @@ IntegerVector modulo_floor_rcpp(IntegerVector n, int m = 2){
 //' @rdname parabolic_weights
 //' @export
 // [[Rcpp::export]]
-List parabolic_weights_rcpp(int ntap) {
+List parabolic_weights_rcpp(int ntap = 1) {
   //
   // return quadratic spectral weighting factors for a given number of tapers
   // Barbour and Parker (2014) Equation 7
   //
-  
-  //int K, K2;
+
   int K = pow(ntap, 1);
   
   NumericVector kseq(ntap), wgts(ntap);

@@ -27,13 +27,16 @@
 #' \code{"final_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pspectrum.R
+#' 
 pspectrum <- function(x, ...) UseMethod("pspectrum")
+
 #' @rdname pspectrum
 #' @export
 pspectrum.ts <- function(x, ...){
   frq <- frequency(x)
   pspectrum(as.vector(x), x.frqsamp=frq, ...)  
 }
+
 #' @rdname pspectrum
 #' @export
 pspectrum.spec <- function(x, ...){
@@ -49,6 +52,7 @@ pspectrum.spec <- function(x, ...){
     .NotYetImplemented()
   }
 }
+
 #' @rdname pspectrum
 #' @export
 pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=2, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
@@ -185,7 +189,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=2, AR=FALSE, N
 pilot_spec <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
 
 #' @rdname pilot_spec
-#' @method pilot_spec default
 #' @export
 pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
   stopifnot(length(ntap)==1)

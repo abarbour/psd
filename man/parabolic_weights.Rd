@@ -8,7 +8,7 @@
 \alias{parabolic_weights_rcpp}
 \title{Calculate parabolic weighting factors.}
 \usage{
-parabolic_weights_rcpp(ntap)
+parabolic_weights_rcpp(ntap = 1L)
 
 parabolic_weights(tapvec, tap.index = 1L)
 

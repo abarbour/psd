@@ -5,7 +5,7 @@
 \alias{splineGrad.default}
 \title{Numerical derivatives of a series based on a weighted, smooth spline representation.}
 \usage{
-splineGrad(dseq, dsig, plot.derivs = FALSE, ...)
+splineGrad(dseq, dsig, ...)
 
 \method{splineGrad}{default}(dseq, dsig, plot.derivs = FALSE, ...)
 }
@@ -14,9 +14,9 @@ splineGrad(dseq, dsig, plot.derivs = FALSE, ...)
 
 \item{dsig}{numeric; a vector of values (which will have a spline fit to them).}
 
-\item{plot.derivs}{logical; should the derivatives be plotted?}
-
 \item{...}{additional arguments passed to \code{smooth.spline}.}
+
+\item{plot.derivs}{logical; should the derivatives be plotted?}
 }
 \value{
 A matrix with columns representing \eqn{x, f(x), f'(x), f''(x)}.
