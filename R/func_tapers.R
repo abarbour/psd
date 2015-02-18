@@ -257,21 +257,18 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #'
 #' @example inst/Examples/rdex_parabolicweights.R
 parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
+
 #' @rdname parabolic_weights
-#' @aliases parabolic_weights.tapers
 #' @export
 parabolic_weights.tapers <- function(tapvec, tap.index=1L){
   stopifnot(is.tapers(tapvec) | ((tap.index > 0L) & (tap.index <= length(tapvec))))
   kWeights <- parabolic_weights_fast(tapvec[as.integer(tap.index)])
   return(kWeights)
 }
-#' @rdname parabolic_weights
-#' @export
-parabolic_weights_fast <- function(ntap=1L) UseMethod("parabolic_weights_fast")
 
 #' @rdname parabolic_weights
 #' @export
-parabolic_weights_fast.default <- function(ntap=1L){
+parabolic_weights_fast <- function(ntap=1L) {
   # Must be long-integer, otherwise overflow for ntap > 1e3
   K <- as.double(ntap)
   kseq <- seq_len(ntap) - 1
@@ -295,7 +292,7 @@ parabolic_weights_fast.default <- function(ntap=1L){
 ###  Constraint methods
 ###
 
-#' @title Taper constraint methods.
+#' @title Taper constraint methods
 #'
 #' @description
 #' In the Riedel-Sidorenko recipe, the number of optimal tapers
@@ -303,52 +300,14 @@ parabolic_weights_fast.default <- function(ntap=1L){
 #' second derivatives of the spectrum. It is crucial to enforce
 #' constraints on the number of actual tapers applied; this is
 #' because the derivatives of "noisy" series can be bogus.
-#'
-#' @rdname tapers-constraints
-#' @name tapers-constraints
-NULL
-
-#' @description \code{\link{minspan}} sets the maximum span a tapers object
-#' may have, which is necessary because it would be nonsense to
-#' have more tapers than the length of the series. 
 #' 
-#' @details \code{\link{minspan}} bounds the number of tapers to within
-#' the minimum of
-#' either the maximum number of tapers found in the object, 
-#' or the half-length of the series.
-#'
-### the minimum of the half-length of the series, and 7/5 times
-### the tapers.  In code this would look something like: 
-### \code{min(length(tapvec)/2, 7*tapvec/5)}
-#'
-#' @rdname tapers-constraints
-#' @title minspan
-#' @export
-#' @seealso \code{\link{as.tapers}} and \code{\link{constrain_tapers}}
-#'
-#' @author A.J. Barbour <andy.barbour@@gmail.com> and R.L.Parker. 
-#' AJB adapted some of RLP's original code,
-#' and wrote the main function in \code{\link{ctap_simple}} for dynamic loading C-code.
-#'
-minspan <- function(tapvec, ...) UseMethod("minspan")
-
-#' @rdname tapers-constraints
-#' @export
-minspan.tapers <- function(tapvec, ...){
-  stopifnot(is.tapers(tapvec))
-  Kmax <- max(tapvec)
-  Kmax.upper <- floor(7*Kmax/5)
-  Kmax.lower <- floor(length(tapvec)/2)
-  tapvec <- pmax(pmin(tapvec, min(c(Kmax.upper, Kmax.lower))), 1)
-  #maxtap <- min(max(tapvec), length(tapvec)/2)
-  #nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
-  return(tapvec)
-}
-
-#' @description \code{\link{constrain_tapers}} refines the number of tapers; 
-#' the method by which it does this is chosen with the \code{constraint.method}
-#' parameter. See \strong{Constraint methods} section for descriptions of each method.
-#' Below is a summary of the function associated with each \code{constraint.method}:
+#' \code{\link{constrain_tapers}} refines the number of tapers at each frequency.
+#' 
+#' \code{\link{minspan}} sets bounds on the number of tapers at each frequency.
+#' 
+#' @details The method by which \code{\link{constrain_tapers}} refines tapers is 
+#' set with the \code{constraint.method} argument:
+#' 
 #' \itemize{
 #'   \item \code{'simple.slope.rcpp'} uses \code{\link{ctap_simple_rcpp}}
 #'   \item \code{'simple.slope'} uses \code{\link{ctap_simple}}
@@ -356,7 +315,12 @@ minspan.tapers <- function(tapvec, ...){
 #'   \item \code{'none'} returns unbounded tapers.
 #' }
 #' 
-#' @section Details of Constraint Methods:
+#' \code{\link{minspan}} bounds the number of tapers to within
+#' the minimum of either the maximum number of tapers found in the object, 
+#' or the half-length of the series, which is necessary because 
+#' it would be nonsense to have more tapers than the length of the series. 
+#' 
+#' Details of the constraint methods:
 #' 
 #' \subsection{via first differencing (the default)}{
 #' 
@@ -365,9 +329,8 @@ minspan.tapers <- function(tapvec, ...){
 #' The algorithm uses first-differencing to modify the number
 #' of tapers in the previous position.  Effectively, the constraint
 #' is based on a causal, 1st-order Finite Impulse-response Filter (FIR) 
-#' which makes the method
-#' sensitive to rapid changes in the number of tapers; naturally,
-#' smoother spectra tend to produce less fluctuation in taper numbers, 
+#' which makes the method sensitive to rapid changes in the number of tapers; 
+#' naturally, smoother spectra tend to produce less fluctuation in taper numbers, 
 #' which makes this well suited for adaptive processing. 
 #'
 #' This produces, generally, the most
@@ -378,32 +341,38 @@ minspan.tapers <- function(tapvec, ...){
 #' }
 #' 
 #' \subsection{via LOESS smoothing}{
-#' \code{\link{ctap_loess}} uses \code{loess} to smooth the taper vector; is
+#' 
+#' \code{\link{ctap_loess}} uses \code{\link{loess}} to smooth the taper vector; is
 #' can be very slow thanks to quadratic scaling.
+#' 
 #' }
 #'
 #' @section Warning:
 #'
 #' \code{\link{ctap_loess}} results tend to be strongly dependent on
 #' the tuning parameters given to \code{loess} (for obvious reasons); hence, 
-#' some effort should be given to understand
-#' their effect, and/or re-tuning them if needed.
+#' some effort should be given to understand their effect, and/or re-tuning them if needed.
 #'
-#' @rdname tapers-constraints
-#' @title constrain_tapers
-#' @export
-#' @keywords tapers tapers-constraints
 #' @param tapvec \code{'tapers'} object; the number of tapers at each frequency
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param constraint.method  character; method to use for constraints on tapers numbers
 #' @param verbose logical; should warnings and messages be given?
-#' @param maxslope integer; constrain based on this maximum first difference
-#' @param loess.span  scalar; the span used in \code{loess}
-#' @param loess.degree  scalar; the polynomial degree
-#' @param ... optional arguments (unused)
-#' @return An object with class \code{'tapers'}.
-#'
+#' @param ... optional arguments sent to the constrain function (e.g. \code{\link{ctap_simple}})
+#' 
+#' @return An object with class \code{'tapers'}
+#' 
+#' @author A.J. Barbour <andy.barbour@@gmail.com> and R.L. Parker
+#' 
+#' @rdname tapers-constraints
+#' @name tapers-constraints
+#' @keywords tapers tapers-constraints
+#' 
+#' @seealso \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{as.tapers}}
 #' @example inst/Examples/rdex_constraintapers.R
+NULL
+
+#' @rdname tapers-constraints
+#' @export
 constrain_tapers <- function(tapvec, ...) UseMethod("constrain_tapers")
 
 #' @rdname tapers-constraints
@@ -439,42 +408,95 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
   #   maxtap <- tapbounds[2]
   #   tapvec.adj[tapvec.adj < mintap] <- mintap
   #   tapvec.adj[tapvec.adj > maxtap] <- maxtap
+  #
+  # is this the bug: ??
   tapvec.adj <- as.tapers(tapvec.adj, min_taper=1, max_taper=round(length(tapvec.adj)/2))
   return(tapvec.adj)
 }
 
 #' @rdname tapers-constraints
 #' @export
+minspan <- function(tapvec, ...) UseMethod("minspan")
+
+#' @rdname tapers-constraints
+#' @export
+minspan.tapers <- function(tapvec, ...){
+  stopifnot(is.tapers(tapvec))
+  Kmax <- max(tapvec)
+  Kmax.upper <- floor(7*Kmax/5)
+  Kmax.lower <- floor(length(tapvec)/2)
+  tapvec <- pmax(pmin(tapvec, min(c(Kmax.upper, Kmax.lower))), 1)
+  #maxtap <- min(max(tapvec), length(tapvec)/2)
+  #nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
+  return(tapvec)
+}
+
+##
+## Individual methods:
+##
+
+#
+# Note that  src/constrain_tapers.cpp  initiates  ctap_simple  documentation
+#
+#' @rdname ctap_simple
+#' @export
 ctap_simple_rcpp <- function(tapvec, ...) UseMethod("ctap_simple_rcpp")
 
-#' @rdname tapers-constraints
+#' @rdname ctap_simple
 #' @export
-ctap_simple_rcpp.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
-  ctap_simple_rcpp(as.integer(tapvec), maxslope=maxslope)
+ctap_simple_rcpp.tapers <- function(tapvec, tapseq=NA, maxslope=1L, ...){
+  # c++ code used for speed up of forward+backward operations
+  tapvec.adj <- ctap_simple_rcpp(as.integer(tapvec), maxslope=maxslope)
+  return(as.tapers(tapvec.adj))
 }
 
-#' @rdname tapers-constraints
+#' @rdname ctap_simple
 #' @export
+#' @examples
+#' 
+#' # compare simple and rcpp implementations
+#' kcr <- ctap_simple_rcpp(xn, 2)
+#' kcs <- ctap_simple(xn, 2)
+#' 
+#' rbind(kcs, kcr)
+#' 
+#' try(all.equal(kcr, kcs))
+#' 
 ctap_simple <- function(tapvec, ...) UseMethod("ctap_simple")
 
-#' @rdname tapers-constraints
+#' @rdname ctap_simple
 #' @export
-ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
-  stopifnot(is.tapers(tapvec))
-  # tapseq not needed
-  # \code{'tapers'} object gives integer values, but code requires real
+ctap_simple.default <- function(tapvec, maxslope=1L, ...){
+  # current code requires real
   tapvec <- as.numeric(tapvec)
   maxslope <- as.numeric(maxslope)
-  # c-code used for speed up of forward+backward operations
-  tapvec.adj <- as.tapers(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE="psd"))
-  return(tapvec.adj)
+  # c code used for speed up of forward+backward operations
+  .Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE="psd")
 }
 
-#' @rdname tapers-constraints
+#' @rdname ctap_simple
 #' @export
+ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1L, ...){
+  stopifnot(is.tapers(tapvec))
+  # TODO: eliminate need for tapseq (currently needed for compatibility)
+  tapvec.adj <- ctap_simple(as.vector(tapvec), maxslope=maxslope)
+  return(as.tapers(tapvec.adj))
+}
+
+#' @title Taper constraints using loess smoothing
+#' @rdname ctap_loess
+#' @export
+#' @keywords tapers tapers-constraints
+#' @param tapvec integer; the number of tapers at each frequency (can be a vector)
+#' @param tapseq vector; positions to evaluate derivatives (unused here, but necessary for smoother methods)
+#' @param loess.span  scalar; the span used in \code{loess}
+#' @param loess.degree  scalar; the polynomial degree
+#' @param verbose logical; should warnings and messages be given?
+#' @param ... additional arguments
+#' @seealso \code{\link{constrain_tapers}}, \code{\link{ctap_simple_rcpp}}
 ctap_loess <- function(tapvec, ...){ UseMethod("ctap_loess") }
 
-#' @rdname tapers-constraints
+#' @rdname ctap_loess
 #' @export
 ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
   stopifnot(is.tapers(tapvec))
@@ -490,12 +512,6 @@ ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1
                       data.frame(x=tapseq, y=as.numeric(tapvec)), 
                       span=loess.span, degree=loess.degree,
                       control = loess.control(trace.hat = trc))
-  tapvec.adj <- as.tapers(stats::predict(loe))
-  return(tapvec.adj)
+  tapvec.adj <- stats::predict(loe)
+  return(as.tapers(tapvec.adj))
 }
-
-#' @rdname tapers-constraints
-ctap_markov <- function() .Defunct("ctap_simple", package="psd")
-
-#' @rdname tapers-constraints
-ctap_friedman <- function() .Defunct("ctap_simple", package="psd")
