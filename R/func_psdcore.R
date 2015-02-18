@@ -19,9 +19,7 @@
 #' }
 #'
 #' \subsection{Decimation}{
-#' The parameter \code{ndecimate} determines the number of PSD estimates actually 
-#' computed.  This number is defined as a fraction of the truncated length, \eqn{(1+N/2)/n_d}.
-#' Linear interpolation is used.
+#' 	No longer supported.
 #' }
 #'
 #' \subsection{Sampling}{
@@ -42,23 +40,22 @@
 #'
 #' @param X.d  the series to estimate a spectrum for 
 #' @param X.frq  scalar; the sampling information (see section Sampling)
-#' @param ntaper  scalar, or vector; the number of tapers
-#' @param ndecimate  scalar; decimation factor
+#' @param ntaper  scalar, vector, or \code{\link{tapers}}; the number of sine tapers to apply at each frequency
 #' @param preproc  logical; should \code{X.d} have a linear trend removed?
-#' @param na.action  the function to deal with \code{NA} values
-#' @param first.last  the extrapolates to give the zeroth and Nyquist frequency estimates
-#' @param plotpsd  logical; should the estimate be shown compared to the \code{spec.pgram} estimate
+#' @param na.action  function to deal with \code{NA} values
+#' @param first.last  should the zeroth and Nyquist frequency estimates be extrapolated?
+#' @param plotpsd  logical; should the estimates be shown compared to the \code{\link{spectrum}}-based estimates
 #' @param as.spec  logical; should the object returned be of class 'spec'?
 #' @param refresh  logical; ensure a free environment prior to execution
-#' @param verbose logical; should messages be given?
-#' @param ...  (unused) Optional parameters
+#' @param verbose logical; should warnings and messages be given?
+#' @param ndecimate  now ignored
+#' @param ...  optional parameters; currently ignored
 #' @return An list object, invisibly.  If \code{as.spec=TRUE} then an object with class \code{spec};
 #' otherwise the list object will have information similar to a \code{spec} object, but with 
 #' a few additional fields.
 #'
 #' @name psdcore
 #' @export
-#' @keywords spectrum-estimation normalization prewhiten
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
 #' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}
 #'
@@ -67,10 +64,13 @@ psdcore <- function(X.d, ...) UseMethod("psdcore")
 
 #' @rdname psdcore
 #' @export
+#psdcore.ts <- function(X.d, ...) .NotYetImplemented()
+
+#' @rdname psdcore
+#' @export
 psdcore.default <- function(X.d, 
                             X.frq=NULL, 
-                            ntaper=as.tapers(1), 
-                            ndecimate=1L,
+                            ntaper=as.tapers(5), 
                             preproc=TRUE,
                             na.action = stats::na.fail,
                             first.last=TRUE,
@@ -78,205 +78,203 @@ psdcore.default <- function(X.d,
                             as.spec=TRUE,
                             refresh=FALSE,
                             verbose=FALSE,
+                            ndecimate,
                             ...
                            ) {
-  #
-  if (refresh) psd::psd_envRefresh(verbose=verbose)
-  #
+  if (!missing(ndecimate)){
+    # force a warning if the user wanted to use decimation, which is no longer supported
+    warning('Support for decimation has been removed.')
+  }
+  
+  # get a clean environment
+  if (refresh) psd_envRefresh(verbose=verbose)
+  
+  # named series (?)
   series <- deparse(substitute(X.d))
+  
   if (is.null(X.frq)){
-    # make some assumptions about the sampling rate
-    X.frq <- if (is.ts(X.d)){
-      stats::frequency(X.d)
-    } else {
-      1
-    }
-    if (verbose) message(sprintf("Sampling frequency assumed to be  %f", X.frq))
-  } else if (X.frq > 0){
+    # make an assumption about the sampling rate
+    X.frq <- ifelse(is.ts(X.d), stats::frequency(X.d), 1)
+    if (verbose) message("\tsampling frequency assumed to be  ", X.frq)
+  } 
+  
+  X.d <- if (X.frq > 0){
     # value represents sampling frequency
-    X.d <- na.action(stats::ts(X.d, frequency=X.frq))
+    na.action(stats::ts(X.d, frequency=X.frq))
   } else if (X.frq < 0){
     # value is sampling interval
-    X.d <- na.action(stats::ts(X.d, deltat=abs(X.frq)))
+    na.action(stats::ts(X.d, deltat=abs(X.frq)))
   } else {
     stop("bad sampling information")
   }
-  # sampling and nyquist
+  
+  # Refresh sampling rate, and get Nyquist frequency, tapers, and status
   X.frq <- stats::frequency(X.d)
   Nyq <- X.frq/2
-  ##
-  ###  When ntaper is a scalar, initialize
-  ##
-  # only one taper: usually means a first run
-  lt <- length(ntaper)
-  # onle one variable in the env (init): it hasn't been added to yet
-  nenvar <- length(psd::psd_envStatus()$listing)
-  fftz <- if (lt == 1 | nenvar == 1 | refresh){
+  len_tapseq <- length(ntaper)
+  #  only one variable in the env (init) means it hasn't been added to yet
+  nenvar <- length(psd_envStatus()[['listing']])
+  
+  ops <- getOption("psd.ops")
+  stopifnot(!is.null(ops))
+  evars <- ops[['names']]
+  
+  # initialize fft and other things, since this usually means a first run
+  fftz <- if ( len_tapseq == 1 | nenvar == 1 | refresh ){
+    
     # original series length
-    n.o <- psd::psd_envAssignGet("len_orig", length(X.d))
-    #
-    X <- if (preproc){
-      prewhiten(X.d, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
-    } else {
-      X.d
-    }
-    #
+    n.o <- psd_envAssignGet(evars[['n.orig']], length(X.d))
+    
+    X <- psd_envAssignGet(evars[['series.orig']], {
+      if (preproc){
+        # option for fast-detrend only [ ]
+        prewhiten(X.d, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
+      } else {
+        X.d
+      }
+    })
+    
     # Force series to be even in length (modulo division)
-    # nextn(factors=2) ?
-    n.e <- psd::psd_envAssignGet("len_even", n.o - n.o %% 2 )
-    X.even <- as.matrix(X[seq_len(n.e)])
-    psd::psd_envAssign("ser_orig", X)
-    psd::psd_envAssign("ser_orig_even", X.even)
+    #
+    n.e <- psd_envAssignGet(evars[['n.even']], modulo_floor(n.o))
+    even_seq <- seq_len(n.e)
+    X.even <- psd_envAssignGet(evars[['series.even']], as.matrix(X[even_seq]))
+    
     # half length of even series
-    nhalf <- psd::psd_envAssignGet("len_even_half", n.e/2)
+    nhalf <- psd_envAssignGet(evars[['n.even.half']], n.e/2)
+    
     # variance of even series
-    varx <- psd::psd_envAssignGet("ser_even_var", drop(stats::var(X.even)))
+    varx <- psd_envAssignGet(evars[['var.even']], drop(stats::var(X.even)))
+    
     # create uniform tapers
-    nt <- nhalf + 1  # check this [ ]
-    ntap <- if (lt < nt) {
-      rep.int(ntaper, nt)
-    } else {
-      ntaper[seq_len(nt)]
-    }
-    ## zero pad and take double-length fft
-    # fftw is faster (becomes apparent for long series)
-    fftz <- fftw::FFT(as.numeric(c(X.even, zeros(n.e))))
-    psd::psd_envAssignGet("fft_even_demeaned_padded", fftz)
+    kseq <- psd_envAssignGet(evars[['last.taper']], {
+      if (len_tapseq == 1){
+        rep.int(ntaper, nhalf+1)
+      } else {
+        tmptap <- ntaper[seq_len(nhalf+1)] # if length < nhalf + 1 the remnants will be NA
+        tmptap[is.na(tmptap)] <- pmin(ntaper[len_tapseq], ops[['tapmin']])
+        tmptap
+      }
+    })
+    
+    ## zero pad and take double-length fft (fftw is faster for very long series)
+    padded <- as.numeric(c(X.even, zeros(n.e)))
+    padded.fft <- psd_envAssignGet(evars[['fft.padded']], fftw::FFT(padded))
+    
+    psd_envAssignGet(evars[['fft']], {
+    	if (first.last){
+    		# Fix first value of fft -- always basically zero -- this will get rid 
+			# of the bug, and prevent needing first-last extrapolation, I think!
+			n.fft <- length(padded.fft)
+			inds <- c(1:3, n.fft)
+			padded.fft[inds] <- NA
+			if (verbose) message("\tnote: working fft has extrapolated ends")
+			psd_envAssignGet(evars[['fft.extrap']], 
+				zoo::na.locf(zoo::na.locf(padded.fft, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE))
+    	} else {
+    		padded.fft
+    	}
+    })
+    
   } else {
-    if (verbose){warning("Working environment *not* refreshed. Results may be bogus.")}
+    
+    if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
+    
     X <- X.d
-    ntap <- ntaper
-    #stopifnot(length(X)==length(ntap))
-    n.e <- psd::psd_envGet("len_even")
-    nhalf <- psd::psd_envGet("len_even_half")
-    varx <- psd::psd_envGet("ser_even_var")
-    psd::psd_envGet("fft_even_demeaned_padded")
+    kseq <- ntaper
+    n.e <- psd_envGet(evars[['n.even']])
+    nhalf <- psd_envGet(evars[['n.even.half']])
+    varx <- psd_envGet(evars[['var.even']])
+    
+    psd_envGet(evars[['fft']])
+    
   }
-  #
-  # if ntaper is a vector, this doesn't work [ ] ?
-  ##
-  # if the user wants a raw periodogram: by all means
-  DOAS <- if (lt == 1){
+  
+  # TODO: if ntaper is a vector, this doesn't work [ ] ?
+  
+  # Switch: multitaper if TRUE, periodogram if FALSE
+  DOMT <- if (len_tapseq == 1){
     ifelse(ntaper > 0, TRUE, FALSE)
   } else {
-    ifelse(!is.tapers(ntap), TRUE, FALSE)
+    ifelse(all(kseq > 0), TRUE, FALSE)
   }
-  if (DOAS) ntap <- as.tapers(ntap, setspan=TRUE)
   
   ###  Select frequencies for PSD evaluation
-  f <- if  (lt > 1 && ndecimate > 1){
-    #
-    # interpolation -- can help with speed.  considering Deprecation for simplicity's sake
-    #
-    stopifnot(!is.integer(ndecimate))
-    if (verbose) message("decim stage 1")
-    # interp1 requires strict monotonicity (for solution stability)
-    nsum <- base::cumsum(1/ntap)
-    ns1 <- nsum[1]
-    tmp.x <- nhalf * (nsum - ns1) / (nsum[length(nsum)] - ns1)
-    tmp.y <- seq.int(0, nhalf, by=1)
-    tmp.xi <- seq.int(0, nhalf, by=ndecimate)
-    # linear interplate (x,y) to (xi,yi) where xi is decimated sequence
-    tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
-    # Remove repeat frequencies in the list
-    unique(c(0, round(tmp.yi), nhalf))
-  } else {
-    base::seq.int(0, nhalf, by=1)
-  }
-  ##
-  ###  Calculate the PSD by averaging over tapered estimates
+  f <- base::seq.int(0, nhalf, by=1)
   nfreq <- length(f)
-  NF <- seq_len(nfreq)
-  ##
-  PSD <- if (sum(as.numeric(ntap)) > 0) {
-    #
-    #     n2e <- n.e * 2
-    #     fjs <- f[NF]
-    #     fjs2 <- fjs * 2
-    #     PSDFUN <- function(fj, fi=fj+1, fj2=fjs2[fi], n2.e=n2e, ntaps=ntap, Xfft=fftz){
-    #       #
-    #       # goes through fj frequency index, and reweights spectra based on
-    #       # quadratic weighting scheme
-    #       #
-    #       # number tapers (for subsetting)
-    #       NT <- ntaps[fi]
-    #       #NT <- base::seq_len(NT)
-    #       # sequence
-    #       KPW <- parabolic_weights_fast(NT)
-    #       Kseq <- KPW$taper_seq
-    #       # weights
-    #       Kwgt <- KPW$taper_weights
-    #       #rm(KPW)
-    #       # Resampling weighted spectral values:
-    #       j1 <- (fj2 + n2.e - Kseq) %% n2.e
-    #       j2 <- (fj2 + Kseq) %% n2.e
-    #       # select spectra
-    #       af12. <- abs(Xfft[j1+1] - Xfft[j2+1])
-    #       af12. <- matrix(af12. * af12., ncol=1)
-    #       # reweighted spectra
-    #       PSDv <- Kwgt %*% af12.
-    #       return(PSDv)
-    #     }
-    #
-    # ** compiled code doesn't appear to help speed
-    #     PSDFUNc <- compiler::cmpfun(PSDFUN)
-    # ** foreach is easier to follow, but foreach solution is actually slower :(
-    #     PSD <- foreach::foreach(f.j=f[1:nfreq], .combine="c") %do% PSDFUN(fj=f.j)
-    # ** vapply is much faster than even lapply
-    # vapply(X=fjs, FUN=PSDFUN, FUN.VALUE=double(1))
-    #    but
-    # ** Rcpp version is lightning fast and hides frequency indices
-    rres <- resample_fft_rcpp(fftz, ntap, verbose=verbose)
-    rres[['psd']]
-  } else {
-    if (verbose) warning("zero taper result --> raw periodogram. careful with these results!")
-    Xfft <- psd::psd_envGet("fft_even_demeaned_padded")
-    ff <- Xfft[NF]
-    N0. <- psd::psd_envGet("len_orig")
-    base::abs(ff * base::Conj(ff)) / N0.
-  }
   
-  ##  Interpolate if necessary to uniform freq sampling
-  if (lt > 1 && ndecimate > 1){
-    ## check [ ]
-    if (verbose) message("decim stage 2")
-    tmp.x <- f
-    tmp.xi <- tmp.y
-    tmp.y <- PSD
-    # x y x_interp --> y_interp
-    tmp.yi <- signal::interp1(tmp.x, tmp.y, tmp.xi, method='linear', extrap=TRUE)
-    tmp.yi
-  }
+  ###  Calculate the PSD by averaging over tapered estimates  
+  PSD <- psd_envAssignGet(evars[["last.psdcore"]], {
+    
+    if (DOMT){
+      
+      if (verbose) message("\testimating multitaper psd")
+      
+      ## resample fft with taper sequence and quadratic weighting
+      kseq <- as.integer(as.tapers(kseq, setspan=TRUE))
+      #    this is where the majority of the work goes on:
+      reff <- try(resample_fft_rcpp(fftz, kseq, verbose=verbose))
+
+	  #    check status:
+      if (inherits(reff,'try-error')){
+      	stop("Could not resample fft... inspect with psd_envGet(",evars[['fft']],"), etc.")
+      } else {
+        reff[['psd']]
+      }
+      
+    } else {
+      
+      if (verbose) message("raw periodogram")
+      Xfft <- psd_envGet(evars[['fft']])
+      ff <- Xfft[seq_len(nfreq)]
+      N0. <- psd_envGet(evars[['n.orig']])
+      # 
+      # if the user wants it, then by all means
+      # ... but force a warning on them
+      warning("Careful with these zero-taper results!")
+      base::abs(ff * base::Conj(ff)) / N0.
+      
+    }
+  })
   
-  # should not be complex at this point!!
+  ## PSD estimates
+  
+  # should not be complex at this point!
   stopifnot(!is.complex(PSD))
   
-  ## Normalize by variance, 
-  trap.area <- base::sum(PSD) - PSD[1]/2 - PSD[length(PSD)]/2 # Trapezoidal rule
-  bandwidth <- 1 / nhalf
-  ## normalize to one sided spectrum
-  PSD.n <- PSD * (2 * varx / (trap.area * bandwidth))
+  npsd <- length(PSD)
+  nonfin <- is.infinite(PSD)
+  
+  if (any(nonfin)) PSD <- replace(PSD, nonfin, NA)
+  
   ## Nyquist frequencies
-  frq <- as.numeric(base::seq.int(0, Nyq, length.out=nfreq)) # was just 0.5
-  ## timebp
-  timebp <- as.numeric(ntap/2)
-  ## bandwidth
-  # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
-  # half-width W = (K + 1)/{2(N + 1)}
-  # effective bandwidth ~ 2 W (accurate for many spectral windows)
-  mtap <- max(ntap)
-  bandwidth <- bandwidth * (mtap + 1) 
-  #
-  if (first.last){ 
-    # BUG: there may be an issue with f==0, & f[length(PSD)]
-    # so just extrapolate from the prev point
-    indic <- base::seq_len(nfreq - 2) + 1 
-    PSD.n <- base::exp(signal::interp1(frq[indic], base::log(PSD.n[indic]), frq, method='linear', extrap=TRUE))
-    if (verbose) message("first.last=TRUE: Zero and Nyquist frequencies were extrapolated")
+  frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
+  
+  ## Update tapers for consistency
+  kseq <- if (DOMT){	
+  	reff[['k.capped']]
+  } else{ 
+  	kseq[-length(PSD)] # will be one longer
   }
-  ##
+
+  ## Normalize and convert to one-sided spectrum
+  #
+  # we are using the trapezoidal rule, the principal being that the area underneath the spectrum
+  trap.area <- base::sum(PSD, na.rm=TRUE) - mean(PSD[c(1,npsd)], na.rm=TRUE)
+  # should equal the variance of the original series, but this was hiccuping thanks to
+  # the bug producing silly values at zero-frequency and a naive integration scheme
+  #
+  PSD <- 2 * PSD * varx / (trap.area / nhalf)
+  #PSD <- 2 * PSD / nhalf 
+  #
+  area.var.ratio <- varx * nhalf / trap.area
+  if (verbose) message("\tarea to variance ratio: ", signif(dB(area.var.ratio)))
+  
   funcall <- sprintf("psdcore (dem.+detr. %s f.l. %s refr. %s)", preproc, first.last, refresh) 
-  ##
+  
+  ## Plot result locally
+  # TODO: cleanup
+  # TODO: class and method (?) and move out of this script
   pltpsd <- function(Xser, frqs, PSDS, taps, nyq, detrend, demean, ...){
     fsamp <- frequency(Xser)
     stopifnot(fsamp==X.frq)
@@ -304,6 +302,7 @@ psdcore.default <- function(X.d,
     r1 <- range(lfrqp, na.rm=TRUE, finite=TRUE)
     r2 <- range(lfrq, na.rm=TRUE, finite=TRUE)
     xlims <- round(c(min(r1, r2), max(r1, r2)), 1) + .1*c(-1,1)
+    
     ## Spectra, in decibels
     plot(lfrqp, db_pgram, col="red", type="l", 
          main=funcall,
@@ -313,48 +312,58 @@ psdcore.default <- function(X.d,
     abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
     lines(lfrq, db_PSD, type="l")
     legend("bottomleft",c("spec.pgram (20% cosine taper)",sprintf("psdcore (max %i tapers)",max(taps))), col=c("red","black"), lty=1, lwd=2, cex=0.9)
+    
     ## tapers
     if (is.tapers(taps)){
       plot(taps, lfrq, xlim=xlims, xaxs="i")
     } else {
       plot(lfrq, taps, type="h", xlim=xlims, xaxs="i")
     }
+    
     ## original series
     plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
     mtext("index", side=1, line=1.5)
     mtext(sprintf("( dt+dm: %s | f.l: %s )", preproc, first.last), cex=0.4)
+    
     ## autocorrelation
     acf(Xser, main="")
     mtext("lag", side=1, line=1.5)
+    
     ## reset params
     par(opar)
   }
   
-  ## Plot it
-  if (plotpsd) pltpsd(Xser=X, frqs=frq, PSDS=PSD.n, taps=ntap, nyq=Nyq, detrend=preproc, demean=preproc, ...)
+  ## Plot results
+  if (plotpsd) pltpsd(Xser=X, frqs=frq, PSDS=PSD, taps=kseq, nyq=Nyq, detrend=preproc, demean=preproc, ...)
   
-  ##
+  ## Return results
+  mtap <- max(kseq, na.rm=TRUE)
   PSD.out <- list(freq = as.numeric(frq), 
-                  spec = as.numeric(PSD.n), 
+                  spec = as.numeric(PSD), 
                   coh = NULL, 
                   phase = NULL, 
                   kernel = NULL, 
                   # must be a scalar for plot.spec to give conf ints:
                   df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
-                  numfreq = nfreq,
-                  bandwidth = bandwidth, 
-                  n.used = psd::psd_envGet("len_even"), 
-                  orig.n = psd::psd_envGet("len_orig"), 
+                  numfreq = npsd,    
+                  ## bandwidth
+                  # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
+                  # half-width W = (K + 1)/{2(N + 1)}
+                  # effective bandwidth ~ 2 W (accurate for many spectral windows)
+                  bandwidth = (mtap + 1) / nhalf, 
+                  n.used = psd_envGet(evars[['n.even']]), 
+                  orig.n = psd_envGet(evars[['n.orig']]), 
                   series = series, 
                   snames = colnames(X), 
-                  method = sprintf("Sine multitaper\n%s",funcall), 
-                  taper = ntap, 
-                  pad = 1, # always!
-                  detrend = preproc, 
+                  method = sprintf("sine multitaper"), 
+                  taper = kseq, 
+                  pad = TRUE, # always!
+                  detrend = preproc, # always true?
                   demean = preproc,
-                  timebp=timebp,
-                  nyquist.frequency=Nyq
-                  )
+                  timebp = as.numeric(kseq/2),
+                  nyquist.frequency = Nyq,
+                  first.last = first.last
+  )
   if (as.spec){class(PSD.out) <- c("spec","amt")}
   return(invisible(PSD.out))
 }

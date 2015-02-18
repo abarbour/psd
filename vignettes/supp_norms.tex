@@ -1,0 +1,36 @@
+%%
+%% for use in normalization.Rnw
+%%
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[h!]
+\centering
+\caption{Top: Representers of various spectral quantities and their associated equations
+in the main text.
+Bottom: Normalizations for double and single sided PSD estimates to
+maintain process variance of $\sigma^2_\mathcal{X}$ and
+frequency ranges ($f_N$ is the Nyquist frequency).}
+\begin{tabular}{r l l l l} %p{6cm}
+
+\SC{Expression} & \SC{Representing} & \SC{Equivalent} & & \SC{Equation}\\
+\hline
+\dXstoch{} & stochastic process with variance $\sigma^2_\mathcal{X}$ & & & \\
+\dXrealiz{} & single realization of \dXstoch{} over $T$ & & & \\
+$\Fo \{ \dXrealiz{} \}$ & Fourier transform of \dXrealiz{} & $\Xfo_T (f)$ & & \ref{eq-FT} \\
+\daS{} & \bidx{amplitude spectrum} of \dXrealiz{} & \daF{} or \dmodF{} & &  \\
+\dpS{} & \bidx{phase spectrum} of \dXrealiz{} & \dargF{} & &  \\
+$\daF{}^2$ & \bidx{energy spectral density} of \dXrealiz{} & \dESD{} or \dmod{\Xfo \star \Xfo^*} & & \ref{eq-ESD} \\
+% &  &  & & \\
+$\daF{}^2/N$ & \bidx{power spectral density} of \dXrealiz{} & \dS{} or $\mathcal{E}\{|\dF{}|^2\}$ & & \ref{eq-psddef1} \\
+$\Fo ^{-1} \{ \dS{} \}$ & \bidx{autocovariance} of \dXrealiz{} & $\Cov \left( \dXrealiz{}, \dXrealiz{} \right)$ & & \ref{eq-acvdef} and \ref{eq-psddef2} \\
+
+\multicolumn{5}{c}{}\\
+
+\multicolumn{2}{l}{\SC{Normalizations to maintain $\sigma^2_\mathcal{X}$}} & \multicolumn{3}{l}{\SC{Frequency range}} \\
+\cline{1-4}
+  \dS{} & \bidx{double-sided} & \multicolumn{3}{l}{$[-f_N, f_N]$}\\
+2 \dS{} & \bidx{single-sided} & \multicolumn{3}{l}{$[0, f_N]$}\\
+
+\end{tabular}
+\label{tbl:norm}
+\end{table}
+\renewcommand{\arraystretch}{1.0}

@@ -6,8 +6,55 @@
 
 using namespace Rcpp;
 
+// irev
+IntegerVector irev(IntegerVector x);
+RcppExport SEXP psd_irev(SEXP xSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP );
+        IntegerVector __result = irev(x);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// constrain_tapers_rcpp
+IntegerVector constrain_tapers_rcpp(IntegerVector tapvec, int maxslope = 1);
+RcppExport SEXP psd_constrain_tapers_rcpp(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< IntegerVector >::type tapvec(tapvecSEXP );
+        Rcpp::traits::input_parameter< int >::type maxslope(maxslopeSEXP );
+        IntegerVector __result = constrain_tapers_rcpp(tapvec, maxslope);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// modulo_floor
+IntegerVector modulo_floor(IntegerVector n, int m = 2);
+RcppExport SEXP psd_modulo_floor(SEXP nSEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< IntegerVector >::type n(nSEXP );
+        Rcpp::traits::input_parameter< int >::type m(mSEXP );
+        IntegerVector __result = modulo_floor(n, m);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // parabolic_weights_rcpp
-List parabolic_weights_rcpp(int ntap);
+List parabolic_weights_rcpp(int ntap = 1);
 RcppExport SEXP psd_parabolic_weights_rcpp(SEXP ntapSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;

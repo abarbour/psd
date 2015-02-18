@@ -96,19 +96,19 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     state = 0;
     for (i = i_min_f; i <= i_max_f; i++){
         if (state == 0){
-            slope = c_ntaps[i] - c_ntaps[i-1];
-			if (slope >= maxslope) {
-				state = 1;
-				//printf("sub f-a\n");
-				c_ntaps[i] = c_ntaps[i-1] + maxslope; // was orig 1
-			}
+          slope = c_ntaps[i] - c_ntaps[i-1];
+    			if (slope >= maxslope) {
+    				state = 1;
+    				//printf("sub f-a\n");
+    				c_ntaps[i] = c_ntaps[i-1] + maxslope; // was orig 1
+    			}
         } else {
-			if (c_ntaps[i] >= c_ntaps[i-1] + maxslope) {
-			    //printf("sub f-b\n");
-				c_ntaps[i] = c_ntaps[i-1] + maxslope;
-			} else {
-				state = 0;
-			}
+    			if (c_ntaps[i] >= c_ntaps[i-1] + maxslope) {
+    			    //printf("sub f-b\n");
+    				c_ntaps[i] = c_ntaps[i-1] + maxslope;
+    			} else {
+    				state = 0;
+    			}
         }
 	    //printf("f %i %f %i %f\n", i, slope, state, c_ntaps[i]);
     }
@@ -116,18 +116,18 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     for (i = i_min_r; i >= i_max_r; i--){
         if (state == 0){
             slope = c_ntaps[i-1] - c_ntaps[i];
-			if (slope >= maxslope) {
-				state = 1;
-				//printf("sub r-a\n");
-				c_ntaps[i-1] = c_ntaps[i] + maxslope; // was orig 1
-			}
+            if (slope >= maxslope) {
+            	state = 1;
+            	//printf("sub r-a\n");
+            	c_ntaps[i-1] = c_ntaps[i] + maxslope; // was orig 1
+            }
         } else {
-			if (c_ntaps[i-1] >= c_ntaps[i] + maxslope) {
-			    //printf("sub r-b\n");
-				c_ntaps[i-1] = c_ntaps[i] + maxslope;
-			} else {
-				state = 0;
-			}
+            if (c_ntaps[i-1] >= c_ntaps[i] + maxslope) {
+                //printf("sub r-b\n");
+            	c_ntaps[i-1] = c_ntaps[i] + maxslope;
+            } else {
+            	state = 0;
+            }
         }
 	    //printf("f %i %f %i %f\n", i, slope, state, c_ntaps[i]);
     }

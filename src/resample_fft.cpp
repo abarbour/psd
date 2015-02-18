@@ -29,16 +29,62 @@ using namespace Rcpp; // otherwise add Rcpp::
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' @title Nearest value below
+//' @export
+//' @description 
+//' Returns the nearest \code{m}-length
+//' value (downwards from \code{n}), which is different from \code{\link{nextn}}.
+//' For example:
+//' \code{10} is the result for \code{n=11,m=2} whereas \code{\link{nextn}} would give \code{12}
+//' @param n integer; the number of terms (can be a vector)
+//' @param m integer; the modulo term (cannot be zero)
+//' @author A.J. Barbour <andy.barbour@@gmail.com>
+//' @seealso \code{\link{psd-utilities}} and \code{\link{psdcore}}, 
+//' which truncates to the nearest even length (so, \code{m=2})
+//' @examples
+//' n <- 11
+//' nextn(n) # 12
+//' modulo_floor(n) # 10
+//' 
+//' # works on vectors too:
+//' # defaults to m=2
+//' modulo_floor(seq_len(n))
+//' #[1]  0  2  2  4  4  6  6  8  8 10 10
+//' 
+//' # change the floor factor
+//' modulo_floor(seq_len(n), 3)
+//' #[1] 0 0 3 3 3 6 6 6 9 9 9
+//' 
+//' # zeros are not allowed for m
+//' try(modulo_floor(n, 0))
+//' 
+// [[Rcpp::export]]
+IntegerVector modulo_floor(IntegerVector n, int m = 2){
+
+  int i, ni, ntrunc;
+  int nn = n.size();
+  IntegerVector ne(nn);
+  
+  if (m == 0) stop("m = 0  is invalid");
+  
+  for (i = 0; i < nn; i++){
+  	ni = n[i];
+  	ntrunc = (ni % m);
+  	ne[i] = ni - ntrunc;
+  }
+  
+  return ne;
+}
+
 //' @rdname parabolic_weights
 //' @export
 // [[Rcpp::export]]
-List parabolic_weights_rcpp(int ntap) {
+List parabolic_weights_rcpp(int ntap = 1) {
   //
   // return quadratic spectral weighting factors for a given number of tapers
   // Barbour and Parker (2014) Equation 7
   //
-  
-  //int K, K2;
+
   int K = pow(ntap, 1);
   
   NumericVector kseq(ntap), wgts(ntap);
@@ -66,6 +112,11 @@ List parabolic_weights_rcpp(int ntap) {
 //' @param dbl logical; should the code assume \code{fftz} is dual-length or singl-length?
 //' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
 //' automatically limited by the length of the series.
+//' @examples
+//' fftz <- complex(real=1:8, imaginary = 1:8)
+//' taps <- 1:4
+//' try(resample_fft_rcpp(fftz, taps))
+//' 
 //' @export
 // [[Rcpp::export]]
 List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers, 
@@ -83,6 +134,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   //Function warning("warning"); // use Rf_warning instead
   
   int sc, nf, nt, ne, ne2, nhalf, nfreq, m, m2, mleft1, mleft2, j1, j2, Kc, ki, ik;
+  double wi;
   Rcomplex fdc;
   List bw;
   
@@ -94,15 +146,14 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
   
   nf = fftz.size() / sc;
-  nt = tapers.size();
-
+  nt = tapers.size(); // this is supposed to be one greater [ ]
+  
   // even, double, and half lengths
   ne = nf - (nf % 2);
-  
+
   if (verbose){
     Function msg("message");
-    //Rcout << "fft resampling: nf = " << nf << ", ne = " << ne << ", nt = " << nt;
-    msg(std::string("fft resampling"));
+    msg(std::string("\tfft resampling"));
   }
   
   if (ne < nf){
@@ -120,44 +171,47 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     Rf_warning("forced taper length");
     tapers = rep(tapers, nhalf);
   }
-  
+
   // %  Select frequencies for PSD evaluation [0:nhalf]
   NumericVector Freqs = abs(seq_len(nhalf)) - 1; // add one since c++ indexes at zero
   
   //%  Calculate the psd by averaging over tapered estimates
   nfreq = Freqs.size();
-  
-  //printf ("NF: %i %i\n", nf, nfreq);
-  
+
   NumericVector K(nfreq), absdiff(nfreq), psd(nfreq);
   
   for (int j = 0; j < nfreq; j++) {
     
     m = Freqs[j];
     m2 = 2*m;
-    Kc = tapers[m + 1]; // number of tapers applied at a given frequency
-    //^^^ is it ok that I removed the (m + 1) index? [no, it's not!]
+    // number of tapers applied at a given frequency (do not remove m+1 index!)
+    Kc = tapers[m + 1]; 
     
     if (Kc > nhalf){
       Kc = nhalf;
       if (Kc > tapcap){
         Kc = tapcap;
       }
+    } else if (Kc <= 0){
+      Kc = 1;
     }
     K[j] = Kc;
     
-    NumericVector k(Kc);
-    arma::rowvec sq_absdiff(Kc);
+    NumericVector k(Kc), w(Kc);
+    arma::rowvec sq_absdiff(Kc), psdprod(Kc);
     
     // taper sequence and spectral weights
     bw = parabolic_weights_rcpp(Kc); // bw is Kc, k, w
     k = bw[1];
-    arma::rowvec w = bw[2];
+    w = bw[2];
     
     // scan across ki to get vector of
     // spectral differences based on modulo indices
     for (ik = 0; ik < Kc; ik++) {
+      
+      wi = w[ik];
       ki = k[ik];
+      
       mleft1 = m2 + ne2 - ki;
       mleft2 = m2 + ki;
       
@@ -168,11 +222,15 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
       
       // absolute value of fdc, squared:
       //    (sqrt(Re^2 + Im^2))^2 = Re^2 + Im^2
-      sq_absdiff(ik) = pow(fdc.r,2) + pow(fdc.i,2);   
+      sq_absdiff(ik) = pow(fdc.r,2) + pow(fdc.i,2);
+        
+      // at the same time to a scalar product (pre-sum)
+      psdprod(ik) = wi * sq_absdiff(ik);
+      
     }    
     // un-normalized psd is vector product of w and (sqrt(Re^2 + Im^2))^2
-    psd(j) = arma::as_scalar( w * sq_absdiff.t() );
-    
+    psd(j) = sum(psdprod); //arma::as_scalar( w * sq_absdiff.t() );
+  
   }
   
   List psd_out = List::create(

@@ -60,7 +60,8 @@
 #' }
 #'
 #' @example inst/Examples/rdex_spectralproperties.R
-spectral_properties <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...) UseMethod("spectral_properties")
+spectral_properties <- function(tapvec, ...) UseMethod("spectral_properties")
+
 #' @rdname spectral_properties
 #' @aliases spectral_properties.spec
 #' @method spectral_properties spec
@@ -70,18 +71,30 @@ spectral_properties.spec <- function(tapvec, ...){
   n.freq <- length(Pspec$freq)
   f.samp <- 2*Pspec$freq[n.freq]
   tapvec <- Pspec$taper
-  if (!is.tapers(tapvec)) tapvec <- as.tapers(tapvec)
   spectral_properties(tapvec, f.samp, n.freq, ...)
 }
+
 #' @rdname spectral_properties
 #' @aliases spectral_properties.tapers
 #' @method spectral_properties tapers
 #' @export
-spectral_properties.tapers <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
+spectral_properties.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
-  K <- unclass(tapvec)
+  K <- as.integer(tapvec)
+  spectral_properties(K, ...)
+}
+
+#' @rdname spectral_properties
+#' @aliases spectral_properties.default
+#' @method spectral_properties default
+#' @export
+spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
+  
+  K <- as.vector(tapvec)
+  if (is.null(n.freq)) n.freq <- length(K)
+  
   Nyquist <- f.samp/2
-  if (is.null(n.freq)) n.freq <- length(tapvec)
+  
   #Var <- 10 / K / 12
   ## Deg Freedom: PW93 Ch7 343
   Dof <- 2 * K

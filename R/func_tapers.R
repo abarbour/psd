@@ -324,8 +324,7 @@ NULL
 #' @rdname tapers-constraints
 #' @title minspan
 #' @export
-#' @keywords tapers tapers-constraints
-#' @seealso \code{\link{splineGrad}}, \code{\link{riedsid}}
+#' @seealso \code{\link{as.tapers}} and \code{\link{constrain_tapers}}
 #'
 #' @author A.J. Barbour <andy.barbour@@gmail.com> and R.L.Parker. 
 #' AJB adapted some of RLP's original code,
@@ -337,10 +336,13 @@ minspan <- function(tapvec, ...) UseMethod("minspan")
 #' @export
 minspan.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
-  tapvec <- 7*tapvec/5
-  maxtap <- min(max(tapvec), length(tapvec)/2)
-  nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
-  return(nspan)
+  Kmax <- max(tapvec)
+  Kmax.upper <- floor(7*Kmax/5)
+  Kmax.lower <- floor(length(tapvec)/2)
+  tapvec <- pmax(pmin(tapvec, min(c(Kmax.upper, Kmax.lower))), 1)
+  #maxtap <- min(max(tapvec), length(tapvec)/2)
+  #nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
+  return(tapvec)
 }
 
 #' @description \code{\link{constrain_tapers}} refines the number of tapers; 
