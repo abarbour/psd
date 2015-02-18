@@ -21,22 +21,40 @@
 %}
 %
 
-% 0.5 -- the Rcpp era begins
-\section{CHANGES IN \psd{} VERSION 0.5-0 (2015-02-10)}{
+%
+% 0.5 -- the era of clean code and Rcpp goodness begins
+%
+\section{CHANGES IN \psd{} VERSION 0.5-0 (2015-02-18)}{
   \itemize{
+    
+    \item This is a major version bump that addresses performance issues by
+    converting known bottlenecks to c++ though the 
+    \href{http://cran.r-project.org/package=Rcpp}{\pkg{Rcpp}} package.
+    There has also been quite a lot of cleanup and rearranging of
+    documentation, and making sure methods are consistent.
+    Some attempts to be backwards compatible have been made, but
+    don't be surprised if results from previous versions are different --
+    sorry!
+
     \item \code{psdcore} now uses \code{resample_fft_rcpp} which
     is a lightning-fast (by comparison with pure-R) implementation
     of the fft-resampling/reweighting method we use; this new function
-    leverages the power of \href{http://cran.r-project.org/package=Rcpp}{\pkg{Rcpp}}
-    and \href{http://cran.r-project.org/package=RcppArmadillo}{\pkg{RcppArmadillo}}
+    leverages the power of 
+    \href{http://cran.r-project.org/package=RcppArmadillo}{\pkg{RcppArmadillo}}.
     
+    \item \code{ctap_simple} has been superceded by \code{ctap_cimple_rcpp}; in
+    the process of rewriting in c++, a minor bug in the c implementation was
+    found (and fixed).
+
     \item \href{https://travis-ci.org/abarbour/psd}{Travis-CI} is now used to track builds; see 
     also the \gitpsd{}.
     
-    \item Some known issues have been moved to the \href{https://github.com/abarbour/psd/issues}{Issues} page.
+    \item Issues/pull-requests can be entered on the \href{https://github.com/abarbour/psd/issues}{Issues} page.
     
-    \item I'm considering deprecating and reworking a lot of things soon; be prepared
-    for backwards compatibility issues starting with the next major version bump.
+    \item Taper constraints: \code{ctap_simple_rcpp}/\code{ctap_simple} and \code{ctap_loess} gain
+    their own man-page; \code{ctap_markov} and \code{ctap_friedman} were
+    previously made defunct, but are now permanently removed from the code-base.
+
   }
 }
 

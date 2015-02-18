@@ -28,7 +28,7 @@ data.frame.tapers(x, ...)
 \method{points}{tapers}(x, pch = "_", cex = 1, ...)
 
 \method{plot}{tapers}(x, xi = NULL, color.pal = c("Blues", "Spectral"),
-  ylim = NULL, hv.lines = FALSE, ...)
+  ylim = NULL, hv.lines = FALSE, log.y = FALSE, ...)
 }
 \arguments{
 \item{x}{tapers object}
@@ -51,7 +51,9 @@ data.frame.tapers(x, ...)
 
 \item{ylim}{optional limits for y-axis}
 
-\item{hv.lines}{logical; should horizontal and vertival reference lines be plotted?}
+\item{hv.lines}{logical; should horizontal (log2) and vertical reference lines be plotted?}
+
+\item{log.y}{logical; should the vertical scale be logarithmic?}
 }
 \value{
 \code{plot} returns a list with names: \code{line.colors} (hex values)
@@ -73,7 +75,7 @@ lines(tap)
 A.J. Barbour <andy.barbour@gmail.com>
 }
 \seealso{
-\code{\link{as.tapers}}, \code{\link{constrain_tapers}}, \code{par}
+\code{\link{as.tapers}}, \code{\link{constrain_tapers}}
 }
 \keyword{S3methods}
 \keyword{methods}

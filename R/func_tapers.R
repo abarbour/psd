@@ -98,9 +98,8 @@ tapers <- as.tapers
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @rdname tapers-methods
 #' @docType methods
-#' @import RColorBrewer
 #'
-#' @seealso \code{\link{as.tapers}}, \code{\link{constrain_tapers}}, \code{par}
+#' @seealso \code{\link{as.tapers}}, \code{\link{constrain_tapers}}
 #' @param x tapers object
 #' @param xi optional vector for indices of \code{x}
 #' @param object tapers object
@@ -110,7 +109,8 @@ tapers <- as.tapers
 #' @param cex point size (default is 1)
 #' @param color.pal color palette to use (choices are: "Blues","Spectral")
 #' @param ylim optional limits for y-axis
-#' @param hv.lines logical; should horizontal and vertival reference lines be plotted?
+#' @param hv.lines logical; should horizontal (log2) and vertical reference lines be plotted?
+#' @param log.y logical; should the vertical scale be logarithmic?
 #' @param ... optional arguments
 #' @return \code{plot} returns a list with names: \code{line.colors} (hex values)
 #' @examples
@@ -169,8 +169,7 @@ print.summary.tapers <- function(x, ...){
 lines.tapers <- function(x, lwd=1.8, col="red", ...){
   stopifnot(is.tapers(x))
   nt <- length(x)
-  xi <- 1:nt
-  #mx <- max(x)
+  xi <- seq_len(nt)
   graphics::lines(xi, x, lwd=lwd, col=col, ...)
 }
 
@@ -180,47 +179,51 @@ lines.tapers <- function(x, lwd=1.8, col="red", ...){
 points.tapers <- function(x, pch="_", cex=1, ...){
   stopifnot(is.tapers(x))
   nt <- length(x)
-  xi <- 1:nt
-  #mx <- max(x)
+  xi <- seq_len(nt)
   graphics::points(xi, x, pch=pch, cex=cex, ...)
 }
 
 #' @rdname tapers-methods
 #' @aliases plot.tapers
 #' @export
-plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, hv.lines=FALSE, ...){
+plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, hv.lines=FALSE, log.y=FALSE, ...){
   stopifnot(is.tapers(x))
-  #if isS4(x) x <- x@tapers
   nt <- length(x)
   if (is.null(xi)){
-    xi <- 1:nt
+    xi <- seq_len(nt)
   }
   stopifnot(length(xi)==nt)
   mx <- max(x)
   pal <- match.arg(color.pal)
+  # Color palette
   npal <- switch(pal, RdYlBu=11, Spectral=11, Blues=9)
   pal.col <- RColorBrewer::brewer.pal(npal, pal)
-  cols <- grDevices::colorRampPalette(pal.col)(mx)
-  if (is.null(ylim)) ylim <- 1.15*c(0.5, mx)
+  # and turn into a function
+  PALCOL <- grDevices::colorRampPalette(pal.col)
+  cols <- PALCOL(mx)
+  if (is.null(ylim)) ylim <- c(1, 1.1*mx)
+  
   graphics::plot.default(xi, x,
-               ylab="number of tapers",
-               xlab="taper index",
-               ylim=ylim, yaxs="i", 
-               #xlim=c(-1, nt+2), 
-                         xaxs="i",
-               lwd=1.8,
-               type="h",
-               col=cols[x],
+               ylab = "number of tapers",
+               xlab = "taper index",
+               ylim = ylim, 
+               yaxs = "i", xaxs = "i",
+               lwd = 1.8,
+               type = "h",
+               col = cols[x],
+               log = ifelse(log.y, "y", ""),
                ...)
-  graphics::lines.default(xi,x,col="black",lwd=0.7)
+  
+  graphics::lines(xi, x, col="black", lwd=0.7)
+  
   if (hv.lines){
     # plot log2 multiples as horiz lines
-    hl <- 2**(1:round(log2(mx)))
-    graphics::abline(h=hl,lty=1,lwd=0.6,col="black")
+    hl <- 2 ** (seq_len(ceiling(log2(mx))))
+    graphics::abline(h=hl, lty=1, lwd=0.6, col="black")
     vl <- c(1, nt)
-    graphics::abline(v=vl,lty=3,lwd=2,col="blue")
+    graphics::abline(v=vl, lty=3, lwd=2, col="blue")
   }
-  return(invisible(list(line.colors=cols)))
+  return(invisible(list(x=xi, k=x, line.colors=cols)))
 }
 
 ###
