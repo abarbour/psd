@@ -61,9 +61,8 @@ using namespace Rcpp; // otherwise add Rcpp::
 // [[Rcpp::export]]
 IntegerVector modulo_floor(IntegerVector n, int m = 2){
 
-  int i, ni, ntrunc;
-  int nn = n.size();
-  IntegerVector ne(nn);
+  int i, ni, ntrunc, nn = n.size();
+  IntegerVector ne(clone(n));
   
   if (m == 0) stop("m = 0  is invalid");
   
@@ -86,7 +85,6 @@ List parabolic_weights_rcpp(int ntap = 1) {
   //
 
   int K = pow(ntap, 1);
-  
   NumericVector kseq(ntap), wgts(ntap);
   kseq = abs( seq_len( K ) - 1 );
   
@@ -168,6 +166,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
   
   if (nt == 1){
+    // TODO: deep copy with clone
     Rf_warning("forced taper length");
     tapers = rep(tapers, nhalf);
   }

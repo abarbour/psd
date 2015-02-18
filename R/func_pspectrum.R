@@ -55,7 +55,7 @@ pspectrum.spec <- function(x, ...){
 
 #' @rdname pspectrum
 #' @export
-pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=2, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
   adapt_message <- function(stage, dvar=NULL){

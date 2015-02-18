@@ -6,31 +6,16 @@
 
 using namespace Rcpp;
 
-// irev
-IntegerVector irev(IntegerVector x);
-RcppExport SEXP psd_irev(SEXP xSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP );
-        IntegerVector __result = irev(x);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-// constrain_tapers_rcpp
-IntegerVector constrain_tapers_rcpp(IntegerVector tapvec, int maxslope = 1);
-RcppExport SEXP psd_constrain_tapers_rcpp(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
+// ctap_simple_rcpp
+IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1);
+RcppExport SEXP psd_ctap_simple_rcpp(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< IntegerVector >::type tapvec(tapvecSEXP );
-        Rcpp::traits::input_parameter< int >::type maxslope(maxslopeSEXP );
-        IntegerVector __result = constrain_tapers_rcpp(tapvec, maxslope);
+        Rcpp::traits::input_parameter< const int >::type maxslope(maxslopeSEXP );
+        IntegerVector __result = ctap_simple_rcpp(tapvec, maxslope);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

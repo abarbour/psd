@@ -27,7 +27,6 @@
 using namespace Rcpp;
 
 // http://gallery.rcpp.org/articles/reversing-a-vector/
-// [[Rcpp::export]]
 IntegerVector irev(IntegerVector x) {
    IntegerVector revX = clone<IntegerVector>(x);
    std::reverse(revX.begin(), revX.end());
@@ -35,127 +34,97 @@ IntegerVector irev(IntegerVector x) {
    return revX;
 }
 
-// Below is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar)
-
-// For more on using Rcpp click the Help button on the editor toolbar
-
-// [[Rcpp::export]]
-IntegerVector constrain_tapers_rcpp(IntegerVector tapvec, int maxslope = 1) {
+//' @rdname tapers-constraints
+//' @export
+//' @examples
+//' 
+//' # generate some random taper series and constrain them based on slopes
+//' set.seed(1237)
+//' n <- 11
+//' x <- seq_len(n)
+//' xn <- round(runif(n,1,n))
+//' 
+//' xnf <- ctap_simple_rcpp(xn, 0) # flattens out
+//' xnc <- ctap_simple_rcpp(xn, 1) # no change, already only slopes = 1
+//' try(all.equal(xnc, xn))
+//' xnc2 <- ctap_simple_rcpp(xn, 2) # slopes = 2 only
+//'
+//' plot(xn, type='b', pch=16, ylim=c(0,12))
+//' grid()
+//' abline(a=0,b=1, col='red', lty=3); abline(a=0,b=2, col='blue', lty=3)
+//' lines(xnf, type='b', col='green')
+//' lines(xnc, type='b', col='red')
+//' lines(xnc2, type='b', col='blue')
+//' lines(0.2+as.vector(psd::ctap_simple(psd::as.tapers(xn))), type='b', pch=".", col='salmon')
+//'
+//' # more examples:
+//' 
+// [[Rcpp::export("ctap_simple_rcpp.default")]]
+IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1) {
   //
   // Simple FIR filter to constrain variations in tapers
+  // based on spectral derivatives so that we curb run-away growth of tapvec 
+  // due to zeros in the psd''; limits slopes to be <= maxslope in magnitude, 
+  // preventing greedy averaging.
   //
   
-  IntegerVector tapvec_c = clone(tapvec);
+  if (maxslope < 0) Rf_error( "max slope cannot be less than zero" );
   
   bool state = true;
-  int ssize = tapvec_c.size();
-  int i, im, valc, valo, slope, newval, dsize = ssize - 1;
-
-  IntegerVector fdiff = diff( tapvec_c[seq(0,dsize)] );
-  IntegerVector rdiff = diff( irev( tapvec_c[seq(1,ssize)] ) );
-
-  // indices (f - forward, r - reverse)
-  int i_min_f = 0,         i_max_f = ssize - 1;
-  int i_min_r = ssize - 1, i_max_r = 0;
+  IntegerVector koptc(clone(tapvec));
+  int ssize = tapvec.size(), i, im, k_prev, k_curr, k_repl, slope; //, k_orig;
   
-  Rcout << "\nsize " << ssize << " max-slp " << maxslope << " " << i_max_f << " " << i_min_f << " " << i_max_r << " " << i_min_r << "\n\n";
-   
-  if (maxslope <= 0) Rf_error( "max slope must greater than zero" );
+  //Rcout << "\nsize " << ssize << " max-slp " << maxslope << "\n\n";
   
-  // APPLY CONSTRAINTS
-  //   FORWARDS:
+  //  Scan FORWARD and create new series where slopes <= 1
+  state = true;
   for (i = 1; i < ssize; i++){
-    
     im = i - 1;
-    valc = tapvec_c[i];
-    valo = tapvec_c[im];
-    slope = valc - valo;
-    newval = valo + maxslope;
-    
-    Rcout << "F -- i " << i << "\tim " << im << "\tval-c: " << valc << "\tval-o: " << valo << "\tslope: " << slope << "\tnew " << newval << "\tste " << state << "\n";
-    
+    //k_orig = tapvec[ im ];
+    k_prev = koptc[ im ];
+    k_curr = koptc[ i ];
+    k_repl = k_prev + maxslope;
+    slope = k_curr - k_prev;
+    //Rcout << "F -- i " << i << "\ti - 1: " << im << "\tk_orig: " << k_orig << "\tk_prev: " << k_prev << "\tk_curr: " << k_curr << "\tslope: " << slope << "\tk_repl " << k_repl << "\tstate " << state << "\n";
     if (state){
-      if (slope > maxslope) {
-        tapvec_c[i] = newval;
+      if (slope >= maxslope){
+        koptc[ i ] = k_repl;
         state = false;
       }
     } else {
-      if (valc >= newval) {
-        tapvec_c[i] = newval;
+      if (k_curr >= k_repl){
+        koptc[ i ] = k_repl;
       } else {
         state = true;
       }
     }
-    
   }
-  
-  Rcout << "\n";
-  
-  // and BACKWARDS:
-  for (i = ssize; i > 0; i--){
-    
+  //
+  //Rcout << "\n";
+  //
+  // scan BACKWARDS to bound slopes >= -1
+  state = true;
+  for (i = ssize - 1; i >= 1; i--){
     im = i - 1;
-    valc = tapvec_c[i];
-    valo = tapvec_c[im];
-    slope = valc - valo;
-    newval = valc + maxslope;
-    
-    Rcout << "R -- i " << i << "\tim " << im << "\tval-c: " << valc << "\tval-o: " << valo << "\tslope: " << slope << "\tnew " << newval << "\tste " << state << "\n";
-    
+    //k_orig = tapvec[ im ];
+    k_prev = koptc[ i ];
+    k_curr = koptc[ im ];
+    k_repl = k_prev + maxslope;
+    slope = k_curr - k_prev;
+    //Rcout << "R -- i " << i << "\ti - 1: " << im << "\tk_orig: " << k_orig << "\tk_prev: " << k_prev << "\tk_curr: " << k_curr << "\tslope: " << slope << "\tk_repl " << k_repl << "\tstate " << state << "\n";
     if (state){
-      if (slope > maxslope) {
-        tapvec_c[im] = newval;
+      if (slope >= maxslope){
+        koptc[ im ] = k_repl;
         state = false;
       }
     } else {
-      if (valc > newval) {
-        tapvec_c[im] = newval;
+      if (k_curr >= k_repl){
+        koptc[ im ] = k_repl;
       } else {
         state = true;
       }
     }
-    
   }
   
-  return fdiff; //tapvec_c;
+  return koptc;
 }
-
-/*** R
-
-set.seed(1237)
-n <- 11
-x <- seq_len(n)
-x2 <- x*2
-xn <- round(runif(n,1,n))
-
-xc <- constrain_tapers_rcpp(x)
-xc2 <- constrain_tapers_rcpp(x, 2)
-
-x2c <- constrain_tapers_rcpp(x2)
-x2c2 <- constrain_tapers_rcpp(x2, 2)
-
-xnc <- constrain_tapers_rcpp(xn)
-xnc2 <- constrain_tapers_rcpp(xn, 2)
-
-#plot(x, type='b', pch=16)
-#abline(a=0,b=1, col='red', lty=3); abline(a=0,b=2, col='blue', lty=3)
-#lines(xc, type='b', col='red')
-#lines(xc2, type='b', col='blue')
-#lines(0.2+as.vector(ctap_simple(as.tapers(x))), type='b', pch=".", col='salmon')
-
-plot(xn, type='b', pch=16, ylim=c(0,12))
-grid()
-abline(a=0,b=1, col='red', lty=3); abline(a=0,b=2, col='blue', lty=3)
-lines(xnc, type='b', col='red')
-lines(xnc2, type='b', col='blue')
-lines(0.2+as.vector(ctap_simple(as.tapers(xn))), type='b', pch=".", col='salmon')
-
-#plot(x2, type='b', pch=16, ylim=c(0,25))
-#abline(a=0,b=1, col='red', lty=3); abline(a=1,b=2, col='blue', lty=3)
-#lines(x2c, type='b', col='red')
-#lines(x2c2, type='b', col='blue')
-#lines(0.2+as.vector(ctap_simple(as.tapers(x2))), type='b', pch=".", col='salmon')
-
-*/

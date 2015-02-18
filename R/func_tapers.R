@@ -331,8 +331,8 @@ NULL
 #' and wrote the main function in \code{\link{ctap_simple}} for dynamic loading C-code.
 #'
 minspan <- function(tapvec, ...) UseMethod("minspan")
+
 #' @rdname tapers-constraints
-#' @aliases minspan.tapers
 #' @export
 minspan.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
@@ -350,6 +350,7 @@ minspan.tapers <- function(tapvec, ...){
 #' parameter. See \strong{Constraint methods} section for descriptions of each method.
 #' Below is a summary of the function associated with each \code{constraint.method}:
 #' \itemize{
+#'   \item \code{'simple.slope.rcpp'} uses \code{\link{ctap_simple_rcpp}}
 #'   \item \code{'simple.slope'} uses \code{\link{ctap_simple}}
 #'   \item \code{'loess.smooth'} uses \code{\link{ctap_loess}}
 #'   \item \code{'none'} returns unbounded tapers.
@@ -358,8 +359,10 @@ minspan.tapers <- function(tapvec, ...){
 #' @section Details of Constraint Methods:
 #' 
 #' \subsection{via first differencing (the default)}{
-#' \code{\link{ctap_simple}} is the preferred constraint method.
-#' The algortihm uses first-differencing to modify the number
+#' 
+#' \code{\link{ctap_simple_rcpp}} is the preferred constraint method
+#' (in previous versions \code{\link{ctap_simple}} was).
+#' The algorithm uses first-differencing to modify the number
 #' of tapers in the previous position.  Effectively, the constraint
 #' is based on a causal, 1st-order Finite Impulse-response Filter (FIR) 
 #' which makes the method
@@ -370,10 +373,8 @@ minspan.tapers <- function(tapvec, ...){
 #' This produces, generally, the most
 #' stable results, meaning repeatedly running the constraint will not change values
 #' other than on the first execution; the same cannot be said for the other
-#' methods.
-#'
-#' In pure-R this algorithm can be very slow; however, here we have
-#' included it as dynamically loaded c-code so it it reasonably fast.
+#' methods, which are also considerably more expensive to use.
+#' 
 #' }
 #' 
 #' \subsection{via LOESS smoothing}{
@@ -390,7 +391,6 @@ minspan.tapers <- function(tapvec, ...){
 #'
 #' @rdname tapers-constraints
 #' @title constrain_tapers
-#' @aliases constrain_tapers tapers-constraints
 #' @export
 #' @keywords tapers tapers-constraints
 #' @param tapvec \code{'tapers'} object; the number of tapers at each frequency
@@ -404,16 +404,13 @@ minspan.tapers <- function(tapvec, ...){
 #' @return An object with class \code{'tapers'}.
 #'
 #' @example inst/Examples/rdex_constraintapers.R
-constrain_tapers <- function(tapvec, tapseq=NULL,
-                             constraint.method=c("simple.slope",
-                                                 "loess.smooth",
-                                                 "none"),
-                             verbose=TRUE, ...) UseMethod("constrain_tapers")
+constrain_tapers <- function(tapvec, ...) UseMethod("constrain_tapers")
+
 #' @rdname tapers-constraints
-#' @aliases constrain_tapers.tapers
 #' @export
 constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
-                                   constraint.method=c("simple.slope",
+                                   constraint.method=c("simple.slope.rcpp",
+                                                       "simple.slope",
                                                        "loess.smooth",
                                                        "none"),
                                    verbose=TRUE, ...){
@@ -426,6 +423,7 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
   } else {
     if (verbose) message(sprintf("Constraining tapers with  ...  %s  ...  method",cmeth))
     CTAPFUN <- switch(cmeth,
+                      "simple.slope.rcpp"=ctap_simple_rcpp,
                       "simple.slope"=ctap_simple,
                       "loess.smooth"=ctap_loess)
     CTAPFUN(tapvec, tapseq, ...)
@@ -447,9 +445,19 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
 
 #' @rdname tapers-constraints
 #' @export
-ctap_simple <- function(tapvec, tapseq=NA, maxslope=1, ...) UseMethod("ctap_simple")
+ctap_simple_rcpp <- function(tapvec, ...) UseMethod("ctap_simple_rcpp")
+
 #' @rdname tapers-constraints
-#' @aliases ctap_simple.tapers
+#' @export
+ctap_simple_rcpp.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
+  ctap_simple_rcpp(as.integer(tapvec), maxslope=maxslope)
+}
+
+#' @rdname tapers-constraints
+#' @export
+ctap_simple <- function(tapvec, ...) UseMethod("ctap_simple")
+
+#' @rdname tapers-constraints
 #' @export
 ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
   stopifnot(is.tapers(tapvec))
@@ -464,7 +472,8 @@ ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1, ...){
 
 #' @rdname tapers-constraints
 #' @export
-ctap_loess <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){ UseMethod("ctap_loess") }
+ctap_loess <- function(tapvec, ...){ UseMethod("ctap_loess") }
+
 #' @rdname tapers-constraints
 #' @export
 ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
@@ -486,11 +495,7 @@ ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1
 }
 
 #' @rdname tapers-constraints
-ctap_markov <- function() UseMethod("ctap_markov")
-#' @rdname tapers-constraints
-ctap_markov.tapers <- function() .Defunct("ctap_simple", package="psd")
+ctap_markov <- function() .Defunct("ctap_simple", package="psd")
 
 #' @rdname tapers-constraints
-ctap_friedman <- function(){ UseMethod("ctap_friedman") }
-#' @rdname tapers-constraints
-ctap_friedman.tapers <- function()  .Defunct("ctap_simple", package="psd")
+ctap_friedman <- function() .Defunct("ctap_simple", package="psd")

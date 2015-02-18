@@ -113,6 +113,7 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
 	    //printf("f %i %f %i %f\n", i, slope, state, c_ntaps[i]);
     }
     // and BACKWARD:
+    state = 0;
     for (i = i_min_r; i >= i_max_r; i--){
         if (state == 0){
             slope = c_ntaps[i-1] - c_ntaps[i];

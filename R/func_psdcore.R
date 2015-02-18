@@ -159,7 +159,7 @@ psdcore.default <- function(X.d,
     
     ## zero pad and take double-length fft (fftw is faster for very long series)
     padded <- as.numeric(c(X.even, zeros(n.e)))
-    padded.fft <- psd_envAssignGet(evars[['fft.padded']], fftw::FFT(padded))
+    padded.fft <- psd_envAssignGet(evars[['fft.padded']], stats::fft(padded)) # fftw::FFT
     
     psd_envAssignGet(evars[['fft']], {
     	if (first.last){
