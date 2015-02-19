@@ -13,13 +13,13 @@
 
 ctap_simple_rcpp(tapvec, ...)
 
-\method{ctap_simple_rcpp}{tapers}(tapvec, tapseq = NA, maxslope = 1L, ...)
+\method{ctap_simple_rcpp}{tapers}(tapvec, maxslope = 1L, ...)
 
 ctap_simple(tapvec, ...)
 
 \method{ctap_simple}{default}(tapvec, maxslope = 1L, ...)
 
-\method{ctap_simple}{tapers}(tapvec, tapseq = NA, maxslope = 1L, ...)
+\method{ctap_simple}{tapers}(tapvec, maxslope = 1L, ...)
 }
 \arguments{
 \item{tapvec}{integer; the number of tapers at each frequency (can be a vector)}

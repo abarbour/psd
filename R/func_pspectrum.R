@@ -55,26 +55,19 @@ pspectrum.spec <- function(x, ...){
 
 #' @rdname pspectrum
 #' @export
-pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=4, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=20, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
-  #
-  adapt_message <- function(stage, dvar=NULL){
-    stopifnot(stage>=0)
-    stage <- if (stage==0){
-      paste(stage,"est. (pilot)")
-    } else {
-      paste(stage, sprintf("est. (Ave. S.V.R. %.01f dB)", dB(dvar)))
-    }
-    message(sprintf("Stage  %s ", stage))
-  }
   #
   niter <- abs(niter)
   plotpsd_ <- FALSE
-  for (stage in 0:niter){
+  #
+  iter_stages <- 0:niter
+  #
+  for (stage in iter_stages){
     if (stage==0){
       if (verbose) adapt_message(stage)
       # --- setup the environment ---
-      psd::psd_envRefresh(verbose=verbose)
+      psd_envRefresh(verbose=verbose)
       # --- pilot spec ---
       # ** normalization is here:
       if (niter==0){
@@ -85,28 +78,28 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=4, AR=FALSE, N
       pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       
       # ensure it's in the environment
-      Pspec <- psd::psd_envGet("pilot_psd")
-      xo <- psd::psd_envAssignGet("original_series", x)
+      Pspec <- psd_envGet("pilot_psd")
+      xo <- psd_envAssignGet("original_series", x)
       
       # starting spec variance
-      dvar.o <- varddiff(Pspec$spec)
+      dvar.o <- varddiff(Pspec[['spec']])
       
       # --- history ---
       save_hist <- ifelse(niter < 10, TRUE, FALSE)
       if (no.history) save_hist <- FALSE
       if (save_hist){
-        psd::new_adapt_history(niter)
-        psd::update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
+        new_adapt_history(niter)
+        update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
       }
       xo <- 0 # to prevent passing orig data back/forth
     } else {
-      # enforce silence
+      # enforce silence once the adapting gets going
       rverb <- ifelse(stage > 0, FALSE, TRUE)
       if (rverb) rm(kopt)
       ## calculate optimal tapers
       kopt <- riedsid(Pspec, verbose=rverb, ...)
       tapcap <- getOption("psd.ops")[['tapcap']] # absolute limit
-      kopt[kopt>tapcap] <- tapcap
+      kopt[kopt > tapcap] <- tapcap
       stopifnot(exists('kopt'))
       ## reapply to spectrum
       if (stage==niter){
@@ -119,15 +112,47 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=4, AR=FALSE, N
       # preproc done in pilot_spec
       Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, 
                        preproc=FALSE, plotpsd=plotpsd_, verbose=FALSE)
-      if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec$spec, double.diff=TRUE)/dvar.o)
+      if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec[['spec']], double.diff=TRUE)/dvar.o)
       ## update history
-      if (save_hist) psd::update_adapt_history(stage, Pspec$taper, Pspec$spec)
+      if (save_hist) update_adapt_history(stage, Pspec[['taper']], Pspec[['spec']])
     }
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "psd", verbose=verbose)
-  return(invisible(psd::psd_envAssignGet("final_psd", Pspec)))
+  return(invisible(psd_envAssignGet("final_psd", Pspec)))
 }
-  
+
+#' @rdname pspectrum
+#' @export
+pspectrum_basic <- function(x, initap=20, n.iter=5){
+  #  Get pilot estimate of psd with fixed number of tapers
+  initap <- 20
+  psd <- psdcore(x, ntaper=initap)
+  kopt <- psd[['taper']]
+  nf <- length(ntaper)
+  message("Iterative refinement of spectrum")
+  for (iter in seq_len(n.iter)){
+    message("\tstage ", iter)
+    kopt <- riedsid(psd, kopt)
+    psd <- psdcore(x, ntaper=kopt)
+  }
+  return(psd)
+}
+
+#' @rdname pspectrum
+#' @export
+adapt_message <- function(stage, dvar=NULL){
+  stopifnot(stage >= 0)
+  stage <- if (stage == 0){
+    paste(stage, "est. (pilot)")
+  } else {
+    if (!is.null(dvar)){
+      paste(stage, sprintf("est. (Ave. S.V.R. %.01f dB)", dB(dvar)))
+    } else {
+      stage
+    }
+  }
+  message(sprintf("Stage  %s ", stage))
+}
 
 #' Calculate the pilot power spectral densities.
 #'
@@ -186,7 +211,14 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=10, niter=4, AR=FALSE, N
 #' \code{"pilot_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pilotspec.R
-pilot_spec <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...) UseMethod("pilot_spec")
+pilot_spec <- function(x, ...) UseMethod("pilot_spec")
+
+#' @rdname pilot_spec
+#' @export
+pilot_spec.ts <- function(x, ...){
+  frq <- frequency(x)
+  pilot_spec(as.vector(x), x.frequency=frq, ...)  
+}
 
 #' @rdname pilot_spec
 #' @export

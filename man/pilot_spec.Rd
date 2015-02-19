@@ -3,18 +3,22 @@
 \name{pilot_spec}
 \alias{pilot_spec}
 \alias{pilot_spec.default}
+\alias{pilot_spec.ts}
 \alias{pilot_spectrum}
 \alias{spec.pilot}
 \title{Calculate the pilot power spectral densities.}
 \usage{
-pilot_spec(x, x.frequency = 1, ntap = 7, remove.AR = 0, plot = FALSE,
-  verbose = FALSE, ...)
+pilot_spec(x, ...)
+
+\method{pilot_spec}{ts}(x, ...)
 
 \method{pilot_spec}{default}(x, x.frequency = 1, ntap = 7, remove.AR = 0,
   plot = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{vector; the data series to find a pilot spectrum for}
+
+\item{...}{additional parameters passed to \code{\link{psdcore}}}
 
 \item{x.frequency}{scalar; the sampling frequency (e.g. Hz) of the series}
 
@@ -25,8 +29,6 @@ pilot_spec(x, x.frequency = 1, ntap = 7, remove.AR = 0, plot = FALSE,
 \item{plot}{logical; should a plot be created?}
 
 \item{verbose}{logical; should messages be given?}
-
-\item{...}{additional parameters passed to \code{\link{psdcore}}}
 }
 \value{
 An object with class 'spec', invisibly.  It also assigns the object to

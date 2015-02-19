@@ -52,29 +52,30 @@
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{smooth.spline}
 #' @example inst/Examples/rdex_riedsid.R
-riedsid <- function(PSD, ntaper, 
-                    tapseq=NULL, 
-                    Deriv.method=c("local_qls","spg"),
-                    constrained=TRUE, c.method=NULL,
-                    verbose=TRUE, ...) UseMethod("riedsid")
+riedsid <- function(PSD, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
 #' @aliases riedsid.spec
 #' @method riedsid spec
 #' @export
-riedsid.spec <- function(PSD, ...){
+riedsid.spec <- function(PSD, ntaper = 1L, ...){
   stopifnot(is.spec(PSD))
-  Pspec <- PSD$spec
-  Ntap <- PSD$taper
-  Tapseq <- PSD$freq
-  riedsid(PSD=Pspec, ntaper=Ntap, tapseq=Tapseq, ...)
-  #.NotYetImplemented()
+  Pspec <- PSD[['spec']]
+  Tapseq <- PSD[['freq']]
+  if (missing(ntaper)){
+    if (inherits(PSD, 'amt')){
+      PSD[['taper']]
+    } else {
+      rep.int(ntaper, length(Pspec))
+    }
+  }
+  riedsid(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
 }
 
 #' @rdname riedsid
 #' @method riedsid default
 #' @export
-riedsid.default <- function(PSD, ntaper, 
+riedsid.default <- function(PSD, ntaper = 1L, 
                             tapseq=NULL, 
                             Deriv.method=c("local_qls","spg"),
                             constrained=TRUE, c.method=NULL,
@@ -117,7 +118,8 @@ riedsid.default <- function(PSD, ntaper,
   #
   lsmeth <- switch(match.arg(Deriv.method), local_qls=TRUE, spg=FALSE)
   stopifnot(exists("lsmeth"))
-  if (lsmeth){
+  rss <- if (lsmeth){
+    # spectral derivatives the preferred way
     DFUN <- function(j, 
                      j1=j-nspan[j]+nadd-1, 
                      j2=j+nspan[j]+nadd-1, 
@@ -137,22 +139,22 @@ riedsid.default <- function(PSD, ntaper,
       # first deriv
       dY <- u %*% logY * CC / LL2L
       # second deriv
-      d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2-4)
+      d2Y <- (u2 - uzero) %*% logY * 360 / LL2L / (L2 - 4)
       return(c(fdY2=dY*dY, fd2Y=d2Y, fdEps=dEps))
     }
-    DX <- seq_len(nf) #1:nf
+    DX <- seq_len(nf)
     ##
-    ## Here is the workhorse:
+    ## Bottleneck:
     RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
     ##
     attr(RSS, which="lsderiv") <- lsmeth
     RSS <- psd_envAssignGet("spectral_derivatives.ls", RSS)
-    RSS <- abs(colSums(RSS))
+    msg <- "local quadratic regression"
     # sums:
     #[ ,1] fdY2
     #[ ,2] fd2Y
     #[ ,3] fdEps
-    msg <- "local quadratic regression"
+    abs(colSums(RSS))
   } else {
     RSS <- splineGrad(dseq=log(0.5+kseq), #seq.int(0,.5,length.out=length(PSD))), 
                       dsig=log(PSD),
@@ -161,24 +163,21 @@ riedsid.default <- function(PSD, ntaper,
     RSS <- psd_envAssignGet("spectral_derivatives", RSS) 
     #returns log
     RSS[,2:4] <- exp(RSS[,2:4])
-    RSS <- abs(eps + RSS[,4] + RSS[,3]**2)
     msg <- "weighted cubic spline"
+    abs(eps + RSS[,4] + RSS[,3]**2)
   }
   if (verbose) message(sprintf("Using spectral derivatives from  %s", msg))
   ##
-  # (480)^0.2 == 3.437544
-  KC <- 3.437544
+  #
+  kc <- (480) ** 0.2  # 3.437544
   ##
   #(480)^0.2*abs(PSD/d2psd)^0.4
   # Original form:  kopt = 3.428*abs(PSD ./ d2psd).^0.4;
   # kopt = round( 3.428 ./ abs(eps + d2Y + dY.^2).^0.4 );
   ##
-  stopifnot(exists("RSS"))
-  kopt <- as.tapers( KC / (RSS ** 0.4) ) #/
-  rm(RSS)
+  kopt <- kc / (rss ** 0.4)
   #
   # Constrain tapers
-  stopifnot(diff(length(kopt), length(kseq))==0)
   if (constrained) kopt <- constrain_tapers(tapvec=kopt, 
                                             tapseq=kseq, 
                                             constraint.method=c.method, 

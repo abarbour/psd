@@ -6,17 +6,18 @@
 \alias{riedsid.spec}
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.}
 \usage{
-riedsid(PSD, ntaper, tapseq = NULL, Deriv.method = c("local_qls", "spg"),
-  constrained = TRUE, c.method = NULL, verbose = TRUE, ...)
+riedsid(PSD, ...)
 
-\method{riedsid}{spec}(PSD, ...)
+\method{riedsid}{spec}(PSD, ntaper = 1L, ...)
 
-\method{riedsid}{default}(PSD, ntaper, tapseq = NULL,
+\method{riedsid}{default}(PSD, ntaper = 1L, tapseq = NULL,
   Deriv.method = c("local_qls", "spg"), constrained = TRUE,
   c.method = NULL, verbose = TRUE, ...)
 }
 \arguments{
 \item{PSD}{vector or class 'spec'; the spectral values used to optimize taper numbers}
+
+\item{...}{optional argments passed to \code{\link{constrain_tapers}}}
 
 \item{ntaper}{scalar or vector; number of tapers to apply optimization}
 
@@ -29,8 +30,6 @@ riedsid(PSD, ntaper, tapseq = NULL, Deriv.method = c("local_qls", "spg"),
 \item{c.method}{string; constraint method to use if \code{constrained=TRUE}}
 
 \item{verbose}{logical; should messages be printed?}
-
-\item{...}{optional argments passed to \code{\link{constrain_tapers}}}
 }
 \value{
 Object with class 'tapers'.

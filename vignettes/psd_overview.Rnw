@@ -686,8 +686,6 @@ in Figure \ref{fig:magres}.
 
 \begin{figure}[h!]
 \begin{center}
-%relp <- (sqrt(varddiff(Aspec$spec))/spa$resolution-0)
-%relp <- dB(spa$stderr.chi.upper/spa$resolution-0)
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=MAGRES>>=
 frq <- Aspec$freq
 relp <- (spa$resolution - spp$resolution) / spp$resolution
@@ -735,12 +733,12 @@ str(AH <- get_adapt_history())
 @
 Followed by some trivial manipulation:
 <<eval=TRUE, echo=TRUE, label="and manipulate it a bit">>=
-Freqs <- (AH$freq)
-Dat <- AH$stg_psd
+Freqs <- AH[['freq']]
+Dat <- AH[['stg_psd']]
 numd <- length(Freqs)
 numit <- length(Dat)
 StgPsd <- dB(matrix(unlist(Dat), ncol=numit))
-Dat <- AH$stg_kopt
+Dat <- AH[['stg_kopt']]
 StgTap <- matrix(unlist(Dat), ncol=numit)
 @
 We can plot these easily with \Rcmd{matplot} or other tools.  We show

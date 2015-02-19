@@ -2,6 +2,7 @@
 % Please edit documentation in R/func_tapers.R
 \name{tapers-constraints}
 \alias{constrain_tapers}
+\alias{constrain_tapers.default}
 \alias{constrain_tapers.tapers}
 \alias{minspan}
 \alias{minspan.tapers}
@@ -10,7 +11,9 @@
 \usage{
 constrain_tapers(tapvec, ...)
 
-\method{constrain_tapers}{tapers}(tapvec, tapseq = NULL,
+\method{constrain_tapers}{tapers}(tapvec, ...)
+
+\method{constrain_tapers}{default}(tapvec, tapseq = NULL,
   constraint.method = c("simple.slope.rcpp", "simple.slope", "loess.smooth",
   "none"), verbose = TRUE, ...)
 

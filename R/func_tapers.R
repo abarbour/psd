@@ -380,25 +380,34 @@ constrain_tapers <- function(tapvec, ...) UseMethod("constrain_tapers")
 
 #' @rdname tapers-constraints
 #' @export
-constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
+constrain_tapers.tapers <- function(tapvec, ...){
+  constrain_tapers(as.vector(tapvec), ...)
+}
+
+#' @rdname tapers-constraints
+#' @export
+constrain_tapers.default <- function(tapvec, tapseq=NULL,
                                    constraint.method=c("simple.slope.rcpp",
                                                        "simple.slope",
                                                        "loess.smooth",
                                                        "none"),
                                    verbose=TRUE, ...){
-  stopifnot(is.tapers(tapvec))
   # choose the appropriate method to apply taper constraints
-  cmeth <- match.arg(constraint.method) 
+  cmeth <- match.arg(constraint.method)
   tapvec.adj <- if (cmeth=="none"){
     if (verbose) warning("no taper optimization constraints applied")
     tapvec
   } else {
-    if (verbose) message(sprintf("Constraining tapers with  ...  %s  ...  method",cmeth))
-    CTAPFUN <- switch(cmeth,
-                      "simple.slope.rcpp"=ctap_simple_rcpp,
-                      "simple.slope"=ctap_simple,
-                      "loess.smooth"=ctap_loess)
-    CTAPFUN(tapvec, tapseq, ...)
+    if (verbose) message(sprintf("Constraining tapers with  ...  %s  ...  method", cmeth))
+    if (cmeth == 'simple.slope.rcpp'){
+      ctap_simple_rcpp(tapvec=tapvec,...)
+    } else if (cmeth == 'simple.slope'){
+      ctap_simple(tapvec=tapvec,...)
+    } else if (cmeth == 'loess.smooth'){
+      ctap_loess(tapvec=tapvec, tapseq=tapseq, ...)
+    } else {
+      stop('no constraint function available')
+    }
   }
   # MAX/MIN bounds
   # set the maximim tapers: Never average over more than the length of the spectrum!
@@ -413,7 +422,9 @@ constrain_tapers.tapers <- function(tapvec, tapseq=NULL,
   #   tapvec.adj[tapvec.adj > maxtap] <- maxtap
   #
   # is this the bug: ??
-  tapvec.adj <- as.tapers(tapvec.adj, min_taper=1, max_taper=round(length(tapvec.adj)/2))
+  print(summary(tapvec.adj))
+  tapvec.adj <- as.tapers(tapvec.adj) #, min_taper=1, max_taper=round(length(tapvec.adj)/2))
+  print(summary(tapvec.adj))
   return(tapvec.adj)
 }
 
@@ -429,8 +440,6 @@ minspan.tapers <- function(tapvec, ...){
   Kmax.upper <- floor(7*Kmax/5)
   Kmax.lower <- floor(length(tapvec)/2)
   tapvec <- pmax(pmin(tapvec, min(c(Kmax.upper, Kmax.lower))), 1)
-  #maxtap <- min(max(tapvec), length(tapvec)/2)
-  #nspan <- as.tapers(tapvec, min_taper=1, max_taper=maxtap, setspan=FALSE)
   return(tapvec)
 }
 
@@ -447,7 +456,7 @@ ctap_simple_rcpp <- function(tapvec, ...) UseMethod("ctap_simple_rcpp")
 
 #' @rdname ctap_simple
 #' @export
-ctap_simple_rcpp.tapers <- function(tapvec, tapseq=NA, maxslope=1L, ...){
+ctap_simple_rcpp.tapers <- function(tapvec, maxslope=1L, ...){
   # c++ code used for speed up of forward+backward operations
   tapvec.adj <- ctap_simple_rcpp(as.integer(tapvec), maxslope=maxslope)
   return(as.tapers(tapvec.adj))
@@ -469,9 +478,8 @@ ctap_simple.default <- function(tapvec, maxslope=1L, ...){
 
 #' @rdname ctap_simple
 #' @export
-ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1L, ...){
+ctap_simple.tapers <- function(tapvec, maxslope=1L, ...){
   stopifnot(is.tapers(tapvec))
-  # TODO: eliminate need for tapseq (currently needed for compatibility)
   tapvec.adj <- ctap_simple(as.vector(tapvec), maxslope=maxslope)
   return(as.tapers(tapvec.adj))
 }
@@ -487,7 +495,7 @@ ctap_simple.tapers <- function(tapvec, tapseq=NA, maxslope=1L, ...){
 #' @param verbose logical; should warnings and messages be given?
 #' @param ... additional arguments
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{ctap_simple_rcpp}}
-ctap_loess <- function(tapvec, ...){ UseMethod("ctap_loess") }
+ctap_loess <- function(tapvec, ...) UseMethod("ctap_loess")
 
 #' @rdname ctap_loess
 #' @export
