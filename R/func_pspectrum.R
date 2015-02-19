@@ -40,13 +40,15 @@ pspectrum.ts <- function(x, ...){
 #' @rdname pspectrum
 #' @export
 pspectrum.spec <- function(x, ...){
+  cant <- "cannot adapt  pspectrum  results without an fft in the psd environment. see ?pspectrum"
   if (inherits(x, "amt")){
     name <- getOption("psd.ops")[['names']]
     fft <- psd_envGet(name[['fft']])
     if (is.null(fft)){
-      stop("cannot adapt  pspectrum  results without an fft in the psd environment. see ?pspectrum")
+      stop(cant)
     } else {
       warning('updating  pspectrum  results is not (yet) supported') 
+      .NotYetImplemented()
     }
   } else {
     .NotYetImplemented()
@@ -56,96 +58,88 @@ pspectrum.spec <- function(x, ...){
 #' @rdname pspectrum
 #' @export
 pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+  
   stopifnot(length(x)>1)
-  #
-  niter <- abs(niter)
+  
+  # plotting and iterations
+  if (is.null(niter)) stopifnot(niter>=0)
   plotpsd_ <- FALSE
-  #
+  # iteration stages (0 is pilot)
   iter_stages <- 0:niter
-  #
+  
+  # absolute limit
+  tapcap <- getOption("psd.ops")[['tapcap']]
+  
+  # retain history
+  save_hist <- ifelse((niter < 10) & !no.history, TRUE, FALSE)
+  
+  # AR switch
+  ordAR <- ifelse(AR, 100, 0)
+
   for (stage in iter_stages){
+    
     if (stage==0){
+      
       if (verbose) adapt_message(stage)
+      if (niter==0 & plot) plotpsd_ <- TRUE
+      
       # --- setup the environment ---
       psd_envRefresh(verbose=verbose)
+      
       # --- pilot spec ---
       # ** normalization is here:
-      if (niter==0){
-        if (plot) plotpsd_ <- TRUE
-      }
       ##
-      ordAR <- ifelse(AR, 100, 0)
-      pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
-      
-      # ensure it's in the environment
-      Pspec <- psd_envGet("pilot_psd")
-      xo <- psd_envAssignGet("original_series", x)
+      Pspec <- pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
+                          remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
+      kopt <- Pspec[['taper']]
+      #plot(kopt, type='l', log='y', ylim=c(1,1000))
+           
+      # ensure series is in the environment
+      psd_envAssign("original_pspectrum_series", x)
       
       # starting spec variance
-      dvar.o <- varddiff(Pspec[['spec']])
+      dvar.o <- varddiff(Pspec)
       
       # --- history ---
-      save_hist <- ifelse(niter < 10, TRUE, FALSE)
-      if (no.history) save_hist <- FALSE
       if (save_hist){
         new_adapt_history(niter)
-        update_adapt_history(0, Pspec$taper, Pspec$spec, Pspec$freq)
+        update_adapt_history(Pspec, stage)
       }
-      xo <- 0 # to prevent passing orig data back/forth
+      
+      x <- 0 # to prevent passing orig data back/forth
+      
     } else {
+      
       # enforce silence once the adapting gets going
       rverb <- ifelse(stage > 0, FALSE, TRUE)
-      if (rverb) rm(kopt)
+      
       ## calculate optimal tapers
-      kopt <- riedsid(Pspec, verbose=rverb, ...)
-      tapcap <- getOption("psd.ops")[['tapcap']] # absolute limit
+      kopt <- riedsid2(Pspec, verbose=rverb, ...)
       kopt[kopt > tapcap] <- tapcap
-      stopifnot(exists('kopt'))
-      ## reapply to spectrum
+      
+      #lines(kopt, col=stage + 1, lty=2)
+      
+      # get data back for plotting, etc.
       if (stage==niter){
-        xo <- x
-        rm(x)
+        x <- psd_envGet("original_pspectrum_series")
         if (plot){
           plotpsd_ <- TRUE
         }
       }
-      # preproc done in pilot_spec
-      Pspec <- psdcore(X.d=xo, X.frq=x.frqsamp, ntaper=kopt, 
-                       preproc=FALSE, plotpsd=plotpsd_, verbose=FALSE)
-      if (verbose) if (verbose) adapt_message(stage, vardiff(Pspec[['spec']], double.diff=TRUE)/dvar.o)
+  
+      # update spectrum with new tapers
+      Pspec <- psdcore(X.d=x, X.frq=x.frqsamp, ntaper=kopt, 
+                       preproc=FALSE, plotpsd=plotpsd_, verbose=rverb) # here's why preproc flags are wrong
+      
+      if (verbose) if (verbose) adapt_message(stage, varddiff(Pspec)/dvar.o)
+      
       ## update history
-      if (save_hist) update_adapt_history(stage, Pspec[['taper']], Pspec[['spec']])
+      if (save_hist) update_adapt_history(Pspec, stage)
+      
     }
   }
-  if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, "psd", verbose=verbose)
+  if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, src="psd", verbose=verbose)
   return(invisible(psd_envAssignGet("final_psd", Pspec)))
-}
-
-#' @rdname pspectrum
-#' @export
-pspectrum_basic <- function(x, initap=20, niter=5, plot=TRUE){
-  
-  message("Pilot spectrum (", initap, " tapers)")
-  cpsd <- psdcore(x, ntaper=initap)
-  kopt <- psd[['taper']]
-  nf <- length(kopt)
-  
-  if (plot) plot(kopt, type='l', ylim=c(initap,2.1*initap))
-  
-  message("Iterative refinement of spectrum (", niter, " iterations)")
-  for (iter in seq_len(niter)){
-    message("\tstage ", iter)
-    # find optimal tapers
-    kopt <- riedsid(cpsd, kopt)
-    print(tail(kopt))
-    # update spectrum
-    cpsd <- psdcore(x, ntaper=kopt)
-    # plot
-    lines(kopt, col=iter+1)
-  }
-  
-  return(cpsd)
-  
 }
 
 #' @rdname pspectrum
@@ -164,164 +158,36 @@ adapt_message <- function(stage, dvar=NULL){
   message(sprintf("Stage  %s ", stage))
 }
 
-#' Calculate the pilot power spectral densities.
-#'
-#' This PSD -- the pilot spectrum -- is used as the starting point
-#' for the adaptive estimation routine.
-#'
-#' A fixed number
-#' of tapers is applied across all frequencies using \code{\link{psdcore}}, and
-#' subsequent taper-refinements are based on the spectral derivatives
-#' of this spectrum; hence, changes in the number of tapers can affect
-#' how many adaptive stages may be needed (though there are no formal convergence
-#' criteria to speak of).
-#'
-#' The taper series of the returned spectrum is constrained using
-#' \code{as.tapers(..., minspan=TRUE)}.
-#'
-#' The default behaviour (\code{remove.AR <= 0}) is to remove the standard linear 
-#' model \eqn{[f(x) = \alpha x + \beta]} from the data; however,
-#' the user can model the effect of an autoregressive process by specifiying
-#' \code{remove.AR}.
-#'
-#' @section Removing an AR effect from the spectrum:
-#' If \code{remove.AR > 0} the argument is used as \code{AR.max} in 
-#' \code{\link{prewhiten}}, from which an AR-response spectrum is calculated using
-#' the best fitting model.
-#'
-#' If the value of \code{remove.AR} is too low the spectrum 
-#' could become distorted,
-#' so use with care.
-#' \emph{Note, however, that the 
-#' value of \code{remove.AR} will be restricted to within the 
-#' range \eqn{[1,100]}.}
-#' If the AR order is much larger than this, it's unclear how \code{\link{prewhiten}}
-#' will perform and whether the AR model is appropriate.
-#'
-#' \emph{Note that this function does not produce a parametric spectrum estimation; rather,
-#' it will return the amplitude response of the best-fitting AR model as \code{spec.ar}
-#' would. \strong{Interpret these results with caution, as an AR response spectrum
-#' can be misleading.}}
-#'
-#' @name pilot_spec
-#' @aliases pilot_spectrum spec.pilot
+#' @rdname pspectrum
 #' @export
-#' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{psdcore}}, \code{\link{prewhiten}}
-#' @seealso Documentation for \code{spec.ar}.
-#'
-#' @param x  vector; the data series to find a pilot spectrum for
-#' @param x.frequency  scalar; the sampling frequency (e.g. Hz) of the series
-#' @param ntap  scalar; the number of tapers to apply during spectrum estimation
-#' @param remove.AR  scalar; the max AR model to be removed from the data.
-#' @param plot  logical; should a plot be created?
-#' @param verbose  logical; should messages be given?
-#' @param ...  additional parameters passed to \code{\link{psdcore}}
-#' @return An object with class 'spec', invisibly.  It also assigns the object to
-#' \code{"pilot_psd"} in the working environment.
-#'
-#' @example inst/Examples/rdex_pilotspec.R
-pilot_spec <- function(x, ...) UseMethod("pilot_spec")
-
-#' @rdname pilot_spec
-#' @export
-pilot_spec.ts <- function(x, ...){
-  frq <- stats::frequency(x)
-  pilot_spec(as.vector(x), x.frequency=frq, ...)  
+pspectrum_basic <- function(x, initap=7, niter=5, plot=TRUE, verbose=TRUE, ...){
+  
+  if (verbose) adapt_message(0)
+  P <- psdcore(x, ntaper=initap, preproc = FALSE, first.last=FALSE, refresh=TRUE)
+  ko <- P[['taper']]
+  nf <- length(ko)
+  
+  if (plot) plot(ko, type='l', log='y', ylim=c(1,100*initap), main=paste0("Kopt\ninitial tapers: ", initap, ", iterations:", niter))
+  
+  # Iterate on optimal tapers, and resample spectrum
+  if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
+  for (iter in seq_len(niter)){
+    if (verbose) adapt_message(iter)
+    # find optimal tapers
+    ko <- riedsid2(P, ko, verbose=FALSE)
+    # update spectrum
+    P  <- psdcore(x, ntaper=ko, preproc = FALSE, first.last=FALSE)
+    # plot
+    if (plot) lines(ko, col=iter+1, lwd=2)
+  }
+  return(P)
 }
 
-#' @rdname pilot_spec
-#' @export
-pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, ...){
-  
-  if (is.null(ntap)) ntap <- 7
-  if (is.null(remove.AR)) remove.AR <- 0
-  if (is.null(x.frequency)) x.frequency <- 1
-  stopifnot(length(ntap)==1)
-  stopifnot(length(remove.AR)==1)
-  stopifnot(length(x.frequency)==1)
-  
-  # setup a universal calculator
-  PSDFUN <- function(X.., Xf.., Xk.., AR=FALSE){
-    toret <- psdcore(X.., Xf.., Xk.., 
-                     preproc=FALSE, 
-                     first.last=!AR, 
-                     as.spec=TRUE, 
-                     refresh=TRUE, 
-                     verbose=FALSE)
-    return(toret)
-  }
-  
-  # AR spectrum or no?
-  REMAR <- ifelse(remove.AR > 0, TRUE, FALSE)
-  
-  #restrict maximum ar orders to within [1,100]
-  if (REMAR) remove.AR <- max(1, min(100, abs(remove.AR)))
-  
-  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
-  
-  if (REMAR){
-    # AR fit
-    ordAR <- xprew[['ardfit']][['order']]
-    if (ordAR==0){
-      warning("AR(0) was the highest model found!\n\t\tConsider fitting a linear model instead ( remove.AR = 0 ).")
-    } else {
-      if (verbose) message(sprintf("removed AR(%s) effects from the spectrum", ordAR))
-    }
-    xar <- xprew[['prew_ar']]
-    # PSD of the AR fit
-    Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)
-    arvar <- var(Pspec_ar[['spec']])
-    mARs <- mean(Pspec_ar[['spec']])
-    Pspec_ar[['spec']] <- Pspec_ar[['spec']] / mARs
-  }
-  #
-  # Initial spectrum:
-  Pspec <- PSDFUN(xprew[['prew_lm']], x.frequency, ntap, AR=FALSE)
-  num_frq <- length(Pspec[['freq']])
-  Ptap <- Pspec[['taper']]
-  num_tap <- length(Ptap)
-  #stopifnot(num_tap <= num_frq)
-  
-  ## generate a series, if necessary
-  if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
-  
-  ## return tapers object
-  Pspec[['taper']] <- as.tapers(Ptap, setspan=TRUE)
-  
-  ## remove the spectrum of the AR process
-  if (REMAR){
-    stopifnot(exists("Pspec") & exists("Pspec_ar"))
-    if (verbose) message(sprintf("Removing AR(%s) effects from spectrum", ordAR))
-    # reup the spectrum
-    Ospec <- psd_envAssignGet("pre_AR_psd", Pspec)
-    psd_envAssign("AR_psd", Pspec_ar)
-    p.lin <- Pspec[['spec']]
-    p.ar <- Pspec_ar[['spec']]
-    Pspec[['spec']] <-  p.lin / p.ar
-  }
-  if (plot){
-    ttl <- "Pilot spectrum estimation"
-    llog <- 'dB'
-    try({
-      if (REMAR){
-        if (verbose) message('Plotting,', tolower(ttl))
-        par(las=1)
-        plot(Ospec, log=llog, col="red", main=ttl)
-        mtext(sprintf("(with AR(%s) response)", ordAR), line=0.4)
-        # rescale
-        Pspec_ar[['spec']] <- Pspec_ar[['spec']] * mARs
-        plot(Pspec_ar, log=llog, col="blue", add=TRUE)
-        plot(Pspec, log=llog, add=TRUE, lwd=2)
-        legend("bottomleft", 
-               c("original PSD",
-                 sprintf("AR-innovations PSD\n(mean %.01f +- %.01f dB)", dB(mARs), dB(sqrt(arvar))/4),
-                 "AR-filter response"), 
-               lwd=2, col=c("red","blue","black"))
-      } else {
-        plot(Pspec, log=llog, main=ttl)
-      }
-    })
-  }
-  return(invisible(psd_envAssignGet("pilot_psd", Pspec)))
+.TEST <- function(){
+  psdcb <- pspectrum_basic(magnet$clean)
+  try({
+    psdc <- pspectrum(magnet$clean)
+    plot(psdcb)
+    lines(psdc, col='red')
+  })
 }

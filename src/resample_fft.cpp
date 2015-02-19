@@ -229,10 +229,10 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
       
     }    
     // un-normalized psd is vector product of w and (sqrt(Re^2 + Im^2))^2
-    cpsd[0] = sum(psdprod); //arma::as_scalar( w * sq_absdiff.t() );
-    //isinf = is_infinite(cpsd);
+    cpsd[0] = sum(psdprod);
+    
     if (any(is_infinite(cpsd))){
-      Rf_warning("infinite psd!");
+      Rf_warning("infinite psd!?");
       cpsd[0] = 0.;
     }
     psd[j] = cpsd[0];

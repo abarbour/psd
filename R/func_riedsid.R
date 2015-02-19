@@ -177,3 +177,62 @@ riedsid.default <- function(PSD, ntaper = 1L,
   return(as.tapers(kopt))
 } 
 
+#' @rdname riedsid
+#' @export
+riedsid2 <- function(PSD, ...) UseMethod("riedsid2")
+
+#' @rdname riedsid
+#' @export
+riedsid2.spec <- function(PSD, ...){
+  stopifnot(is.spec(PSD))
+  pspec <- PSD[['spec']]
+  freqs <- PSD[['freq']]
+  ntaper <- if (inherits(PSD, 'amt')){
+    PSD[['taper']]
+  } else {
+    rep.int(1L, length(pspec))
+  }
+  riedsid2(pspec, ntaper, ...)
+}
+
+#' @rdname riedsid
+#' @export
+riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...){
+  PSD <- as.vector(PSD)
+  ntaper <- as.vector(ntaper)
+  eps <- 1e-78
+  nf <- length(PSD)
+  nt <- length(ntaper)
+  if (nt == 1) ntaper <- rep(ntaper, nf)
+  nspan <- ceiling( pmin( nf/2, 7*ntaper/5 ) )
+  nadd <- 1 + max(nspan)
+  # Create log psd, and pad to handle beginning and end values
+  ist <- nadd:2
+  iend <- (nf - 1):(nf - nadd)
+  S <- as.numeric(c(PSD[ist], PSD, PSD[iend])) + eps
+  Y <- log(S)
+  DFUN <- function(j){
+    j1 <- j - nspan[j] + nadd - 1
+    j2 <- j + nspan[j] + nadd - 1
+    u <- j1:j2 - (j1 + j2)/2
+    L <- j2 - j1 + 1
+    CC <- 12
+    #
+    uzero <- (L^2 - 1)/CC
+    #
+    # first deriv
+    dY <- u  %*%  Y[j1:j2] * CC / (L*(L*L - 1))
+    # second deriv
+    d2Y <- (u*u - uzero)  %*%  Y[j1:j2] * 360 / (L*(L^2 - 1)*(L^2 - 4))
+    #
+    return(c(eps=eps, d2Y=d2Y, dYsq=dY*dY))
+  }
+  yders <- vapply(X=seq_len(nf), FUN=DFUN, FUN.VALUE=c(1,1,1))
+  kopt <- round(480**0.2 / abs(colSums(yders))**0.4)
+  if (constrained){
+    tapcap <- getOption("psd.ops")[['tapcap']]
+    kopt <- constrain_tapers(tapvec = kopt, verbose = verbose, ...)
+    kopt <- replace(kopt, kopt > tapcap, tapcap)
+  }
+  return(as.tapers(kopt))
+}

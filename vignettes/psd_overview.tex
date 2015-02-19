@@ -216,7 +216,7 @@ for 10 kilometer wavelengths and longer; whereas, the
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which could be difficult to judge if the spectral variance was higher.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/RAWvCLEAN.tex}
 \caption{Power spectral density estimates for the raw and cleaned
@@ -226,6 +226,8 @@ features which could be difficult to judge if the spectral variance was higher.
 \label{fig:pmag}
 \end{center}
 \end{figure}
+
+\clearpage
 
 \section{Comparisons with other methods}
 
@@ -276,8 +278,8 @@ We can then
 re-calculate the multitaper PSD and the
 raw periodogram with \Rcmd{plotpsd=TRUE}; these
 results are shown in Figure \ref{fig:two}.
-%
-\begin{figure}[h!]
+
+\begin{figure}[!htbp]
 \begin{center}
 %% Project MAGNET compare
 \input{figure/MAGNETNAIVE.tex}
@@ -329,7 +331,7 @@ the highest order appropriate for the data.
 \input{figure/AR_prewhiten.tex}
 \label{sxn:prew}
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/ARFITPLT.tex}
 \caption{Pre-whitening of the Project MAGNET series (with a
@@ -375,7 +377,7 @@ is finished.
 These estimates are shown on the same scale in
 Figure \ref{fig:psdcomp}.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/RSEIS.tex}
 \caption{Comparisons of estimations of Project MAGNET power spectral densities.}
@@ -400,7 +402,7 @@ the \Rcmd{mtapspec} results, which
 manifests at short wavelengths
 in Figure \ref{fig:psdcomp}.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/RSEISvsRLP2.tex}
 \caption{Linear regression residuals of
@@ -457,7 +459,7 @@ An intriguing method for producing power spectral density estimates
 
 \input{figure/BSPEC.tex}
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/BSPECFIG.tex}
 \caption{Project MAGNET PSD estimates from \Rcmd{bspec}, a Bayesian method,
@@ -493,8 +495,7 @@ The non-AR component (labelled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 
-% ERROR HERE
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/MAGPSDAR.tex}
 \caption{AR response spectrum for the MAGNET dataset produced by 
@@ -533,7 +534,7 @@ a few tapers becomes obvious, though the spectral uncertainty
 is asymptotically decreasing with taper numbers and yields
 only slight improvements with logarithmic number of tapers.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/SPECERR.tex}
 \caption{Additive spectral uncertainties by number of tapers
@@ -558,7 +559,7 @@ the Bayesian method, for a coverage probability of
 which we calculate here:
 \input{figure/Compute_spectral_properties.tex}
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/MAGERR.tex}
 \caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
@@ -581,7 +582,7 @@ differences in resolution for the Project MAGNET PSD estimates; these
 are shown
 in Figure \ref{fig:magres}.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/MAGRES.tex}
 \caption{Relative changes in resolution of the adaptive method
@@ -614,7 +615,7 @@ We can plot these easily with \Rcmd{matplot} or other tools.  We show
 the adaptive history in
 Figure \ref{fig:psdhist}.  
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 \input{figure/HIST1.tex}
 \input{figure/HIST2.tex}
@@ -649,7 +650,7 @@ highlighting the essential
 functions involved in the adaptive estimation
 process. The primary function is \Rcmd{pspectrum}.
 
-\begin{figure}[htb!]
+\begin{figure}[!htbp]
  \centering
  \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
  \includegraphics[width=0.3\textwidth]{yuml_n.png}

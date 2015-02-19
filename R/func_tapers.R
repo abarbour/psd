@@ -201,7 +201,7 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
     xi <- seq_len(nt)
   }
   stopifnot(length(xi)==nt)
-  mx <- max(x)
+  mx <- max(x, na.rm=TRUE)
   pal <- match.arg(color.pal)
   # Color palette
   npal <- switch(pal, RdYlBu=11, Spectral=11, Blues=9)

@@ -66,7 +66,7 @@
 #' @param adapt_stages scalar; The number of adaptive iterations to save (excluding pilot spectrum).
 #' @param stage scalar; the current stage of the adaptive estimation procedure
 #' @param ntap vector; the tapers
-#' @param PSD vector; the power spectral densities
+#' @param PSD vector or object with class \code{'spec'}; the power spectral density estimates
 #' @param freq vector; the frequencies
 #' 
 #' @seealso \code{\link{psd-utilities}}, \code{\link{pspectrum}}
@@ -211,14 +211,24 @@ last_psd <- function(){
 #' @description \code{update_adapt_history} updates the adaptive estimation history list.
 #' @rdname psd-environment
 #' @export
-update_adapt_history <- function(stage, ntap, PSD, freq=NULL){
+update_adapt_history <- function(PSD, stage, ...) UseMethod("update_adapt_history")
+
+#' @rdname psd-environment
+#' @export
+update_adapt_history.spec <- function(PSD, stage, ...){
+  update_adapt_history(PSD[['spec']], stage, as.tapers(PSD[['taper']]), PSD[['freq']], ...)
+}
+
+#' @rdname psd-environment
+#' @export
+update_adapt_history.default <- function(PSD, stage, ntap=NA, freq=NULL, ...){
+  stopifnot(stage >= 0)
   histlist <- get_adapt_history()
-  # stage==0 <--> index==1
-  stg_ind <- stage+1
-  nulfrq <- is.null(freq)
-  if (!nulfrq) histlist$freq <- freq
-  histlist$stg_kopt[[stg_ind]] <- ntap
-  histlist$stg_psd[[stg_ind]] <- PSD
-  if (is.null(histlist$freq) & stage>0) warning("freqs absent despite non-pilot stage update")
-  psd::psd_envAssignGet("histlist",histlist)
+  # stage == 0 <--> index == 1
+  stg_ind <- stage + 1
+  if (!is.null(freq)) histlist[['freq']] <- freq
+  histlist[['stg_kopt']][[stg_ind]] <- ntap
+  histlist[['stg_psd']][[stg_ind]] <- PSD
+  if (is.null(histlist[['freq']]) & stage > 0) warning("frequencies are absent despite non-pilot stage update")
+  psd_envAssignGet("histlist", histlist)
 }

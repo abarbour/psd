@@ -249,11 +249,11 @@ psdcore.default <- function(X.d,
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
   
   ## Update tapers for consistency
-  kseq <- if (DOMT){	
+  kseq <- as.tapers(if (DOMT){	
   	reff[['k.capped']]
   } else{ 
   	kseq[-length(PSD)] # will be one longer
-  }
+  })
 
   ## Normalize and convert to one-sided spectrum
   #

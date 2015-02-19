@@ -16,6 +16,8 @@
 \alias{psd_envRefresh}
 \alias{psd_envStatus}
 \alias{update_adapt_history}
+\alias{update_adapt_history.default}
+\alias{update_adapt_history.spec}
 \title{Various environment manipulation functions.}
 \usage{
 get_psd_env_pointer()
@@ -42,7 +44,12 @@ get_adapt_history()
 
 last_psd()
 
-update_adapt_history(stage, ntap, PSD, freq = NULL)
+update_adapt_history(PSD, stage, ...)
+
+\method{update_adapt_history}{spec}(PSD, stage, ...)
+
+\method{update_adapt_history}{default}(PSD, stage, ntap = NA, freq = NULL,
+  ...)
 }
 \arguments{
 \item{verbose}{logical; should messages be given?}
@@ -53,11 +60,11 @@ update_adapt_history(stage, ntap, PSD, freq = NULL)
 
 \item{adapt_stages}{scalar; The number of adaptive iterations to save (excluding pilot spectrum).}
 
+\item{PSD}{vector or object with class \code{'spec'}; the power spectral density estimates}
+
 \item{stage}{scalar; the current stage of the adaptive estimation procedure}
 
 \item{ntap}{vector; the tapers}
-
-\item{PSD}{vector; the power spectral densities}
 
 \item{freq}{vector; the frequencies}
 }

@@ -19,9 +19,10 @@ pspectrum(x, ...)
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
   no.history = FALSE, plot = FALSE, ...)
 
-pspectrum_basic(x, initap = 20, niter = 5, plot = TRUE)
-
 adapt_message(stage, dvar = NULL)
+
+pspectrum_basic(x, initap = 7, niter = 5, plot = TRUE, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{x}{vector; series to estimate PSD for.}

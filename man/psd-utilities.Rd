@@ -13,6 +13,8 @@
 \alias{psd-utilities}
 \alias{rowvec}
 \alias{varddiff}
+\alias{varddiff.default}
+\alias{varddiff.spec}
 \alias{vardiff}
 \alias{vector_reshape}
 \alias{zeros}
@@ -21,6 +23,10 @@
 vardiff(x, double.diff = FALSE)
 
 varddiff(x)
+
+\method{varddiff}{spec}(x)
+
+\method{varddiff}{default}(x)
 
 dB(Rat, invert = FALSE, pos.only = TRUE, is.power = FALSE)
 

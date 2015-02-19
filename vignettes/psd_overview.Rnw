@@ -185,7 +185,7 @@ for 10 kilometer wavelengths and longer; whereas, the
 PSD for the raw series looks somewhat unrealistic at higher wavelengths--
 features which could be difficult to judge if the spectral variance was higher.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, label=RAWvCLEAN>>=
 plot(psdc, log="dB", main="Raw and Clean Project MAGNET power spectral density", 
@@ -200,6 +200,8 @@ text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 \label{fig:pmag}
 \end{center}
 \end{figure}
+
+\clearpage
 
 \section{Comparisons with other methods}
 
@@ -252,8 +254,8 @@ We can then
 re-calculate the multitaper PSD and the
 raw periodogram with \Rcmd{plotpsd=TRUE}; these
 results are shown in Figure \ref{fig:two}.
-%
-\begin{figure}[h!]
+
+\begin{figure}[!htbp]
 \begin{center}
 %% Project MAGNET compare
 <<eval=TRUE, echo=TRUE,  label=MAGNETNAIVE>>=
@@ -292,7 +294,7 @@ double-sided spectra to single-sided spectra).
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods:
 <<eval=TRUE, echo=TRUE, label="Load RSEIS package">>=
-require(RSEIS)
+library(RSEIS)
 dt=1 # km
 # prewhiten the data after adding a linear trend + offset
 summary(prewhiten(mc <- (ts(magnet$clean+1e3,deltat=dt)+seq_along(magnet$clean)), plot=FALSE))
@@ -318,7 +320,7 @@ ats_ar <- atsar$prew_ar
 @
 \label{sxn:prew}
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.height=5, fig.width=5.5, label=ARFITPLT>>=
 plot(ts.union(orig.plus.trend=mc, linear=ats_lm, ar=ats_ar), yax.flip=TRUE, 
@@ -387,7 +389,7 @@ Xspec <- normalize(Xspec, dt, "spectrum")
 These estimates are shown on the same scale in
 Figure \ref{fig:psdcomp}.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=RSEIS>>=
 library(RColorBrewer)
@@ -433,7 +435,7 @@ the \Rcmd{mtapspec} results, which
 manifests at short wavelengths
 in Figure \ref{fig:psdcomp}.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=2.5, label=RSEISvsRLP2>>=
 library(ggplot2)
@@ -501,7 +503,7 @@ library(bspec)
 print(Bspec <- bspec(ts(magnet$clean)))
 @
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=5, label=BSPECFIG>>=
 Bspec_plt <- plot(Bspec)
@@ -544,8 +546,7 @@ The non-AR component (labelled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 
-% ERROR HERE
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6.0, fig.height=5.4, label=MAGPSDAR>>=
 pilot_spec(ats_lm, ntap=ntap, remove.AR=100, plot=TRUE)
@@ -589,7 +590,7 @@ a few tapers becomes obvious, though the spectral uncertainty
 is asymptotically decreasing with taper numbers and yields
 only slight improvements with logarithmic number of tapers.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=5, fig.height=4.5, label=SPECERR>>=
 sp <- spectral_properties(as.tapers(1:50), p=0.95, db.ci=TRUE)
@@ -649,7 +650,7 @@ pspau <- create_poly(Aspec$freq, dB(Aspec$spec), spa$stderr.chi.upper)
 pspb <- create_poly(Bspec_plt$freq, Bspec_plt$spectrum[,1], Bspec_plt$spectrum[,3], from.lower=TRUE)
 @
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4.5, label=MAGERR>>=
 plot(c(0,0.5),c(-5,40),col="white", 
@@ -684,7 +685,7 @@ differences in resolution for the Project MAGNET PSD estimates; these
 are shown
 in Figure \ref{fig:magres}.
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=MAGRES>>=
 frq <- Aspec$freq
@@ -745,7 +746,7 @@ We can plot these easily with \Rcmd{matplot} or other tools.  We show
 the adaptive history in
 Figure \ref{fig:psdhist}.  
 
-\begin{figure}[h!]
+\begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.3, label=HIST1>>=
 seqcols <- seq_len(numit)
@@ -852,7 +853,7 @@ highlighting the essential
 functions involved in the adaptive estimation
 process. The primary function is \Rcmd{pspectrum}.
 
-\begin{figure}[htb!]
+\begin{figure}[!htbp]
  \centering
  \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
  \includegraphics[width=0.3\textwidth]{yuml_n.png}

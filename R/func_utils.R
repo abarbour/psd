@@ -24,7 +24,13 @@ vardiff <- function(x, double.diff=FALSE){
 }
 #' @rdname psd-utilities
 #' @export
-varddiff <- function(x) vardiff(x, double.diff=TRUE)
+varddiff <- function(x) UseMethod('varddiff')
+#' @rdname psd-utilities
+#' @export
+varddiff.spec <- function(x) varddiff(as.vector(x[['spec']]))
+#' @rdname psd-utilities
+#' @export
+varddiff.default <- function(x) vardiff(x, double.diff=TRUE)
 
 # @rdname psd-utilities
 # @export
