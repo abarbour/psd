@@ -4,9 +4,11 @@
 \alias{tapers}
 \title{Coerce an object into a \code{'tapers'} object.}
 \usage{
-as.tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE)
+as.tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE,
+  record.last = FALSE)
 
-tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE)
+tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE,
+  record.last = FALSE)
 }
 \arguments{
 \item{x}{An object to set}
@@ -16,6 +18,8 @@ tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE)
 \item{max_taper}{Set all values greater than this to this.}
 
 \item{setspan}{logical; should the tapers object be passed through \code{\link{minspan}} before being returned?}
+
+\item{record.last}{logical; should the \code{x} be saved to the \code{\link{psd-environment}} before coercion?}
 }
 \value{
 An object with class taper.

@@ -55,33 +55,36 @@
 #' @param min_taper Set all values less than this to this.
 #' @param max_taper Set all values greater than this to this.
 #' @param setspan logical; should the tapers object be passed through \code{\link{minspan}} before being returned?
+#' @param record.last logical; should the \code{x} be saved to the \code{\link{psd-environment}} before coercion?
 #' @export
 #' @return An object with class taper.
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @seealso \code{\link{is.tapers}}
 #' @example inst/Examples/rdex_tapers.R
-as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
+as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE, record.last=FALSE){
   # taper should be non-zero integer, since it represents the
   # number of tapered sections to average; hence, floor.
   # pmin/pmax.int are fast versions of
   x <- as.vector(unlist(x))
   stopifnot(!is.character(x))
-  psd_envAssign('last_as_tapers', x)
+  record <- 'last_as_tapers'
+  if (record.last) psd_envAssign(record, x)
   
   # TODO: set na.rm until we are sure resample_fft_rcpp returns only finite values
   if (is.null(max_taper)) max_taper <- ceiling(max(x, na.rm=TRUE))
   if (!(min_taper*max_taper >= 1  &  max_taper >= min_taper)) stop('Bad taper limits:\tmin ', min_taper, "\tmax ", max_taper)
   #
   x <- as.integer( pmin.int(max_taper, pmax.int(min_taper, round(x), na.rm=TRUE), na.rm=TRUE) )
-  #
   class(x) <- "tapers"
   
+  attr(x, 'last_recorded') <- ifelse(record.last, record, NA)
   attr(x, "n_taper_limits") <- c(min_taper, max_taper)
   attr(x, "taper_positions") <- NA
   #
   if (setspan) x <- minspan(x)
   #
   attr(x, "span_was_set") <- setspan
+  # TODO: why set twice?
   attr(x, "n_taper_limits_orig") <- c(min_taper, max_taper)
   #
   return(x)

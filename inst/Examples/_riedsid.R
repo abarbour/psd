@@ -58,11 +58,13 @@ riedsid2.default <- function(psd, ntaper, constrained=TRUE, verbose=TRUE, ...){
   return(as.tapers(kopt))
 }
 
-plot(koo <- riedsid2(pmo$spec, 10, constrained = FALSE), ylim=c(-5,110))
+koo <- riedsid2(pmo$spec, 10, constrained = FALSE)
 koo.c <- ctap_simple(koo)
 koo.cr <- ctap_simple_rcpp(koo)
 koo.l <- ctap_loess(koo, loess.span=0.1)
 print(all.equal(koo.c, koo.cr))
+
+plot(koo, ylim=c(-5,110), main='Taper constraint methods')
 lines(koo.c)
 lines(koo.cr+1)
 lines(koo.c - koo.cr)
@@ -75,7 +77,7 @@ pspectrum_basic <- function(x, initap=20, niter=5, plot=TRUE, verbose=TRUE, ...)
   ko <- P[['taper']]
   nf <- length(ko)
   
-  if (plot) plot(ko, type='l', ylim=c(initap,5.1*initap))
+  if (plot) plot(ko, type='l', ylim=c(initap,5.1*initap), main=paste0("Kopt\ninitial tapers: ", initap, ", iterations:", niter))
   
   # Iterate on optimal tapers, and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
@@ -91,7 +93,9 @@ pspectrum_basic <- function(x, initap=20, niter=5, plot=TRUE, verbose=TRUE, ...)
   return(P)
 }
 
+message("\n++++>\tuniform tapered result\n")
 pm0 <- pspectrum_basic(dat, initap=2, niter = 0)
+message("\n++++>\tadaptively tapered result\n")
 pm <- pspectrum_basic(dat)
 
 plot(pm0)
