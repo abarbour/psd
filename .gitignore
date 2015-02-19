@@ -9,10 +9,6 @@ Rprof.out
 .pull
 .push
 
-inst/Examples/plots
-inst/Examples/g.c.*
-inst/Examples/tmpscpt.R
-
 psd.Rproj
 
 README.html

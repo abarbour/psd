@@ -59,6 +59,15 @@
 #' \item{\code{update_adapt_history}}{}
 #' }
 #' }
+#'
+#' @param verbose logical; should messages be given?
+#' @param variable character; the name of the variable to get or assign
+#' @param value character; the name of the variable to assign
+#' @param adapt_stages scalar; The number of adaptive iterations to save (excluding pilot spectrum).
+#' @param stage scalar; the current stage of the adaptive estimation procedure
+#' @param ntap vector; the tapers
+#' @param PSD vector; the power spectral densities
+#' @param freq vector; the frequencies
 #' 
 #' @seealso \code{\link{psd-utilities}}, \code{\link{pspectrum}}
 #' @example inst/Examples/rdex_psdenv.R
@@ -70,43 +79,39 @@ NULL
 
 #' @description \code{get_psd_env_pointer} is a convenience wrapper to get the environment pointer.
 #' @rdname psd-environment
-#' @name get_psd_env_pointer
 #' @export
 get_psd_env_pointer <- function() .psdEnv
+
   #as.name(formals(psd_envPointers)$envpoint)
 #' @description \code{get_psd_env_name} is a convenience wrapper to get the environment name.
 #' @rdname psd-environment
-#' @name get_psd_env_name
 #' @export
 get_psd_env_name <- function() .psdEnvName
   #eval(get_psd_env_pointer())
 
 #' @description \code{psd_envRefresh} will clear any variables in the enviroment and reset the initialization stamp.
 #' @rdname psd-environment
-#' @name psd_envRefresh
-#' @param verbose logical; should messages be given?
 #' @return \code{psd_envRefresh} returns (invisibly) the result of \code{psd_envStatus()}.
 #' @export
 psd_envRefresh <- function(verbose=TRUE) {
   # env params
   envname <- get_psd_env_name()
   # rm all in envir
-  psd::psd_envClear()
-  psd::psd_envAssign("init", sprintf("refreshed at %s", Sys.time()))
+  psd_envClear()
+  psd_envAssign("init", sprintf("refreshed at %s", Sys.time()))
   if (verbose) {
     message(sprintf("\tenvironment  ** %s **  refreshed", envname))
   }
-  return(invisible(psd::psd_envStatus()))
+  return(invisible(psd_envStatus()))
 }
 
 #' @description \code{psd_envClear} clears the contents of the environment.
 #' @note \code{psd_envClear} does \emph{not} remove the environment--simply the assignments within it.
 #' @rdname psd-environment
-#' @name psd_envClear
 #' @export
 psd_envClear <- function(){
   ENV <- get_psd_env_pointer()
-  listing <- psd::psd_envList()
+  listing <- psd_envList()
   rm(list=listing, envir=ENV)
 }
                                    
@@ -114,7 +119,6 @@ psd_envClear <- function(){
 #' @description \code{psd_envStatus} returns a list of some information regarding
 #' the status of the environment.
 #' @rdname psd-environment
-#' @name psd_envStatus
 #' @export
 psd_envStatus <- function(){
   envname <- get_psd_env_name()
@@ -122,15 +126,14 @@ psd_envStatus <- function(){
   return(list(env_name=envname, 
               env_pointer=envir, 
               env_is_env=is.environment(envir), 
-              listing=psd::psd_envList(),
-              env_init=psd::psd_envGet("init"),
+              listing=psd_envList(),
+              env_init=psd_envGet("init"),
               env_status_stamp=Sys.time() ))
   
 }
 
 #' @description \code{psd_envList} returns a listing of any assignments.
 #' @rdname psd-environment
-#' @name psd_envList
 #' @export
 psd_envList <- function(){
   ## return listing of envir::variable
@@ -140,15 +143,13 @@ psd_envList <- function(){
 
 #' @description \code{psd_envGet} returns the value of \code{variable}.
 #' @rdname psd-environment
-#' @name psd_envGet
-#' @param variable character; the name of the variable to get or assign
 #' @return the object represented by \code{variable} in the \code{psd} environment.
 #' @export
 psd_envGet <- function(variable){
   ## return contents on envir::variable
   ENV <- get_psd_env_pointer()
   if (!exists(variable, envir=ENV)){
-    warning(sprintf("Variable  '%s'  not found! See psd_envList()", variable))
+    warning(sprintf("Variable  '%s'  not found!  Inspect results of  psd_envList()", variable))
     return(NULL)
   } else {
     return(get(variable, envir=ENV))
@@ -157,8 +158,6 @@ psd_envGet <- function(variable){
 
 #' @description \code{psd_envAssign} assigns \code{value} to \code{variable}, but does not return it.
 #' @rdname psd-environment
-#' @name psd_envAssign
-#' @param value character; the name of the variable to assign
 #' @export
 psd_envAssign <- function(variable, value){
   ## set contents of envir::variable to value
@@ -168,12 +167,11 @@ psd_envAssign <- function(variable, value){
 
 #' @description \code{psd_envAssignGet} both assigns and returns a value.
 #' @rdname psd-environment
-#' @name psd_envAssignGet
 #' @export
 psd_envAssignGet <- function(variable, value){
   ## set contents of envir::variable to value
-  psd::psd_envAssign(variable, value)
-  psd::psd_envGet(variable)
+  psd_envAssign(variable, value)
+  psd_envGet(variable)
 }
 
 #' @description \code{new_adapt_history} initializes a nested-list object to store the 
@@ -188,7 +186,6 @@ psd_envAssignGet <- function(variable, value){
 #' \item{\code{stg_psd}}{Sequential power spectral density vectors.}
 #' \item{\code{freq}}{The frequencies for each set of \code{stg_kopt} and \code{stg_psd}.}
 #' }
-#' @param adapt_stages scalar; The number of adaptive iterations to save (excluding pilot spectrum).
 #' @export
 new_adapt_history <- function(adapt_stages){
   stopifnot(length(adapt_stages)==1)
@@ -196,25 +193,23 @@ new_adapt_history <- function(adapt_stages){
   names(histlist) <- c("freq", "stg_kopt", "stg_psd")
   num_pos <- 1 + adapt_stages # pilot + adapts
   histlist[[2]] <- histlist[[3]] <- vector("list", adapt_stages+1)
-  psd::psd_envAssignGet("histlist", histlist)
+  psd_envAssignGet("histlist", histlist)
 }
+
 #' @export
 #' @rdname psd-environment
-get_adapt_history <- function() psd::psd_envGet("histlist")
+get_adapt_history <- function() psd_envGet("histlist")
+
 #' @export
 #' @rdname psd-environment
 last_psd <- function(){
-  fp <- psd::psd_envGet("final_psd")
+  fp <- psd_envGet("final_psd")
   if (is.null(fp)) stop('last psd not available')
   return(fp)
 }
 
 #' @description \code{update_adapt_history} updates the adaptive estimation history list.
 #' @rdname psd-environment
-#' @param stage scalar; the current stage of the adaptive estimation procedure
-#' @param ntap vector; the tapers
-#' @param PSD vector; the power spectral densities
-#' @param freq vector; the frequencies
 #' @export
 update_adapt_history <- function(stage, ntap, PSD, freq=NULL){
   histlist <- get_adapt_history()

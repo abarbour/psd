@@ -6,6 +6,8 @@
 [ ] All bottlenecks to c++ 
 *** Riedsid 'local_qls' spectral derivatives?
 
+[ ] logsmoo
+
 [ ] method to 'adapt' a class 'spec' produced by spectrum
 
 [ ] prewhiten:
@@ -43,8 +45,3 @@
  # columnwise products
  allcomb[match(ucprods, cprods),2:1]
  # get non-redundant rows (from the perspective of indices) and swap columns
-
-[ ] logsmoo
-
-[ ] A well-tested decimation option, or just deprecate it.
-

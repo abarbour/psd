@@ -30,9 +30,6 @@ inst/Examples/g.c.*
 inst/Examples/*.Rout
 inst/Examples/.Rhistory
 
-BUGS
-BUGS.description
-
 Rprof.out
 
 WISHLISH

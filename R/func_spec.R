@@ -21,33 +21,37 @@
 NULL
 
 #' @rdname spec-methods
-#' @name as.data.frame.spec
-#' @method as.data.frame spec
+#' @aliases lines.spec
+#' @export
+lines.spec <- function(x, y=NULL, type = 'l', ...){
+  plot(x, add=TRUE, type=type, ...)
+}
+
+#' @rdname spec-methods
+#' @aliases as.data.frame.spec
 #' @export
 as.data.frame.spec <- function(x, ...){
   # [1]  "freq"      "spec"      "coh"       "phase"     "kernel"    
   #      "df"        "bandwidth" "n.used"    "orig.n"   
   # [10] "series"    "snames"    "method"    "taper"     "pad"       
   #      "detrend"   "demean" 
-  xdf <- as.data.frame(x[1:2])
-  attr(xdf,"coh") <- x$coh
-  attr(xdf,"phase") <- x$phase
-  attr(xdf,"kernel") <- x$kernel
-  attr(xdf,"df") <- x$df
-  attr(xdf,"bandwidth") <- x$bandwidth
-  attr(xdf,"n.used") <- x$n.used
-  attr(xdf,"orig.n") <- x$orig.n
-  attr(xdf,"series") <- x$series
-  attr(xdf,"snames") <- x$snames
-  attr(xdf,"method") <- x$method
-  xdf$taper <- x$taper
-  attr(xdf,"pad") <- x$pad
-  attr(xdf,"detrend") <- x$detrend
-  attr(xdf,"demean") <- x$demean
+  xdf <- data.frame(freq=x[['freq']], spec=x[['spec']], taper = x[['taper']])
+  attr(xdf, "coh")       <- x[['coh']]
+  attr(xdf, "phase")     <- x[['phase']]
+  attr(xdf, "kernel")    <- x[['kernel']]
+  attr(xdf, "df")        <- x[['df']]
+  attr(xdf, "bandwidth") <- x[['bandwidth']]
+  attr(xdf, "n.used")    <- x[['n.used']]
+  attr(xdf, "orig.n")    <- x[['orig.n']]
+  attr(xdf, "series")    <- x[['series']]
+  attr(xdf, "snames")    <- x[['snames']]
+  attr(xdf, "method")    <- x[['method']]
+  attr(xdf, "pad")       <- x[['pad']]
+  attr(xdf, "detrend")   <- x[['detrend']]
+  attr(xdf, "demean")    <- x[['demean']]
   return(xdf)
 }
 #' @rdname spec-methods
-#' @name data.frame.spec
-#' @method data.frame spec
+#' @aliases data.frame.spec
 #' @export
 data.frame.spec <- as.data.frame.spec

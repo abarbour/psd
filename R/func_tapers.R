@@ -65,12 +65,14 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   # number of tapered sections to average; hence, floor.
   # pmin/pmax.int are fast versions of
   x <- as.vector(unlist(x))
-  stopifnot(!(is.character(x)))
-  if (is.null(max_taper)) max_taper <- ceiling(max(x))
-  message("tap min: ", min_taper, " max: ", max_taper)
-  stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper)
+  stopifnot(!is.character(x))
+  psd_envAssign('last_as_tapers', x)
+  
+  # TODO: set na.rm until we are sure resample_fft_rcpp returns only finite values
+  if (is.null(max_taper)) max_taper <- ceiling(max(x, na.rm=TRUE))
+  if (!(min_taper*max_taper >= 1  &  max_taper >= min_taper)) stop('Bad taper limits:\tmin ', min_taper, "\tmax ", max_taper)
   #
-  x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, round(x))))
+  x <- as.integer( pmin.int(max_taper, pmax.int(min_taper, round(x), na.rm=TRUE), na.rm=TRUE) )
   #
   class(x) <- "tapers"
   

@@ -159,7 +159,10 @@ psdcore.default <- function(X.d,
     
     ## zero pad and take double-length fft (fftw is faster for very long series)
     padded <- as.numeric(c(X.even, zeros(n.e)))
-    padded.fft <- psd_envAssignGet(evars[['fft.padded']], stats::fft(padded)) # fftw::FFT
+    has.fftw <- getOption('psd.ops')[['has.fftw']]
+    use.fftw <- FALSE
+    FFTFUN <- ifelse(has.fftw & use.fftw, fftw::FFT, stats::fft)
+    padded.fft <- psd_envAssignGet(evars[['fft.padded']], FFTFUN(padded))
     
     psd_envAssignGet(evars[['fft']], {
     	if (first.last){
@@ -205,18 +208,16 @@ psdcore.default <- function(X.d,
   
   ###  Calculate the PSD by averaging over tapered estimates  
   PSD <- psd_envAssignGet(evars[["last.psdcore"]], {
-    
     if (DOMT){
-      
       if (verbose) message("\testimating multitaper psd")
       
       ## resample fft with taper sequence and quadratic weighting
       kseq <- as.integer(as.tapers(kseq, setspan=TRUE))
       #    this is where the majority of the work goes on:
       reff <- try(resample_fft_rcpp(fftz, kseq, verbose=verbose))
+      # ^^ TODO: figure out why we're getting infinite values, which is causing hickups downstream
 
-	  #    check status:
-      if (inherits(reff,'try-error')){
+	    if (inherits(reff,'try-error')){
       	stop("Could not resample fft... inspect with psd_envGet(",evars[['fft']],"), etc.")
       } else {
         reff[['psd']]

@@ -20,11 +20,15 @@
   ## add some info to the environment
   psd::psd_envAssign("init", "initialized upon attach")
   ##
+  pkgs <- utils::installed.packages()[,'Package']
+  has.fftw <- 'fftw' %in% pkgs
+  ##
   packageStartupMessage(
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation",
             utils::packageVersion("psd")))
   ##
   options(psd.ops=list(
+    has.fftw = has.fftw,
     tapmin=1,
     tapcap=1000,
     names=list(

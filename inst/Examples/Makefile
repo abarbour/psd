@@ -8,5 +8,5 @@ $(RES): $(TEST) $(FIX) $(wildcard rdex_*.R)
 	$(TEST)
 
 clean:
-	rm -f *.Rout g.c.test .RData test_results_rdex
+	rm -f *.Rout g.c.test .RData test_results_rdex tmpscpt.R
 	rm -r plots

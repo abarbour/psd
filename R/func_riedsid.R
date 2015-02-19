@@ -96,6 +96,7 @@ riedsid.default <- function(PSD, ntaper = 1L,
   # Set the number of tapers to within the range: 1/2 nf, 7/5 ntap
   # rowMins produces a rowvec of rowwise minimums; convert to colvec
   nspan <- minspan(ntap, nf)
+  
   # The spectral gradients should be in log-space, so
   # create a log spec, and pad to handle begnning and end values
   nadd <- 1 + max(nspan)
@@ -173,6 +174,6 @@ riedsid.default <- function(PSD, ntaper = 1L,
   # Constrain tapers
   kopt <- constrain_tapers(tapvec = (480 ** 0.2)/(rss ** 0.4), tapseq=kseq, constraint.method=c.method, verbose=verbose)
   #
-  return(kopt)
+  return(as.tapers(kopt))
 } 
 
