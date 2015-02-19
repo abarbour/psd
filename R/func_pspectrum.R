@@ -123,19 +123,29 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=20, niter=5, AR=FALSE, N
 
 #' @rdname pspectrum
 #' @export
-pspectrum_basic <- function(x, initap=20, n.iter=5){
-  #  Get pilot estimate of psd with fixed number of tapers
-  initap <- 20
-  psd <- psdcore(x, ntaper=initap)
+pspectrum_basic <- function(x, initap=20, niter=5, plot=TRUE){
+  
+  message("Pilot spectrum (", initap, " tapers)")
+  cpsd <- psdcore(x, ntaper=initap)
   kopt <- psd[['taper']]
-  nf <- length(ntaper)
-  message("Iterative refinement of spectrum")
-  for (iter in seq_len(n.iter)){
+  nf <- length(kopt)
+  
+  if (plot) plot(kopt, type='l', ylim=c(initap,2.1*initap))
+  
+  message("Iterative refinement of spectrum (", niter, " iterations)")
+  for (iter in seq_len(niter)){
     message("\tstage ", iter)
-    kopt <- riedsid(psd, kopt)
-    psd <- psdcore(x, ntaper=kopt)
+    # find optimal tapers
+    kopt <- riedsid(cpsd, kopt)
+    print(tail(kopt))
+    # update spectrum
+    cpsd <- psdcore(x, ntaper=kopt)
+    # plot
+    lines(kopt, col=iter+1)
   }
-  return(psd)
+  
+  return(cpsd)
+  
 }
 
 #' @rdname pspectrum

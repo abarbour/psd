@@ -5,6 +5,7 @@
 \alias{constrain_tapers.default}
 \alias{constrain_tapers.tapers}
 \alias{minspan}
+\alias{minspan.default}
 \alias{minspan.tapers}
 \alias{tapers-constraints}
 \title{Taper constraint methods}
@@ -20,6 +21,8 @@ constrain_tapers(tapvec, ...)
 minspan(tapvec, ...)
 
 \method{minspan}{tapers}(tapvec, ...)
+
+\method{minspan}{default}(tapvec, Kmin = NULL, Kmax = NULL, ...)
 }
 \arguments{
 \item{tapvec}{\code{'tapers'} object; the number of tapers at each frequency}
@@ -31,9 +34,13 @@ minspan(tapvec, ...)
 \item{constraint.method}{character; method to use for constraints on tapers numbers}
 
 \item{verbose}{logical; should warnings and messages be given?}
+
+\item{Kmin}{numeric; the minimum to set; default is 1}
+
+\item{Kmax}{numeric; the maximum to set; default is the minimum of either (7/5 max value), or (1/2 series length)}
 }
 \value{
-An object with class \code{'tapers'}
+\code{\link{constrain_tapers}}: an object with class \code{'tapers'}; \code{\link{minspan}}: a vector
 }
 \description{
 In the Riedel-Sidorenko recipe, the number of optimal tapers
@@ -122,7 +129,7 @@ demo("ctap")
 A.J. Barbour <andy.barbour@gmail.com> and R.L. Parker
 }
 \seealso{
-\code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{as.tapers}}
+\code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 }
 \keyword{tapers}
 \keyword{tapers-constraints}

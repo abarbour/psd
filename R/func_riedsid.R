@@ -44,19 +44,16 @@
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as \code{PSD})
 #' @param Deriv.method character string; choice of gradient estimation method 
-#' @param constrained logical; should the taper constraints be applied to the optimum tapers?
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
 #' @return Object with class 'tapers'.
 #' 
-#' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{smooth.spline}
+#' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
 #' @example inst/Examples/rdex_riedsid.R
 riedsid <- function(PSD, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
-#' @aliases riedsid.spec
-#' @method riedsid spec
 #' @export
 riedsid.spec <- function(PSD, ntaper = 1L, ...){
   stopifnot(is.spec(PSD))
@@ -73,7 +70,6 @@ riedsid.spec <- function(PSD, ntaper = 1L, ...){
 }
 
 #' @rdname riedsid
-#' @method riedsid default
 #' @export
 riedsid.default <- function(PSD, ntaper = 1L, 
                             tapseq=NULL, 
@@ -169,20 +165,14 @@ riedsid.default <- function(PSD, ntaper = 1L,
   if (verbose) message(sprintf("Using spectral derivatives from  %s", msg))
   ##
   #
-  kc <- (480) ** 0.2  # 3.437544
   ##
   #(480)^0.2*abs(PSD/d2psd)^0.4
   # Original form:  kopt = 3.428*abs(PSD ./ d2psd).^0.4;
   # kopt = round( 3.428 ./ abs(eps + d2Y + dY.^2).^0.4 );
-  ##
-  kopt <- kc / (rss ** 0.4)
   #
   # Constrain tapers
-  if (constrained) kopt <- constrain_tapers(tapvec=kopt, 
-                                            tapseq=kseq, 
-                                            constraint.method=c.method, 
-                                            verbose=verbose)
-  ##
+  kopt <- constrain_tapers(tapvec = (480 ** 0.2)/(rss ** 0.4), tapseq=kseq, constraint.method=c.method, verbose=verbose)
+  #
   return(kopt)
 } 
-# end riedsid.default
+

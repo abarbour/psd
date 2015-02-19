@@ -16,7 +16,7 @@ tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE)
 
 \item{max_taper}{Set all values greater than this to this.}
 
-\item{setspan}{logical; should the tapers object be passed through \code{\link{minspan}} before it is return?}
+\item{setspan}{logical; should the tapers object be passed through \code{\link{minspan}} before being returned?}
 }
 \value{
 An object with class taper.

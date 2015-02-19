@@ -54,7 +54,7 @@
 #' @param x An object to set
 #' @param min_taper Set all values less than this to this.
 #' @param max_taper Set all values greater than this to this.
-#' @param setspan logical; should the tapers object be passed through \code{\link{minspan}} before it is return?
+#' @param setspan logical; should the tapers object be passed through \code{\link{minspan}} before being returned?
 #' @export
 #' @return An object with class taper.
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
@@ -67,6 +67,7 @@ as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE){
   x <- as.vector(unlist(x))
   stopifnot(!(is.character(x)))
   if (is.null(max_taper)) max_taper <- ceiling(max(x))
+  message("tap min: ", min_taper, " max: ", max_taper)
   stopifnot(min_taper*max_taper >= 1 & max_taper >= min_taper)
   #
   x <- as.integer(pmin.int(max_taper, pmax.int(min_taper, round(x))))
@@ -143,6 +144,8 @@ print.tapers <- function(x, ...){
   xh <- paste(as.character(head(x)), collapse=" ")
   xt <- paste(as.character(tail(x)), collapse=" ")
   cat(sprintf("'tapers' object: num. tapers applied by index\n\thead:  %s\n\t\t...\n\ttail:  %s\n",xh,xt))
+  spans <- attr(x, "span_was_set")
+  if (spans) message('span-set: TRUE')
 }
 
 #' @rdname tapers-methods
@@ -204,15 +207,15 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
   if (is.null(ylim)) ylim <- c(1, 1.1*mx)
   
   graphics::plot.default(xi, x,
-               ylab = "number of tapers",
-               xlab = "taper index",
-               ylim = ylim, 
-               yaxs = "i", xaxs = "i",
-               lwd = 1.8,
-               type = "h",
-               col = cols[x],
-               log = ifelse(log.y, "y", ""),
-               ...)
+                         ylab = "number of tapers",
+                         xlab = "taper index",
+                         ylim = ylim, 
+                         yaxs = "i", xaxs = "i",
+                         lwd = 1.8,
+                         type = "h",
+                         col = cols[x],
+                         log = ifelse(log.y, "y", ""),
+                         ...)
   
   graphics::lines(xi, x, col="black", lwd=0.7)
   
@@ -360,9 +363,11 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' @param tapseq vector; positions or frequencies -- necessary for smoother methods
 #' @param constraint.method  character; method to use for constraints on tapers numbers
 #' @param verbose logical; should warnings and messages be given?
+#' @param Kmin numeric; the minimum to set; default is 1
+#' @param Kmax numeric; the maximum to set; default is the minimum of either (7/5 max value), or (1/2 series length)
 #' @param ... optional arguments sent to the constrain function (e.g. \code{\link{ctap_simple}})
 #' 
-#' @return An object with class \code{'tapers'}
+#' @return \code{\link{constrain_tapers}}: an object with class \code{'tapers'}; \code{\link{minspan}}: a vector
 #' 
 #' @author A.J. Barbour <andy.barbour@@gmail.com> and R.L. Parker
 #' 
@@ -370,7 +375,7 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' @name tapers-constraints
 #' @keywords tapers tapers-constraints
 #' 
-#' @seealso \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{as.tapers}}
+#' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 #' @example inst/Examples/rdex_constraintapers.R
 NULL
 
@@ -387,11 +392,11 @@ constrain_tapers.tapers <- function(tapvec, ...){
 #' @rdname tapers-constraints
 #' @export
 constrain_tapers.default <- function(tapvec, tapseq=NULL,
-                                   constraint.method=c("simple.slope.rcpp",
-                                                       "simple.slope",
-                                                       "loess.smooth",
-                                                       "none"),
-                                   verbose=TRUE, ...){
+                                     constraint.method=c("simple.slope.rcpp",
+                                                         "simple.slope",
+                                                         "loess.smooth",
+                                                         "none"),
+                                     verbose=TRUE, ...){
   # choose the appropriate method to apply taper constraints
   cmeth <- match.arg(constraint.method)
   tapvec.adj <- if (cmeth=="none"){
@@ -409,23 +414,8 @@ constrain_tapers.default <- function(tapvec, tapseq=NULL,
       stop('no constraint function available')
     }
   }
-  # MAX/MIN bounds
-  # set the maximim tapers: Never average over more than the length of the spectrum!
-  #   maxtap <- round(length(tapvec)/2)
-  #   # ensure the minimum is below
-  #   mintap <- min(1, maxtap)
-  #   # sort for posterity
-  #   tapbounds <- sort(c(mintap, maxtap))
-  #   mintap <- tapbounds[1]
-  #   maxtap <- tapbounds[2]
-  #   tapvec.adj[tapvec.adj < mintap] <- mintap
-  #   tapvec.adj[tapvec.adj > maxtap] <- maxtap
-  #
-  # is this the bug: ??
-  print(summary(tapvec.adj))
-  tapvec.adj <- as.tapers(tapvec.adj) #, min_taper=1, max_taper=round(length(tapvec.adj)/2))
-  print(summary(tapvec.adj))
-  return(tapvec.adj)
+  # tapers, limit range
+  return(as.tapers(tapvec.adj, setspan=TRUE))
 }
 
 #' @rdname tapers-constraints
@@ -436,10 +426,20 @@ minspan <- function(tapvec, ...) UseMethod("minspan")
 #' @export
 minspan.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
-  Kmax <- max(tapvec)
-  Kmax.upper <- floor(7*Kmax/5)
-  Kmax.lower <- floor(length(tapvec)/2)
-  tapvec <- pmax(pmin(tapvec, min(c(Kmax.upper, Kmax.lower))), 1)
+  minspan(as.vector(tapvec))
+}
+
+#' @rdname tapers-constraints
+#' @export
+minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
+  if (is.null(Kmin)) Kmin <- 1
+  if (is.null(Kmax)){
+    Kmax.upper.a <- floor(7 * max(tapvec) / 5)
+    Kmax.upper.b <- floor(length(tapvec) / 2)
+    Kmax <- min(c(Kmax.upper.a, Kmax.upper.b))
+  }
+  stopifnot(Kmin <= Kmax)
+  tapvec <- pmax(pmin(tapvec, Kmax), Kmin)
   return(tapvec)
 }
 

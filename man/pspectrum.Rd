@@ -19,7 +19,7 @@ pspectrum(x, ...)
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
   no.history = FALSE, plot = FALSE, ...)
 
-pspectrum_basic(x, initap = 20, n.iter = 5)
+pspectrum_basic(x, initap = 20, niter = 5, plot = TRUE)
 
 adapt_message(stage, dvar = NULL)
 }

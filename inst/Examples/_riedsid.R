@@ -8,23 +8,25 @@ pmo <- spectrum(dat, plot=FALSE)
 ro <- riedsid(pmo)
 print(ro)
 
-pspectrum_basic <- function(x, initap=20, n.iter=5, plot=TRUE){
+pspectrum_basic <- function(x, initap=20, niter=5, plot=TRUE){
   
   message("Pilot spectrum (", initap, " tapers)")
   psd <- psdcore(x, ntaper=initap)
-  if (plot) plot(psd)
   kopt <- psd[['taper']]
   nf <- length(kopt)
   
-  message("Iterative refinement of spectrum (", n.iter, " iterations)")
-  for (iter in seq_len(n.iter)){
+  if (plot) plot(kopt, type='l', ylim=c(initap,2.1*initap))
+  
+  message("Iterative refinement of spectrum (", niter, " iterations)")
+  for (iter in seq_len(niter)){
     message("\tstage ", iter)
     # find optimal tapers
     kopt <- riedsid(psd, kopt)
     print(tail(kopt))
     # update spectrum
     psd <- psdcore(x, ntaper=kopt)
-    if (plot) plot(psd, col=iter+1, add=TRUE)
+    # plot
+    lines(kopt, col=iter+1)
   }
   return(psd)
 }

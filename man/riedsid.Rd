@@ -25,8 +25,6 @@ riedsid(PSD, ...)
 
 \item{Deriv.method}{character string; choice of gradient estimation method}
 
-\item{constrained}{logical; should the taper constraints be applied to the optimum tapers?}
-
 \item{c.method}{string; constraint method to use if \code{constrained=TRUE}}
 
 \item{verbose}{logical; should messages be printed?}
@@ -112,7 +110,7 @@ par(op)
 A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.
 }
 \seealso{
-\code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{smooth.spline}
+\code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
 }
 \keyword{riedel-sidorenko}
 \keyword{tapers}
