@@ -72,3 +72,19 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// spec_deriv
+NumericVector spec_deriv(NumericVector S, IntegerVector K);
+RcppExport SEXP psd_spec_deriv(SEXP SSEXP, SEXP KSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericVector >::type S(SSEXP );
+        Rcpp::traits::input_parameter< IntegerVector >::type K(KSEXP );
+        NumericVector __result = spec_deriv(S, K);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}

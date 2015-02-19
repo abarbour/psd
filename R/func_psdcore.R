@@ -164,21 +164,8 @@ psdcore.default <- function(X.d,
     FFTFUN <- ifelse(has.fftw & use.fftw, fftw::FFT, stats::fft)
     padded.fft <- psd_envAssignGet(evars[['fft.padded']], FFTFUN(padded))
     
-    psd_envAssignGet(evars[['fft']], {
-    	if (first.last){
-    		# Fix first value of fft -- always basically zero -- this will get rid 
-			# of the bug, and prevent needing first-last extrapolation, I think!
-			n.fft <- length(padded.fft)
-			inds <- c(1:3, n.fft)
-			padded.fft[inds] <- NA
-			if (verbose) message("\tnote: working fft has extrapolated ends")
-			psd_envAssignGet(evars[['fft.extrap']], 
-				zoo::na.locf(zoo::na.locf(padded.fft, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE))
-    	} else {
-    		padded.fft
-    	}
-    })
-    
+    psd_envAssignGet(evars[['fft']], padded.fft)
+  
   } else {
     
     if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
@@ -246,7 +233,17 @@ psdcore.default <- function(X.d,
   npsd <- length(PSD)
   nonfin <- is.infinite(PSD)
   
-  if (any(nonfin)) PSD <- replace(PSD, nonfin, NA)
+  # TODO: check this:
+  if (any(nonfin)){
+    warning("infinite psd estimates?!")
+    PSD <- replace(PSD, nonfin, NA)
+  }
+  
+  # first point is bogus
+  PSD[1] <- mean(PSD[c(2,npsd)], na.rm=TRUE)
+  psd_envAssignGet(evars[['last.psdcore.extrap']], {
+    zoo::na.locf(zoo::na.locf(PSD, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE)
+    })
   
   ## Nyquist frequencies
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))

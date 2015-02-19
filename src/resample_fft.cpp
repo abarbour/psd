@@ -135,6 +135,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   double wi;
   Rcomplex fdc;
   List bw;
+  //bool isinf;
   
   // double-length fft estimates assumed by default
   if (dbl){
@@ -196,7 +197,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     }
     K[j] = Kc;
     
-    NumericVector k(Kc), w(Kc);
+    NumericVector k(Kc), w(Kc), cpsd(1);
     arma::rowvec sq_absdiff(Kc), psdprod(Kc);
     
     // taper sequence and spectral weights
@@ -228,8 +229,13 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
       
     }    
     // un-normalized psd is vector product of w and (sqrt(Re^2 + Im^2))^2
-    psd(j) = sum(psdprod); //arma::as_scalar( w * sq_absdiff.t() );
-  
+    cpsd[0] = sum(psdprod); //arma::as_scalar( w * sq_absdiff.t() );
+    //isinf = is_infinite(cpsd);
+    if (any(is_infinite(cpsd))){
+      Rf_warning("infinite psd!");
+      cpsd[0] = 0.;
+    }
+    psd[j] = cpsd[0];
   }
   
   List psd_out = List::create(

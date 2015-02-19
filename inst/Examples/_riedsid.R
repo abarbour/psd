@@ -31,7 +31,7 @@ riedsid2.default <- function(psd, ntaper, constrained=TRUE, verbose=TRUE, ...){
   if (nt == 1) ntaper <- rep(ntaper, nf)
   nspan <- ceiling( pmin( nf/2, 7*ntaper/5 ) )
   nadd <- 1 + max(nspan)
-  # Create log psd, and pad to handle begnning and end values
+  # Create log psd, and pad to handle beginning and end values
   ist <- nadd:2
   iend <- (nf - 1):(nf - nadd)
   S <- as.numeric(c(psd[ist], psd, psd[iend])) + eps
@@ -77,7 +77,7 @@ pspectrum_basic <- function(x, initap=20, niter=5, plot=TRUE, verbose=TRUE, ...)
   ko <- P[['taper']]
   nf <- length(ko)
   
-  if (plot) plot(ko, type='l', ylim=c(initap,5.1*initap), main=paste0("Kopt\ninitial tapers: ", initap, ", iterations:", niter))
+  if (plot) plot(ko, type='l', log='y', ylim=c(1,5.1*initap), main=paste0("Kopt\ninitial tapers: ", initap, ", iterations:", niter))
   
   # Iterate on optimal tapers, and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
@@ -98,8 +98,10 @@ pm0 <- pspectrum_basic(dat, initap=2, niter = 0)
 message("\n++++>\tadaptively tapered result\n")
 pm <- pspectrum_basic(dat)
 
-plot(pm0)
-lines(pm, col='red')
+plt_last_res <- function(){
+  plot(pm)
+  lines(pm0, col='red')
+}
 
 stop()
 

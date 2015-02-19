@@ -99,3 +99,7 @@ resample_fft_rcpp <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap =
     .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers, verbose, dbl, tapcap)
 }
 
+spec_deriv <- function(S, K) {
+    .Call('psd_spec_deriv', PACKAGE = 'psd', S, K)
+}
+

@@ -55,7 +55,7 @@ pspectrum.spec <- function(x, ...){
 
 #' @rdname pspectrum
 #' @export
-pspectrum.default <- function(x, x.frqsamp=1, ntap.init=20, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   stopifnot(length(x)>1)
   #
   niter <- abs(niter)
@@ -226,16 +226,21 @@ pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 #' @rdname pilot_spec
 #' @export
 pilot_spec.ts <- function(x, ...){
-  frq <- frequency(x)
+  frq <- stats::frequency(x)
   pilot_spec(as.vector(x), x.frequency=frq, ...)  
 }
 
 #' @rdname pilot_spec
 #' @export
-pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE, verbose=FALSE, ...){
+pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, ...){
+  
+  if (is.null(ntap)) ntap <- 7
+  if (is.null(remove.AR)) remove.AR <- 0
+  if (is.null(x.frequency)) x.frequency <- 1
   stopifnot(length(ntap)==1)
   stopifnot(length(remove.AR)==1)
-  if (is.ts(x)) x.frequency <- stats::frequency(x)
+  stopifnot(length(x.frequency)==1)
+  
   # setup a universal calculator
   PSDFUN <- function(X.., Xf.., Xk.., AR=FALSE){
     toret <- psdcore(X.., Xf.., Xk.., 
@@ -246,17 +251,15 @@ pilot_spec.default <- function(x, x.frequency=1, ntap=7, remove.AR=0, plot=FALSE
                      verbose=FALSE)
     return(toret)
   }
-  # preprocess
-  REMAR <- if (remove.AR > 0){
-    # restrict to within [1,100]
-    remove.AR <- max(1, min(100, abs(remove.AR)))
-    TRUE
-  } else {
-    FALSE
-  }
   
-  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, 
-                     impute=TRUE, plot=FALSE, verbose=verbose)
+  # AR spectrum or no?
+  REMAR <- ifelse(remove.AR > 0, TRUE, FALSE)
+  
+  #restrict maximum ar orders to within [1,100]
+  if (REMAR) remove.AR <- max(1, min(100, abs(remove.AR)))
+  
+  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
+  
   if (REMAR){
     # AR fit
     ordAR <- xprew[['ardfit']][['order']]

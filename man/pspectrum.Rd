@@ -15,7 +15,7 @@ pspectrum(x, ...)
 
 \method{pspectrum}{spec}(x, ...)
 
-\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = 20, niter = 5,
+\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = NULL, niter = 5,
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
   no.history = FALSE, plot = FALSE, ...)
 

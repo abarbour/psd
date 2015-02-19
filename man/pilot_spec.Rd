@@ -12,8 +12,8 @@ pilot_spec(x, ...)
 
 \method{pilot_spec}{ts}(x, ...)
 
-\method{pilot_spec}{default}(x, x.frequency = 1, ntap = 7, remove.AR = 0,
-  plot = FALSE, verbose = FALSE, ...)
+\method{pilot_spec}{default}(x, x.frequency = NULL, ntap = NULL,
+  remove.AR = NULL, plot = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{vector; the data series to find a pilot spectrum for}

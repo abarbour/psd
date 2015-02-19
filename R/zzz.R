@@ -34,9 +34,9 @@
     names=list(
       fft = "working_fft",
       fft.padded = "fft_even_demeaned_padded",
-      fft.extrap = "fft_even_demeaned_padded_extrap",
       last.taper = "last_taper_sequence",
       last.psdcore = "last_psdcore_psd",
+      last.psdcore.extrap = "last_psdcore_psd_extrap",
       series.even = "ser_orig_even",
       var.even = "ser_even_var",
       n.even = "len_even",
