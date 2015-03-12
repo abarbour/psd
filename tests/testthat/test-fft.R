@@ -1,11 +1,12 @@
-context("Fast fourier transform")
+
+context("Discrete Fourier Transform calculations")
+
+library(stats)
+stopifnot(require(fftw))
 
 n. <- 10
 x. <- seq_len(n.)
 xn. <- 1.0*x.
-
-require(stats)
-require(fftw)
 
 test_that("fftw expects numeric or complex", {
   expect_error(FFT(x.))
@@ -23,8 +24,9 @@ test_that("fft and fftw return equivalent results", {
   expect_equal(fft(xn.), FFT(xn.))
   
   # Inverse transform
-  # (by default FFTW scales the inverse transform)
+  # - by default FFTW scales the inverse transform so this is an error:
   expect_error(stopifnot(all.equal(fft(xn., inverse = TRUE), IFFT(xn.))))
+  # but this is not:
   expect_equal(fft(xn., inverse = TRUE), IFFT(xn., scale=FALSE))
   
 })

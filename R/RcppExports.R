@@ -7,7 +7,6 @@
 #' @keywords tapers tapers-constraints
 #' @param tapvec integer; the number of tapers at each frequency (can be a vector)
 #' @param maxslope integer; constrain based on this maximum first difference
-#' @param tapseq vector; positions to evaluate derivatives (unused here, but necessary for smoother methods)
 #' @param ... additional arguments
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{ctap_loess}}
 #' @examples
@@ -97,9 +96,5 @@ parabolic_weights_rcpp <- function(ntap = 1L) {
 #' @export
 resample_fft_rcpp <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap = 1000L) {
     .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers, verbose, dbl, tapcap)
-}
-
-spec_deriv <- function(S, K) {
-    .Call('psd_spec_deriv', PACKAGE = 'psd', S, K)
 }
 

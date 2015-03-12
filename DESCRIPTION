@@ -20,8 +20,7 @@ Depends:
     utils,
     stats,
     graphics,
-    grDevices,
-    fftw (>= 1.0-3)
+    grDevices
 Imports:
     Rcpp (>= 0.11.5),
     RColorBrewer,
@@ -29,6 +28,7 @@ Imports:
     zoo
 Suggests:
     bspec,
+    fftw (>= 1.0.3),
     ggplot2 (>= 0.9),
     knitr,
     multitaper,

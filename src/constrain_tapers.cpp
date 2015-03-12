@@ -29,7 +29,6 @@ using namespace Rcpp;
 //' @keywords tapers tapers-constraints
 //' @param tapvec integer; the number of tapers at each frequency (can be a vector)
 //' @param maxslope integer; constrain based on this maximum first difference
-//' @param tapseq vector; positions to evaluate derivatives (unused here, but necessary for smoother methods)
 //' @param ... additional arguments
 //' @seealso \code{\link{constrain_tapers}}, \code{\link{ctap_loess}}
 //' @examples

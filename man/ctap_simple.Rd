@@ -27,8 +27,6 @@ ctap_simple(tapvec, ...)
 \item{maxslope}{integer; constrain based on this maximum first difference}
 
 \item{...}{additional arguments}
-
-\item{tapseq}{vector; positions to evaluate derivatives (unused here, but necessary for smoother methods)}
 }
 \description{
 Taper constraints using simple derivatives

@@ -38,8 +38,6 @@ psd_envAssign(variable, value)
 
 psd_envAssignGet(variable, value)
 
-new_adapt_history(adapt_stages)
-
 get_adapt_history()
 
 last_psd()
@@ -48,8 +46,9 @@ update_adapt_history(PSD, stage, ...)
 
 \method{update_adapt_history}{spec}(PSD, stage, ...)
 
-\method{update_adapt_history}{default}(PSD, stage, ntap = NA, freq = NULL,
-  ...)
+\method{update_adapt_history}{default}(PSD, stage, ntap = NA, freq = NULL)
+
+new_adapt_history(adapt_stages)
 }
 \arguments{
 \item{verbose}{logical; should messages be given?}
@@ -58,20 +57,17 @@ update_adapt_history(PSD, stage, ...)
 
 \item{value}{character; the name of the variable to assign}
 
-\item{adapt_stages}{scalar; The number of adaptive iterations to save (excluding pilot spectrum).}
-
 \item{PSD}{vector or object with class \code{'spec'}; the power spectral density estimates}
 
 \item{stage}{scalar; the current stage of the adaptive estimation procedure}
 
+\item{...}{additional arguments}
+
 \item{ntap}{vector; the tapers}
 
 \item{freq}{vector; the frequencies}
-}
-\value{
-\code{psd_envRefresh} returns (invisibly) the result of \code{psd_envStatus()}.
 
-the object represented by \code{variable} in the \code{psd} environment.
+\item{adapt_stages}{scalar; The number of adaptive iterations to save (excluding pilot spectrum).}
 }
 \description{
 The computation of \emph{adaptive} power spectral density estimates
@@ -102,10 +98,10 @@ the status of the environment.
 
 \code{psd_envAssignGet} both assigns and returns a value.
 
+\code{update_adapt_history} updates the adaptive estimation history list.
+
 \code{new_adapt_history} initializes a nested-list object to store the
 data from each iteration.
-
-\code{update_adapt_history} updates the adaptive estimation history list.
 }
 \note{
 \code{psd_envClear} does \emph{not} remove the environment--simply the assignments within it.

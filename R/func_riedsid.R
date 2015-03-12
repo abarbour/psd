@@ -37,13 +37,13 @@
 #' be the preferred over the \code{"local_qls"} method, other than for efficiency's sake.
 #'
 #' @export
-#' @keywords tapers tapers-constraints riedel-sidorenko
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' 
 #' @param PSD vector or class 'spec'; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as \code{PSD})
-#' @param Deriv.method character string; choice of gradient estimation method 
+#' @param Deriv.method character; choice of gradient estimation method 
+#' @param constrained logical; apply constraints; \code{FALSE} turns off constraints
 #' @param c.method string; constraint method to use if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}

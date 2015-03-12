@@ -1,10 +1,28 @@
 Notes:
-	* another quirk to deal with:
-http://cran.r-project.org/web/packages/R.rsp/vignettes/NonSweaveVignettes.pdf	
-http://www.mail-archive.com/r-devel@r-project.org/msg26748.html
-
 	* do not use \include (use \input)
 	(build creates aux files and CRAN checks NOTE/COMPLAIN)
+
+##
+##
+##
+
+>>>>>>>>>>>>>>>
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{title of vignette}
+-->
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  error = FALSE,
+  tidy = FALSE
+)
+```
+
+yada yada yada
+:
+<<<<<<<<<<<<<<<
 
 ##
 ## DFT benchmark vignette [DONE]
@@ -13,11 +31,13 @@ http://www.mail-archive.com/r-devel@r-project.org/msg26748.html
 		fftw_bench_even.pdf
 		fftw_bench_odd.pdf
 		# see /Users/abarbour/Google\ Drive/PUB/psd
+
 ##
-## Normalization vignette [ ]
+## Normalization vignette [DONE]
 ##
 	normalization.Rnw
 	supp_norms.tex		normalization definitions
+
 ##
 ## Overview benchmark vignette [DONE]
 ##
@@ -26,6 +46,7 @@ http://www.mail-archive.com/r-devel@r-project.org/msg26748.html
 			yuml.fawk*
 				yuml_d.png
 				yuml_n.png
+
 ##
 ## Common files
 ##

@@ -33,7 +33,9 @@ riedsid2(PSD, ...)
 
 \item{tapseq}{vector; representing positions or frequencies (same length as \code{PSD})}
 
-\item{Deriv.method}{character string; choice of gradient estimation method}
+\item{Deriv.method}{character; choice of gradient estimation method}
+
+\item{constrained}{logical; apply constraints; \code{FALSE} turns off constraints}
 
 \item{c.method}{string; constraint method to use if \code{constrained=TRUE}}
 
@@ -122,7 +124,4 @@ A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.
 \seealso{
 \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
 }
-\keyword{riedel-sidorenko}
-\keyword{tapers}
-\keyword{tapers-constraints}
 

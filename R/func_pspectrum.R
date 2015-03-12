@@ -143,6 +143,8 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
 }
 
 #' @rdname pspectrum
+#' @param stage integer; the current adaptive stage (0 is pilot)
+#' @param dvar numeric; the spectral variange; see also \code{\link{vardiff}} etc
 #' @export
 adapt_message <- function(stage, dvar=NULL){
   stopifnot(stage >= 0)
@@ -160,14 +162,14 @@ adapt_message <- function(stage, dvar=NULL){
 
 #' @rdname pspectrum
 #' @export
-pspectrum_basic <- function(x, initap=7, niter=5, plot=TRUE, verbose=TRUE, ...){
+pspectrum_basic <- function(x, ntap.init=7, niter=5, plot=TRUE, verbose=TRUE, ...){
   
   if (verbose) adapt_message(0)
-  P <- psdcore(x, ntaper=initap, preproc = FALSE, first.last=FALSE, refresh=TRUE)
+  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, first.last=FALSE, refresh=TRUE)
   ko <- P[['taper']]
   nf <- length(ko)
   
-  if (plot) plot(ko, type='l', log='y', ylim=c(1,100*initap), main=paste0("Kopt\ninitial tapers: ", initap, ", iterations:", niter))
+  if (plot) plot(ko, type='l', log='y', ylim=c(1,100*ntap.init), main=paste0("Kopt\ninitial tapers: ", ntap.init, ", iterations:", niter))
   
   # Iterate on optimal tapers, and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")

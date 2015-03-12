@@ -20,18 +20,15 @@
   ## add some info to the environment
   psd::psd_envAssign("init", "initialized upon attach")
   ##
-  pkgs <- utils::installed.packages()[,'Package']
-  has.fftw <- 'fftw' %in% pkgs
-  ##
   packageStartupMessage(
     sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation",
             utils::packageVersion("psd")))
   ##
+  ## options which can be reset by the user
   options(psd.ops=list(
-    has.fftw = has.fftw,
-    tapmin=1,
-    tapcap=1000,
-    names=list(
+    tapmin = 1,
+    tapcap = 1000,
+    names = list(
       fft = "working_fft",
       fft.padded = "fft_even_demeaned_padded",
       last.taper = "last_taper_sequence",

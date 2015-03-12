@@ -17,6 +17,10 @@ data.frame.spec(x, ...)
 \arguments{
 \item{x}{spec object}
 
+\item{y}{optional coordinate vector for the y-axis}
+
+\item{type}{character; the type of plot}
+
 \item{...}{optional arguments}
 }
 \description{
@@ -54,7 +58,4 @@ is.tapers(xdf$taper)
 \author{
 A.J. Barbour <andy.barbour@gmail.com>
 }
-\keyword{S3methods}
-\keyword{methods}
-\keyword{spec}
 

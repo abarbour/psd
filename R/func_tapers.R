@@ -437,14 +437,16 @@ minspan.tapers <- function(tapvec, ...){
 #' @rdname tapers-constraints
 #' @export
 minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
+  tapvec <- as.integer(tapvec)
   if (is.null(Kmin)) Kmin <- 1
   if (is.null(Kmax)){
-    Kmax.upper.a <- floor(7 * max(tapvec) / 5)
+    Kmax.upper.a <- floor(7 * max(tapvec, na.rm=TRUE) / 5)
     Kmax.upper.b <- floor(length(tapvec) / 2)
-    Kmax <- min(c(Kmax.upper.a, Kmax.upper.b))
+    Kmax <- min(c(Kmax.upper.a, Kmax.upper.b), na.rm=TRUE)
   }
   stopifnot(Kmin <= Kmax)
-  tapvec <- pmax(pmin(tapvec, Kmax), Kmin)
+  tapvec <- pmax(pmin(tapvec, Kmax, na.rm=TRUE), Kmin, na.rm=TRUE)
+  stopifnot(all(tapvec >= 0))
   return(tapvec)
 }
 

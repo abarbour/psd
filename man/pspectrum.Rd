@@ -21,8 +21,8 @@ pspectrum(x, ...)
 
 adapt_message(stage, dvar = NULL)
 
-pspectrum_basic(x, initap = 7, niter = 5, plot = TRUE, verbose = TRUE,
-  ...)
+pspectrum_basic(x, ntap.init = 7, niter = 5, plot = TRUE,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{vector; series to estimate PSD for.}
@@ -44,6 +44,10 @@ pspectrum_basic(x, initap = 7, niter = 5, plot = TRUE, verbose = TRUE,
 \item{no.history}{logical; Should the adaptive history \emph{not} be saved?}
 
 \item{plot}{logical; Should the results be plotted?}
+
+\item{stage}{integer; the current adaptive stage (0 is pilot)}
+
+\item{dvar}{numeric; the spectral variange; see also \code{\link{vardiff}} etc}
 }
 \value{
 Object with class 'spec', invisibly. It also assigns the object to

@@ -1,9 +1,5 @@
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 % !Rnw weave = knitr
-% sweave fig help:
-% http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
-% borrowing design from roxygen -- AJB Jan 13
-
 %% \VignetteIndexEntry{DFT benchmarks: fft vs FFT.}
 %% \VignetteEngine{knitr}
 
@@ -38,36 +34,43 @@
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
-%% path, filename, caption, label
-\newcommand{\listing}[4]{        %
-  \begin{figure}[H]              %
-    \centering                   %
-    \VerbatimInput[numbers=left, %
-      frame=single,              %
-      label=#2]{#1}              %
-    \caption{#3}                 %
-    \label{#4}                   %
-  \end{figure}                   %
-}
+%
+\title{Benchmarks for Discrete Fourier Transform (DFT) calculations in R}
 \author{Andrew J. Barbour}
-\title{Benchmarks for Discrete Fourier Transforms in R}
+%
 \begin{document}
 \maketitle
+%
 \begin{abstract}
-The base DFT calculator in R, \Rcmd{stats::fft}, uses
+%
+\begin{quote}
+The DFT calculator in R, \Rcmd{stats::fft}, uses
 the Mixed-Radix algorithm of \citet{singleton1969}.
-In this vignette we show how 
-this calculator compares
+In this vignette we show how this calculator compares
 to \Rcmd{FFT} in the \Rcmd{fftw} package \citep{fftw}, which uses the
 FFTW algorithm of \citet{frigo2005}.
 For univariate DFT computations,
 the methods are nearly equivalent with two exceptions which
 are not mutually exclusive: 
-(A) the series to be transformed is very long, and 
-especially (B) when the series length is not highly composite.
+(1) the series to be transformed is very long ($10^6$ terms), and 
+\emph{especially} (2) when the series length is not highly composite.
 In both exceptions the algorithm \Rcmd{FFT} outperforms \Rcmd{fft}.
+\end{quote}
+%
+\begin{quote}
+\textit{\textbf{Update:} I have decided that (for now) \psd{} will not
+use \Rcmd{fftw::FFT}, despite its advantage over \Rcmd{stats::fft} for 
+large-$n$ `NHC' series, simply because
+the binaries on CRAN have not been reliably built for some time now.
+If they do become reliable, I may consider using \Rcmd{fftw::FFT} instead.
+}
+\end{quote}
+%
 \end{abstract}
+
 \tableofcontents
+\clearpage
+
 \section{Benchmarking function}
 We use both functions in their default state, and ask them
 to transform the same univariate random series.

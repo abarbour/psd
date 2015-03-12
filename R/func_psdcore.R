@@ -159,9 +159,10 @@ psdcore.default <- function(X.d,
     
     ## zero pad and take double-length fft (fftw is faster for very long series)
     padded <- as.numeric(c(X.even, zeros(n.e)))
-    has.fftw <- getOption('psd.ops')[['has.fftw']]
-    use.fftw <- FALSE
-    FFTFUN <- ifelse(has.fftw & use.fftw, fftw::FFT, stats::fft)
+    # option to switch on or off fftw usage -- turning this off until fftw is reliably built
+    #use.fftw <- getOption('psd.ops')[['use.fftw']]
+    #ifelse(has.fftw & use.fftw, fftw::FFT, stats::fft)
+    FFTFUN <- stats::fft
     padded.fft <- psd_envAssignGet(evars[['fft.padded']], FFTFUN(padded))
     
     psd_envAssignGet(evars[['fft']], padded.fft)
@@ -239,8 +240,12 @@ psdcore.default <- function(X.d,
     PSD <- replace(PSD, nonfin, NA)
   }
   
-  # first point is bogus
+  #
+  #first point is bogus -- but sometimes so to is
+  # the last point(s) <-- FIX THIS!
+  #
   PSD[1] <- mean(PSD[c(2,npsd)], na.rm=TRUE)
+  
   psd_envAssignGet(evars[['last.psdcore.extrap']], {
     zoo::na.locf(zoo::na.locf(PSD, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE)
     })

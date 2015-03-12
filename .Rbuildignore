@@ -8,6 +8,7 @@
 
 ^src/.gitignore$
 src/deprecated
+src/in.development
 
 ^.*/.gitignore$
 
