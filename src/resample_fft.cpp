@@ -126,10 +126,14 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   //
   
   // needs:
-  //  - complex fft vector (assumes double-length)
-  //  - integer tapers vector
+  //  - fftz: complex vector -- the FFT of the original signal
+  //  - tapers: integer vector -- the number of tapers at each frequency
   
-  //Function warning("warning"); // use Rf_warning instead
+  // options:
+  //  - verbose: logical -- should warnings be given?
+  //  - dbl: logical -- should the progam assume 'fftz' is for a double-length (padded) series? 
+  //                    Otherwise a single-length series is assumed.
+  //  - tapcap: integer -- the maximum number of tapers at any frequency
   
   int sc, nf, nt, ne, ne2, nhalf, nfreq, m, m2, mleft1, mleft2, j1, j2, Kc, ki, ik;
   double wi;
@@ -137,17 +141,17 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   List bw;
   //bool isinf;
   
-  // double-length fft estimates assumed by default
   if (dbl){
+    // double-length fft estimates assumed by default
   	sc = 2;
   } else {
+    // but could be single-length
 	  sc = 1;
   }
   
-  nf = fftz.size() / sc;
-  nt = tapers.size(); // this is supposed to be one greater [ ]
-  
   // even, double, and half lengths
+  nf = fftz.size() / sc; 
+  nt = tapers.size(); // ?? this is supposed to be one greater [ ]
   ne = nf - (nf % 2);
 
   if (verbose){
@@ -156,7 +160,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
   
   if (ne < nf){
-    Rf_warning("fft was not done on an even length series");
+    warning("fft was not done on an even length series");
   }
   
   ne2 = 2 * ne;
@@ -168,15 +172,17 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   
   if (nt == 1){
     // TODO: deep copy with clone
-    Rf_warning("forced taper length");
+    warning("forced taper length");
     tapers = rep(tapers, nhalf);
   }
 
-  // %  Select frequencies for PSD evaluation [0:nhalf]
+  // Select frequencies for PSD evaluation [0:nhalf]
   NumericVector Freqs = abs(seq_len(nhalf)) - 1; // add one since c++ indexes at zero
-  
-  //%  Calculate the psd by averaging over tapered estimates
   nfreq = Freqs.size();
+  
+  //
+  // Calculate the psd by averaging over tapered estimates
+  //
 
   NumericVector K(nfreq), absdiff(nfreq), psd(nfreq);
   
@@ -246,4 +252,21 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     return psd_out;
 }
 
-// end
+/*** R 
+n <- 100
+set.seed(1234)
+# random walk
+x <- cumsum(sample(c(-1, 1), n, TRUE))
+fftz <- fft(x)
+taps <- ceiling(runif(n,10,30))
+try(rsz <- resample_fft_rcpp(fftz, taps))
+str(rsz)
+layout(matrix(1:2))
+par(oma=c(2,3,0.2,0.2))
+with(rsz,{
+  plot(freq.inds, psd)
+  plot(freq.inds, k.capped, type='h')
+})
+*/
+
+// end all

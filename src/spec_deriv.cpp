@@ -15,6 +15,8 @@ NumericVector spec_deriv(NumericVector S, IntegerVector K) {
    
    Y = log(S);
    
+   // much more to do...
+   
    for (i = 0; i < ns; i++){
      dY[i] = Y[i] + kopt[i];
    }

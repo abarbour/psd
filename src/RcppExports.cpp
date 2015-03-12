@@ -7,84 +7,64 @@
 using namespace Rcpp;
 
 // ctap_simple_rcpp
-IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1);
+IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope);
 RcppExport SEXP psd_ctap_simple_rcpp(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< IntegerVector >::type tapvec(tapvecSEXP );
-        Rcpp::traits::input_parameter< const int >::type maxslope(maxslopeSEXP );
-        IntegerVector __result = ctap_simple_rcpp(tapvec, maxslope);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< IntegerVector >::type tapvec(tapvecSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxslope(maxslopeSEXP);
+    __result = Rcpp::wrap(ctap_simple_rcpp(tapvec, maxslope));
+    return __result;
 END_RCPP
 }
 // modulo_floor
-IntegerVector modulo_floor(IntegerVector n, int m = 2);
+IntegerVector modulo_floor(IntegerVector n, int m);
 RcppExport SEXP psd_modulo_floor(SEXP nSEXP, SEXP mSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< IntegerVector >::type n(nSEXP );
-        Rcpp::traits::input_parameter< int >::type m(mSEXP );
-        IntegerVector __result = modulo_floor(n, m);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< IntegerVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    __result = Rcpp::wrap(modulo_floor(n, m));
+    return __result;
 END_RCPP
 }
 // parabolic_weights_rcpp
-List parabolic_weights_rcpp(int ntap = 1);
+List parabolic_weights_rcpp(int ntap);
 RcppExport SEXP psd_parabolic_weights_rcpp(SEXP ntapSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< int >::type ntap(ntapSEXP );
-        List __result = parabolic_weights_rcpp(ntap);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type ntap(ntapSEXP);
+    __result = Rcpp::wrap(parabolic_weights_rcpp(ntap));
+    return __result;
 END_RCPP
 }
 // resample_fft_rcpp
-List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers, bool verbose = true, bool dbl = true, const int tapcap = 1000);
+List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers, bool verbose, bool dbl, const int tapcap);
 RcppExport SEXP psd_resample_fft_rcpp(SEXP fftzSEXP, SEXP tapersSEXP, SEXP verboseSEXP, SEXP dblSEXP, SEXP tapcapSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< ComplexVector >::type fftz(fftzSEXP );
-        Rcpp::traits::input_parameter< IntegerVector >::type tapers(tapersSEXP );
-        Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP );
-        Rcpp::traits::input_parameter< bool >::type dbl(dblSEXP );
-        Rcpp::traits::input_parameter< const int >::type tapcap(tapcapSEXP );
-        List __result = resample_fft_rcpp(fftz, tapers, verbose, dbl, tapcap);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< ComplexVector >::type fftz(fftzSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type tapers(tapersSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< bool >::type dbl(dblSEXP);
+    Rcpp::traits::input_parameter< const int >::type tapcap(tapcapSEXP);
+    __result = Rcpp::wrap(resample_fft_rcpp(fftz, tapers, verbose, dbl, tapcap));
+    return __result;
 END_RCPP
 }
 // spec_deriv
 NumericVector spec_deriv(NumericVector S, IntegerVector K);
 RcppExport SEXP psd_spec_deriv(SEXP SSEXP, SEXP KSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericVector >::type S(SSEXP );
-        Rcpp::traits::input_parameter< IntegerVector >::type K(KSEXP );
-        NumericVector __result = spec_deriv(S, K);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type S(SSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type K(KSEXP);
+    __result = Rcpp::wrap(spec_deriv(S, K));
+    return __result;
 END_RCPP
 }

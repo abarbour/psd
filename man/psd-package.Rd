@@ -5,10 +5,10 @@
 \alias{psd}
 \alias{psd-package}
 \alias{spec.psd}
-\title{Power spectral density estimates using optimal sine tapers}
+\title{Power spectral density estimates using optimal sine multitapers}
 \description{
-Perform adaptive estimation of the power spectral density (PSD)
-using the sine multitapers in which the number of tapers
+Estimate the power spectral density (PSD)
+of a timeseries using the sine multitapers, adaptively; the number of tapers
 (and hence the resolution and uncertainty) vary according to
 spectral shape. The main function to be used is \code{\link{pspectrum}}.
 }
@@ -19,16 +19,16 @@ attained at the expense of lower frequency resolution.
 The program makes a pilot estimate of the spectrum, then uses
 Riedel and Sidorenko's estimate of the MSE (minimum square error) value,
 which is based on an estimate of the second derivative of the PSD (\eqn{S''}).
-The process is repeated \code{niter}.
-Further iteration may be necessary to reach convergence, or an acceptably low
-spectral variance. Although the term "acceptable" is rather subjective, one can
-usually detect an unconverged state by a rather jagged appearence of the spectrum;
-this is rather uncommon in our experience.
+The process is repeated \code{niter} times; further iteration may be necessary
+to reach convergence, or an acceptably low
+spectral variance.
+In this context the term "acceptable" is rather subjective: one can
+usually detect an unconverged state by a rather jagged appearence of the spectrum,
+but this is uncommon in our experience.
 
 \subsection{Adaptive estimation}{
 The adaptive process used is as follows. A quadratic fit to the logarithm of the
-PSD within an
-adaptively determined frequency band is used to find an estimate of the local second
+PSD within an adaptively determined frequency band is used to find an estimate of the local second
 derivative of the spectrum. This is used in an equation like R-S eq (13) for
 the MSE taper number, with the difference that a parabolic weighting is applied with
 increasing taper order. Because the FFTs of the tapered series can be found by
@@ -51,7 +51,7 @@ how these are computed.
 }
 }
 \author{
-Andrew J. Barbour and Robert L. Parker<andy.barbour@gmail.com>
+Andrew J. Barbour and Robert L. Parker <andy.barbour@gmail.com>
 }
 \references{
 Barbour, A. J. and R. L. Parker, (2014),
