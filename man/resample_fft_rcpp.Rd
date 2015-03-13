@@ -8,7 +8,7 @@ resample_fft_rcpp(fftz, tapers, verbose = TRUE, dbl = TRUE,
   tapcap = 1000L)
 }
 \arguments{
-\item{fftz}{complex; a vector representing the dual-length \code{\link[fftw]{FFT}}; see also \code{dbl}.}
+\item{fftz}{complex; a vector representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument}
 
 \item{tapers}{integer; a vector of tapers}
 

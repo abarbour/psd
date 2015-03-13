@@ -53,7 +53,7 @@
 #' 
 #' @useDynLib psd
 #' @exportPattern "^[[:alpha:]]+"
-#' @import fftw RColorBrewer signal zoo
+#' @import RColorBrewer signal zoo
 #' @importFrom Rcpp evalCpp
 #'
 #'

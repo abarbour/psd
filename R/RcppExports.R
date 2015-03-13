@@ -82,7 +82,7 @@ parabolic_weights_rcpp <- function(ntap = 1L) {
 }
 
 #' @title Resample an fft using varying tapers
-#' @param fftz complex; a vector representing the dual-length \code{\link[fftw]{FFT}}; see also \code{dbl}.
+#' @param fftz complex; a vector representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument
 #' @param tapers integer; a vector of tapers
 #' @param verbose logical; should messages be given?
 #' @param dbl logical; should the code assume \code{fftz} is dual-length or singl-length?

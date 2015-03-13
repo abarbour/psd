@@ -1,10 +1,6 @@
 \documentclass[10pt]{article}
 % !Rnw weave = knitr
-% sweave fig help:
-% http://users.stat.umn.edu/~geyer/Sweave/foo.pdf
-% borrowing design from roxygen -- AJB Jan 13
-
-%% \VignetteIndexEntry{Normalization of power spectral density estimates.}
+%% \VignetteIndexEntry{Normalization of power spectral density estimates}
 %% \VignetteEngine{knitr}
 
 \usepackage[T1]{fontenc}
@@ -21,15 +17,14 @@
 \usepackage{natbib}
 \usepackage{geometry}
 \usepackage{hyperref}
-%\usepackage{units}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
-%captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
-%
 \usepackage{color}
-%%
+%
+%
 \input{supp_mathsyms}
-%%
+%
+%
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
@@ -38,21 +33,13 @@
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
-%% path, filename, caption, label
-\newcommand{\listing}[4]{        %
-  \begin{figure}[H]              %
-    \centering                   %
-    \VerbatimInput[numbers=left, %
-      frame=single,              %
-      label=#2]{#1}              %
-    \caption{#3}                 %
-    \label{#4}                   %
-  \end{figure}                   %
-}
+%
+\title{Normalization of Power Spectral Density estimates}
 \author{Andrew J. Barbour and Robert L. Parker}
-\title{Normalization of Power Spectral Density estimates.}
+%
 \begin{document}
 \maketitle
+%
 \begin{abstract}
   A vast and deep pool of
   literature exists on the subject of spectral 
@@ -74,7 +61,9 @@
   the spectrum estimator included in the base distribution of
   R: \Rcmd{stats::spectrum}.
 \end{abstract}
+
 \tableofcontents
+
 %%
 %%
 %%

@@ -1,6 +1,6 @@
 \documentclass[11pt]{article}
 % !Rnw weave = knitr
-%% \VignetteIndexEntry{DFT benchmarks: fft vs FFT.}
+%% \VignetteIndexEntry{DFT benchmarks: fft vs FFT}
 %% \VignetteEngine{knitr}
 
 \usepackage[T1]{fontenc}
