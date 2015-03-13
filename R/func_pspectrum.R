@@ -185,11 +185,3 @@ pspectrum_basic <- function(x, ntap.init=7, niter=5, plot=TRUE, verbose=TRUE, ..
   return(P)
 }
 
-.TEST <- function(){
-  psdcb <- pspectrum_basic(magnet$clean)
-  try({
-    psdc <- pspectrum(magnet$clean)
-    plot(psdcb)
-    lines(psdc, col='red')
-  })
-}

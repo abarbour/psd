@@ -42,11 +42,8 @@ vignettes/.knitr*
 vignettes/.knitr2*
 vignettes/.sweave*
 vignettes/Rplots.pdf
-vignettes/fftw.pdf
 vignettes/fftw.tex
-vignettes/normalization.pdf
 vignettes/normalization.tex
-vignettes/psd_overview.pdf
 vignettes/psd_overview.tex
 vignettes/*.ilg
 vignettes/*.out

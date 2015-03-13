@@ -11,9 +11,9 @@
 \usage{
 \method{ctap_simple_rcpp}{default}(tapvec, maxslope = 1L)
 
-ctap_simple_rcpp(tapvec, ...)
+ctap_simple_rcpp(tapvec, maxslope = 1L)
 
-\method{ctap_simple_rcpp}{tapers}(tapvec, maxslope = 1L, ...)
+\method{ctap_simple_rcpp}{tapers}(tapvec, maxslope = 1L)
 
 ctap_simple(tapvec, ...)
 

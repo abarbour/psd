@@ -49,11 +49,8 @@
 
 \usepackage{alltt}
 % !Rnw weave = knitr
-%
-%\makeatletter
-%% \VignetteIndexEntry{An overview of psd.}
+%% \VignetteIndexEntry{An overview of psd}
 %% \VignetteEngine{knitr}
-%\makeatother
 %
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -66,7 +63,6 @@
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{amsmath}
-\usepackage{hyperref}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
@@ -84,6 +80,7 @@
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
+
 \begin{abstract}
   This vignette provides an overview of some 
   features included in the package \psd{}, designed to
@@ -118,7 +115,7 @@
 \end{abstract}
 
 \tableofcontents
-\pagebreak
+\clearpage
 
 
 %opts_knit$set(verbose = TRUE)

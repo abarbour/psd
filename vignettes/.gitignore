@@ -1,9 +1,7 @@
 Rplots.pdf
-
-fftw*.tex
-normalization*.tex
-psd_overview*.tex
-
+fftw.tex
+normalization.tex
+psd_overview.tex
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -12,7 +10,6 @@ psd_overview*.tex
 *.fls
 *.out
 *.toc
-
 ## Intermediate documents:
 *.dvi
 # these rules might exclude image files for figures etc.
@@ -20,7 +17,6 @@ psd_overview*.tex
 # *.eps
 # *.pdf
 figure/
-
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
 *.bcf
@@ -28,41 +24,32 @@ figure/
 *-blx.aux
 *-blx.bib
 *.run.xml
-
 ## Build tool auxiliary files:
 *concordance.tex
 *.fdb_latexmk
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
-
 ## Auxiliary and intermediate files from other packages:
-
 # algorithms
 *.alg
 *.loa
-
 # amsthm
 *.thm
-
 # beamer
 *.nav
 *.snm
 *.vrb
-
 # glossaries
 *.acn
 *.acr
 *.glg
 *.glo
 *.gls
-
 # hyperref
 *.brf
-
 # listings
 *.lol
-
 # makeidx
 *.idx
 *.ilg

@@ -17,12 +17,8 @@
 \usepackage{natbib}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
-%\usepackage{fullpage}
-%captions
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
-%
 \usepackage{color}
-%
 %%
 \input{supp_mathsyms}
 %%

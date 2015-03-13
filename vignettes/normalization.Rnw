@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{Normalization of power spectral density estimates}
 %% \VignetteEngine{knitr}
@@ -16,15 +16,12 @@
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{geometry}
-\usepackage{hyperref}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{color}
-%
-%
+%%
 \input{supp_mathsyms}
-%
-%
+%%
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}

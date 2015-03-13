@@ -455,15 +455,15 @@ minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
 ##
 
 #
-# Note that  src/constrain_tapers.cpp  initiates  ctap_simple  documentation
+# Note that  src/constrain_tapers.cpp  initiates  ctap_simple_rcpp  documentation
 #
 #' @rdname ctap_simple
 #' @export
-ctap_simple_rcpp <- function(tapvec, ...) UseMethod("ctap_simple_rcpp")
+ctap_simple_rcpp <- function(tapvec, maxslope=1L) UseMethod("ctap_simple_rcpp")
 
 #' @rdname ctap_simple
 #' @export
-ctap_simple_rcpp.tapers <- function(tapvec, maxslope=1L, ...){
+ctap_simple_rcpp.tapers <- function(tapvec, maxslope=1L){
   # c++ code used for speed up of forward+backward operations
   tapvec.adj <- ctap_simple_rcpp(as.integer(tapvec), maxslope=maxslope)
   return(as.tapers(tapvec.adj))

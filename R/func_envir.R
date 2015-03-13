@@ -199,12 +199,16 @@ update_adapt_history <- function(PSD, stage, ...) UseMethod("update_adapt_histor
 #' @rdname psd-environment
 #' @export
 update_adapt_history.spec <- function(PSD, stage, ...){
-  update_adapt_history(PSD[['spec']], stage, as.tapers(PSD[['taper']]), PSD[['freq']], ...)
+  p. <- PSD[['spec']]
+  s. <- stage
+  t. <- as.tapers(PSD[['taper']])
+  f. <- PSD[['freq']]
+  update_adapt_history(p., s., t., f., ...)
 }
 
 #' @rdname psd-environment
 #' @export
-update_adapt_history.default <- function(PSD, stage, ntap=NA, freq=NULL){
+update_adapt_history.default <- function(PSD, stage, ntap=NA, freq=NULL, ...){
   stopifnot(stage >= 0)
   histlist <- get_adapt_history()
   # stage == 0 <--> index == 1

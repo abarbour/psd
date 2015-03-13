@@ -10,7 +10,7 @@
 \newcommand{\citation}{\href{http://dx.doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
-\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \href{https://travis-ci.org/abarbour/psd}{Travis-CI}}
+\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \href{https://travis-ci.org/abarbour/psd}{Travis}}
 
 \encoding{UTF-8}
 
@@ -24,7 +24,7 @@
 %
 % 0.5 -- the era of clean code and Rcpp goodness begins
 %
-\section{CHANGES IN \psd{} VERSION 0.5-0 (2015-02-18)}{
+\section{CHANGES IN \psd{} VERSION 0.5-0 (2015-03-12)}{
   \itemize{
     
     \item This is a major version bump that addresses performance issues by
@@ -81,7 +81,7 @@
   \itemize{
   	\item We have published a paper in Computers & Geosciences regarding
 	\psd{}, and the citation is up to date: \code{citation('psd')}
-	If you cannot access the publication (\citaton{}), 
+	If you cannot access the publication (\citation{}), 
 	contact Andy for a reprint.
   	\item Fixed an example which was causing CRAN-buildcheck errors.
 	\item Fixed a small error in the normalization vignette -- thanks 
