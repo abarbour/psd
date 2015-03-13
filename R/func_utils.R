@@ -51,7 +51,7 @@ varddiff.default <- function(x) vardiff(x, double.diff=TRUE)
 #' Decibels are defined as \eqn{10 \log{}_{10} \frac{X_1}{X_2}}, 
 #' unless \code{is.power=TRUE} in which \eqn{\mathrm{db} X^2 \equiv 20 \log{}_{10} X^2}
 #' @rdname psd-utilities
-#' @param Rat numeric; A ratio to convert to decibels (\code{dB}).
+#' @param Rat numeric; the values -- ratios -- to convert to decibels (\code{dB}).
 #' @param invert logical; assumes \code{Rat} is already in decibels, so return ratio
 #' @param pos.only logical; if \code{invert=FALSE}, sets negative or zero values to NA
 #' @param is.power logical; should the factor of 2 be included in the decibel calculation?
@@ -60,12 +60,11 @@ varddiff.default <- function(x) vardiff(x, double.diff=TRUE)
 dB <- function(Rat, invert=FALSE, pos.only=TRUE, is.power=FALSE){
   CC <- ifelse(is.power, 20, 10)
   if (invert) {
-    toret <- 10 ** (Rat/CC)
+    10 ** (Rat/CC)
   } else {
     if (pos.only) Rat[Rat <= 0] <- NA
-    toret <- CC * log10(Rat)
+    CC * log10(Rat)
   }
-  return(toret)
 }
 
 #' @description \code{vector_reshape} reshapes a vector into another vector.

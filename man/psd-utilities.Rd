@@ -53,7 +53,7 @@ mod(X, Y)
 
 \item{double.diff}{logical; should the double difference be used instead?}
 
-\item{Rat}{numeric; A ratio to convert to decibels (\code{dB}).}
+\item{Rat}{numeric; the values -- ratios -- to convert to decibels (\code{dB}).}
 
 \item{invert}{logical; assumes \code{Rat} is already in decibels, so return ratio}
 

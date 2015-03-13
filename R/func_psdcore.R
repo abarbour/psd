@@ -81,10 +81,8 @@ psdcore.default <- function(X.d,
                             ndecimate,
                             ...
                            ) {
-  if (!missing(ndecimate)){
-    # force a warning if the user wanted to use decimation, which is no longer supported
-    warning('Support for decimation has been removed.')
-  }
+  
+  if (!missing(ndecimate)) warning('Support for decimation has been removed.')
   
   # get a clean environment
   if (refresh) psd_envRefresh(verbose=verbose)
@@ -98,6 +96,7 @@ psdcore.default <- function(X.d,
     if (verbose) message("\tsampling frequency assumed to be  ", X.frq)
   } 
   
+  ## Convert to ts object
   X.d <- if (X.frq > 0){
     # value represents sampling frequency
     na.action(stats::ts(X.d, frequency=X.frq))
@@ -112,22 +111,24 @@ psdcore.default <- function(X.d,
   X.frq <- stats::frequency(X.d)
   Nyq <- X.frq/2
   len_tapseq <- length(ntaper)
+  single.taper.arg <- len_tapseq == 1
   #  only one variable in the env (init) means it hasn't been added to yet
-  nenvar <- length(psd_envStatus()[['listing']])
+  is.fresh <- length(psd_envStatus()[['listing']]) == 1
   
   ops <- getOption("psd.ops")
   stopifnot(!is.null(ops))
   evars <- ops[['names']]
   
-  # initialize fft and other things, since this usually means a first run
-  fftz <- if ( len_tapseq == 1 | nenvar == 1 | refresh ){
-    
-    # original series length
+  ### Return complex fft, and initialize other things as necessary
+  fftz <- if ( single.taper.arg | is.fresh | refresh ){
+    #
+    # initialize fft and other things, since this usually means a first run
+    #
+    # original series
     n.o <- psd_envAssignGet(evars[['n.orig']], length(X.d))
-    
     X <- psd_envAssignGet(evars[['series.orig']], {
       if (preproc){
-        # option for fast-detrend only [ ]
+        # TODO: option for fast-detrend only, assign preproc flag in env (for plotting later)
         prewhiten(X.d, AR.max=0L, detrend=TRUE, plot=FALSE, verbose=verbose)$prew_lm
       } else {
         X.d
@@ -135,7 +136,6 @@ psdcore.default <- function(X.d,
     })
     
     # Force series to be even in length (modulo division)
-    #
     n.e <- psd_envAssignGet(evars[['n.even']], modulo_floor(n.o))
     even_seq <- seq_len(n.e)
     X.even <- psd_envAssignGet(evars[['series.even']], as.matrix(X[even_seq]))
@@ -157,34 +157,32 @@ psdcore.default <- function(X.d,
       }
     })
     
-    ## zero pad and take double-length fft (fftw is faster for very long series)
-    padded <- as.numeric(c(X.even, zeros(n.e)))
-    # option to switch on or off fftw usage -- turning this off until fftw is reliably built
-    #use.fftw <- getOption('psd.ops')[['use.fftw']]
-    #ifelse(has.fftw & use.fftw, fftw::FFT, stats::fft)
-    FFTFUN <- stats::fft
-    padded.fft <- psd_envAssignGet(evars[['fft.padded']], FFTFUN(padded))
+    ## zero pad and take double-length fft
+    padded <- as.numeric(c(X.even, rep.int(0, n.e)))
+    # Note fftw is faster for very long series but we are
+    # using stats::fft until fftw is reliably built on CRAN
+    padded.fft <- psd_envAssignGet(evars[['fft.padded']], stats::fft(padded))
     
+    # return the fft
     psd_envAssignGet(evars[['fft']], padded.fft)
   
   } else {
     
     if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
     
-    X <- X.d
+    X <- psd_envGet(evars[['series.even']]) #X.d
     kseq <- ntaper
     n.e <- psd_envGet(evars[['n.even']])
     nhalf <- psd_envGet(evars[['n.even.half']])
     varx <- psd_envGet(evars[['var.even']])
     
+    # return the original fft
     psd_envGet(evars[['fft']])
     
   }
   
-  # TODO: if ntaper is a vector, this doesn't work [ ] ?
-  
-  # Switch: multitaper if TRUE, periodogram if FALSE
-  DOMT <- if (len_tapseq == 1){
+  ### Switch: multitaper if TRUE, periodogram if FALSE
+  do.mt <- if (single.taper.arg){
     ifelse(ntaper > 0, TRUE, FALSE)
   } else {
     ifelse(all(kseq > 0), TRUE, FALSE)
@@ -196,15 +194,16 @@ psdcore.default <- function(X.d,
   
   ###  Calculate the PSD by averaging over tapered estimates  
   PSD <- psd_envAssignGet(evars[["last.psdcore"]], {
-    if (DOMT){
+    if (do.mt){
       if (verbose) message("\testimating multitaper psd")
       
       ## resample fft with taper sequence and quadratic weighting
-      kseq <- as.integer(as.tapers(kseq, setspan=TRUE))
       #    this is where the majority of the work goes on:
+      kseq <- as.integer(kseq) 
       reff <- try(resample_fft_rcpp(fftz, kseq, verbose=verbose))
       # ^^ TODO: figure out why we're getting infinite values, which is causing hickups downstream
 
+      # return a valid resampled fft or stop
 	    if (inherits(reff,'try-error')){
       	stop("Could not resample fft... inspect with psd_envGet(",evars[['fft']],"), etc.")
       } else {
@@ -214,13 +213,14 @@ psdcore.default <- function(X.d,
     } else {
       
       if (verbose) message("raw periodogram")
+      
       Xfft <- psd_envGet(evars[['fft']])
       ff <- Xfft[seq_len(nfreq)]
-      N0. <- psd_envGet(evars[['n.orig']])
-      # 
+      N0. <- psd_envGet(evars[['n.even']])
+      
       # if the user wants it, then by all means
       # ... but force a warning on them
-      warning("Careful with these zero-taper results!")
+      warning("Careful interpreting raw-periodogram results!")
       base::abs(ff * base::Conj(ff)) / N0.
       
     }
@@ -236,7 +236,7 @@ psdcore.default <- function(X.d,
   
   # TODO: check this:
   if (any(nonfin)){
-    warning("infinite psd estimates?!")
+    warning("non-finite psd estimates?!")
     PSD <- replace(PSD, nonfin, NA)
   }
   
@@ -244,20 +244,29 @@ psdcore.default <- function(X.d,
   #first point is bogus -- but sometimes so to is
   # the last point(s) <-- FIX THIS!
   #
-  PSD[1] <- mean(PSD[c(2,npsd)], na.rm=TRUE)
+  #PSD[1] <- mean(PSD[c(2,npsd)], na.rm=TRUE)
   
-  psd_envAssignGet(evars[['last.psdcore.extrap']], {
-    zoo::na.locf(zoo::na.locf(PSD, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE)
-    })
+  print(PSD[c(1:2,(npsd-1):npsd)])
+  print(dB(range(PSD)))
+  
+  # extrapolate NAs
+  pNAs <- is.na(PSD)
+  if (any(pNAs)){
+    warning("NA psd estimates?!")
+    print(which(pNAs))
+    PSD <- psd_envAssignGet(evars[['last.psdcore.extrap']], {
+      zoo::na.locf(zoo::na.locf(PSD, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE)
+      })
+  }
   
   ## Nyquist frequencies
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
   
   ## Update tapers for consistency
-  kseq <- as.tapers(if (DOMT){	
+  kseq <- as.tapers(if (do.mt){	
   	reff[['k.capped']]
   } else{ 
-  	kseq[-length(PSD)] # will be one longer
+  	kseq #[-length(PSD)] # will be one longer -- why??
   })
 
   ## Normalize and convert to one-sided spectrum
@@ -267,8 +276,9 @@ psdcore.default <- function(X.d,
   # should equal the variance of the original series, but this was hiccuping thanks to
   # the bug producing silly values at zero-frequency and a naive integration scheme
   #
+  print(dB(range(PSD)))
   PSD <- 2 * PSD * varx / (trap.area / nhalf)
-  #PSD <- 2 * PSD / nhalf 
+  print(dB(range(PSD)))
   #
   area.var.ratio <- varx * nhalf / trap.area
   if (verbose) message("\tarea to variance ratio: ", signif(dB(area.var.ratio)))

@@ -118,7 +118,7 @@ List parabolic_weights_rcpp(int ntap = 1) {
 //' @export
 // [[Rcpp::export]]
 List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers, 
-  bool verbose = true, bool dbl = true, const int tapcap=1000 ) {
+  bool verbose = true, const bool dbl = true, const int tapcap=1000 ) {
   
   //
   // resample and reweight an fft estimates for a given number of tapers
@@ -139,7 +139,6 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   double wi;
   Rcomplex fdc;
   List bw;
-  //bool isinf;
   
   if (dbl){
     // double-length fft estimates assumed by default
@@ -184,9 +183,10 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   // Calculate the psd by averaging over tapered estimates
   //
 
-  NumericVector K(nfreq), absdiff(nfreq), psd(nfreq);
+  int lenfinal = nfreq - 1;
+  NumericVector K(lenfinal), absdiff(lenfinal), psd(lenfinal);
   
-  for (int j = 0; j < nfreq; j++) {
+  for (int j = 0; j < lenfinal; j++) {
     
     m = Freqs[j];
     m2 = 2*m;
@@ -238,7 +238,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
     cpsd[0] = sum(psdprod);
     
     if (any(is_infinite(cpsd))){
-      Rf_warning("infinite psd!?");
+      warning("infinite psd!?");
       cpsd[0] = 0.;
     }
     psd[j] = cpsd[0];

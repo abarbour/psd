@@ -81,8 +81,8 @@ riedsid.default <- function(PSD, ntaper = 1L,
   # num freqs
   nf <- psd_envAssignGet("num_freqs", length(PSD))
   # prelims
+  #  A small number to protect against zeros
   eps <- 1e-78 
-  # .Machine$double.eps #  A small number to protect against zeros
   # vectorize initial estimate
   Zeros <- zeros(nf)
   nt <- length(ntaper)
@@ -198,12 +198,16 @@ riedsid2.spec <- function(PSD, ...){
 #' @rdname riedsid
 #' @export
 riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...){
+  
   PSD <- as.vector(PSD)
   ntaper <- as.vector(ntaper)
+  
+  #  A small number to protect against zeros
   eps <- 1e-78
   nf <- length(PSD)
   nt <- length(ntaper)
   if (nt == 1) ntaper <- rep(ntaper, nf)
+  # some constraints
   nspan <- ceiling( pmin( nf/2, 7*ntaper/5 ) )
   nadd <- 1 + max(nspan)
   # Create log psd, and pad to handle beginning and end values
@@ -214,25 +218,31 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
   DFUN <- function(j){
     j1 <- j - nspan[j] + nadd - 1
     j2 <- j + nspan[j] + nadd - 1
-    u <- j1:j2 - (j1 + j2)/2
+    jseq <- j1:j2
+    u <- jseq - (j1 + j2)/2
     L <- j2 - j1 + 1
     CC <- 12
     #
     uzero <- (L^2 - 1)/CC
     #
     # first deriv
-    dY <- u  %*%  Y[j1:j2] * CC / (L*(L*L - 1))
+    dY <- u  %*%  Y[jseq] * CC / (L*(L*L - 1))
     # second deriv
-    d2Y <- (u*u - uzero)  %*%  Y[j1:j2] * 360 / (L*(L^2 - 1)*(L^2 - 4))
+    d2Y <- (u*u - uzero)  %*%  Y[jseq] * 360 / (L*(L^2 - 1)*(L^2 - 4))
     #
     return(c(eps=eps, d2Y=d2Y, dYsq=dY*dY))
   }
+  # Calculate derivatives and optimal tapers
   yders <- vapply(X=seq_len(nf), FUN=DFUN, FUN.VALUE=c(1,1,1))
-  kopt <- round(480**0.2 / abs(colSums(yders))**0.4)
-  if (constrained){
-    tapcap <- getOption("psd.ops")[['tapcap']]
-    kopt <- constrain_tapers(tapvec = kopt, verbose = verbose, ...)
-    kopt <- replace(kopt, kopt > tapcap, tapcap)
+  sc <- ifelse(TRUE, 473.3736, 480)
+  kopt <- round( sc**0.2 / abs(colSums(yders))**0.4 )
+  
+  print(c("RS", head(kopt), tail(kopt)))
+  kopt <- if (constrained){
+    constrain_tapers(tapvec = kopt, verbose = verbose, ...)
+  } else {
+    as.tapers(kopt)
   }
-  return(as.tapers(kopt))
+  print(c("RS-c", head(kopt), tail(kopt)))
+  return(kopt)
 }

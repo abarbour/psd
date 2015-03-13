@@ -68,7 +68,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
   iter_stages <- 0:niter
   
   # absolute limit
-  tapcap <- getOption("psd.ops")[['tapcap']]
+  #tapcap <- getOption("psd.ops")[['tapcap']]
   
   # retain history
   save_hist <- ifelse((niter < 10) & !no.history, TRUE, FALSE)
@@ -79,21 +79,17 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
   for (stage in iter_stages){
     
     if (stage==0){
-      
       if (verbose) adapt_message(stage)
       if (niter==0 & plot) plotpsd_ <- TRUE
-      
       # --- setup the environment ---
       psd_envRefresh(verbose=verbose)
-      
+
       # --- pilot spec ---
       # ** normalization is here:
-      ##
       Pspec <- pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
                           remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
       kopt <- Pspec[['taper']]
-      #plot(kopt, type='l', log='y', ylim=c(1,1000))
-           
+      
       # ensure series is in the environment
       psd_envAssign("original_pspectrum_series", x)
       
@@ -110,14 +106,12 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       
     } else {
       
-      # enforce silence once the adapting gets going
+      # enforce silence in the subfunctions once the adapting gets going
       rverb <- ifelse(stage > 0, FALSE, TRUE)
       
+      if (verbose) message('Ried-Sid optimization')
       ## calculate optimal tapers
       kopt <- riedsid2(Pspec, verbose=rverb, ...)
-      kopt[kopt > tapcap] <- tapcap
-      
-      #lines(kopt, col=stage + 1, lty=2)
       
       # get data back for plotting, etc.
       if (stage==niter){
@@ -128,15 +122,20 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       }
   
       # update spectrum with new tapers
+      # TODO: here's why preproc flags are wrong
       Pspec <- psdcore(X.d=x, X.frq=x.frqsamp, ntaper=kopt, 
-                       preproc=FALSE, plotpsd=plotpsd_, verbose=rverb) # here's why preproc flags are wrong
+                       preproc=FALSE, plotpsd=plotpsd_, verbose=rverb) 
       
-      if (verbose) if (verbose) adapt_message(stage, varddiff(Pspec)/dvar.o)
+      print(c(length(kopt), " --(",length(x),")--> ", length(Pspec$taper)))
+      # show spectral variance reduction
+      if (verbose) adapt_message(stage, varddiff(Pspec)/dvar.o)
       
       ## update history
       if (save_hist) update_adapt_history(Pspec, stage)
       
     }
+    print(c("PS-spec",round(c(head(Pspec$spec, 5),tail(Pspec$spec, 5)),1)))
+    print(c("PS-taps",round(c(head(Pspec$taper, 5),tail(Pspec$taper, 5)),1)))
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, src="psd", verbose=verbose)
   return(invisible(psd_envAssignGet("final_psd", Pspec)))
@@ -162,14 +161,12 @@ adapt_message <- function(stage, dvar=NULL){
 
 #' @rdname pspectrum
 #' @export
-pspectrum_basic <- function(x, ntap.init=7, niter=5, plot=TRUE, verbose=TRUE, ...){
+pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
   
   if (verbose) adapt_message(0)
   P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, first.last=FALSE, refresh=TRUE)
   ko <- P[['taper']]
   nf <- length(ko)
-  
-  if (plot) plot(ko, type='l', log='y', ylim=c(1,100*ntap.init), main=paste0("Kopt\ninitial tapers: ", ntap.init, ", iterations:", niter))
   
   # Iterate on optimal tapers, and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
@@ -179,8 +176,6 @@ pspectrum_basic <- function(x, ntap.init=7, niter=5, plot=TRUE, verbose=TRUE, ..
     ko <- riedsid2(P, ko, verbose=FALSE)
     # update spectrum
     P  <- psdcore(x, ntaper=ko, preproc = FALSE, first.last=FALSE)
-    # plot
-    if (plot) lines(ko, col=iter+1, lwd=2)
   }
   return(P)
 }

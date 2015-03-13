@@ -73,20 +73,19 @@ IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1) {
   
   bool state = true;
   IntegerVector koptc(clone(tapvec));
-  int ssize = tapvec.size(), i, im, k_prev, k_curr, k_repl, slope; //, k_orig;
-  
-  //Rcout << "\nsize " << ssize << " max-slp " << maxslope << "\n\n";
+  const int ssize = tapvec.size();
+  int lasti = ssize - 1;
+  int i, im, k_prev, k_curr, k_repl, slope;
   
   //  Scan FORWARD and create new series where slopes <= 1
   state = true;
-  for (i = 1; i < ssize; i++){
+  // orig: 2:nf
+  for (i = 1; i <= lasti; i++){
     im = i - 1;
-    //k_orig = tapvec[ im ];
     k_prev = koptc[ im ];
     k_curr = koptc[ i ];
     k_repl = k_prev + maxslope;
     slope = k_curr - k_prev;
-    //Rcout << "F -- i " << i << "\ti - 1: " << im << "\tk_orig: " << k_orig << "\tk_prev: " << k_prev << "\tk_curr: " << k_curr << "\tslope: " << slope << "\tk_repl " << k_repl << "\tstate " << state << "\n";
     if (state){
       if (slope >= maxslope){
         koptc[ i ] = k_repl;
@@ -100,19 +99,15 @@ IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1) {
       }
     }
   }
-  //
-  //Rcout << "\n";
-  //
   // scan BACKWARDS to bound slopes >= -1
   state = true;
-  for (i = ssize - 1; i >= 1; i--){
+  //  orig: nf:-1:2
+  for (i = lasti; i >= 1; i--){
     im = i - 1;
-    //k_orig = tapvec[ im ];
     k_prev = koptc[ i ];
     k_curr = koptc[ im ];
     k_repl = k_prev + maxslope;
     slope = k_curr - k_prev;
-    //Rcout << "R -- i " << i << "\ti - 1: " << im << "\tk_orig: " << k_orig << "\tk_prev: " << k_prev << "\tk_curr: " << k_curr << "\tslope: " << slope << "\tk_repl " << k_repl << "\tstate " << state << "\n";
     if (state){
       if (slope >= maxslope){
         koptc[ im ] = k_repl;
@@ -127,5 +122,37 @@ IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1) {
     }
   }
   
+  // never let the the number of tapers be
+  //  - less than one, or 
+  //  - greater than the length of the series
+  koptc = pmin(pmax(koptc, 1), ssize);
+  
   return koptc;
 }
+
+// [[Rcpp::export]]
+IntegerVector test_sample_indices( IntegerVector x ) {
+  int ssize = x.size();
+  IntegerVector outv(4);
+  outv[0] = x[0];
+  outv[1] = x[1];
+  outv[2] = x[ssize - 1];
+  outv[3] = x[ssize];
+  return outv;
+}
+  
+/*** R
+
+test_sample_indices(1:10)
+
+taps <- c(100,rep(1,10),100,-1)
+#matplot(t(rbind(taps, ctap_simple_rcpp(taps))), type='b')
+
+taps <- c(100,rep(1,10),0,-1)
+#matplot(t(rbind(taps, ctap_simple_rcpp(taps))), type='b')
+
+taps <- c(100,round(runif(10,2,10)),0,-1)
+#matplot(t(rbind(taps, ctap_simple_rcpp(taps))), type='b')
+
+*/
+

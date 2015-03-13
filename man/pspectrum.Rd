@@ -21,8 +21,7 @@ pspectrum(x, ...)
 
 adapt_message(stage, dvar = NULL)
 
-pspectrum_basic(x, ntap.init = 7, niter = 5, plot = TRUE,
-  verbose = TRUE, ...)
+pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{vector; series to estimate PSD for.}

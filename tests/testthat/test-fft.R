@@ -2,7 +2,7 @@
 context("Discrete Fourier Transform calculations")
 
 library(stats)
-stopifnot(require(fftw))
+if (!require(fftw)) stop('Please install the fftw package to complete tests.')
 
 n. <- 10
 x. <- seq_len(n.)

@@ -18,6 +18,17 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// test_sample_indices
+IntegerVector test_sample_indices(IntegerVector x);
+RcppExport SEXP psd_test_sample_indices(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
+    __result = Rcpp::wrap(test_sample_indices(x));
+    return __result;
+END_RCPP
+}
 // modulo_floor
 IntegerVector modulo_floor(IntegerVector n, int m);
 RcppExport SEXP psd_modulo_floor(SEXP nSEXP, SEXP mSEXP) {
@@ -42,7 +53,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // resample_fft_rcpp
-List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers, bool verbose, bool dbl, const int tapcap);
+List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers, bool verbose, const bool dbl, const int tapcap);
 RcppExport SEXP psd_resample_fft_rcpp(SEXP fftzSEXP, SEXP tapersSEXP, SEXP verboseSEXP, SEXP dblSEXP, SEXP tapcapSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -50,7 +61,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< ComplexVector >::type fftz(fftzSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type tapers(tapersSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< bool >::type dbl(dblSEXP);
+    Rcpp::traits::input_parameter< const bool >::type dbl(dblSEXP);
     Rcpp::traits::input_parameter< const int >::type tapcap(tapcapSEXP);
     __result = Rcpp::wrap(resample_fft_rcpp(fftz, tapers, verbose, dbl, tapcap));
     return __result;

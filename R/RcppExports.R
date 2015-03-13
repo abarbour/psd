@@ -42,6 +42,10 @@ ctap_simple_rcpp.default <- function(tapvec, maxslope = 1L) {
     .Call('psd_ctap_simple_rcpp', PACKAGE = 'psd', tapvec, maxslope)
 }
 
+test_sample_indices <- function(x) {
+    .Call('psd_test_sample_indices', PACKAGE = 'psd', x)
+}
+
 #' @title Nearest value below
 #' @export
 #' @description 

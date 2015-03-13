@@ -64,28 +64,27 @@
 as.tapers <- function(x, min_taper=1, max_taper=NULL, setspan=FALSE, record.last=FALSE){
   # taper should be non-zero integer, since it represents the
   # number of tapered sections to average; hence, floor.
-  # pmin/pmax.int are fast versions of
   x <- as.vector(unlist(x))
   stopifnot(!is.character(x))
   record <- 'last_as_tapers'
   if (record.last) psd_envAssign(record, x)
   
   # TODO: set na.rm until we are sure resample_fft_rcpp returns only finite values
-  if (is.null(max_taper)) max_taper <- ceiling(max(x, na.rm=TRUE))
-  if (!(min_taper*max_taper >= 1  &  max_taper >= min_taper)) stop('Bad taper limits:\tmin ', min_taper, "\tmax ", max_taper)
+  if (is.null(max_taper)) max_taper <- floor(max(x, na.rm=TRUE))
+  if (!(min_taper*max_taper >= 1  &  max_taper >= min_taper)){
+    stop('Bad taper limits:\tmin ', min_taper, "\tmax ", max_taper)
+  }
   #
   x <- as.integer( pmin.int(max_taper, pmax.int(min_taper, round(x), na.rm=TRUE), na.rm=TRUE) )
-  class(x) <- "tapers"
-  
   attr(x, 'last_recorded') <- ifelse(record.last, record, NA)
-  attr(x, "n_taper_limits") <- c(min_taper, max_taper)
+  attr(x, "n_taper_limits_orig") <- c(min_taper, max_taper)
   attr(x, "taper_positions") <- NA
   #
   if (setspan) x <- minspan(x)
-  #
   attr(x, "span_was_set") <- setspan
-  # TODO: why set twice?
-  attr(x, "n_taper_limits_orig") <- c(min_taper, max_taper)
+  attr(x, "n_taper_limits") <- range(x, na.rm=TRUE)
+  #
+  class(x) <- "tapers"
   #
   return(x)
 }
@@ -419,7 +418,7 @@ constrain_tapers.default <- function(tapvec, tapseq=NULL,
       stop('no constraint function available')
     }
   }
-  # tapers, limit range
+  # tapers, limit range with minspan
   return(as.tapers(tapvec.adj, setspan=TRUE))
 }
 
@@ -459,13 +458,15 @@ minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
 #
 #' @rdname ctap_simple
 #' @export
-ctap_simple_rcpp <- function(tapvec, maxslope=1L) UseMethod("ctap_simple_rcpp")
+ctap_simple_rcpp <- function(tapvec, ...) UseMethod("ctap_simple_rcpp")
 
 #' @rdname ctap_simple
 #' @export
-ctap_simple_rcpp.tapers <- function(tapvec, maxslope=1L){
+ctap_simple_rcpp.tapers <- function(tapvec, maxslope=1L, ...){
   # c++ code used for speed up of forward+backward operations
-  tapvec.adj <- ctap_simple_rcpp(as.integer(tapvec), maxslope=maxslope)
+  tapvec <- as.integer(tapvec)
+  maxslope <- as.integer(maxslope)
+  tapvec.adj <- ctap_simple_rcpp(tapvec, maxslope)
   return(as.tapers(tapvec.adj))
 }
 
