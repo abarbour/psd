@@ -240,24 +240,19 @@ psdcore.default <- function(X.d,
     PSD <- replace(PSD, nonfin, NA)
   }
   
-  #
-  #first point is bogus -- but sometimes so to is
-  # the last point(s) <-- FIX THIS!
-  #
+  # spec.pgram does this for some reason:
   #PSD[1] <- mean(PSD[c(2,npsd)], na.rm=TRUE)
-  
-  print(PSD[c(1:2,(npsd-1):npsd)])
-  print(dB(range(PSD)))
   
   # extrapolate NAs
   pNAs <- is.na(PSD)
-  if (any(pNAs)){
-    warning("NA psd estimates?!")
-    print(which(pNAs))
-    PSD <- psd_envAssignGet(evars[['last.psdcore.extrap']], {
+  PSD <- psd_envAssignGet(evars[['last.psdcore.extrap']], {
+    if (any(pNAs)){
+      warning("NA psd estimates?!")
       zoo::na.locf(zoo::na.locf(PSD, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE)
-      })
-  }
+    } else {
+      PSD
+    }
+  })
   
   ## Nyquist frequencies
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
@@ -266,19 +261,14 @@ psdcore.default <- function(X.d,
   kseq <- as.tapers(if (do.mt){	
   	reff[['k.capped']]
   } else{ 
-  	kseq #[-length(PSD)] # will be one longer -- why??
+  	kseq
   })
 
   ## Normalize and convert to one-sided spectrum
   #
   # we are using the trapezoidal rule, the principal being that the area underneath the spectrum
   trap.area <- base::sum(PSD, na.rm=TRUE) - mean(PSD[c(1,npsd)], na.rm=TRUE)
-  # should equal the variance of the original series, but this was hiccuping thanks to
-  # the bug producing silly values at zero-frequency and a naive integration scheme
-  #
-  print(dB(range(PSD)))
   PSD <- 2 * PSD * varx / (trap.area / nhalf)
-  print(dB(range(PSD)))
   #
   area.var.ratio <- varx * nhalf / trap.area
   if (verbose) message("\tarea to variance ratio: ", signif(dB(area.var.ratio)))

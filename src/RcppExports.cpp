@@ -18,17 +18,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// test_sample_indices
-IntegerVector test_sample_indices(IntegerVector x);
-RcppExport SEXP psd_test_sample_indices(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< IntegerVector >::type x(xSEXP);
-    __result = Rcpp::wrap(test_sample_indices(x));
-    return __result;
-END_RCPP
-}
 // modulo_floor
 IntegerVector modulo_floor(IntegerVector n, int m);
 RcppExport SEXP psd_modulo_floor(SEXP nSEXP, SEXP mSEXP) {

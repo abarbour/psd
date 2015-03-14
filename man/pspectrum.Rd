@@ -24,15 +24,16 @@ adapt_message(stage, dvar = NULL)
 pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{vector; series to estimate PSD for.}
+\item{x}{vector; series to find PSD estimates for}
 
 \item{...}{Optional parameters passed to \code{\link{riedsid}}}
 
 \item{x.frqsamp}{scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.}
 
-\item{ntap.init}{scalar; the number of sine tapers to use in the pilot spectrum estimation.}
+\item{ntap.init}{scalar; the number of sine tapers to use in the pilot spectrum estimation; if \code{NULL} then the
+default in \code{\link{pilot_spec}} is used.}
 
-\item{niter}{scalar; the number of adaptive iterations to execute after the pilot spectrum.}
+\item{niter}{scalar; the number of adaptive iterations to execute after the pilot spectrum is estimated.}
 
 \item{AR}{logical; should the effects of an AR model be removed from the pilot spectrum?}
 
@@ -145,10 +146,4 @@ A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.
 \seealso{
 \code{\link{psdcore}}, \code{\link{pilot_spec}}, \code{\link{riedsid}}, \code{\link{prewhiten}}
 }
-\keyword{numerical-derivative}
-\keyword{riedel-sidorenko}
-\keyword{spectrum-estimation}
-\keyword{tapers}
-\keyword{tapers-constraints}
-\keyword{tapers-weighting}
 

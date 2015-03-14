@@ -69,7 +69,7 @@ IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1) {
   // preventing greedy averaging.
   //
   
-  if (maxslope < 0) Rf_error( "max slope cannot be less than zero" );
+  if (maxslope < 0) stop( "max slope cannot be less than zero" );
   
   bool state = true;
   IntegerVector koptc(clone(tapvec));
@@ -130,20 +130,22 @@ IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope = 1) {
   return koptc;
 }
 
-// [[Rcpp::export]]
-IntegerVector test_sample_indices( IntegerVector x ) {
-  int ssize = x.size();
-  IntegerVector outv(4);
-  outv[0] = x[0];
-  outv[1] = x[1];
-  outv[2] = x[ssize - 1];
-  outv[3] = x[ssize];
-  return outv;
-}
+//IntegerVector test_sample_indices( IntegerVector x ) {
+//  int ssize = x.size();
+//  IntegerVector outv(4);
+//  outv[0] = x[0];
+//  outv[1] = x[1];
+//  outv[2] = x[ssize - 1];
+//  outv[3] = x[ssize];
+//  return outv;
+//}
   
 /*** R
 
-test_sample_indices(1:10)
+ctap_simple_rcpp.default(1:10, 0)
+ctap_simple_rcpp.default(1:10, -1)
+
+#test_sample_indices(1:10)
 
 taps <- c(100,rep(1,10),100,-1)
 #matplot(t(rbind(taps, ctap_simple_rcpp(taps))), type='b')

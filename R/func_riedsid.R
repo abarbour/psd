@@ -237,12 +237,10 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
   sc <- ifelse(TRUE, 473.3736, 480)
   kopt <- round( sc**0.2 / abs(colSums(yders))**0.4 )
   
-  print(c("RS", head(kopt), tail(kopt)))
   kopt <- if (constrained){
     constrain_tapers(tapvec = kopt, verbose = verbose, ...)
   } else {
     as.tapers(kopt)
   }
-  print(c("RS-c", head(kopt), tail(kopt)))
   return(kopt)
 }

@@ -201,15 +201,15 @@ The PSD of the clean series shows a
 very ``red" spectrum typical of geophysical processes \citep{agnew1992},
 and a rolloff in signal
 for 10 kilometer wavelengths and longer; whereas, the 
-PSD for the raw series looks somewhat unrealistic at higher wavelengths--
-features which could be difficult to judge if the spectral variance was higher.
+PSD for the raw series looks somewhat unrealistic at higher wavelengths -- features 
+which could be difficult to judge if the spectral variance was higher.
 
 \begin{figure}[!htbp]
 \begin{center}
 \input{figure/RAWvCLEAN.tex}
 \caption{Power spectral density estimates for the raw and cleaned
-             \Rcmd{Project MAGNET} data bundled with \psd{}. Note that
-             because the class is \Rcmd{'spec'} we have
+             \Rcmd{Project MAGNET} data bundled with \psd{}: see \Rcmd{data(magnet)}. 
+             Note that because the class is \Rcmd{`spec'} we have
              utilized  existing methods in the \Rcmd{stats} namespace.}
 \label{fig:pmag}
 \end{center}
@@ -223,8 +223,7 @@ As we have shown in the Project MAGNET example,
 improved understanding of the physics behind the signals in the data
 is of great concern.
 Assuming a sample is free of non-physical points, how do
-PSD estimates from \psd{}
-compare with other methods?
+PSD estimates from \psd{} compare with other methods?
 Unfortunately the suite of extensions with similar functionality
 is relatively limited, but hopefully we have
 summarized most, if not all, the available functions in Table \ref{tbl:methods}.
@@ -250,21 +249,14 @@ Included in \Rcmd{psdcore} is an option to compare the
 results with a 20\% cosine-tapered periodogram,
 found with the following command:
 \input{figure/Naive_spectrum_estimation.tex}
-Within \Rcmd{psdcore} the comparison is
-made with
-the logical argument \Rcmd{preproc} 
+Within \Rcmd{psdcore} the comparison is made with the logical argument \Rcmd{preproc} 
 passed to \Rcmd{spec.pgram}, which is \SC{True} by default.
 
-As a matter of bookkeeping and good practice, 
-we should consider the working environment
-accessed by \psd{} functions.
-To ensure
-\Rcmd{psdcore} does not access any inappropriate information leftover
-from the previous calculations, we
-can set \Rcmd{refresh=TRUE}.
-We can then
-re-calculate the multitaper PSD and the
-raw periodogram with \Rcmd{plotpsd=TRUE}; these
+As a matter of bookkeeping and good practice, we should consider the working environment
+accessed by \psd{} functions. 
+To ensure \Rcmd{psdcore} does not access any inappropriate information leftover
+from the previous calculations, we can set \Rcmd{refresh=TRUE}; we then 
+re-calculate the multitaper PSD and the raw periodogram with \Rcmd{plotpsd=TRUE}; these
 results are shown in Figure \ref{fig:two}.
 
 \begin{figure}[!htbp]
@@ -284,6 +276,8 @@ of the full autocorrelation function.}
 \end{center}
 \end{figure}
 
+\clearpage
+
 %%
 %% RSEIS
 %%
@@ -292,27 +286,20 @@ of the full autocorrelation function.}
 In \Rcmd{RSEIS} the spectrum estimation tool is \Rcmd{mtapspec}, which
 calls the program of \citet{lees1995}.
 There are numerous optional tuning parameters, including
-flags for
-normalization and taper averaging.  
-For our
-purpose the correct normalization for \Rcmd{mtapspec} is found
-by using
-\Rcmd{MTP=list(kind=2, inorm=3)} and scaling the results by 2 (to convert
+flags for normalization and taper averaging, but 
+for our purpose the correct normalization for \Rcmd{mtapspec} is found
+by using \Rcmd{MTP=list(kind=2, inorm=3)} and scaling the results by 2 (to convert
 double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods:
 \input{figure/Load_RSEIS_package.tex}
 
-Although the 
-default operation of  \Rcmd{prewhiten} is to fit a linear model of the form 
-$f(x) = \alpha x + \beta + \epsilon$
-using ordinary linear least squares,
-setting \Rcmd{AR.max} higher than zero
-to fit an auto-regressive (AR) model to the data\footnote{Note that 
-the linear trend fitting is removed from the series prior to AR estimation,
-and the residuals from this fit are also returned.
-}.  
+Although the default operation of  \Rcmd{prewhiten} is to fit a linear model of the form 
+$f(x) = \alpha x + \beta + \epsilon$ using ordinary linear least squares,
+setting \Rcmd{AR.max} higher than zero to fit an auto-regressive (AR) model to the 
+data\footnote{Note that the linear trend fitting is removed from the series prior to AR estimation,
+and the residuals from this fit are also returned.}.  
 This fit uses the Akaike infomation criterion (AIC) to select
 the highest order appropriate for the data.
 
@@ -329,13 +316,12 @@ synthetic linear model superimposed on it) assuming linear and linear-with-AR mo
 \end{center}
 \end{figure}
 
+\clearpage
+
 We didn't necessarily need to deal with the sampling information since it is just 1 per km;
-but, supposing the sampling information was based on an interval, we
-could have used
-a negative value for \Rcmd{X.frq}, 
-with which \Rcmd{psdcore}
-would interpret as
-an interval (instead of a frequency). 
+but, supposing the sampling information was based on an interval, we could have used
+a negative value for \Rcmd{X.frq}, with which \Rcmd{psdcore}
+would interpret as an interval (instead of a frequency). 
 A quick example highlights the equivalency:
 \input{figure/Sampling_rate_versus_interval.tex}
 
@@ -344,13 +330,11 @@ estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
 \input{figure/Compute_PSD_with_mtapspec.tex}
 where \Rcmd{nwin} is the number of tapers taken and
 \Rcmd{npi} is, from the documentation, the ``number of Pi-prolate functions" (we
-leave it out for the sake of comparison). 
-Note that the object returned
-is not of class \Rcmd{spec}:
+leave it out for the sake of comparison). Note that the object returned
+is \emph{not} of class \Rcmd{`spec'}:
 \input{figure/Structure_of_mtapspec-psd.tex}
 
-We will calculate the comparative spectra
-from
+We will calculate the comparative spectra from
 \begin{enumerate}
   \item \Rcmd{spectrum} (20\% cosine taper),
   \item \Rcmd{psdcore} (with fixed tapers), and
@@ -362,8 +346,7 @@ set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
 \input{figure/Comparative_spectra:_mtapspec_vs_pspectrum.tex}
-These estimates are shown on the same scale in
-Figure \ref{fig:psdcomp}.
+These estimates are shown on the same scale in Figure \ref{fig:psdcomp}.
 
 \begin{figure}[!htbp]
 \begin{center}
@@ -373,21 +356,20 @@ Figure \ref{fig:psdcomp}.
 \end{center}
 \end{figure}
 
+\clearpage
+
 Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
 \input{figure/Interpolate_results.tex}
 We regress the spectral values from \Rcmd{mtapspec} against
-the \Rcmd{psdcore} results because we have used them to
-produce uniformly tapered spectra
+the \Rcmd{psdcore} results because we have used them to produce uniformly tapered spectra
 with an equal number of sine tapers.
 \input{figure/Summarize_regression_statistics.tex}
 We show the regression residuals in Figure \ref{fig:psdreg}.  
-The structure visible
-at low power levels might be from curvature bias in
-the \Rcmd{mtapspec} results, which
-manifests at short wavelengths
+The structure visible at low power levels might be from curvature bias in
+the \Rcmd{mtapspec} results, which manifests at short wavelengths
 in Figure \ref{fig:psdcomp}.
 
 \begin{figure}[!htbp]
@@ -399,51 +381,41 @@ in Figure \ref{fig:psdcomp}.
 \end{center}
 \end{figure}
 
+\clearpage
+
 \subsection{\Rcmd{multitaper::spec.mtm}}
 The function with the highest similarity to \psd{} is
 \Rcmd{spec.mtm} in the \Rcmd{multitaper} package: it uses
 the sine multitapers, and can adaptively refine the spectrum.
-In fact, this function
-calls source code of a Fortran equivalent to \psd{}
+In fact, this function calls source code of a Fortran equivalent to \psd{}
 authored by R.L. Parker (\citeyear{parkerweb}) to do these operations.
 
 There are some notable differences, though.  
-By default \Rcmd{spec.mtm}
- uses the Discrete Prolate Spheroidal Sequences (dpss) 
-of \citet{thomson1982},
-which can have very good spectral leakage suppression (assuming
+By default \Rcmd{spec.mtm} uses the Discrete Prolate Spheroidal Sequences (dpss) 
+of \citet{thomson1982}, which can have very good spectral leakage suppression (assuming
 the number of tapers used is appropriate for the 
 desired resolution, which varies inversely with the time-bandwidth product).
 Spectral analyses using dpss can have superior results if the series is
 relatively short (e.g. $N < 1000$), or has inherent spectra
-with sharply changing features or
-deep wells.
+with sharply changing features or deep wells.
 Improper usage of the dpss, however, can lead to severe bias.
 Thus, considerable care should be given to parameter choices, 
-which translates practicably
-to having many more knobs to turn.
+which translates practicably to having many more knobs to turn.
 
 \subsection{\Rcmd{sapa::SDF}}
-As of this writing, the package has no maintainer; 
-lest we end up discussing deprecated and archived functions,
-we will not compare it to \psd{}.
+This package was previously orphaned but,
+as of this writing, the package has a new maintainer, so we may add a comparison
+in future versions of this document.
 
 \subsection{\Rcmd{bspec::bspec}}
 An intriguing method for producing power spectral density estimates
- using Bayesian inference
- is presented by \citet{rover2011} and included in
- the \Rcmd{bspec} package.
- Simplistically, the method uses a \emph{Student's t} likelihood function
- to estimate the distribution of spectral densities
- at a given frequency.
- We will use the spectra from the previous 
- calculation to compare with \Rcmd{bspec} results.
- For this comparison
- we use the default 
- settings for the \emph{a priori} distribution scale
- and degrees of freedom.
- In Figure \ref{fig:bayes} we have used the \Rcmd{plot.bspec} method
- and overlain the results found previously by \Rcmd{psdcore}.
+using Bayesian inference is presented by \citet{rover2011} and included in
+the \Rcmd{bspec} package. Simplistically, the method uses a \emph{Student's t} likelihood function
+to estimate the distribution of spectral densities at a given frequency.
+We will use the spectra from the previous calculation to compare with \Rcmd{bspec} results.
+For this comparison we use the default settings for the \emph{a priori} distribution scale
+and degrees of freedom. In Figure \ref{fig:bayes} we have used the \Rcmd{plot.bspec} method
+and overlain the results found previously by \Rcmd{psdcore}.
 
 \input{figure/BSPEC.tex}
 
@@ -457,6 +429,8 @@ An intriguing method for producing power spectral density estimates
 \end{center}
 \end{figure}
 
+\clearpage
+
 \section{Can AR prewhitening improve the spectrum?}
 
 This question must be addressed on a case-by-base basis; but, if there
@@ -469,17 +443,14 @@ Recall the results of the prewhitening in Section \ref{sxn:prew}.
 While \Rcmd{AR.max} was set relatively high,
 only an AR(6) model was fit significantly, according to the AIC requirements. 
 The estimated variance of the innovations is about $~20$ nT$^2$.
-If the innovation spectrum
-is flat (as we expect), this variance translates to power levels
-of about $~16$ decibels
-for a 1 km sampling interval.  
+If the innovation spectrum is flat (as we expect), this variance translates to power levels
+of about $~16$ decibels for a 1 km sampling interval.  
 
 \input{figure/AR_spectrum.tex}
 
 In Figure \ref{fig:arspecvar} we have used \Rcmd{pilot\_spec} to 
 model the spectral response of the AR component of the series (solid
-black line).
-The non-AR component (labelled "AR-innovations")
+black line). The non-AR component (labelled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 
@@ -495,15 +466,14 @@ normalization difference.}
 \end{center}
 \end{figure}
 
+\clearpage
+
 \section{Assessing spectral properties}
 \subsection{Spectral uncertainties}
 It is important to place bounds on the uncertainties associated
-with a spectral estimate.
-In a multitaper algorithm the uncertainty is distributed as
-a $\chi{}_{\nu}^2$ variate where $\nu$ is
-the number of degrees of freedom, which is twice the
-number of tapers applied.
-A proxy for this is simply $1/\sqrt{\nu - 1}$.
+with a spectral estimate. In a multitaper algorithm the uncertainty is distributed as
+a $\chi{}_{\nu}^2$ variate where $\nu$ is the number of degrees of freedom, which is twice the
+number of tapers applied. A proxy for this is simply $1/\sqrt{\nu - 1}$.
 Using $\nu = 2*K$ we can approximate the distribution
 of uncertainties from the tapers alone; however, a more
 rigorous estimate comes from evaluating the appropriate 
@@ -512,8 +482,7 @@ Among other calculations, \Rcmd{spectral\_properties} returns the
 $\chi{}_{\nu}^2$ based confidence intervals for $p=0.95$, as well as the
 approximate uncertainties.  
 
-To illustrate, we 
-plot the uncertainties for an integer sequence\footnote{
+To illustrate, we plot the uncertainties for an integer sequence\footnote{
 Note the $\chi{}_{\nu}^2$ distribution is defined for non-negative,
 non-integer degrees of freedom, but we cannot apply
 fractions of tapers.} of tapers $[0, 50]$, shown in
@@ -540,6 +509,8 @@ the width less than 3 decibels.
 \end{center}
 \end{figure}
 
+\clearpage
+
 Returning to the Project MAGNET spectra, we will compare the
 spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
 the Bayesian method, for a coverage probability of
@@ -560,6 +531,8 @@ The results from Figure \ref{fig:bayes} (Bayesian method) are shown in blue.
 \end{center}
 \end{figure}
 
+\clearpage
+
 \subsection{Spectral resolution}
 There is an inherent tradeoff between the number of tapers 
 applied and the spectral resolution (effectively, the spectral bandwidth).
@@ -567,8 +540,7 @@ In general, the greater the number of tapers applied, the lower the spectral res
 We can use the information returned from \Rcmd{spectral\_properties}
 to visualize the actual 
 differences in resolution for the Project MAGNET PSD estimates; these
-are shown
-in Figure \ref{fig:magres}.
+are shown in Figure \ref{fig:magres}.
 
 \begin{figure}[!htbp]
 \begin{center}
@@ -584,24 +556,20 @@ resolution bandwidth.
 \end{center}
 \end{figure}
 
+\clearpage
+
 \subsection{Visualizing the adaptive history}
-One might be curious to study how the
-uncertainties change with each iteration.
-\Rcmd{pspectrum}
- saves an array of ``historical" data in its working environment.
- Specifically, it saves the frequencies,
- spectral values, and number of tapers at each stage of the adaptive
- procedure, accessible with \Rcmd{get\_adapt\_history}.
- To ensure a fresh calculation and to 
- add a few more iterations to visualize, 
-we repeat the adaptive spectral analysis, 
+One might be curious to study how the uncertainties change with each iteration.
+\Rcmd{pspectrum} saves an array of ``historical" data in its working environment.
+Specifically, it saves the frequencies, spectral values, and number of tapers at each stage of the adaptive
+procedure, accessible with \Rcmd{get\_adapt\_history}. To ensure a fresh calculation and to 
+add a few more iterations to visualize, we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
 \input{figure/Get_adaptive_history.tex}
 Followed by some trivial manipulation:
 \input{figure/and_manipulate_it_a_bit.tex}
 We can plot these easily with \Rcmd{matplot} or other tools.  We show
-the adaptive history in
-Figure \ref{fig:psdhist}.  
+the adaptive history in Figure \ref{fig:psdhist}.  
 
 \begin{figure}[!htbp]
 \begin{center}
@@ -619,8 +587,9 @@ and (C) the relative uncertainties of the PSDs.
 \end{center}
 \end{figure}
 
-It may be informative to investigate cross correlation
-coefficients between the stages;
+\clearpage
+
+It may be informative to investigate cross correlation coefficients between the stages;
 but, in this case, only the PSD estimates are significantly correlated:
 \input{figure/SYMCORT.tex}
 \input{figure/SYMCORP.tex}
@@ -631,12 +600,8 @@ but, in this case, only the PSD estimates are significantly correlated:
 %\pagebreak
 \section{Call overview}
 
-Shown
-in Figure \ref{fig:calls}
-is a flow chart 
-highlighting the essential
-functions involved in the adaptive estimation
-process. The primary function is \Rcmd{pspectrum}.
+Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
+functions involved in the adaptive estimation process. The primary function is \Rcmd{pspectrum}.
 
 \begin{figure}[!htbp]
  \centering
@@ -648,13 +613,14 @@ process. The primary function is \Rcmd{pspectrum}.
  \label{fig:calls}
 \end{figure}
 
-\pagebreak
+\clearpage
+
 \section*{Session Info}
 \input{figure/SI.tex}
 
-%%
-%\pagebreak
-\bibliographystyle{apalike} %plainnat}
+\clearpage
+
+\bibliographystyle{apalike}
 \bibliography{REFS}
 
 \end{document}

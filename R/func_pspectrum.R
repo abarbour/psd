@@ -11,12 +11,12 @@
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' @seealso \code{\link{psdcore}}, \code{\link{pilot_spec}}, \code{\link{riedsid}}, \code{\link{prewhiten}}
-#' @keywords spectrum-estimation riedel-sidorenko tapers tapers-constraints tapers-weighting numerical-derivative
 #' 
-#' @param x vector; series to estimate PSD for.
+#' @param x vector; series to find PSD estimates for
 #' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.
-#' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation.
-#' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum.
+#' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation; if \code{NULL} then the
+#' default in \code{\link{pilot_spec}} is used.
+#' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum is estimated.
 #' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
 #' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param verbose logical; Should messages be given?
@@ -67,9 +67,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
   # iteration stages (0 is pilot)
   iter_stages <- 0:niter
   
-  # absolute limit
-  #tapcap <- getOption("psd.ops")[['tapcap']]
-  
   # retain history
   save_hist <- ifelse((niter < 10) & !no.history, TRUE, FALSE)
   
@@ -109,7 +106,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       # enforce silence in the subfunctions once the adapting gets going
       rverb <- ifelse(stage > 0, FALSE, TRUE)
       
-      if (verbose) message('Ried-Sid optimization')
       ## calculate optimal tapers
       kopt <- riedsid2(Pspec, verbose=rverb, ...)
       
@@ -122,11 +118,10 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       }
   
       # update spectrum with new tapers
-      # TODO: here's why preproc flags are wrong
+      # TODO: here's why preproc flags are wrong...
       Pspec <- psdcore(X.d=x, X.frq=x.frqsamp, ntaper=kopt, 
                        preproc=FALSE, plotpsd=plotpsd_, verbose=rverb) 
       
-      print(c(length(kopt), " --(",length(x),")--> ", length(Pspec$taper)))
       # show spectral variance reduction
       if (verbose) adapt_message(stage, varddiff(Pspec)/dvar.o)
       
@@ -134,8 +129,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       if (save_hist) update_adapt_history(Pspec, stage)
       
     }
-    print(c("PS-spec",round(c(head(Pspec$spec, 5),tail(Pspec$spec, 5)),1)))
-    print(c("PS-taps",round(c(head(Pspec$taper, 5),tail(Pspec$taper, 5)),1)))
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, src="psd", verbose=verbose)
   return(invisible(psd_envAssignGet("final_psd", Pspec)))
