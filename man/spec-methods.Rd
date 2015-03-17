@@ -3,11 +3,20 @@
 \docType{methods}
 \name{spec-methods}
 \alias{as.data.frame.spec}
+\alias{as.list.spec}
+\alias{as.spec}
+\alias{as.spec.amt}
 \alias{data.frame.spec}
 \alias{lines.spec}
 \alias{spec-methods}
 \title{Generic methods for objects with class \code{'spec'}.}
 \usage{
+\method{as.list}{spec}(x, ...)
+
+as.spec(x, ...)
+
+\method{as.spec}{amt}(x, ...)
+
 \method{lines}{spec}(x, y = NULL, type = "l", ...)
 
 \method{as.data.frame}{spec}(x, ...)
@@ -15,24 +24,22 @@
 data.frame.spec(x, ...)
 }
 \arguments{
-\item{x}{spec object}
+\item{x}{a \code{'spec'} object}
+
+\item{...}{optional arguments}
 
 \item{y}{optional coordinate vector for the y-axis}
 
 \item{type}{character; the type of plot}
-
-\item{...}{optional arguments}
 }
 \description{
 Generic methods for objects with class \code{'spec'}.
 }
 \details{
-Objects with class \code{'spec'} are simply list objects.
-\code{as.data.frame} converts the list into
-a \code{'data.frame'} with individual
+Objects with class \code{'spec'} are simply lists with spectral estimates and parameters
+\code{as.data.frame} converts the list into a \code{'data.frame'} with individual
 columns for the frequency, PSD, and taper vectors;
 all other information will be retained as an attribute.
-\code{data.frame} is an alias.
 }
 \examples{
 \dontrun{#REX

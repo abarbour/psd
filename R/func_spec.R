@@ -1,27 +1,41 @@
-##
-## Functions for objects with class spec
-##
+
 #' @title Generic methods for objects with class \code{'spec'}.
 #'
-#' @details Objects with class \code{'spec'} are simply list objects. 
-#' \code{as.data.frame} converts the list into
-#' a \code{'data.frame'} with individual
+#' @details Objects with class \code{'spec'} are simply lists with spectral estimates and parameters 
+#' \code{as.data.frame} converts the list into a \code{'data.frame'} with individual
 #' columns for the frequency, PSD, and taper vectors; 
 #' all other information will be retained as an attribute.
-#' \code{data.frame} is an alias.
 #'
 #' @name spec-methods
 #' @author A.J. Barbour <andy.barbour@@gmail.com>
 #' @rdname spec-methods
 #' @docType methods
 #' 
-#' @param x spec object
+#' @param x a \code{'spec'} object
 #' @param y optional coordinate vector for the y-axis
 #' @param type character; the type of plot
 #' @param ... optional arguments
 #' 
 #' @example inst/Examples/rdex_spec.R
 NULL
+
+#' @rdname spec-methods
+#' @export
+as.list.spec <- function(x, ...){
+  class(x) <- 'list'
+  return(x)
+}
+
+#' @rdname spec-methods
+#' @export
+as.spec <- function(x, ...) UseMethod("as.spec")
+
+#' @rdname spec-methods
+#' @export
+as.spec.amt <- function(x, ...){
+  class(x) <- 'spec'
+  return(x)
+}
 
 #' @rdname spec-methods
 #' @aliases lines.spec

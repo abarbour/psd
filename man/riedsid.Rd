@@ -25,7 +25,7 @@ riedsid2(PSD, ...)
   verbose = TRUE, ...)
 }
 \arguments{
-\item{PSD}{vector or class 'spec'; the spectral values used to optimize taper numbers}
+\item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}
 
 \item{...}{optional argments passed to \code{\link{constrain_tapers}}}
 

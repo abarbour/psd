@@ -1,15 +1,13 @@
+March 2015
+
 Miscellany
 ----------
-[ ] Move this stuff to github (as issues/etc)
 [ ] remove untested or unstable options
-*** is there a function for deprecation?
-*** ctap_markov?
-[ ] add option for tapcap in pspectrum, rather than hardwire
-[ ] work on bugs
+[ ] add option for tapcap in pspectrum, rather than hardwire?
 
 Vignettes
 ---------
-[ ] migrate to Rmd format (knitr)
+[ ] new for time-varying spectra, in Rmd format (knitr)
 
 Functions
 ---------
@@ -23,10 +21,3 @@ Functions
 Datasets
 --------
 [?] add more fields to hfsnm: meter.type== bsm or lsm, location=anza,pfo, etc
-
-performance
------------
-[ ] vapply to c++
-*** riedsid [ ]
-*** psdcore [ ]
-

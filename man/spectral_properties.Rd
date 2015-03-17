@@ -17,7 +17,7 @@ spectral_properties(tapvec, ...)
   p = 0.95, db.ci = FALSE, ...)
 }
 \arguments{
-\item{tapvec}{object with class \code{tapers} or \code{spec}}
+\item{tapvec}{object with class \code{'tapers'} or \code{'spec'}}
 
 \item{...}{additional arguments (unused)}
 

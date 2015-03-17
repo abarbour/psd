@@ -67,6 +67,7 @@
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{color}
+\usepackage{txfonts}
 %
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
@@ -144,16 +145,16 @@ The \Rcmd{raw} and \Rcmd{clean} names represent raw
 and edited intensities respectively, expressed in units of nanotesla; 
 \Rcmd{mdiff} is the difference between them.
 The difference between them is a matter of just a few points
-attributable to instrumental malfunction. 
-%% edits
+attributable to instrumental malfunction; but, as we will see, the
+outliers adversely affect the accuracy of any type PSD estimate, regardless
+of the level of sophistication of the method.
+%%
 \input{figure/Outliers_.tex}
-These deviations can,
-as we will see, adversely affect the accuracy of any PSD estimate,
-multitaper or otherwise.
+\input{figure/Outliers.tex}
 
 We can find power spectral density (PSD)
 estimates for the two series quite simply with \Rcmd{pspectrum}:
-%% pspectrum 5 iters
+%%
 \input{figure/MAGPSDS.tex}
 Each application of \Rcmd{pspectrum} calculates a pilot PSD, followed by 
 \Rcmd{niter}
@@ -164,53 +165,51 @@ based on the proposed optimal number from \citet{rs1995}, which
 depends on spectral shape; we use 
 quadratically weighted spectral derivatives \citep{prieto2007}
 to estimate this shape.
-By default, a multipanel summary plot of the final PSD compared
-to the raw periodogram estimate is shown after the final iterative stage.
 Note that if the user forgets to assign the results of
-\Rcmd{pspectrum} to the global environment, this can be
-done with the \Rcmd{psd\_envGet} function:
+\Rcmd{pspectrum} to the global environment, the result can
+be recovered with the \Rcmd{psd\_envGet} function:
+%%
 \input{figure/FINALPSDS.tex}
 
 In general, spectral variance is reduced
 with sequential refinements\footnote{
-Messages are given by default; ones with
-``Ave. S.V.R."
-are in reference to 
- ``average spectral-variance reduction", which
- is the variance of the
- double-differenced spectra at each stage, relative
- to the pilot estimate's variance.
-}, but is not necessarily guaranteed to converge.
-Note that in the example
-the sampling frequency of both series
-is 1 km$^{-1}$, the assumed value.
+  Messages are given by default; ones which read
+  ``Ave. S.V.R." are in reference to 
+  average spectral-variance reduction, which
+  we define here as the variance of the
+  double-differenced spectra at each stage, relative
+  to the spectral variance in the pilot estimate.
+}, but is not necessarily guaranteed to reduce monotonically.
 
-Figure \ref{fig:pmag} compares the 
-power spectra for the \Rcmd{raw} and \Rcmd{clean} 
-series\footnote{
-Note that \Rcmd{pspectrum} returns
-an object with class \Rcmd{spec}, so we have access to methods 
-within \Rcmd{stats}, including \Rcmd{plot.spec}.
-}.  
+Figure \ref{fig:pmag} compares power spectra for the \Rcmd{raw} and \Rcmd{clean} 
+series produced by \Rcmd{stats::spectrum} and \Rcmd{pspectrum}\footnote{
+  Note that \Rcmd{pspectrum} returns an object with class \Rcmd{spec} (and \Rcmd{amt}), so 
+  we have access to methods within \Rcmd{stats}, including \Rcmd{plot.spec}.
+} using default settings.
+%
 We expect the Project MAGNET data to be linear in the space of
-linear-frequencies and logarithmic-power;
-we see a clear
+linear-frequencies and logarithmic-power; in fact there is a clear
 improvement in spectral shape between the two series,
 simply because the large outliers have been removed.
-The PSD of the clean series shows a
-very ``red" spectrum typical of geophysical processes \citep{agnew1992},
-and a rolloff in signal
+%
+The PSD of the clean series shows the type of spectrum typical of 
+geophysical processes \citep{agnew1992}, and a rolloff in signal
 for 10 kilometer wavelengths and longer; whereas, the 
-PSD for the raw series looks somewhat unrealistic at higher wavelengths -- features 
-which could be difficult to judge if the spectral variance was higher.
+PSD for the raw series looks somewhat unrealistic at shorter wavelengths -- features 
+which could be difficult to judge with high spectral variance.
 
 \begin{figure}[!htbp]
 \begin{center}
 \input{figure/RAWvCLEAN.tex}
 \caption{Power spectral density estimates for the raw and cleaned
-             \Rcmd{Project MAGNET} data bundled with \psd{}: see \Rcmd{data(magnet)}. 
-             Note that because the class is \Rcmd{`spec'} we have
-             utilized  existing methods in the \Rcmd{stats} namespace.}
+         Project MAGNET data bundled with \psd{}: see \Rcmd{?magnet}. 
+         Points are estimates produced by \Rcmd{spectrum} and
+         dashed lines are estimates produced by \Rcmd{pspectrum}, using the
+         default settings.
+         \emph{Note that because the objects class includes \Rcmd{`spec'}, we have
+         utilized existing methods in the \Rcmd{stats} namespace. The bandwidth
+         and confidence interval estimates are for the \Rcmd{spectrum}-based result.}
+}
 \label{fig:pmag}
 \end{center}
 \end{figure}
@@ -219,10 +218,10 @@ which could be difficult to judge if the spectral variance was higher.
 
 \section{Comparisons with other methods}
 
-As we have shown in the Project MAGNET example, 
-improved understanding of the physics behind the signals in the data
-is of great concern.
-Assuming a sample is free of non-physical points, how do
+As we have shown in the Project MAGNET example, a more accurate estimate
+of the power spectrum can help improve understanding of the physics 
+behind the signals in the data.
+But, assuming a sample is free of non-physical points, how do
 PSD estimates from \psd{} compare with other methods?
 Unfortunately the suite of extensions with similar functionality
 is relatively limited, but hopefully we have
@@ -240,14 +239,15 @@ using the same data: the cleaned Project MAGNET series.
 \subsection{\Rcmd{stats::spectrum}}
 
 Included in the core distribution of R is \Rcmd{stats::spectrum}, which
-accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
+accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} (which was used
+for the estimates in Figure \ref{fig:pmag}) for either
 parametric and non-parametric estimation, respectively.  
 The user can optionally apply a single cosine taper, and/or a smoothing kernel.
 Our method is non-parametric; hence, we will compare to the latter.
 
 Included in \Rcmd{psdcore} is an option to compare the 
-results with a 20\% cosine-tapered periodogram,
-found with the following command:
+results with cosine-tapered periodogram,
+found with a command equivalent to this:
 \input{figure/Naive_spectrum_estimation.tex}
 Within \Rcmd{psdcore} the comparison is made with the logical argument \Rcmd{preproc} 
 passed to \Rcmd{spec.pgram}, which is \SC{True} by default.
@@ -266,10 +266,12 @@ results are shown in Figure \ref{fig:two}.
 \caption{A summary plot produced by \Rcmd{psdcore} when
 \Rcmd{plotpsd=TRUE}.  
 Top: Comparison between PSD estimators for the 
-clean Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
+cleaned Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.
+%
 Middle: The number of tapers applied as a function of frequency from
 the \Rcmd{plot.tapers} method. 
+%
 Bottom: The spatial series used to estimate the PSDs and a subset
 of the full autocorrelation function.}
 \label{fig:two}
@@ -589,10 +591,14 @@ and (C) the relative uncertainties of the PSDs.
 
 \clearpage
 
-It may be informative to investigate cross correlation coefficients between the stages;
-but, in this case, only the PSD estimates are significantly correlated:
-\input{figure/SYMCORT.tex}
-\input{figure/SYMCORP.tex}
+%It may be informative to investigate cross correlation coefficients between the stages;
+%but, in this case, only the PSD estimates are significantly correlated:
+%<<eval=TRUE, echo=TRUE, label=SYMCORT>>=
+%suppressWarnings(symnum( cT <- cor(StgTap) ))
+%@
+%<<eval=TRUE, echo=TRUE, label=SYMCORP>>=
+%suppressWarnings(symnum( cP <- cor(StgPsd) ))
+%@
 
 %\section{Acknowledgements}
 
@@ -601,7 +607,10 @@ but, in this case, only the PSD estimates are significantly correlated:
 \section{Call overview}
 
 Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
-functions involved in the adaptive estimation process. The primary function is \Rcmd{pspectrum}.
+functions involved in the adaptive estimation process. 
+The primary function is \Rcmd{pspectrum}, which calls 
+\Rcmd{psdcore} followed by \Rcmd{riedsid} repeatedly (\Rcmd{niter} times)
+to produce the final result.
 
 \begin{figure}[!htbp]
  \centering

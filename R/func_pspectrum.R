@@ -130,7 +130,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       
     }
   }
-  if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, src="psd", verbose=verbose)
+  if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, verbose=verbose)
   return(invisible(psd_envAssignGet("final_psd", Pspec)))
 }
 
@@ -157,7 +157,7 @@ adapt_message <- function(stage, dvar=NULL){
 pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
   
   if (verbose) adapt_message(0)
-  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, first.last=FALSE, refresh=TRUE)
+  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, refresh=TRUE)
   ko <- P[['taper']]
   nf <- length(ko)
   
@@ -168,7 +168,7 @@ pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
     # find optimal tapers
     ko <- riedsid2(P, ko, verbose=FALSE)
     # update spectrum
-    P  <- psdcore(x, ntaper=ko, preproc = FALSE, first.last=FALSE)
+    P  <- psdcore(x, ntaper=ko, preproc = FALSE)
   }
   return(P)
 }

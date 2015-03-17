@@ -1,7 +1,9 @@
-#' Multitaper power spectral density estimates of a series.
+#' Multitaper power spectral density estimates of a series
 #'
 #' Compute power spectral density (PSD) estimates
 #' for the input series using sine multitapers.
+#' This is used by \code{\link{pspectrum}} for the adaptive
+#' estimation procedure.
 #'  
 #' @details
 #' \subsection{Tapering}{
@@ -12,52 +14,42 @@
 #'
 #' \subsection{Truncation}{
 #' The series, with length \eqn{N}, is necessarily truncated so that \eqn{1+N/2} evenly 
-#' spaced frequencies are returned.  This truncation makes the series length ``highly composite",
+#' spaced frequencies are returned. This truncation makes the series length ``highly composite",
 #' which the discrete Fourier transform (DFT) is most efficient.
-#' The vignette "fftw" (accessed with \code{vignette("fftw",package="psd")}) shows
+#' The "fftw" vignette (accessed with \code{vignette("fftw",package="psd")}) shows
 #' how the performance of a DFT can be affected by series length.
 #' }
 #'
 #' \subsection{Decimation}{
-#' 	No longer supported.
+#' 	No longer supported. Setting \code{ndecimate} will not affect the results
 #' }
 #'
 #' \subsection{Sampling}{
-#'  If \code{X.frq} is NULL, the value is assumed to be 1, unless \code{X.d} is a 'ts' object.
+#'  If \code{X.frq} is NULL, the value is assumed to be 1, unless \code{X.d} is a  \code{'ts'} object.
 #'  If \code{X.frq > 0} it's assumed the value represents \emph{frequency} (e.g. Hz).
 #'  If \code{X.frq < 0} it's assumed the value represents \emph{interval} (e.g. seconds).
 #' }
-#'
-#' @section Warning:
-#' Decimation is not well tested as of this point.
-#' 
-#' The \code{first.last} parameter is a workaround for potential bug (under investigation), 
-#' which causes
-#' the power at the zero and Nyquist frequencies to have anomalously low values.  
-#' This argument enables using
-#' linear \emph{extrapolation} to correct these values.
-#' \strong{The feature will be deprecated if the supposed bug is both identified and fixed.}
 #'
 #' @param X.d  the series to estimate a spectrum for 
 #' @param X.frq  scalar; the sampling information (see section Sampling)
 #' @param ntaper  scalar, vector, or \code{\link{tapers}}; the number of sine tapers to apply at each frequency
 #' @param preproc  logical; should \code{X.d} have a linear trend removed?
 #' @param na.action  function to deal with \code{NA} values
-#' @param first.last  should the zeroth and Nyquist frequency estimates be extrapolated?
-#' @param plotpsd  logical; should the estimates be shown compared to the \code{\link{spectrum}}-based estimates
-#' @param as.spec  logical; should the object returned be of class 'spec'?
+#' @param plotpsd  logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
+#' Note that this will add some computation time, since the cosine-tapered periodogram is calculated inside
+#' \code{\link{pgram_compare}}.
 #' @param refresh  logical; ensure a free environment prior to execution
 #' @param verbose logical; should warnings and messages be given?
 #' @param ndecimate  now ignored
 #' @param ...  optional parameters; currently ignored
-#' @return An list object, invisibly.  If \code{as.spec=TRUE} then an object with class \code{spec};
-#' otherwise the list object will have information similar to a \code{spec} object, but with 
-#' a few additional fields.
+#' 
+#' @return An on object of class \code{'amt','spec'}, which has a structure similar to a regular \code{'spec'} object, 
+#' but with a few additional fields, invisibly.
 #'
 #' @name psdcore
 #' @export
-#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L.Parker.
-#' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}
+#' @author A.J. Barbour; original algorithm by R.L. Parker.
+#' @seealso \code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}, \code{\link{pgram_compare}}
 #'
 #' @example inst/Examples/rdex_psdcore.R
 psdcore <- function(X.d, ...) UseMethod("psdcore")
@@ -67,15 +59,14 @@ psdcore <- function(X.d, ...) UseMethod("psdcore")
 #psdcore.ts <- function(X.d, ...) .NotYetImplemented()
 
 #' @rdname psdcore
+#' @aliases psdcore.default
 #' @export
 psdcore.default <- function(X.d, 
                             X.frq=NULL, 
                             ntaper=as.tapers(5), 
                             preproc=TRUE,
                             na.action = stats::na.fail,
-                            first.last=TRUE,
                             plotpsd=FALSE,
-                            as.spec=TRUE,
                             refresh=FALSE,
                             verbose=FALSE,
                             ndecimate,
@@ -84,43 +75,45 @@ psdcore.default <- function(X.d,
   
   if (!missing(ndecimate)) warning('Support for decimation has been removed.')
   
-  # get a clean environment
-  if (refresh) psd_envRefresh(verbose=verbose)
+  # psd options
+  ops <- getOption("psd.ops")
+  stopifnot(!is.null(ops))
+  evars <- ops[['names']]
   
-  # named series (?)
+  # named series
   series <- deparse(substitute(X.d))
   
   if (is.null(X.frq)){
     # make an assumption about the sampling rate
     X.frq <- ifelse(is.ts(X.d), stats::frequency(X.d), 1)
-    if (verbose) message("\tsampling frequency assumed to be  ", X.frq)
+    if (verbose) message("\tsampling frequency taken to be\t", X.frq)
   } 
   
   ## Convert to ts object
-  X.d <- if (X.frq > 0){
+  X.d <- na.action(if (X.frq > 0){
     # value represents sampling frequency
-    na.action(stats::ts(X.d, frequency=X.frq))
+    stats::ts(X.d, frequency=X.frq)
   } else if (X.frq < 0){
     # value is sampling interval
-    na.action(stats::ts(X.d, deltat=abs(X.frq)))
+    stats::ts(X.d, deltat=abs(X.frq))
   } else {
     stop("bad sampling information")
-  }
+  })
   
   # Refresh sampling rate, and get Nyquist frequency, tapers, and status
   X.frq <- stats::frequency(X.d)
   Nyq <- X.frq/2
   len_tapseq <- length(ntaper)
   single.taper.arg <- len_tapseq == 1
+  
+  # get a clean environment
+  if ( single.taper.arg | refresh ) psd_envRefresh(verbose=verbose)
+  
   #  only one variable in the env (init) means it hasn't been added to yet
   is.fresh <- length(psd_envStatus()[['listing']]) == 1
   
-  ops <- getOption("psd.ops")
-  stopifnot(!is.null(ops))
-  evars <- ops[['names']]
-  
   ### Return complex fft, and initialize other things as necessary
-  fftz <- if ( single.taper.arg | is.fresh | refresh ){
+  fftz <- if ( is.fresh ){
     #
     # initialize fft and other things, since this usually means a first run
     #
@@ -137,8 +130,9 @@ psdcore.default <- function(X.d,
     
     # Force series to be even in length (modulo division)
     n.e <- psd_envAssignGet(evars[['n.even']], modulo_floor(n.o))
-    even_seq <- seq_len(n.e)
-    X.even <- psd_envAssignGet(evars[['series.even']], as.matrix(X[even_seq]))
+    X.even <- ts(X[seq_len(n.e)], frequency=X.frq)
+    X.even <- psd_envAssignGet(evars[['series.even']], X.even)
+    stopifnot(is.ts(X.even))
     
     # half length of even series
     nhalf <- psd_envAssignGet(evars[['n.even.half']], n.e/2)
@@ -159,24 +153,24 @@ psdcore.default <- function(X.d,
     
     ## zero pad and take double-length fft
     padded <- as.numeric(c(X.even, rep.int(0, n.e)))
-    # Note fftw is faster for very long series but we are
-    # using stats::fft until fftw is reliably built on CRAN
+    
+    ## Calculate discrete Fourier tranform
+    #   Note fftw is faster for very long series but we are
+    #   using stats::fft until fftw is reliably built on CRAN
     padded.fft <- psd_envAssignGet(evars[['fft.padded']], stats::fft(padded))
     
-    # return the fft
     psd_envAssignGet(evars[['fft']], padded.fft)
   
   } else {
     
     if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
     
-    X <- psd_envGet(evars[['series.even']]) #X.d
-    kseq <- ntaper
+    X <- psd_envGet(evars[['series.even']])
     n.e <- psd_envGet(evars[['n.even']])
     nhalf <- psd_envGet(evars[['n.even.half']])
     varx <- psd_envGet(evars[['var.even']])
+    kseq <- ntaper
     
-    # return the original fft
     psd_envGet(evars[['fft']])
     
   }
@@ -192,16 +186,19 @@ psdcore.default <- function(X.d,
   f <- base::seq.int(0, nhalf, by=1)
   nfreq <- length(f)
   
-  ###  Calculate the PSD by averaging over tapered estimates  
+  ###  Calculate the (un-normalized) PSD
   PSD <- psd_envAssignGet(evars[["last.psdcore"]], {
+    
     if (do.mt){
+      #
+      # with sine tapers
+      #
       if (verbose) message("\testimating multitaper psd")
       
       ## resample fft with taper sequence and quadratic weighting
-      #    this is where the majority of the work goes on:
+      # ( this is where the majority of the computational work is )
       kseq <- as.integer(kseq) 
-      reff <- try(resample_fft_rcpp(fftz, kseq, verbose=verbose))
-      # ^^ TODO: figure out why we're getting infinite values, which is causing hickups downstream
+      reff <- resample_fft_rcpp(fftz, kseq, verbose=verbose)
 
       # return a valid resampled fft or stop
 	    if (inherits(reff,'try-error')){
@@ -211,7 +208,9 @@ psdcore.default <- function(X.d,
       }
       
     } else {
-      
+      #
+      # or with the simple cosine-tapered result
+      #
       if (verbose) message("raw periodogram")
       
       Xfft <- psd_envGet(evars[['fft']])
@@ -226,35 +225,15 @@ psdcore.default <- function(X.d,
     }
   })
   
-  ## PSD estimates
-  
   # should not be complex at this point!
   stopifnot(!is.complex(PSD))
   
-  npsd <- length(PSD)
-  nonfin <- is.infinite(PSD)
-  
-  # TODO: check this:
-  if (any(nonfin)){
-    warning("non-finite psd estimates?!")
-    PSD <- replace(PSD, nonfin, NA)
-  }
-  
-  # spec.pgram does this for some reason:
-  #PSD[1] <- mean(PSD[c(2,npsd)], na.rm=TRUE)
-  
-  # extrapolate NAs
+  # there should not be any bad values here!
   pNAs <- is.na(PSD)
-  PSD <- psd_envAssignGet(evars[['last.psdcore.extrap']], {
-    if (any(pNAs)){
-      warning("NA psd estimates?!")
-      zoo::na.locf(zoo::na.locf(PSD, na.rm=FALSE), na.rm=FALSE, fromLast=TRUE)
-    } else {
-      PSD
-    }
-  })
+  if (any(pNAs)) warning("NA psd estimates?!")
   
   ## Nyquist frequencies
+  npsd <- length(PSD)
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
   
   ## Update tapers for consistency
@@ -264,82 +243,16 @@ psdcore.default <- function(X.d,
   	kseq
   })
 
-  ## Normalize and convert to one-sided spectrum
+  ## Normalize and convert to one-sided PSD
   #
-  # we are using the trapezoidal rule, the principal being that the area underneath the spectrum
+  # ( using the trapezoidal rule, the principal being that the
+  # integrated spectrum should be equal to the variance of the signal )
+  #
   trap.area <- base::sum(PSD, na.rm=TRUE) - mean(PSD[c(1,npsd)], na.rm=TRUE)
-  PSD <- 2 * PSD * varx / (trap.area / nhalf)
-  #
-  area.var.ratio <- varx * nhalf / trap.area
-  if (verbose) message("\tarea to variance ratio: ", signif(dB(area.var.ratio)))
+  area.var.ratio <- varx / trap.area
+  PSD <- 2 * PSD * area.var.ratio * nhalf
   
-  funcall <- sprintf("psdcore (dem.+detr. %s f.l. %s refr. %s)", preproc, first.last, refresh) 
-  
-  ## Plot result locally
-  # TODO: cleanup
-  # TODO: class and method (?) and move out of this script
-  pltpsd <- function(Xser, frqs, PSDS, taps, nyq, detrend, demean, ...){
-    fsamp <- frequency(Xser)
-    stopifnot(fsamp==X.frq)
-    Xpg <- spec.pgram(Xser, log="no", pad=1, taper=0.2, detrend=detrend, demean=detrend, plot=FALSE)
-    # frequencies are appropriate,
-    # but spectrum is normed for double-sided whereas psd single-sided; hence,
-    # factor of 2
-    Xpg <- normalize(Xpg, fsamp, "spectrum", verbose=FALSE)
-    ##
-    opar <- par(no.readonly = TRUE)
-    par(mar=c(2, 3, 2.3, 1.2), oma=rep(2,4), las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
-    #layout(matrix(c(1,2), ncol=1), c(1,2))
-    layout(matrix(c(1,1,2,2,3,4), 3, 2, byrow = TRUE))
-    ## Prelims:
-    # psd
-    lfrq <- log10(frqs); rm(frqs)
-    db_PSD <- dB(PSDS/fsamp); rm(PSDS) # quick normalization
-    # spec.pgram
-    lfrqp <- log10(Xpg$freq)
-    db_pgram <- dB(Xpg$spec); rm(Xpg)
-    # plotting
-    r1 <- range(db_PSD, na.rm=TRUE, finite=TRUE)
-    r2 <- range(db_pgram, na.rm=TRUE, finite=TRUE)
-    ylims <- round(c(min(r1, r2), max(r1, r2)), 1)
-    r1 <- range(lfrqp, na.rm=TRUE, finite=TRUE)
-    r2 <- range(lfrq, na.rm=TRUE, finite=TRUE)
-    xlims <- round(c(min(r1, r2), max(r1, r2)), 1) + .1*c(-1,1)
-    
-    ## Spectra, in decibels
-    plot(lfrqp, db_pgram, col="red", type="l", 
-         main=funcall,
-         xaxs="i", xlab="", xlim=xlims,
-         ylab="dB, units^2 * delta", ylim=ylims)
-    mtext("log10 frequency", side=1, line=1.6)
-    abline(h=3.01*c(-1,0,1), v=log10(nyq), col="dark gray", lwd=c(0.8,2,0.8), lty=c(4,3,4))
-    lines(lfrq, db_PSD, type="l")
-    legend("bottomleft",c("spec.pgram (20% cosine taper)",sprintf("psdcore (max %i tapers)",max(taps))), col=c("red","black"), lty=1, lwd=2, cex=0.9)
-    
-    ## tapers
-    if (is.tapers(taps)){
-      plot(taps, lfrq, xlim=xlims, xaxs="i")
-    } else {
-      plot(lfrq, taps, type="h", xlim=xlims, xaxs="i")
-    }
-    
-    ## original series
-    plot(Xser, type="l", ylab="units", xlab="", xaxs="i", main="Modified series")
-    mtext("index", side=1, line=1.5)
-    mtext(sprintf("( dt+dm: %s | f.l: %s )", preproc, first.last), cex=0.4)
-    
-    ## autocorrelation
-    acf(Xser, main="")
-    mtext("lag", side=1, line=1.5)
-    
-    ## reset params
-    par(opar)
-  }
-  
-  ## Plot results
-  if (plotpsd) pltpsd(Xser=X, frqs=frq, PSDS=PSD, taps=kseq, nyq=Nyq, detrend=preproc, demean=preproc, ...)
-  
-  ## Return results
+  ## Assemble final results
   mtap <- max(kseq, na.rm=TRUE)
   PSD.out <- list(freq = as.numeric(frq), 
                   spec = as.numeric(PSD), 
@@ -364,9 +277,139 @@ psdcore.default <- function(X.d,
                   detrend = preproc, # always true?
                   demean = preproc,
                   timebp = as.numeric(kseq/2),
-                  nyquist.frequency = Nyq,
-                  first.last = first.last
+                  nyquist.frequency = Nyq
   )
-  if (as.spec){class(PSD.out) <- c("spec","amt")}
+  class(PSD.out) <- c("amt","spec")
+  if (plotpsd) pgram_compare(PSD.out, ...)
   return(invisible(PSD.out))
+}
+
+#' Plot an sine multitaper spectrum against a cosine-tapered periodogram
+#' 
+#' @description
+#' Plot the results of \code{\link{psdcore}} against the results of 
+#' \code{\link[stats]{spec.pgram}}
+#' 
+#' @name pgram_compare
+#' @export
+#' 
+#' @param x numeric; the frequencies to plot; alternatively, a single \code{\link{psdcore}} object 
+#' @param y a single \code{\link{psdcore}} object; optional if \code{x} is an appropriate set of frequencies
+#' @param log.freq logical; should frequencies be transformed with \code{\link{log10}}?  
+#' Note that if \code{x} is a set of frequencies, the values should not already be transformed.
+#' @param dp.spec logical; should the spectrum estimates be converted to decibels with \code{\link{dB}}?
+#' @param taper numeric; specifies the proportion of data to taper for the cosine periodogram. 
+#' @param ... additional parameters (currently unused)
+#' 
+#' @return A list with the cosine-tapered estimates and the adaptive estimates, invisibly.
+#' 
+pgram_compare <- function(x, y, ...) UseMethod("pgram_compare")
+
+#' @rdname pgram_compare
+#' @aliases pgram_compare.amt
+#' @export
+pgram_compare.amt <- function(x, y, log.freq=TRUE, db.spec=TRUE, taper=0.2, ...){
+  
+  if (missing(y)){
+    P. <- x
+    f. <- P.[['freq']]
+    s. <- P.[['spec']]
+    t. <- P.[['taper']]
+  } else {
+    P. <- y
+    f. <- as.numeric(x)
+    s. <- P.[['spec']]
+    t. <- P.[['taper']]
+  }
+
+  detrend <- P.[['detrend']]
+  demean <- P.[['demean']]
+  
+  ops <- getOption("psd.ops")
+  stopifnot(!is.null(ops))
+  evars <- ops[['names']]
+  
+  X <- as.ts(psd_envGet(evars[['series.even']]))
+  fsamp <- frequency(X)
+  
+  # Calculate (single) cosine taper psd
+  tc. <- taper
+  Pc. <- spec.pgram(X, log="no", pad=1, taper=tc., detrend=detrend, demean=detrend, plot=FALSE)
+  # frequencies are appropriate,
+  # but spectrum is normed for double-sided whereas psd single-sided; hence,
+  # factor of 2
+  Pc. <- normalize(Pc., fsamp, "spectrum", verbose=FALSE)
+  fc. <- Pc.[['freq']]
+  sc. <- Pc.[['spec']]
+  
+  flab <- if (log.freq){
+    f. <- log10(f.)
+    fc. <- log10(fc.)
+    flims <- range(pretty(c(f.,fc.)))
+    expression(log[10] ~~ "frequency")
+  } else {
+    expression('frequency')
+  }
+  
+  slab <- if (db.spec){
+    s. <- dB(s./fsamp) # normalization adjustment
+    sc. <- dB(sc.)
+    slims <- range(pretty(c(s.,sc.)))
+    expression("dB rel." ~~ "units"**2 %*% delta * t)
+  } else {
+    expression(delta ~ "units"**2 %*% delta * t)
+  }
+  
+  ## Start plotting
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar))
+  
+  #layout(matrix(c(1,2), ncol=1), c(1,2))
+  layout(matrix(c(1,1,2,2,3,4), 3, 2, byrow = TRUE))
+  par(mar=c(2, 3.5, 2.3, 1.2), oma=c(2,2,2,1))
+  par(las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
+  par(cex=0.8)
+  
+  ## Periodogram result first
+  plot(fc., sc., 
+       col="red", type="l",
+       xaxs="i", xlim=flims, 
+       yaxs="i", ylim=slims, 
+       xlab="", 
+       ylab=slab,
+       main="")
+  # and adaptive result overlain
+  lines(f., s., type="l")
+  legend("bottomleft",
+         c(sprintf("spec.pgram (%i%% cosine taper)", 100*tc.), 
+           sprintf("psdcore (%i - %i tapers)", min(t.), max(t.)) ), 
+         col=c("red","black"), lty=1, lwd=2, cex=0.9)
+  mtext(flab, side=1, line=2)
+  mtext("Spectral density estimates", adj=0, line=0.2, font=4)
+  
+  ## Tapers
+  if (is.tapers(t.)){
+    plot(t., f., xlim=flims, xaxs="i")
+  } else {
+    plot(f., t., type="h", xlim=flims, xaxs="i")
+  }
+  mtext("Sine-tapers", adj=0, line=0.2, font=4)
+  #mtext(flab, side=1, line=2)
+    
+  ## Original series
+  main.pre <- ifelse(detrend | demean, "Modified e", "E")
+  main.post <- sprintf("(dem. %s detr. %s)", detrend, demean) 
+  plot(X, type="l", ylab="units", xlab="", xaxs="i", main="")
+  mtext(paste0(main.pre, "ven-length series"), line=1, font=4)
+  mtext(main.post, cex=0.6)
+  mtext(expression("time"), side=1, line=1.7)
+  
+  ## autocorrelation
+  acf(X, main="")
+  mtext(expression("lag, time"), side=1, line=1.7)
+  mtext("Auto-correlation function", line=1, font=4)
+  
+  title("Sine-multitaper PSD vs. Tapered Periodogram", outer=TRUE, line=0, cex.main=1.5)
+  return(invisible(list(spec=Pc., amt=P.)))
+  
 }

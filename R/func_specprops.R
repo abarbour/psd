@@ -44,7 +44,7 @@
 #' \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
 #' doi: 10.1111/j.1365-246X.2007.03592.x
 #'
-#' @param tapvec object with class \code{tapers} or \code{spec}
+#' @param tapvec object with class \code{'tapers'} or \code{'spec'}
 #' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
 #' @param n.freq scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the tapers object is assumed to be the number)
 #' @param p numeric; the coverage probability, bound within \eqn{[0,1)}
@@ -64,19 +64,17 @@ spectral_properties <- function(tapvec, ...) UseMethod("spectral_properties")
 
 #' @rdname spectral_properties
 #' @aliases spectral_properties.spec
-#' @method spectral_properties spec
 #' @export
 spectral_properties.spec <- function(tapvec, ...){
   stopifnot(is.spec(Pspec <- tapvec))
-  n.freq <- length(Pspec$freq)
-  f.samp <- 2*Pspec$freq[n.freq]
-  tapvec <- Pspec$taper
+  n.freq <- length(Pspec[['freq']])
+  f.samp <- 2 * Pspec[['freq']][n.freq]
+  tapvec <- Pspec[['taper']]
   spectral_properties(tapvec, f.samp, n.freq, ...)
 }
 
 #' @rdname spectral_properties
 #' @aliases spectral_properties.tapers
-#' @method spectral_properties tapers
 #' @export
 spectral_properties.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
@@ -86,7 +84,6 @@ spectral_properties.tapers <- function(tapvec, ...){
 
 #' @rdname spectral_properties
 #' @aliases spectral_properties.default
-#' @method spectral_properties default
 #' @export
 spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
   

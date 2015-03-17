@@ -3,14 +3,13 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.default}
-\title{Multitaper power spectral density estimates of a series.}
+\title{Multitaper power spectral density estimates of a series}
 \usage{
 psdcore(X.d, ...)
 
 \method{psdcore}{default}(X.d, X.frq = NULL, ntaper = as.tapers(5),
-  preproc = TRUE, na.action = stats::na.fail, first.last = TRUE,
-  plotpsd = FALSE, as.spec = TRUE, refresh = FALSE, verbose = FALSE,
-  ndecimate, ...)
+  preproc = TRUE, na.action = stats::na.fail, plotpsd = FALSE,
+  refresh = FALSE, verbose = FALSE, ndecimate, ...)
 }
 \arguments{
 \item{X.d}{the series to estimate a spectrum for}
@@ -25,11 +24,9 @@ psdcore(X.d, ...)
 
 \item{na.action}{function to deal with \code{NA} values}
 
-\item{first.last}{should the zeroth and Nyquist frequency estimates be extrapolated?}
-
-\item{plotpsd}{logical; should the estimates be shown compared to the \code{\link{spectrum}}-based estimates}
-
-\item{as.spec}{logical; should the object returned be of class 'spec'?}
+\item{plotpsd}{logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
+Note that this will add some computation time, since the cosine-tapered periodogram is calculated inside
+\code{\link{pgram_compare}}.}
 
 \item{refresh}{logical; ensure a free environment prior to execution}
 
@@ -38,13 +35,14 @@ psdcore(X.d, ...)
 \item{ndecimate}{now ignored}
 }
 \value{
-An list object, invisibly.  If \code{as.spec=TRUE} then an object with class \code{spec};
-otherwise the list object will have information similar to a \code{spec} object, but with
-a few additional fields.
+An on object of class \code{'amt','spec'}, which has a structure similar to a regular \code{'spec'} object,
+but with a few additional fields, invisibly.
 }
 \description{
 Compute power spectral density (PSD) estimates
 for the input series using sine multitapers.
+This is used by \code{\link{pspectrum}} for the adaptive
+estimation procedure.
 }
 \details{
 \subsection{Tapering}{
@@ -55,32 +53,21 @@ otherwise, use \code{ntaper[j]} sine tapers at \code{frequency[j]}.
 
 \subsection{Truncation}{
 The series, with length \eqn{N}, is necessarily truncated so that \eqn{1+N/2} evenly
-spaced frequencies are returned.  This truncation makes the series length ``highly composite",
+spaced frequencies are returned. This truncation makes the series length ``highly composite",
 which the discrete Fourier transform (DFT) is most efficient.
-The vignette "fftw" (accessed with \code{vignette("fftw",package="psd")}) shows
+The "fftw" vignette (accessed with \code{vignette("fftw",package="psd")}) shows
 how the performance of a DFT can be affected by series length.
 }
 
 \subsection{Decimation}{
-	No longer supported.
+	No longer supported. Setting \code{ndecimate} will not affect the results
 }
 
 \subsection{Sampling}{
- If \code{X.frq} is NULL, the value is assumed to be 1, unless \code{X.d} is a 'ts' object.
+ If \code{X.frq} is NULL, the value is assumed to be 1, unless \code{X.d} is a  \code{'ts'} object.
  If \code{X.frq > 0} it's assumed the value represents \emph{frequency} (e.g. Hz).
  If \code{X.frq < 0} it's assumed the value represents \emph{interval} (e.g. seconds).
 }
-}
-\section{Warning}{
-
-Decimation is not well tested as of this point.
-
-The \code{first.last} parameter is a workaround for potential bug (under investigation),
-which causes
-the power at the zero and Nyquist frequencies to have anomalously low values.
-This argument enables using
-linear \emph{extrapolation} to correct these values.
-\strong{The feature will be deprecated if the supposed bug is both identified and fixed.}
 }
 \examples{
 \dontrun{#REX
@@ -103,9 +90,9 @@ psdcore(X, 20, 10, plotpsd=TRUE, refresh=TRUE)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L.Parker.
+A.J. Barbour; original algorithm by R.L. Parker.
 }
 \seealso{
-\code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}
+\code{\link{pspectrum}}, \code{\link{riedsid}}, \code{\link{parabolic_weights}}, \code{\link{pgram_compare}}
 }
 

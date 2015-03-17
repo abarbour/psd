@@ -3,31 +3,31 @@
 \name{psd-normalization}
 \alias{normalization}
 \alias{normalize}
-\alias{normalize.default}
+\alias{normalize.amt}
 \alias{normalize.list}
 \alias{normalize.spec}
 \alias{psd-normalization}
 \title{Normalization of power spectral density estimates.}
 \usage{
-normalize(Spec, Fsamp = 1, src = NULL, verbose = TRUE, ...)
+normalize(Spec, ...)
 
-\method{normalize}{default}(Spec, Fsamp = 1, src = NULL, verbose = TRUE,
-  ...)
+\method{normalize}{list}(Spec, ...)
 
-\method{normalize}{list}(Spec, Fsamp = 1, src = NULL, verbose = TRUE, ...)
+\method{normalize}{spec}(Spec, Fsamp = 1, src = c("spectrum",
+  "double.sided", "psd", "single.sided"), verbose = TRUE, ...)
 
-\method{normalize}{spec}(Spec, Fsamp = 1, src = NULL, verbose = TRUE, ...)
+\method{normalize}{amt}(Spec, ...)
 }
 \arguments{
 \item{Spec}{spectrum to normalize}
+
+\item{...}{(unused) additional parameters}
 
 \item{Fsamp}{sampling frequency}
 
 \item{src}{character string; the source of the spectrum estimator}
 
 \item{verbose}{logical; should messages be given?}
-
-\item{...}{(unused) additional parameters}
 }
 \value{
 An object with its spectral values normalized accordingly.

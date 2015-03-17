@@ -39,7 +39,7 @@
 #' @export
 #' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
 #' 
-#' @param PSD vector or class 'spec'; the spectral values used to optimize taper numbers
+#' @param PSD vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as \code{PSD})
 #' @param Deriv.method character; choice of gradient estimation method 
@@ -59,15 +59,16 @@ riedsid.spec <- function(PSD, ntaper = 1L, ...){
   stopifnot(is.spec(PSD))
   Pspec <- PSD[['spec']]
   Tapseq <- PSD[['freq']]
-  if (missing(ntaper)){
-    if (inherits(PSD, 'amt')){
+  ntaper <- if (missing(ntaper)){
+    if (is.amt(PSD)){
       PSD[['taper']]
     } else {
       rep.int(ntaper, length(Pspec))
     }
   }
-  riedsid(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
+  riedsid.default(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
 }
+
 
 #' @rdname riedsid
 #' @export
@@ -187,12 +188,12 @@ riedsid2.spec <- function(PSD, ...){
   stopifnot(is.spec(PSD))
   pspec <- PSD[['spec']]
   freqs <- PSD[['freq']]
-  ntaper <- if (inherits(PSD, 'amt')){
+  ntaper <- if (is.amt(PSD)){
     PSD[['taper']]
   } else {
     rep.int(1L, length(pspec))
   }
-  riedsid2(pspec, ntaper, ...)
+  riedsid2.default(pspec, ntaper, ...)
 }
 
 #' @rdname riedsid

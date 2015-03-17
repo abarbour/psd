@@ -5,6 +5,7 @@
 \alias{dB}
 \alias{db}
 \alias{decibels}
+\alias{is.amt}
 \alias{is.spec}
 \alias{is.tapers}
 \alias{mod}
@@ -37,6 +38,8 @@ colvec(x)
 rowvec(x)
 
 is.spec(Obj)
+
+is.amt(Obs, ...)
 
 is.tapers(Obj)
 
@@ -78,9 +81,7 @@ mod(X, Y)
 had it's dimensions changes so that it has either one row
 (if \code{vec.shape=="horizontal"}), or one column (\code{"vertical"}).
 
-\code{is.spec} and \code{is.tapers} both return
-logicals about whether or not the object does have class 'spec' or 'tapers',
-respectively
+\code{is.spec}, \code{is.amt}, and \code{is.tapers} return the output of \code{\link{inherits}}.
 
 \code{na_mat} returns a matrix of dimensions \code{(nrow,ncol)} with
 \code{NA} values, the representation of which is set by \code{NA_real_}
@@ -102,10 +103,10 @@ to return variance for the second difference.
 \code{colvec} returns the object as a vertically long vector; whereas
 \code{rowvec} returns the object as a horizontally long vector.
 
-\code{is.spec} reports whether an object has class S3 class 'spec', as
-would one returned by, for example, \code{spectrum}.
+\code{is.spec} and \code{is.amt} reports whether an object has class \code{'spec'} or \code{'amt'}, as
+would one returned by, for example, \code{\link{spectrum}} or \code{\link{psdcore}}.
 
-\code{is.tapers} reports whether an object has S3 class 'tapers', as
+\code{is.tapers} reports whether an object has class \code{'tapers'}, as
 would one returned by, for example, \code{\link{as.tapers}}.
 
 \code{na_mat} populates a matrix of specified dimensions

@@ -76,15 +76,9 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   stopifnot(length(remove.AR)==1)
   stopifnot(length(x.frequency)==1)
   
-  # setup a universal calculator
+  # setup a common calculator
   PSDFUN <- function(X.., Xf.., Xk.., AR=FALSE){
-    toret <- psdcore(X.., Xf.., Xk.., 
-                     preproc=FALSE, 
-                     first.last=!AR, 
-                     as.spec=TRUE, 
-                     refresh=TRUE, 
-                     verbose=FALSE)
-    return(toret)
+    return(psdcore(X.., Xf.., Xk.., preproc=FALSE, refresh=TRUE, verbose=FALSE))
   }
   
   # AR spectrum or no?

@@ -18,6 +18,7 @@
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{color}
+\usepackage{txfonts}
 %
 \newcommand{\SC}[1]{\textsc{#1}}
 \newcommand{\SCY}[0]{\SC{Yes}}
@@ -105,18 +106,25 @@ The \Rcmd{raw} and \Rcmd{clean} names represent raw
 and edited intensities respectively, expressed in units of nanotesla; 
 \Rcmd{mdiff} is the difference between them.
 The difference between them is a matter of just a few points
-attributable to instrumental malfunction. 
-%% edits
+attributable to instrumental malfunction; but, as we will see, the
+outliers adversely affect the accuracy of any type PSD estimate, regardless
+of the level of sophistication of the method.
+%%
 <<eval=TRUE, echo=TRUE, label="Outliers.">>=
 subset(magnet, abs(mdiff)>0)
 @
-These deviations can,
-as we will see, adversely affect the accuracy of any PSD estimate,
-multitaper or otherwise.
+<<eval=TRUE, echo=FALSE, fig.width=6.0, fig.height=4.0, label=Outliers>>=
+plot(raw ~ km, magnet, col=NA, las=1, ylab="Magnetic anomaly", xlab="Along-track distance, km")
+abline(v=subset(magnet, abs(mdiff)>0)$km, col='grey')
+lines(raw ~ km, magnet, col='red')
+lines(clean + 75 ~ km, magnet)
+text(1100,-50,"Raw", col='red')
+text(1500,130,"Clean (+75)")
+@
 
 We can find power spectral density (PSD)
 estimates for the two series quite simply with \Rcmd{pspectrum}:
-%% pspectrum 5 iters
+%%
 <<eval=TRUE, echo=TRUE, label=MAGPSDS>>=
 psdr <- pspectrum(magnet$raw)
 psdc <- pspectrum(magnet$clean)
@@ -130,11 +138,10 @@ based on the proposed optimal number from \citet{rs1995}, which
 depends on spectral shape; we use 
 quadratically weighted spectral derivatives \citep{prieto2007}
 to estimate this shape.
-By default, a multipanel summary plot of the final PSD compared
-to the raw periodogram estimate is shown after the final iterative stage.
 Note that if the user forgets to assign the results of
-\Rcmd{pspectrum} to the global environment, this can be
-done with the \Rcmd{psd\_envGet} function:
+\Rcmd{pspectrum} to the global environment, the result can
+be recovered with the \Rcmd{psd\_envGet} function:
+%%
 <<echo=TRUE, eval=TRUE, label=FINALPSDS>>=
 psdc_recovered <- psd_envGet("final_psd")
 all.equal(psdc, psdc_recovered)
@@ -142,49 +149,55 @@ all.equal(psdc, psdc_recovered)
 
 In general, spectral variance is reduced
 with sequential refinements\footnote{
-Messages are given by default; ones with
-``Ave. S.V.R."
-are in reference to 
- ``average spectral-variance reduction", which
- is the variance of the
- double-differenced spectra at each stage, relative
- to the pilot estimate's variance.
-}, but is not necessarily guaranteed to converge.
-Note that in the example
-the sampling frequency of both series
-is 1 km$^{-1}$, the assumed value.
+  Messages are given by default; ones which read
+  ``Ave. S.V.R." are in reference to 
+  average spectral-variance reduction, which
+  we define here as the variance of the
+  double-differenced spectra at each stage, relative
+  to the spectral variance in the pilot estimate.
+}, but is not necessarily guaranteed to reduce monotonically.
 
-Figure \ref{fig:pmag} compares the 
-power spectra for the \Rcmd{raw} and \Rcmd{clean} 
-series\footnote{
-Note that \Rcmd{pspectrum} returns
-an object with class \Rcmd{spec}, so we have access to methods 
-within \Rcmd{stats}, including \Rcmd{plot.spec}.
-}.  
+Figure \ref{fig:pmag} compares power spectra for the \Rcmd{raw} and \Rcmd{clean} 
+series produced by \Rcmd{stats::spectrum} and \Rcmd{pspectrum}\footnote{
+  Note that \Rcmd{pspectrum} returns an object with class \Rcmd{spec} (and \Rcmd{amt}), so 
+  we have access to methods within \Rcmd{stats}, including \Rcmd{plot.spec}.
+} using default settings.
+%
 We expect the Project MAGNET data to be linear in the space of
-linear-frequencies and logarithmic-power;
-we see a clear
+linear-frequencies and logarithmic-power; in fact there is a clear
 improvement in spectral shape between the two series,
 simply because the large outliers have been removed.
-The PSD of the clean series shows a
-very ``red" spectrum typical of geophysical processes \citep{agnew1992},
-and a rolloff in signal
+%
+The PSD of the clean series shows the type of spectrum typical of 
+geophysical processes \citep{agnew1992}, and a rolloff in signal
 for 10 kilometer wavelengths and longer; whereas, the 
-PSD for the raw series looks somewhat unrealistic at higher wavelengths -- features 
-which could be difficult to judge if the spectral variance was higher.
+PSD for the raw series looks somewhat unrealistic at shorter wavelengths -- features 
+which could be difficult to judge with high spectral variance.
 
 \begin{figure}[!htbp]
 \begin{center}
-<<eval=TRUE, echo=TRUE, label=RAWvCLEAN>>=
-plot(psdc, log="dB", main="Raw and cleaned Project MAGNET power spectral density estimates", 
-       lwd=3, ci.col=NA, ylim=c(0,32), yaxs="i")
-plot(psdr, log="dB", add=TRUE, lwd=3, lty=5)
-text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
+<<eval=TRUE, echo=FALSE, fig.width=7, fig.height=7.5, label=RAWvCLEAN>>=
+psdo <- spectrum(magnet$clean, plot=FALSE)
+psdo <- normalize(psdo, verbose = FALSE)
+psdor <- spectrum(magnet$raw, plot=FALSE)
+psdor <- normalize(psdor, verbose = FALSE)
+plot(psdo, log="dB", main="Raw and cleaned Project MAGNET power spectral density estimates", 
+       lwd=1, ci.col=NA, ylim=c(0,32), yaxs="i", col=NA)
+with(psdo, points(freq, dB(spec), pch=3, col='light grey', cex=0.5, lwd=2))
+with(psdor, points(freq, dB(spec), pch=3, col='lightpink', cex=0.5, lwd=2))
+plot(psdc, log="dB", add=TRUE, lwd=3, lty=5, col='black')
+plot(psdr, log="dB", add=TRUE, lwd=3, lty=5, col='red')
+text(c(0.28,0.34), c(11,23), c("Clean","Raw"), cex=1, col=1:2, font=2)
 @
 \caption{Power spectral density estimates for the raw and cleaned
-             \Rcmd{Project MAGNET} data bundled with \psd{}: see \Rcmd{data(magnet)}. 
-             Note that because the class is \Rcmd{`spec'} we have
-             utilized  existing methods in the \Rcmd{stats} namespace.}
+         Project MAGNET data bundled with \psd{}: see \Rcmd{?magnet}. 
+         Points are estimates produced by \Rcmd{spectrum} and
+         dashed lines are estimates produced by \Rcmd{pspectrum}, using the
+         default settings.
+         \emph{Note that because the objects class includes \Rcmd{`spec'}, we have
+         utilized existing methods in the \Rcmd{stats} namespace. The bandwidth
+         and confidence interval estimates are for the \Rcmd{spectrum}-based result.}
+}
 \label{fig:pmag}
 \end{center}
 \end{figure}
@@ -193,10 +206,10 @@ text(c(0.25,0.34), c(11,24), c("Clean","Raw"), cex=1)
 
 \section{Comparisons with other methods}
 
-As we have shown in the Project MAGNET example, 
-improved understanding of the physics behind the signals in the data
-is of great concern.
-Assuming a sample is free of non-physical points, how do
+As we have shown in the Project MAGNET example, a more accurate estimate
+of the power spectrum can help improve understanding of the physics 
+behind the signals in the data.
+But, assuming a sample is free of non-physical points, how do
 PSD estimates from \psd{} compare with other methods?
 Unfortunately the suite of extensions with similar functionality
 is relatively limited, but hopefully we have
@@ -214,14 +227,15 @@ using the same data: the cleaned Project MAGNET series.
 \subsection{\Rcmd{stats::spectrum}}
 
 Included in the core distribution of R is \Rcmd{stats::spectrum}, which
-accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} for either
+accesses \Rcmd{stats::spec.ar} or \Rcmd{stats::spec.pgram} (which was used
+for the estimates in Figure \ref{fig:pmag}) for either
 parametric and non-parametric estimation, respectively.  
 The user can optionally apply a single cosine taper, and/or a smoothing kernel.
 Our method is non-parametric; hence, we will compare to the latter.
 
 Included in \Rcmd{psdcore} is an option to compare the 
-results with a 20\% cosine-tapered periodogram,
-found with the following command:
+results with cosine-tapered periodogram,
+found with a command equivalent to this:
 <<eval=FALSE, echo=TRUE, label="Naive spectrum estimation">>=
 spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=FALSE)
 @
@@ -239,16 +253,18 @@ results are shown in Figure \ref{fig:two}.
 \begin{center}
 %% Project MAGNET compare
 <<eval=TRUE, echo=TRUE,  label=MAGNETNAIVE>>=
-ntap <- psdc$taper
+ntap <- psdc$taper # get the previous vector of tapers
 psdcore(magnet$clean, ntaper=ntap, refresh=TRUE, plotpsd=TRUE)
 @
 \caption{A summary plot produced by \Rcmd{psdcore} when
 \Rcmd{plotpsd=TRUE}.  
 Top: Comparison between PSD estimators for the 
-clean Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
+cleaned Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.
+%
 Middle: The number of tapers applied as a function of frequency from
 the \Rcmd{plot.tapers} method. 
+%
 Bottom: The spatial series used to estimate the PSDs and a subset
 of the full autocorrelation function.}
 \label{fig:two}
@@ -647,15 +663,16 @@ are shown in Figure \ref{fig:magres}.
 
 \begin{figure}[!htbp]
 \begin{center}
-<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.5, label=MAGRES>>=
+<<eval=TRUE, echo=TRUE, fig.width=6, fig.height=3.0, label=MAGRES>>=
 frq <- Aspec$freq
 relp <- (spa$resolution - spp$resolution) / spp$resolution
+yl <- range(pretty(relp))
 par(las=1, oma=rep(0,4), omi=rep(0,4), mar=c(4,3,2,0))
 layout(matrix(c(1,2),1,2,byrow=TRUE), heights=c(2,2), widths=c(3,0.5), respect=TRUE)
 plot(frq, relp,
      main="Percent change in spectral resolution",
      col="light grey", 
-     ylim=yl<-range(pretty(relp)),
+     ylim=yl, yaxs="i",
      type="h", 
      ylab="dB", xlab="frequency, 1/km")
 lines(frq, relp)
@@ -704,12 +721,12 @@ the adaptive history in Figure \ref{fig:psdhist}.
 
 \begin{figure}[!htbp]
 \begin{center}
-<<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.3, label=HIST1>>=
+<<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.4, label=HIST1>>=
 seqcols <- seq_len(numit)
 itseq <- seqcols - 1
 toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=TRUE)
 PltStg <- StgPsd + (sc<-6)*toadd
-par(xpd=TRUE, oma=rep(0,4), mar=c(1,4,3,2), tcl=0.4)
+par(xpd=TRUE, oma=rep(0,4), mar=c(1,4,3,2), tcl=-0.4)
 matplot(Freqs, PltStg, type="l", lty=1, lwd=2, col="black",
         main="Adaptive estimation history", ylab="", xlab="",
         yaxt="n", frame.plot=FALSE,
@@ -717,11 +734,11 @@ matplot(Freqs, PltStg, type="l", lty=1, lwd=2, col="black",
 text(0.52, 1.06*sc*itseq, itseq, cex=0.9)
 lines(-1*c(1.5,1,1,1.5)*0.02,c(0,0,7,7))
 text(-.06, 3.5, "7 dB", cex=0.8)
-mtext("(a)", font=2, adj=0, line=-0.8)
-mtext("PSDs by stage", line=-0.8, font=4)
+mtext("(a)", font=2, adj=0, line=-0.3)
+mtext("PSDs by stage", line=-0.3, font=4)
 @
-<<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.1, label=HIST2>>=
-par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(1,4,2,2), tcl=0.4)
+<<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.4, label=HIST2>>=
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(1,4,2,2), tcl=-0.4)
 Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
@@ -744,26 +761,27 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
   lines(Frq, y)
   #print(c(iter,mcol)) #1 5, 2 4, 3 3, 4 2, 5 1.
   x <- (c(0,1)+mcol)*.05+0.075
-  y <- c(0.95, 0.95, 1, 1, 0.95) * 0.95 * ylm
-  text(mean(x), ylm*0.95**2, mcol-1, cex=0.9, pos=1, font=2)
-  polygon(c(x,rev(x),x[1]),y,border="black",col=icol)
+  ym. <- 0.95
+  y <- c(ym., ym., 1, 1, ym.) * ym. * ylm
+  text(mean(x), 10 + ylm*ym.**2, mcol-1, cex=0.9, pos=1, font=2)
+  polygon(c(x,rev(x),x[1]), 10 + y, border="black",col=icol)
 }))
 mtext("(b)", font=2, adj=0, line=0.5)
 mtext("Tapers by stage", line=0.5, font=4)
 @
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.7, label=HIST3>>=
-par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(3.5,4,2,2), tcl=0.4)
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(3.5,4,2,2), tcl=-0.4)
 #Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Tap=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
   tap <- Tap[,mcol]
   icol <- Cols[mcol]
   spp <- spectral_properties(as.tapers(tap), db.ci=TRUE)
-  psppu <- create_poly(Frq, tap*0-(iter*0.76)**2, spp$stderr.chi.upper)
+  psppu <- create_poly(Frq, tap*0-(iter*0.90)**2, spp$stderr.chi.upper)
   if (iter==1){
 	 plot(psppu$xx, psppu$yy, type="l", col=NA,
         main="", ylab="", xlab="", yaxt="n",
-        ylim=18*c(-1,0.02), 
+        ylim=25*c(-1,0.02), 
         yaxs="i", frame.plot=FALSE)
   }
   polygon(psppu$xx, psppu$yy, col=icol, border = "black") #, lwd = 0.2)
@@ -772,8 +790,8 @@ mtext("(c)", font=2, adj=0, line=0.6)
 lines(-1*c(1.5,1,1,1.5)*0.02, -1*c(0,0,7,7)-10)
 text(-0.06, -3.5-10, "7 dB", cex=0.8)
 mtext("Uncertainties by stage", line=0.6, font=4)
-mtext("Spatial frequency, 1/km", side=1, line=2.3)
-text(0.25, -14.5, "(pilot spectrum -- uniform tapers)", font=3, cex=0.8)
+mtext(expression("Spatial frequency, km"**-1), side=1, line=2.3)
+mtext("(pilot spectrum -- uniform tapers)", line=-2.2, side=1, font=3, cex=0.7)
 @
 
 \caption{Adaptive spectral estimation history.
@@ -788,14 +806,14 @@ and (C) the relative uncertainties of the PSDs.
 
 \clearpage
 
-It may be informative to investigate cross correlation coefficients between the stages;
-but, in this case, only the PSD estimates are significantly correlated:
-<<eval=TRUE, echo=TRUE, label=SYMCORT>>=
-suppressWarnings(symnum( cT <- cor(StgTap) ))
-@
-<<eval=TRUE, echo=TRUE, label=SYMCORP>>=
-suppressWarnings(symnum( cP <- cor(StgPsd) ))
-@
+%It may be informative to investigate cross correlation coefficients between the stages;
+%but, in this case, only the PSD estimates are significantly correlated:
+%<<eval=TRUE, echo=TRUE, label=SYMCORT>>=
+%suppressWarnings(symnum( cT <- cor(StgTap) ))
+%@
+%<<eval=TRUE, echo=TRUE, label=SYMCORP>>=
+%suppressWarnings(symnum( cP <- cor(StgPsd) ))
+%@
 
 %\section{Acknowledgements}
 
@@ -804,7 +822,10 @@ suppressWarnings(symnum( cP <- cor(StgPsd) ))
 \section{Call overview}
 
 Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
-functions involved in the adaptive estimation process. The primary function is \Rcmd{pspectrum}.
+functions involved in the adaptive estimation process. 
+The primary function is \Rcmd{pspectrum}, which calls 
+\Rcmd{psdcore} followed by \Rcmd{riedsid} repeatedly (\Rcmd{niter} times)
+to produce the final result.
 
 \begin{figure}[!htbp]
  \centering
