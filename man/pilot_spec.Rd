@@ -6,14 +6,14 @@
 \alias{pilot_spec.ts}
 \alias{pilot_spectrum}
 \alias{spec.pilot}
-\title{Calculate the pilot power spectral densities.}
+\title{Calculate inital power spectral density estimates}
 \usage{
 pilot_spec(x, ...)
 
+\method{pilot_spec}{ts}(x, ...)
+
 \method{pilot_spec}{default}(x, x.frequency = NULL, ntap = NULL,
   remove.AR = NULL, plot = FALSE, verbose = FALSE, ...)
-
-\method{pilot_spec}{ts}(x, ...)
 }
 \arguments{
 \item{x}{vector; the data series to find a pilot spectrum for}
@@ -31,12 +31,11 @@ pilot_spec(x, ...)
 \item{verbose}{logical; should messages be given?}
 }
 \value{
-An object with class 'spec', invisibly.  It also assigns the object to
-\code{"pilot_psd"} in the working environment.
+An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.
 }
 \description{
-This PSD -- the pilot spectrum -- is used as the starting point
-for the adaptive estimation routine.
+This PSD is used as the starting point -- the pilot spectrum -- for
+the adaptive estimation routine.
 }
 \details{
 A fixed number
@@ -70,7 +69,7 @@ If the AR order is much larger than this, it's unclear how \code{\link{prewhiten
 will perform and whether the AR model is appropriate.
 
 \emph{Note that this function does not produce a parametric spectrum estimation; rather,
-it will return the amplitude response of the best-fitting AR model as \code{spec.ar}
+it will return the amplitude response of the best-fitting AR model as \code{\link[stats]{spec.ar}}
 would. \strong{Interpret these results with caution, as an AR response spectrum
 can be misleading.}}
 }
@@ -90,11 +89,9 @@ plot(pilot_spec(xc, remove.AR=10), log="dB", add=TRUE, col="red")
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \seealso{
-\code{\link{psdcore}}, \code{\link{prewhiten}}
-
-Documentation for \code{spec.ar}.
+\code{\link{psdcore}}, \code{\link{prewhiten}}, \code{\link[stats]{spec.ar}}
 }
 

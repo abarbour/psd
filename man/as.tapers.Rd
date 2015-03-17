@@ -23,7 +23,7 @@ tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE,
 \item{record.last}{logical; should the \code{x} be saved to the \code{\link{psd-environment}} before coercion?}
 }
 \value{
-An object with class taper.
+An object with class \code{'taper'}
 }
 \description{
 In a tapered spectrum estimation algorithm, it is
@@ -89,11 +89,9 @@ try(as.tapers(c("a","b")), silent=TRUE)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \seealso{
 \code{\link{is.tapers}}
 }
-\keyword{S3methods}
-\keyword{tapers}
 

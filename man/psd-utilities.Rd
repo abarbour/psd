@@ -2,6 +2,7 @@
 % Please edit documentation in R/func_utils.R
 \name{psd-utilities}
 \alias{colvec}
+\alias{create_poly}
 \alias{dB}
 \alias{db}
 \alias{decibels}
@@ -29,6 +30,8 @@ varddiff(x)
 
 \method{varddiff}{default}(x)
 
+create_poly(x, y, dy, from.lower = FALSE)
+
 dB(Rat, invert = FALSE, pos.only = TRUE, is.power = FALSE)
 
 vector_reshape(x, vec.shape = c("horizontal", "vertical"))
@@ -39,7 +42,7 @@ rowvec(x)
 
 is.spec(Obj)
 
-is.amt(Obs, ...)
+is.amt(Obj)
 
 is.tapers(Obj)
 
@@ -49,12 +52,20 @@ zeros(nrow)
 
 ones(nrow)
 
-mod(X, Y)
+mod(x, y)
 }
 \arguments{
-\item{x}{object}
+\item{x,y}{objects; in \code{\link{create_poly}} these are the vectors used to
+create a \code{\link{polygon}}-compatible sequence (\code{x} is sorted by default);
+in \code{\link{mod}} these are the "numerator" and "denominator", respectively.}
 
 \item{double.diff}{logical; should the double difference be used instead?}
+
+\item{dy}{numeric; the distance from \code{y} to the top and bottom of
+the polygonal surfaces; see \code{from.lower}}
+
+\item{from.lower}{logical; should the bottom be \code{y} instead of \code{y+dy}, so that
+\code{dy} represents the distance from the lower surface?}
 
 \item{Rat}{numeric; the values -- ratios -- to convert to decibels (\code{dB}).}
 
@@ -68,13 +79,7 @@ mod(X, Y)
 
 \item{Obj}{An object to test for class inheritance.}
 
-\item{nrow}{integer; the number of rows to create.}
-
-\item{ncol}{integer; the number of columns to create (default 1).}
-
-\item{X}{numeric; the "numerator" of the modulo division}
-
-\item{Y}{numeric; the "denominator" of the modulo division}
+\item{nrow,ncol}{integer; the number of rows and/or columns to create}
 }
 \value{
 \code{vector_reshape} returns a "reshaped" vector, meaning it has
@@ -87,36 +92,38 @@ had it's dimensions changes so that it has either one row
 \code{NA} values, the representation of which is set by \code{NA_real_}
 
 \code{mod} returns the result of a modulo division, which is
-equivalent to \code{(X) \%\% (Y)}.
+equivalent to \code{(x) \%\% (y)}.
 }
 \description{
 \emph{The various utility functions are:}
 
-\code{vardiff} returns the variance of the first (or second)
-difference of the series. \code{varddiff} is a convenience wrapper
+\code{\link{vardiff}} returns the variance of the first (or second)
+difference of the series. \code{\link{varddiff}} is a convenience wrapper
 to return variance for the second difference.
 
-\code{dB} returns an object converted to decibels.
+\code{\link{create_poly}} generates an x-y sequence compatible for use with \code{\link{polygon}}
 
-\code{vector_reshape} reshapes a vector into another vector.
+\code{\link{dB}} returns an object converted to decibels.
 
-\code{colvec} returns the object as a vertically long vector; whereas
-\code{rowvec} returns the object as a horizontally long vector.
+\code{\link{vector_reshape}} reshapes a vector into another vector.
 
-\code{is.spec} and \code{is.amt} reports whether an object has class \code{'spec'} or \code{'amt'}, as
+\code{\link{colvec}} returns the object as a vertically long vector; whereas
+\code{\link{rowvec}} returns the object as a horizontally long vector.
+
+\code{\link{is.spec}} and \code{\link{is.amt}} report whether an object has class \code{'spec'} or \code{'amt'}, as
 would one returned by, for example, \code{\link{spectrum}} or \code{\link{psdcore}}.
 
-\code{is.tapers} reports whether an object has class \code{'tapers'}, as
+\code{\link{is.tapers}} reports whether an object has class \code{'tapers'}, as
 would one returned by, for example, \code{\link{as.tapers}}.
 
-\code{na_mat} populates a matrix of specified dimensions
+\code{\link{na_mat}} populates a matrix of specified dimensions
 with \code{NA} values.
 
-\code{zeros} populate a column-wise matrix with zeros; whereas,
-\code{ones} populates a column-wise matrix with ones.  \emph{Note that
+\code{\link{zeros}} populate a column-wise matrix with zeros; whereas,
+\code{\link{ones}} populates a column-wise matrix with ones.  \emph{Note that
 \code{n} is enforced to be at least 1 for both functions.}
 
-\code{mod} finds the modulo division of X and Y.
+\code{\link{mod}} finds the modulo division of two values
 }
 \details{
 Decibels are defined as \eqn{10 \log{}_{10} \frac{X_1}{X_2}},
@@ -131,7 +138,7 @@ is simply a series of \code{trunc} commands which
 reduces the chance for unintentionally erroneous results.
 }
 \note{
-The performance of \code{mod} has not been tested against the
+The performance of \code{\link{mod}} has not been tested against the
 \code{\%\%} arithmetic method -- it may or may not be slower for large
 numeric vectors.
 }
@@ -209,7 +216,7 @@ modulo_floor(1:10, 3)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \references{
 For \code{\link{mod}}: see Peter Dalgaard's explanation of

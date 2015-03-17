@@ -1,5 +1,4 @@
-
-#' @title Generic methods for objects with class \code{'spec'}.
+#' @title Generic methods for objects with class \code{'spec'}
 #'
 #' @details Objects with class \code{'spec'} are simply lists with spectral estimates and parameters 
 #' \code{as.data.frame} converts the list into a \code{'data.frame'} with individual
@@ -7,7 +6,7 @@
 #' all other information will be retained as an attribute.
 #'
 #' @name spec-methods
-#' @author A.J. Barbour <andy.barbour@@gmail.com>
+#' @author A.J. Barbour
 #' @rdname spec-methods
 #' @docType methods
 #' 

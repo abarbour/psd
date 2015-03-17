@@ -1,5 +1,7 @@
 
-context("Parabolic weighting factors from  parabolic_weights_rcpp")
+##
+
+context("Parabolic weighting -- Rcpp implementation")
 
 PWS <- function(n, verbose=FALSE){
   n <- as.integer(n)
@@ -9,7 +11,7 @@ PWS <- function(n, verbose=FALSE){
   return(pws.)
 }
 
-test_that("internal checks are correct",{
+test_that("internal checks are working",{
   expect_error(PWS(-1))
   expect_error(PWS(1:2))
 })
@@ -22,3 +24,5 @@ test_that("weights sum to 1 when n > 0",{
   expect_equal(PWS(1e3), 1)
   expect_equal(PWS(1e4), 1)
 })
+
+##

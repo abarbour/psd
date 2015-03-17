@@ -5,7 +5,7 @@
 \alias{spec_confint.default}
 \alias{spec_confint.spec}
 \alias{spec_confint.tapers}
-\title{Multitaper PSD confidence intervals.}
+\title{Confidence intervals for multitaper power spectral density estimates}
 \usage{
 spec_confint(dof, p = 0.95, as.db = FALSE)
 
@@ -32,7 +32,7 @@ A \code{data.frame} with the following properties (and names):
 }
 }
 \description{
-Multitaper PSD confidence intervals.
+Confidence intervals for multitaper power spectral density estimates
 }
 \details{
 The errors are estimated
@@ -78,14 +78,9 @@ lwd=c(1,3,3), col=c("black","black","red"), bg="white")
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>, modified from the
-\code{spec.ci} function inside \code{stats::plot.spec}.
+A.J. Barbour; some code modified from the \code{spec.ci} function inside \code{plot.spec}
 }
 \seealso{
 \code{\link{spectral_properties}}, \code{\link{psd-package}}, \code{plot.spec}, \code{\link{dB}}
 }
-\keyword{degrees-of-freedom}
-\keyword{properties}
-\keyword{tapers}
-\keyword{uncertainty}
 

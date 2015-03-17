@@ -1,5 +1,7 @@
 
-context("Discrete Fourier Transform calculations")
+##
+
+context("DFT calculations -- stats::fft and fftw::FFT")
 
 library(stats)
 if (!require(fftw)) stop('Please install the fftw package to complete tests.')
@@ -8,16 +10,16 @@ n. <- 10
 x. <- seq_len(n.)
 xn. <- 1.0*x.
 
-test_that("fftw expects numeric or complex", {
+test_that("fftw::FFT expects numeric or complex", {
   expect_error(FFT(x.))
 })
 
-test_that("fft and fftw return complex", {
+test_that("stats::fft and fftw::FFT return complex", {
   expect_is(fft(xn.), 'complex')
   expect_is(FFT(xn.), 'complex')
 })
 
-test_that("fft and fftw return equivalent results", {
+test_that("stats::fft and fftw::FFT return equivalent results", {
   
   # Forward transform
   expect_equal(fft(x.), FFT(xn.))
@@ -30,3 +32,5 @@ test_that("fft and fftw return equivalent results", {
   expect_equal(fft(xn., inverse = TRUE), IFFT(xn., scale=FALSE))
   
 })
+
+##

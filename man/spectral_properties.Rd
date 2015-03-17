@@ -5,7 +5,7 @@
 \alias{spectral_properties.default}
 \alias{spectral_properties.spec}
 \alias{spectral_properties.tapers}
-\title{Calculate spectral properties.}
+\title{Calculate properties of multitaper power spectral density estimates}
 \usage{
 spectral_properties(tapvec, ...)
 
@@ -23,7 +23,8 @@ spectral_properties(tapvec, ...)
 
 \item{f.samp}{scalar; the sampling frequency (e.g. Hz) of the series the tapers are for}
 
-\item{n.freq}{scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the tapers object is assumed to be the number)}
+\item{n.freq}{scalar; the number of frequencies of the original spectrum
+(if \code{NULL} the length of the tapers object is assumed to be the number)}
 
 \item{p}{numeric; the coverage probability, bound within \eqn{[0,1)}}
 
@@ -43,8 +44,8 @@ A list with the following properties (and names):
 Various spectral properties may be computed from the vector of tapers, and
 if necessary the sampling frequency.
 }
-\section{Parameter Details}{
-
+\details{
+Parameter Details:
 \subsection{Uncertainty}{
 See \code{\link{spec_confint}} for details.
 }
@@ -167,21 +168,9 @@ abline(h=dB(sqrt(vardiff(Aspec$spec))), lwd=1.5, lty=2, col="red")
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
-}
-\references{
-Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007),
-Reducing the bias of multitaper spectrum estimates,
-\emph{Geophysical Journal International}, \strong{171}, 1269--1281,
-doi: 10.1111/j.1365-246X.2007.03592.x
+A.J. Barbour
 }
 \seealso{
 \code{\link{spec_confint}}, \code{\link{psd-package}}
 }
-\keyword{bandwidth}
-\keyword{degrees-of-freedom}
-\keyword{properties}
-\keyword{resolution}
-\keyword{tapers}
-\keyword{uncertainty}
 

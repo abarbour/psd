@@ -7,7 +7,7 @@
 \alias{pspectrum.spec}
 \alias{pspectrum.ts}
 \alias{pspectrum_basic}
-\title{Adaptive sine multitaper power spectral density estimation.}
+\title{Adaptive sine multitaper power spectral density estimation}
 \usage{
 pspectrum(x, ...)
 
@@ -19,9 +19,9 @@ pspectrum(x, ...)
   AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
   no.history = FALSE, plot = FALSE, ...)
 
-adapt_message(stage, dvar = NULL)
-
 pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE, ...)
+
+adapt_message(stage, dvar = NULL)
 }
 \arguments{
 \item{x}{vector; series to find PSD estimates for}
@@ -61,6 +61,8 @@ frequency has been iteratively optimized (\code{niter} times).
 \details{
 See the \strong{Adaptive estimation} section in the description of
 the \code{\link{psd-package}} for details regarding adaptive estimation.
+
+\code{\link{pspectrum_basic}} is a simplified implementation.
 }
 \examples{
 \dontrun{#REX
@@ -141,7 +143,7 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=St
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.
+A.J. Barbour adapted original by R.L. Parker
 }
 \seealso{
 \code{\link{psdcore}}, \code{\link{pilot_spec}}, \code{\link{riedsid}}, \code{\link{prewhiten}}

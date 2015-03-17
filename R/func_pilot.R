@@ -1,9 +1,10 @@
-
-#' Calculate the pilot power spectral densities.
+#' Calculate inital power spectral density estimates
 #'
-#' This PSD -- the pilot spectrum -- is used as the starting point
-#' for the adaptive estimation routine.
+#' @description
+#' This PSD is used as the starting point -- the pilot spectrum -- for
+#' the adaptive estimation routine.
 #'
+#' @details
 #' A fixed number
 #' of tapers is applied across all frequencies using \code{\link{psdcore}}, and
 #' subsequent taper-refinements are based on the spectral derivatives
@@ -34,16 +35,15 @@
 #' will perform and whether the AR model is appropriate.
 #'
 #' \emph{Note that this function does not produce a parametric spectrum estimation; rather,
-#' it will return the amplitude response of the best-fitting AR model as \code{spec.ar}
+#' it will return the amplitude response of the best-fitting AR model as \code{\link[stats]{spec.ar}}
 #' would. \strong{Interpret these results with caution, as an AR response spectrum
 #' can be misleading.}}
 #'
 #' @name pilot_spec
 #' @aliases pilot_spectrum spec.pilot
 #' @export
-#' @author A.J. Barbour <andy.barbour@@gmail.com>
-#' @seealso \code{\link{psdcore}}, \code{\link{prewhiten}}
-#' @seealso Documentation for \code{spec.ar}.
+#' @author A.J. Barbour
+#' @seealso \code{\link{psdcore}}, \code{\link{prewhiten}}, \code{\link[stats]{spec.ar}}
 #'
 #' @param x  vector; the data series to find a pilot spectrum for
 #' @param x.frequency  scalar; the sampling frequency (e.g. Hz) of the series
@@ -52,11 +52,19 @@
 #' @param plot  logical; should a plot be created?
 #' @param verbose  logical; should messages be given?
 #' @param ...  additional parameters passed to \code{\link{psdcore}}
-#' @return An object with class 'spec', invisibly.  It also assigns the object to
-#' \code{"pilot_psd"} in the working environment.
+#' @return An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pilotspec.R
 pilot_spec <- function(x, ...) UseMethod("pilot_spec")
+
+#' @rdname pilot_spec
+#' @aliases pilot_spec.ts
+#' @export
+pilot_spec.ts <- function(x, ...){
+  stopifnot(is.ts(x))
+  frq <- frequency(x)
+  pilot_spec.default(as.vector(x), x.frequency=frq, ...)  
+}
 
 #' @rdname pilot_spec
 #' @aliases pilot_spec.default
@@ -76,7 +84,7 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   #restrict maximum ar orders to within [1,100]
   if (REMAR) remove.AR <- max(1, min(100, abs(remove.AR)))
   
-  xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
+  xprew <- prewhiten(x, x.fsamp=x.frequency, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
   
   ## Remove and AR model
   if (REMAR){
@@ -144,13 +152,5 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
     })
   }
   return(invisible(psd_envAssignGet("pilot_psd", Pspec)))
-}
-
-#' @rdname pilot_spec
-#' @aliases pilot_spec.ts
-#' @export
-pilot_spec.ts <- function(x, ...){
-  frq <- stats::frequency(x)
-  pilot_spec(as.vector(x), x.frequency=frq, ...)  
 }
 

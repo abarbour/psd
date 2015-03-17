@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{resample_fft_rcpp}
 \alias{resample_fft_rcpp}
-\title{Resample an fft using varying tapers}
+\title{Resample an fft using varying numbers of sine tapers}
 \usage{
 resample_fft_rcpp(fftz, tapers, verbose = TRUE, dbl = TRUE,
   tapcap = 1000L)
@@ -14,17 +14,26 @@ resample_fft_rcpp(fftz, tapers, verbose = TRUE, dbl = TRUE,
 
 \item{verbose}{logical; should messages be given?}
 
-\item{dbl}{logical; should the code assume \code{fftz} is dual-length or singl-length?}
+\item{dbl}{logical; should the code assume \code{fftz} is dual-length or single-length?}
 
 \item{tapcap}{integer; the maximum number of tapers which can be applied; note that the length is
 automatically limited by the length of the series.}
 }
 \description{
-Resample an fft using varying tapers
+Produce an un-normalized psd based on an fft and a vector of optimal sine tapers
+}
+\details{
+To produce a psd estimate with our adaptive spectrum estimation method, we need only make one
+fft calculation initially and then
+apply the weighting factors given by \code{\link{parabolic_weights_rcpp}}, which this
+function does.
 }
 \examples{
 fftz <- complex(real=1:8, imaginary = 1:8)
 taps <- 1:4
 try(resample_fft_rcpp(fftz, taps))
+}
+\seealso{
+\code{\link{riedsid}}
 }
 

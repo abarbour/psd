@@ -1,15 +1,19 @@
-#' Adaptive sine multitaper power spectral density estimation.
+#' Adaptive sine multitaper power spectral density estimation
 #' 
+#' @description
 #' This is the primary function to be used in this package, and returns
 #' power spectral density estimates where the number of tapers at each
 #' frequency has been iteratively optimized (\code{niter} times).
 #'
+#' @details
 #' See the \strong{Adaptive estimation} section in the description of
 #' the \code{\link{psd-package}} for details regarding adaptive estimation.
+#' 
+#' \code{\link{pspectrum_basic}} is a simplified implementation.
 #'
 #' @name pspectrum
 #' @export
-#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
+#' @author A.J. Barbour adapted original by R.L. Parker
 #' @seealso \code{\link{psdcore}}, \code{\link{pilot_spec}}, \code{\link{riedsid}}, \code{\link{prewhiten}}
 #' 
 #' @param x vector; series to find PSD estimates for
@@ -23,6 +27,8 @@
 #' @param no.history logical; Should the adaptive history \emph{not} be saved?
 #' @param plot logical; Should the results be plotted?
 #' @param ... Optional parameters passed to \code{\link{riedsid}}
+#' @param stage integer; the current adaptive stage (0 is pilot)
+#' @param dvar numeric; the spectral variange; see also \code{\link{vardiff}} etc
 #' @return Object with class 'spec', invisibly. It also assigns the object to
 #' \code{"final_psd"} in the working environment.
 #'
@@ -31,6 +37,7 @@
 pspectrum <- function(x, ...) UseMethod("pspectrum")
 
 #' @rdname pspectrum
+#' @aliases pspectrum.ts
 #' @export
 pspectrum.ts <- function(x, ...){
   frq <- frequency(x)
@@ -38,6 +45,7 @@ pspectrum.ts <- function(x, ...){
 }
 
 #' @rdname pspectrum
+#' @aliases pspectrum.spec
 #' @export
 pspectrum.spec <- function(x, ...){
   cant <- "cannot adapt  pspectrum  results without an fft in the psd environment. see ?pspectrum"
@@ -56,6 +64,7 @@ pspectrum.spec <- function(x, ...){
 }
 
 #' @rdname pspectrum
+#' @aliases pspectrum.default
 #' @export
 pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
   
@@ -120,7 +129,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       # update spectrum with new tapers
       # TODO: here's why preproc flags are wrong...
       Pspec <- psdcore(X.d=x, X.frq=x.frqsamp, ntaper=kopt, 
-                       preproc=FALSE, plotpsd=plotpsd_, verbose=rverb) 
+                       preproc=FALSE, plot=plotpsd_, verbose=rverb) 
       
       # show spectral variance reduction
       if (verbose) adapt_message(stage, varddiff(Pspec)/dvar.o)
@@ -132,24 +141,6 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
   }
   if (Nyquist.normalize) Pspec <- normalize(Pspec, x.frqsamp, verbose=verbose)
   return(invisible(psd_envAssignGet("final_psd", Pspec)))
-}
-
-#' @rdname pspectrum
-#' @param stage integer; the current adaptive stage (0 is pilot)
-#' @param dvar numeric; the spectral variange; see also \code{\link{vardiff}} etc
-#' @export
-adapt_message <- function(stage, dvar=NULL){
-  stopifnot(stage >= 0)
-  stage <- if (stage == 0){
-    paste(stage, "est. (pilot)")
-  } else {
-    if (!is.null(dvar)){
-      paste(stage, sprintf("est. (Ave. S.V.R. %.01f dB)", dB(dvar)))
-    } else {
-      stage
-    }
-  }
-  message(sprintf("Stage  %s ", stage))
 }
 
 #' @rdname pspectrum
@@ -171,5 +162,21 @@ pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
     P  <- psdcore(x, ntaper=ko, preproc = FALSE)
   }
   return(P)
+}
+
+#' @rdname pspectrum
+#' @export
+adapt_message <- function(stage, dvar=NULL){
+  stopifnot(stage >= 0)
+  stage <- if (stage == 0){
+    paste(stage, "est. (pilot)")
+  } else {
+    if (!is.null(dvar)){
+      paste(stage, sprintf("est. (Ave. S.V.R. %.01f dB)", dB(dvar)))
+    } else {
+      stage
+    }
+  }
+  message(sprintf("Stage  %s ", stage))
 }
 

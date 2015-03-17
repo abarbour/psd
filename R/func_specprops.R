@@ -1,9 +1,11 @@
-#' Calculate spectral properties.
+#' Calculate properties of multitaper power spectral density estimates
 #'
+#' @description
 #' Various spectral properties may be computed from the vector of tapers, and
 #' if necessary the sampling frequency.
-#'
-#' @section Parameter Details:
+#' 
+#' @details
+#' Parameter Details:
 #' \subsection{Uncertainty}{
 #' See \code{\link{spec_confint}} for details.
 #' }
@@ -33,20 +35,15 @@
 #' approximate time-bandwidth product.
 #' }
 #' 
-#' @author A.J. Barbour <andy.barbour@@gmail.com>
+#' @author A.J. Barbour
 #' @name spectral_properties
 #' @export
-#' @keywords properties tapers resolution uncertainty degrees-of-freedom bandwidth
 #' @seealso \code{\link{spec_confint}}, \code{\link{psd-package}}
-#'
-#' @references Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007), 
-#' Reducing the bias of multitaper spectrum estimates,
-#' \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
-#' doi: 10.1111/j.1365-246X.2007.03592.x
 #'
 #' @param tapvec object with class \code{'tapers'} or \code{'spec'}
 #' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
-#' @param n.freq scalar; the number of frequencies of the original spectrum (if \code{NULL} the length of the tapers object is assumed to be the number)
+#' @param n.freq scalar; the number of frequencies of the original spectrum 
+#' (if \code{NULL} the length of the tapers object is assumed to be the number)
 #' @param p numeric; the coverage probability, bound within \eqn{[0,1)}
 #' @param  db.ci logical; should the uncertainty confidence intervals be returned as decibels?
 #' @param ... additional arguments (unused)
@@ -113,7 +110,7 @@ spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, d
   return(data.frame(taper=K, stderr.chi=StdErrCI, resolution=Resolu, dof=Dof, bw=BW))
 }
 
-#' Multitaper PSD confidence intervals.
+#' Confidence intervals for multitaper power spectral density estimates 
 #'
 #' @details
 #' The errors are estimated 
@@ -132,8 +129,7 @@ spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, d
 #' Additive uncertainties \eqn{\delta S} are returned, such that 
 #' the spectrum with confidence interval is \eqn{S \pm \delta S}.
 #'
-#' @author A.J. Barbour <andy.barbour@@gmail.com>, modified from the 
-#' \code{spec.ci} function inside \code{stats::plot.spec}.
+#' @author A.J. Barbour; some code modified from the \code{spec.ci} function inside \code{plot.spec}
 #' @name spec_confint
 #' @export
 #' @seealso \code{\link{spectral_properties}}, \code{\link{psd-package}}, \code{plot.spec}, \code{\link{dB}}
@@ -147,21 +143,20 @@ spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, d
 #' \item{\code{median}: Based on lower tail probabilities (\eqn{p=0.5})}
 #' \item{\code{approx}: Approximation based on \eqn{1/\sqrt(\nu - 1)}.}
 #' }
-#' @keywords properties tapers uncertainty degrees-of-freedom
 #' @example inst/Examples/rdex_confint.R
 spec_confint <- function(dof, p = 0.95, as.db=FALSE) UseMethod("spec_confint")
+
 #' @rdname spec_confint
 #' @aliases spec_confint.spec
-#' @method spec_confint spec
 #' @export
 spec_confint.spec <- function(dof, p = 0.95, as.db=FALSE){
   stopifnot(is.spec(dof))
   dof <- dof$df
   spec_confint(dof, p, as.db)
 }
+
 #' @rdname spec_confint
 #' @aliases spec_confint.tapers
-#' @method spec_confint tapers
 #' @export
 spec_confint.tapers <- function(dof, p = 0.95, as.db=FALSE){
   stopifnot(is.tapers(dof))
@@ -169,9 +164,9 @@ spec_confint.tapers <- function(dof, p = 0.95, as.db=FALSE){
   dof <- 2 * unclass(dof)
   spec_confint(dof, p, as.db)
 }
+
 #' @rdname spec_confint
 #' @aliases spec_confint.default
-#' @method spec_confint default
 #' @export
 spec_confint.default <- function(dof, p = 0.95, as.db=FALSE) {
   # Mostly from spec.ci, lifted from plot.spec

@@ -9,7 +9,7 @@
 \alias{data.frame.spec}
 \alias{lines.spec}
 \alias{spec-methods}
-\title{Generic methods for objects with class \code{'spec'}.}
+\title{Generic methods for objects with class \code{'spec'}}
 \usage{
 \method{as.list}{spec}(x, ...)
 
@@ -33,7 +33,7 @@ data.frame.spec(x, ...)
 \item{type}{character; the type of plot}
 }
 \description{
-Generic methods for objects with class \code{'spec'}.
+Generic methods for objects with class \code{'spec'}
 }
 \details{
 Objects with class \code{'spec'} are simply lists with spectral estimates and parameters
@@ -63,6 +63,6 @@ is.tapers(xdf$taper)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 

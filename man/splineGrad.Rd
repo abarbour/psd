@@ -3,7 +3,7 @@
 \name{splineGrad}
 \alias{splineGrad}
 \alias{splineGrad.default}
-\title{Numerical derivatives of a series based on a weighted, smooth spline representation.}
+\title{Numerical derivatives of a series based on its smooth-spline representation}
 \usage{
 splineGrad(dseq, dsig, ...)
 
@@ -14,23 +14,21 @@ splineGrad(dseq, dsig, ...)
 
 \item{dsig}{numeric; a vector of values (which will have a spline fit to them).}
 
-\item{...}{additional arguments passed to \code{smooth.spline}.}
+\item{...}{additional arguments passed to \code{\link{smooth.spline}}}
 
 \item{plot.derivs}{logical; should the derivatives be plotted?}
 }
 \value{
-A matrix with columns representing \eqn{x, f(x), f'(x), f''(x)}.
+A matrix with columns representing \eqn{x, f(x), f'(x), f''(x)}
 }
 \description{
-\code{splineGrad} computes the numerical derivatives of a spline
+This computes the numerical derivatives of a spline
 representation of the input series; differentiation of spline curves is
 numerically efficient.
-
+}
+\details{
 With smoothing, the numerical instability for "noisy" data can be drastically
-reduced,
-since spline curves are
-inherently (at least) twice differentiable. See the \strong{Examples} for
-an illustration of this.
+reduced, since spline curves are inherently (at least) twice differentiable.
 }
 \examples{
 \dontrun{#REX
@@ -54,9 +52,9 @@ splineGrad(x, y, TRUE, spar=1.0)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \seealso{
-\code{\link{smooth.spline}}
+\code{\link{smooth.spline}}, \code{\link{constrain_tapers}}
 }
 

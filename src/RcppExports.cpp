@@ -6,15 +6,15 @@
 
 using namespace Rcpp;
 
-// ctap_simple_rcpp
-IntegerVector ctap_simple_rcpp(IntegerVector tapvec, const int maxslope);
-RcppExport SEXP psd_ctap_simple_rcpp(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
+// rcpp_ctap_simple
+IntegerVector rcpp_ctap_simple(IntegerVector tapvec, const int maxslope);
+RcppExport SEXP psd_rcpp_ctap_simple(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< IntegerVector >::type tapvec(tapvecSEXP);
     Rcpp::traits::input_parameter< const int >::type maxslope(maxslopeSEXP);
-    __result = Rcpp::wrap(ctap_simple_rcpp(tapvec, maxslope));
+    __result = Rcpp::wrap(rcpp_ctap_simple(tapvec, maxslope));
     return __result;
 END_RCPP
 }

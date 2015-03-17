@@ -4,7 +4,7 @@
 \alias{prewhiten}
 \alias{prewhiten.default}
 \alias{prewhiten.ts}
-\title{Prewhiten a series}
+\title{Prepare a series for spectral estimation}
 \usage{
 prewhiten(tser, ...)
 
@@ -37,8 +37,7 @@ prewhiten(tser, ...)
 \value{
 A list with the model fits (\code{lm} and \code{ar} objects),
 the linear and AR prewhitened series (\code{ts} objects), and a logical
-flag indicating whether the I/O has been imputed. The names
-in the list are:
+flag indicating whether the I/O has been imputed. This list includes:
 \code{"lmdfit"}, \code{"ardfit"}, \code{"prew_lm"}, \code{"prew_ar"}, and \code{"imputed"}
 
 \emph{Note that if \code{AR.max=0} the AR information will exist as \code{NULL}.}
@@ -150,7 +149,7 @@ plot(PSD.ar, log=ylog, add=TRUE, col="blue", lwd=2)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com> and Robert L. Parker
+A.J. Barbour and Robert L. Parker
 }
 \seealso{
 \code{\link{psdcore}}, \code{\link{pspectrum}}

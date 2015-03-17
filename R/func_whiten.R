@@ -1,8 +1,10 @@
-#' Prewhiten a series
+#' Prepare a series for spectral estimation
 #' 
+#' @description
 #' Remove (optionally) mean, trend, and Auto Regressive (AR) model
 #' from the original series.
 #'
+#' @details
 #' The R-S multitapers do not exhibit the remarkable spectral-leakage 
 #' suppression properties of the Thomson prolate tapers, 
 #' so that in spectra with large dynamic range, 
@@ -79,7 +81,7 @@
 #'
 #' @name prewhiten
 #' @export
-#' @author A.J. Barbour <andy.barbour@@gmail.com> and Robert L. Parker
+#' @author A.J. Barbour and Robert L. Parker
 #' @seealso \code{\link{psdcore}}, \code{\link{pspectrum}}
 #' 
 #' @param tser  vector; An object to prewhiten.
@@ -92,10 +94,10 @@
 #' @param x.fsamp sampling frequency (for non \code{ts} objects)
 #' @param x.start start time of observations (for non \code{ts} objects)
 #' @param ... variables passed to \code{prewhiten.ts} (for non \code{ts} objects)
+#' 
 #' @return A list with the model fits (\code{lm} and \code{ar} objects),
 #' the linear and AR prewhitened series (\code{ts} objects), and a logical
-#' flag indicating whether the I/O has been imputed. The names
-#' in the list are:
+#' flag indicating whether the I/O has been imputed. This list includes:
 #' \code{"lmdfit"}, \code{"ardfit"}, \code{"prew_lm"}, \code{"prew_ar"}, and \code{"imputed"}
 #' @return \emph{Note that if \code{AR.max=0} the AR information will exist as \code{NULL}.}
 #'
@@ -106,8 +108,8 @@ prewhiten <- function(tser, ...) UseMethod("prewhiten")
 #' @aliases prewhiten.default
 #' @export
 prewhiten.default <- function(tser, x.fsamp=1, x.start=c(1, 1), ...){
-  Xts <- stats::ts(tser, frequency=x.fsamp, start=x.start)
-  prewhiten(Xts, ...)
+  Xts <- ts(tser, frequency=x.fsamp, start=x.start)
+  prewhiten.ts(Xts, ...)
 }
 
 #' @rdname prewhiten
@@ -117,8 +119,8 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   
   # prelims
   stopifnot(is.ts(tser))
-  sps <- stats::frequency(tser)
-  tstart <- stats::start(tser)
+  sps <- frequency(tser)
+  tstart <- start(tser)
   n.o <- length(tser)
   ttime <- sps*n.o
   

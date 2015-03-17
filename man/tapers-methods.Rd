@@ -11,7 +11,7 @@
 \alias{print.tapers}
 \alias{summary.tapers}
 \alias{tapers-methods}
-\title{Generic methods for objects with class \code{'tapers'}.}
+\title{Generic methods for objects with class \code{'tapers'}}
 \usage{
 \method{as.data.frame}{tapers}(x, ...)
 
@@ -59,7 +59,7 @@ data.frame.tapers(x, ...)
 \code{plot} returns a list with names: \code{line.colors} (hex values)
 }
 \description{
-Generic methods for objects with class \code{'tapers'}.
+Generic methods for objects with class \code{'tapers'}
 }
 \examples{
 ##
@@ -72,12 +72,9 @@ tap <- as.tapers(tap/2)
 lines(tap)
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \seealso{
 \code{\link{as.tapers}}, \code{\link{constrain_tapers}}
 }
-\keyword{S3methods}
-\keyword{methods}
-\keyword{tapers}
 

@@ -3,20 +3,15 @@
 # reverse sorted by desirability.
 #
 
-[ ] All bottlenecks to c++ 
-*** Riedsid 'local_qls' spectral derivatives?
-
-[ ] logsmoo
+[ ] log-smoothing
 
 [ ] method to 'adapt' a class 'spec' produced by spectrum
+*** is this even possible if ffts arent retained?
 
 [ ] prewhiten:
 *** implement fastLM in RcppEigen, instead of plain lm
 
 [ ] History and derivatives plotter.
-
-[ ] Unified argument names
-*** psdcore
 
 [ ] cross spectral density estimation
 *** something like the methods in ifultools/src/fra_sdf.c

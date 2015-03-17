@@ -119,12 +119,11 @@
 \clearpage
 
 
-%opts_knit$set(verbose = TRUE)
 
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
 %% libload
-\input{figure/Load_library_.tex}
+\input{figure/Load_library.tex}
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
 which represents along-track measurements
 of horizontal magnetic-field strength from a gimbaled, airborne magnetometer.
@@ -136,11 +135,11 @@ The sampling interval is
 once every kilometer (km), so the data will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% Project MAGNET data
-\input{figure/Load_Project_MAGNET_data_.tex}
+\input{figure/Load_Project_MAGNET_data.tex}
 The format of the data set is a \Rcmd{data.frame} with four
 sets of information:
 %%
-\input{figure/Show_contents_of_Project_MAGNET_.tex}
+\input{figure/Show_contents_of_Project_MAGNET.tex}
 The \Rcmd{raw} and \Rcmd{clean} names represent raw
 and edited intensities respectively, expressed in units of nanotesla; 
 \Rcmd{mdiff} is the difference between them.
@@ -149,7 +148,7 @@ attributable to instrumental malfunction; but, as we will see, the
 outliers adversely affect the accuracy of any type PSD estimate, regardless
 of the level of sophistication of the method.
 %%
-\input{figure/Outliers_.tex}
+\input{figure/Outliers.tex}
 %%
 These are readily apparent in the timeseries:
 
@@ -259,7 +258,7 @@ As a matter of bookkeeping and good practice, we should consider the working env
 accessed by \psd{} functions. 
 To ensure \Rcmd{psdcore} does not access any inappropriate information leftover
 from the previous calculations, we can set \Rcmd{refresh=TRUE}; we then 
-re-calculate the multitaper PSD and the raw periodogram with \Rcmd{plotpsd=TRUE}; these
+re-calculate the multitaper PSD and the raw periodogram with \Rcmd{plot=TRUE}; these
 results are shown in Figure \ref{fig:two}.
 
 \begin{figure}[!htbp]
@@ -267,7 +266,7 @@ results are shown in Figure \ref{fig:two}.
 %% Project MAGNET compare
 \input{figure/MAGNETNAIVE.tex}
 \caption{A summary plot produced by \Rcmd{psdcore} when
-\Rcmd{plotpsd=TRUE}.  
+\Rcmd{plot=TRUE}.  
 Top: Comparison between PSD estimators for the 
 cleaned Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.

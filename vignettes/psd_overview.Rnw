@@ -74,18 +74,16 @@ options(width=72)
 knitr::opts_chunk$set(tidy = TRUE, size="small", split=TRUE, par=TRUE)
 knit_hooks$set(par = function(before, options, envir){
   if (before && options$fig.show!='none'){
-    #mar=c(4,4,.1,.1),
     par(cex.lab=.95,cex.axis=.9,mgp=c(2.7,.6,0),tcl=-.4)
     par(las=1, lend='square', ljoin='mitre')
   }
 })
 @
-%opts_knit$set(verbose = TRUE)
 
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
 %% libload
-<<eval=TRUE, echo=TRUE, label="Load library.">>=
+<<eval=TRUE, echo=TRUE, label="Load_library">>=
 library(psd)
 @ 
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
@@ -99,13 +97,13 @@ The sampling interval is
 once every kilometer (km), so the data will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% Project MAGNET data
-<<eval=TRUE, eval=TRUE, label="Load Project MAGNET data.">>=
+<<eval=TRUE, eval=TRUE, label="Load_Project_MAGNET_data">>=
 data(magnet)
 @ 
 The format of the data set is a \Rcmd{data.frame} with four
 sets of information:
 %%
-<<eval=TRUE, eval=TRUE, label="Show contents of Project MAGNET.">>=
+<<eval=TRUE, eval=TRUE, label="Show_contents_of_Project_MAGNET">>=
 names(magnet)
 @ 
 The \Rcmd{raw} and \Rcmd{clean} names represent raw
@@ -116,7 +114,7 @@ attributable to instrumental malfunction; but, as we will see, the
 outliers adversely affect the accuracy of any type PSD estimate, regardless
 of the level of sophistication of the method.
 %%
-<<eval=TRUE, echo=TRUE, label="Outliers.", par=TRUE>>=
+<<eval=TRUE, echo=TRUE, label="Outliers", par=TRUE>>=
 subset(magnet, abs(mdiff)>0)
 @
 %%
@@ -246,7 +244,7 @@ Our method is non-parametric; hence, we will compare to the latter.
 Included in \Rcmd{psdcore} is an option to compare the 
 results with cosine-tapered periodogram,
 found with a command equivalent to this:
-<<eval=FALSE, echo=TRUE, label="Naive spectrum estimation">>=
+<<eval=FALSE, echo=TRUE, label="Naive_spectrum_estimation">>=
 spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=FALSE)
 @
 Within \Rcmd{psdcore} the comparison is made with the logical argument \Rcmd{preproc} 
@@ -256,7 +254,7 @@ As a matter of bookkeeping and good practice, we should consider the working env
 accessed by \psd{} functions. 
 To ensure \Rcmd{psdcore} does not access any inappropriate information leftover
 from the previous calculations, we can set \Rcmd{refresh=TRUE}; we then 
-re-calculate the multitaper PSD and the raw periodogram with \Rcmd{plotpsd=TRUE}; these
+re-calculate the multitaper PSD and the raw periodogram with \Rcmd{plot=TRUE}; these
 results are shown in Figure \ref{fig:two}.
 
 \begin{figure}[!htbp]
@@ -264,10 +262,10 @@ results are shown in Figure \ref{fig:two}.
 %% Project MAGNET compare
 <<eval=TRUE, echo=TRUE,  label=MAGNETNAIVE, par=TRUE>>=
 ntap <- psdc[['taper']] # get the previous vector of tapers
-psdcore(magnet$clean, ntaper=ntap, refresh=TRUE, plotpsd=TRUE)
+psdcore(magnet$clean, ntaper=ntap, refresh=TRUE, plot=TRUE)
 @
 \caption{A summary plot produced by \Rcmd{psdcore} when
-\Rcmd{plotpsd=TRUE}.  
+\Rcmd{plot=TRUE}.  
 Top: Comparison between PSD estimators for the 
 cleaned Project MAGNET data. The frequency axis is in units of $\log_{10}$ km$^{-1}$,
 and power axis is in decibels.
@@ -620,15 +618,6 @@ which we calculate here:
 spp <- spectral_properties(Pspec[['taper']], db.ci=TRUE)
 spa <- spectral_properties(Aspec[['taper']], db.ci=TRUE)
 str(spa)
-create_poly <- function(x, y, dy, from.lower=FALSE){
-  xx <- c(x, rev(x))
-  if (from.lower){
-    yy <- c(y, rev(y+dy))
-  } else {
-    yy <- c(y+dy, rev(y-dy))
-  }
-  return(data.frame(xx=xx, yy=yy))
-}
 psppu <- with(Pspec, create_poly(freq, dB(spec), spp$stderr.chi.upper))
 pspau <- with(Aspec, create_poly(freq, dB(spec), spa$stderr.chi.upper))
 # and the Bayesian spectrum 95% posterior distribution range
@@ -638,17 +627,18 @@ pspb <- with(Bspec_plt, create_poly(freq, spectrum[,1], spectrum[,3], from.lower
 \begin{figure}[!htbp]
 \begin{center}
 <<eval=TRUE, echo=TRUE, fig.width=7, fig.height=4.5, label=MAGERR, par=TRUE>>=
-plot(c(0,0.5),c(-5,40),col="white", 
+plot(c(-0.005,0.505), c(-5,40), col=NA, xaxs="i", 
        main="Project MAGNET Spectral Uncertainty (p > 0.95)",
        ylab="", xlab="spatial frequency, 1/km", yaxt="n", frame.plot=FALSE)
 lines(c(2,1,1,2)*0.01,c(0,0,7,7))
 text(.04, 3.5, "7 dB")
-with(pspb, polygon(xx, dB(yy), col="light blue", border=NA))
+with(pspb, polygon(x.x, dB(y.y), col="light blue", border=NA))
 text(0.26, 37, "Posterior distribution\n(bspec)", col="#0099FF", cex=0.8)
-with(psppu, polygon(xx, yy, col="dark grey", border="black", lwd=0.2))
+with(psppu, polygon(x.x, y.y, col="dark grey", border="black", lwd=0.2))
 text(0.15, 6, "Light: adaptive\ntaper refinement\n(pspectrum)", cex=0.8)
-with(pspau, polygon(xx, yy, col="light grey", border="black", lwd=0.2))
+with(pspau, polygon(x.x, y.y, col="light grey", border="black", lwd=0.2))
 text(0.40, 22, "Dark: Uniform\ntapering (psdcore)", cex=0.8)
+box()
 @
 \caption{Project MAGNET spectral uncertainties for 95\% coverage probability.
 The filled regions encompass the spectral uncertainties values based on the
@@ -787,12 +777,12 @@ invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Tap=St
   spp <- spectral_properties(as.tapers(tap), db.ci=TRUE)
   psppu <- create_poly(Frq, tap*0-(iter*0.90)**2, spp$stderr.chi.upper)
   if (iter==1){
-	 plot(psppu$xx, psppu$yy, type="l", col=NA,
+	 plot(psppu$x.x, psppu$y.y, type="l", col=NA,
         main="", ylab="", xlab="", yaxt="n",
         ylim=25*c(-1,0.02), 
         yaxs="i", frame.plot=FALSE)
   }
-  polygon(psppu$xx, psppu$yy, col=icol, border = "black") #, lwd = 0.2)
+  polygon(psppu$x.x, psppu$y.y, col=icol, border = "black") #, lwd = 0.2)
 }))
 lines(-1*c(1.5,1,1,1.5)*0.02, -1*c(0,0,7,7)-10)
 text(-0.06, -3.5-10, "7 dB", cex=0.8)

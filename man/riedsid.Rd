@@ -7,11 +7,11 @@
 \alias{riedsid2}
 \alias{riedsid2.default}
 \alias{riedsid2.spec}
-\title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.}
+\title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method}
 \usage{
 riedsid(PSD, ...)
 
-\method{riedsid}{spec}(PSD, ntaper = 1L, ...)
+\method{riedsid}{spec}(PSD, ...)
 
 \method{riedsid}{default}(PSD, ntaper = 1L, tapseq = NULL,
   Deriv.method = c("local_qls", "spg"), constrained = TRUE,
@@ -35,18 +35,17 @@ riedsid2(PSD, ...)
 
 \item{Deriv.method}{character; choice of gradient estimation method}
 
-\item{constrained}{logical; apply constraints; \code{FALSE} turns off constraints}
+\item{constrained}{logical; apply constraints with \code{\link{constrain_tapers}}; \code{FALSE} turns off constraints}
 
-\item{c.method}{string; constraint method to use if \code{constrained=TRUE}}
+\item{c.method}{string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}}
 
 \item{verbose}{logical; should messages be printed?}
 }
 \value{
-Object with class 'tapers'.
+Object with class \code{'tapers'}
 }
 \description{
-Estimates the
-optimal number of tapers at each frequency of
+Estimates the optimal number of tapers at each frequency of
 given PSD, using a modified Riedel-Sidorenko MSE recipe (RS-RLP).
 }
 \details{
@@ -55,6 +54,9 @@ input PSD are computed.
 Using those derivates the optimal number of tapers is found through the
 RS-RLP formulation.
 Constraints are then placed on the practicable number of tapers.
+
+\code{\link{riedsid2}} is a new implementation which does not allow
+for multiple constraint methods; this is the preferred function to use.
 
 \subsection{Taper constraints}{
 The parameter \code{c.method} provides an option to change the method
@@ -120,9 +122,9 @@ par(op)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L. Parker.
+A.J. Barbour adapted original by R.L. Parker
 }
 \seealso{
-\code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
+\code{\link{constrain_tapers}}, \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
 }
 

@@ -32,6 +32,4 @@ Taper constraints using loess smoothing
 \seealso{
 \code{\link{constrain_tapers}}, \code{\link{ctap_simple_rcpp}}
 }
-\keyword{tapers}
-\keyword{tapers-constraints}
 

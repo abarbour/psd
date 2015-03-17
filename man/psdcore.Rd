@@ -11,7 +11,7 @@ psdcore(X.d, ...)
 \method{psdcore}{ts}(X.d, ...)
 
 \method{psdcore}{default}(X.d, X.frq = NULL, ntaper = as.tapers(5),
-  preproc = TRUE, na.action = stats::na.fail, plotpsd = FALSE,
+  preproc = TRUE, na.action = stats::na.fail, plot = FALSE,
   refresh = FALSE, verbose = FALSE, ndecimate, ...)
 }
 \arguments{
@@ -27,7 +27,7 @@ psdcore(X.d, ...)
 
 \item{na.action}{function to deal with \code{NA} values}
 
-\item{plotpsd}{logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
+\item{plot}{logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
 Note that this will add some computation time, since the cosine-tapered periodogram is calculated inside
 \code{\link{pgram_compare}}.}
 
@@ -86,10 +86,10 @@ plot(psdcore(X))
 #
 # use more tapers, compare to stats::spectrum, and clear 
 # env data from the previous calculation
-psdcore(X, ntapers=10, plotpsd=TRUE, refresh=TRUE)
+psdcore(X, ntaper=10, plot=TRUE, refresh=TRUE)
 #
 # change the sampling frequency to 20
-psdcore(X, 20, 10, plotpsd=TRUE, refresh=TRUE) 
+psdcore(X, 20, 10, plot=TRUE, refresh=TRUE) 
 }#REX
 }
 \author{

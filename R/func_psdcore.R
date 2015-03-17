@@ -35,7 +35,7 @@
 #' @param ntaper  scalar, vector, or \code{\link{tapers}}; the number of sine tapers to apply at each frequency
 #' @param preproc  logical; should \code{X.d} have a linear trend removed?
 #' @param na.action  function to deal with \code{NA} values
-#' @param plotpsd  logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
+#' @param plot  logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
 #' Note that this will add some computation time, since the cosine-tapered periodogram is calculated inside
 #' \code{\link{pgram_compare}}.
 #' @param refresh  logical; ensure a free environment prior to execution
@@ -70,7 +70,7 @@ psdcore.default <- function(X.d,
                             ntaper=as.tapers(5), 
                             preproc=TRUE,
                             na.action = stats::na.fail,
-                            plotpsd=FALSE,
+                            plot=FALSE,
                             refresh=FALSE,
                             verbose=FALSE,
                             ndecimate,
@@ -287,11 +287,11 @@ psdcore.default <- function(X.d,
                   nyquist.frequency = Nyq
   )
   class(PSD.out) <- c("amt","spec")
-  if (plotpsd) pgram_compare(PSD.out, ...)
+  if (plot) pgram_compare(PSD.out, ...)
   return(invisible(PSD.out))
 }
 
-#' Plot an sine multitaper spectrum against a cosine-tapered periodogram
+#' Compare multitaper spectrum with cosine-tapered periodogram
 #' 
 #' @description
 #' Plot the results of \code{\link{psdcore}} against the results of 
@@ -300,35 +300,59 @@ psdcore.default <- function(X.d,
 #' @name pgram_compare
 #' @export
 #' 
-#' @param x numeric; the frequencies to plot; alternatively, a single \code{\link{psdcore}} object 
-#' @param y a single \code{\link{psdcore}} object; optional if \code{x} is an appropriate set of frequencies
+#' @param x a single \code{\link{psdcore}} object
+#' @param f numeric; the frequency range to plot; optional: if not given the program will show the entire band.
+#' @param X object used to create \code{x}; optional: if not given the program will
+#' try and access the last copy in the environment. An attempt is made to coerce to an object of class \code{'ts'}.
 #' @param log.freq logical; should frequencies be transformed with \code{\link{log10}}?  
-#' Note that if \code{x} is a set of frequencies, the values should not already be transformed.
-#' @param dp.spec logical; should the spectrum estimates be converted to decibels with \code{\link{dB}}?
+#' Note that if \code{f} is given, the values should not already be transformed.
+#' @param db.spec logical; should the spectrum estimates be converted to decibels with \code{\link{dB}}?
 #' @param taper numeric; specifies the proportion of data to taper for the cosine periodogram. 
 #' @param ... additional parameters (currently unused)
 #' 
 #' @return A list with the cosine-tapered estimates and the adaptive estimates, invisibly.
+#' @examples
+#' set.seed(1234)
+#' X <- rnorm(1e3)
 #' 
-pgram_compare <- function(x, y, ...) UseMethod("pgram_compare")
+#' # multitaper spectrum
+#' p <- psdcore(X, ntaper=10)
+#' 
+#' # how does it compare to a single-cosine tapered spectrum?
+#' pgram_compare(p)
+#' 
+#' # or in a certain band
+#' pgram_compare(p, c(0.1,0.4))
+#' 
+#' # linear frequencies
+#' pgram_compare(p, c(0.1,0.4), log.freq = FALSE)
+pgram_compare <- function(x, ...) UseMethod("pgram_compare")
 
 #' @rdname pgram_compare
 #' @aliases pgram_compare.amt
 #' @export
-pgram_compare.amt <- function(x, y, log.freq=TRUE, db.spec=TRUE, taper=0.2, ...){
+pgram_compare.amt <- function(x, f=NULL, X=NULL, log.freq=TRUE, db.spec=TRUE, taper=0.2, ...){
   
-  if (missing(y)){
-    P. <- x
-    f. <- P.[['freq']]
-    s. <- P.[['spec']]
-    t. <- P.[['taper']]
+  P. <- x
+  f. <- P.[['freq']]
+  s. <- P.[['spec']]
+  t. <- P.[['taper']]
+  
+  flims <- if (!is.null(f)){
+    if (log.freq) {
+      log10(f)
+    } else {
+      f
+    }
   } else {
-    P. <- y
-    f. <- as.numeric(x)
-    s. <- P.[['spec']]
-    t. <- P.[['taper']]
+    if (log.freq) {
+      log10(range(f.[f.>0]))
+    } else {
+      range(f.)
+    }
   }
-
+  if (any(is.infinite(flims))) flims <- NULL
+  
   detrend <- P.[['detrend']]
   demean <- P.[['demean']]
   
@@ -336,7 +360,9 @@ pgram_compare.amt <- function(x, y, log.freq=TRUE, db.spec=TRUE, taper=0.2, ...)
   stopifnot(!is.null(ops))
   evars <- ops[['names']]
   
-  X <- as.ts(psd_envGet(evars[['series.even']]))
+  if (is.null(X)) X <- psd_envGet(evars[['series.even']])
+  stopifnot(!is.null(X))
+  X <- as.ts(X)
   fsamp <- frequency(X)
   
   # Calculate (single) cosine taper psd
@@ -352,7 +378,6 @@ pgram_compare.amt <- function(x, y, log.freq=TRUE, db.spec=TRUE, taper=0.2, ...)
   flab <- if (log.freq){
     f. <- log10(f.)
     fc. <- log10(fc.)
-    flims <- range(pretty(c(f.,fc.)))
     expression(log[10] ~~ "frequency")
   } else {
     expression('frequency')
@@ -361,11 +386,11 @@ pgram_compare.amt <- function(x, y, log.freq=TRUE, db.spec=TRUE, taper=0.2, ...)
   slab <- if (db.spec){
     s. <- dB(s./fsamp) # normalization adjustment
     sc. <- dB(sc.)
-    slims <- range(pretty(c(s.,sc.)))
     expression("dB rel." ~~ "units"**2 %*% delta * t)
   } else {
     expression(delta ~ "units"**2 %*% delta * t)
   }
+  slims <- range(pretty(c(s.,sc.)))
   
   ## Start plotting
   opar <- par(no.readonly = TRUE)

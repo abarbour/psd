@@ -32,15 +32,20 @@ using namespace Rcpp; // otherwise add Rcpp::
 //' @title Nearest value below
 //' @export
 //' @description 
-//' Returns the nearest \code{m}-length
-//' value (downwards from \code{n}), which is different from \code{\link{nextn}}.
+//' Returns the nearest \code{m}-length value (downwards from \code{n}).
+//' @details
+//' This function is different from \code{\link{nextn}} in that the value is floored.
 //' For example:
-//' \code{10} is the result for \code{n=11,m=2} whereas \code{\link{nextn}} would give \code{12}
+//' \code{10} is the result for \code{n=11,m=2} whereas \code{\link{nextn}} would give \code{12}.
+//' 
 //' @param n integer; the number of terms (can be a vector)
 //' @param m integer; the modulo term (cannot be zero)
-//' @author A.J. Barbour <andy.barbour@@gmail.com>
-//' @seealso \code{\link{psd-utilities}} and \code{\link{psdcore}}, 
-//' which truncates to the nearest even length (so, \code{m=2})
+//' 
+//' @author A.J. Barbour
+//' 
+//' @seealso \code{\link{psd-utilities}}; \code{\link{psdcore}} uses this to 
+//' truncate series to their nearest even length (i.e., \code{m=2}).
+//' 
 //' @examples
 //' n <- 11
 //' nextn(n) # 12
@@ -103,13 +108,26 @@ List parabolic_weights_rcpp(int ntap = 1) {
     return weights_out;
 }
 
-//' @title Resample an fft using varying tapers
+//' @title Resample an fft using varying numbers of sine tapers
+//' 
+//' @description
+//' Produce an un-normalized psd based on an fft and a vector of optimal sine tapers
+//' 
+//' @details
+//' To produce a psd estimate with our adaptive spectrum estimation method, we need only make one 
+//' fft calculation initially and then
+//' apply the weighting factors given by \code{\link{parabolic_weights_rcpp}}, which this
+//' function does.
+//' 
 //' @param fftz complex; a vector representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument
 //' @param tapers integer; a vector of tapers
 //' @param verbose logical; should messages be given?
-//' @param dbl logical; should the code assume \code{fftz} is dual-length or singl-length?
+//' @param dbl logical; should the code assume \code{fftz} is dual-length or single-length?
 //' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
 //' automatically limited by the length of the series.
+//' 
+//' @seealso \code{\link{riedsid}}
+//' 
 //' @examples
 //' fftz <- complex(real=1:8, imaginary = 1:8)
 //' taps <- 1:4

@@ -3,7 +3,7 @@
 \docType{data}
 \name{magnet}
 \alias{magnet}
-\title{A single line of Project MAGNET horizontal field intensity.}
+\title{A single line of Project MAGNET horizontal field intensity}
 \format{A dataframe with 2048 observations on the following 4 variables.
 
 \describe{

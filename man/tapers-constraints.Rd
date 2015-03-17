@@ -128,11 +128,9 @@ demo("ctap")
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com> and R.L. Parker
+A.J. Barbour and R.L. Parker
 }
 \seealso{
 \code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 }
-\keyword{tapers}
-\keyword{tapers-constraints}
 

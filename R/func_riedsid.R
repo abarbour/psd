@@ -1,7 +1,6 @@
-#' Constrained, optimal tapers using the Riedel & Sidorenko--Parker method.
+#' Constrained, optimal tapers using the Riedel & Sidorenko--Parker method
 #' 
-#' Estimates the
-#' optimal number of tapers at each frequency of
+#' Estimates the optimal number of tapers at each frequency of
 #' given PSD, using a modified Riedel-Sidorenko MSE recipe (RS-RLP).
 #' 
 #' @details
@@ -10,6 +9,9 @@
 #' Using those derivates the optimal number of tapers is found through the 
 #' RS-RLP formulation.
 #' Constraints are then placed on the practicable number of tapers.
+#' 
+#' \code{\link{riedsid2}} is a new implementation which does not allow 
+#' for multiple constraint methods; this is the preferred function to use.
 #'
 #' \subsection{Taper constraints}{
 #' The parameter \code{c.method} provides an option to change the method
@@ -37,34 +39,32 @@
 #' be the preferred over the \code{"local_qls"} method, other than for efficiency's sake.
 #'
 #' @export
-#' @author A.J. Barbour <andy.barbour@@gmail.com> adapted original by R.L. Parker.
+#' @author A.J. Barbour adapted original by R.L. Parker
 #' 
 #' @param PSD vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' @param tapseq vector; representing positions or frequencies (same length as \code{PSD})
 #' @param Deriv.method character; choice of gradient estimation method 
-#' @param constrained logical; apply constraints; \code{FALSE} turns off constraints
-#' @param c.method string; constraint method to use if \code{constrained=TRUE}
+#' @param constrained logical; apply constraints with \code{\link{constrain_tapers}}; \code{FALSE} turns off constraints
+#' @param c.method string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
-#' @return Object with class 'tapers'.
+#' @return Object with class \code{'tapers'}
 #' 
-#' @seealso \code{\link{constrain_tapers}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
+#' @seealso \code{\link{constrain_tapers}}, \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
 #' @example inst/Examples/rdex_riedsid.R
 riedsid <- function(PSD, ...) UseMethod("riedsid")
 
 #' @rdname riedsid
 #' @export
-riedsid.spec <- function(PSD, ntaper = 1L, ...){
+riedsid.spec <- function(PSD, ...){
   stopifnot(is.spec(PSD))
   Pspec <- PSD[['spec']]
   Tapseq <- PSD[['freq']]
-  ntaper <- if (missing(ntaper)){
-    if (is.amt(PSD)){
+  ntaper <- if (is.amt(PSD)){
       PSD[['taper']]
-    } else {
-      rep.int(ntaper, length(Pspec))
-    }
+  } else {
+      rep.int(1L, length(Pspec))
   }
   riedsid.default(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
 }
@@ -165,17 +165,22 @@ riedsid.default <- function(PSD, ntaper = 1L,
     abs(eps + RSS[,4] + RSS[,3]**2)
   }
   if (verbose) message(sprintf("Using spectral derivatives from  %s", msg))
-  ##
   #
-  ##
   #(480)^0.2*abs(PSD/d2psd)^0.4
   # Original form:  kopt = 3.428*abs(PSD ./ d2psd).^0.4;
   # kopt = round( 3.428 ./ abs(eps + d2Y + dY.^2).^0.4 );
   #
-  # Constrain tapers
-  kopt <- constrain_tapers(tapvec = (480 ** 0.2)/(rss ** 0.4), tapseq=kseq, constraint.method=c.method, verbose=verbose)
+  sc <- ifelse(TRUE, 473.3736, 480)
+  kopt <- (sc ** 0.2)/(rss ** 0.4)
   #
-  return(as.tapers(kopt))
+  # Constrain tapers
+  kopt <- if (constrained){
+    constrain_tapers(tapvec = kopt, tapseq=kseq, constraint.method=c.method, verbose=verbose, ...)
+  } else {
+    as.tapers(kopt)
+  }
+  #
+  return(kopt)
 } 
 
 #' @rdname riedsid
@@ -233,8 +238,9 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
     #
     return(c(eps=eps, d2Y=d2Y, dYsq=dY*dY))
   }
-  # Calculate derivatives and optimal tapers
+  # Calculate derivatives
   yders <- vapply(X=seq_len(nf), FUN=DFUN, FUN.VALUE=c(1,1,1))
+  # and optimal tapers
   sc <- ifelse(TRUE, 473.3736, 480)
   kopt <- round( sc**0.2 / abs(colSums(yders))**0.4 )
   

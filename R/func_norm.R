@@ -43,8 +43,7 @@
 #' @name psd-normalization
 #' @rdname psd-normalization
 #' @aliases normalization
-#' @keywords spectrum-estimation normalization prewhiten
-#' @author A.J. Barbour <andy.barbour@@gmail.com>
+#' @author A.J. Barbour
 #'
 #' @param Spec spectrum to normalize
 #' @param Fsamp sampling frequency

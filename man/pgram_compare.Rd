@@ -3,26 +3,29 @@
 \name{pgram_compare}
 \alias{pgram_compare}
 \alias{pgram_compare.amt}
-\title{Plot an sine multitaper spectrum against a cosine-tapered periodogram}
+\title{Compare multitaper spectrum with cosine-tapered periodogram}
 \usage{
-pgram_compare(x, y, ...)
+pgram_compare(x, ...)
 
-\method{pgram_compare}{amt}(x, y, log.freq = TRUE, db.spec = TRUE,
-  taper = 0.2, ...)
+\method{pgram_compare}{amt}(x, f = NULL, X = NULL, log.freq = TRUE,
+  db.spec = TRUE, taper = 0.2, ...)
 }
 \arguments{
-\item{x}{numeric; the frequencies to plot; alternatively, a single \code{\link{psdcore}} object}
-
-\item{y}{a single \code{\link{psdcore}} object; optional if \code{x} is an appropriate set of frequencies}
+\item{x}{a single \code{\link{psdcore}} object}
 
 \item{...}{additional parameters (currently unused)}
 
+\item{f}{numeric; the frequency range to plot; optional: if not given the program will show the entire band.}
+
+\item{X}{object used to create \code{x}; optional: if not given the program will
+try and access the last copy in the environment. An attempt is made to coerce to an object of class \code{'ts'}.}
+
 \item{log.freq}{logical; should frequencies be transformed with \code{\link{log10}}?
-Note that if \code{x} is a set of frequencies, the values should not already be transformed.}
+Note that if \code{f} is given, the values should not already be transformed.}
+
+\item{db.spec}{logical; should the spectrum estimates be converted to decibels with \code{\link{dB}}?}
 
 \item{taper}{numeric; specifies the proportion of data to taper for the cosine periodogram.}
-
-\item{dp.spec}{logical; should the spectrum estimates be converted to decibels with \code{\link{dB}}?}
 }
 \value{
 A list with the cosine-tapered estimates and the adaptive estimates, invisibly.
@@ -30,5 +33,21 @@ A list with the cosine-tapered estimates and the adaptive estimates, invisibly.
 \description{
 Plot the results of \code{\link{psdcore}} against the results of
 \code{\link[stats]{spec.pgram}}
+}
+\examples{
+set.seed(1234)
+X <- rnorm(1e3)
+
+# multitaper spectrum
+p <- psdcore(X, ntaper=10)
+
+# how does it compare to a single-cosine tapered spectrum?
+pgram_compare(p)
+
+# or in a certain band
+pgram_compare(p, c(0.1,0.4))
+
+# linear frequencies
+pgram_compare(p, c(0.1,0.4), log.freq = FALSE)
 }
 

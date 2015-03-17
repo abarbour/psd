@@ -12,10 +12,12 @@ modulo_floor(n, m = 2L)
 \item{m}{integer; the modulo term (cannot be zero)}
 }
 \description{
-Returns the nearest \code{m}-length
-value (downwards from \code{n}), which is different from \code{\link{nextn}}.
+Returns the nearest \code{m}-length value (downwards from \code{n}).
+}
+\details{
+This function is different from \code{\link{nextn}} in that the value is floored.
 For example:
-\code{10} is the result for \code{n=11,m=2} whereas \code{\link{nextn}} would give \code{12}
+\code{10} is the result for \code{n=11,m=2} whereas \code{\link{nextn}} would give \code{12}.
 }
 \examples{
 n <- 11
@@ -35,10 +37,10 @@ modulo_floor(seq_len(n), 3)
 try(modulo_floor(n, 0))
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \seealso{
-\code{\link{psd-utilities}} and \code{\link{psdcore}},
-which truncates to the nearest even length (so, \code{m=2})
+\code{\link{psd-utilities}}; \code{\link{psdcore}} uses this to
+truncate series to their nearest even length (i.e., \code{m=2}).
 }
 

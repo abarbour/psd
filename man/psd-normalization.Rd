@@ -110,12 +110,9 @@ mean(PSD$spec)*max(PSD$freq)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com>
+A.J. Barbour
 }
 \seealso{
 \code{\link{psdcore}}, \code{\link{spectral_properties}}
 }
-\keyword{normalization}
-\keyword{prewhiten}
-\keyword{spectrum-estimation}
 

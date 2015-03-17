@@ -5,7 +5,7 @@
 \alias{psd}
 \alias{psd-package}
 \alias{spec.psd}
-\title{Power spectral density estimates using optimal sine multitapers}
+\title{Adaptive power spectral density estimation using optimal sine multitapers}
 \description{
 Estimate the power spectral density (PSD)
 of a timeseries using the sine multitapers, adaptively; the number of tapers
@@ -50,13 +50,13 @@ how these are computed.
 }
 }
 \author{
-Andrew J. Barbour and Robert L. Parker <andy.barbour@gmail.com>
+Andrew J. Barbour <andy.barbour@gmail.com> and Robert L. Parker
 }
 \references{
 Barbour, A. J. and R. L. Parker, (2014),
 psd: Adaptive, sine multitaper power spectral density estimation for R,
 \emph{Computers and Geosciences}, \strong{63}, 1--8,
-<\url{http://dx.doi.org/10.1016/j.cageo.2013.09.015}>
+\url{http://dx.doi.org/10.1016/j.cageo.2013.09.015}
 
 Percival, D. B., and A.T. Walden (1993),
 Spectral analysis for physical applications,
@@ -65,7 +65,7 @@ Spectral analysis for physical applications,
 Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007),
 Reducing the bias of multitaper spectrum estimates,
 \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
-doi: 10.1111/j.1365-246X.2007.03592.x
+\url{http://dx.doi.org/10.1111/j.1365-246X.2007.03592.x}
 
 Riedel, K. S., & Sidorenko, A. (1995),
 Minimum bias multiple taper spectral estimation,

@@ -23,16 +23,19 @@ parabolic_weights_fast(ntap = 1L)
 \item{tap.index}{integer; the index of \code{tapvec} from which to produce a sequence of weights for}
 }
 \value{
-A list with taper indices, and the weights \eqn{W_N}{w}.
+A list with the number of tapers, indices of the taper sequence, and the weights \eqn{W_N}{w}.
 }
 \description{
 The resampled spectrum involves summing weighted tapers; this produces
 the weighting factors.
+\code{\link{parabolic_weights_rcpp}} is the fastest implementation, used by
+\code{\link{resample_fft_rcpp}}, but it takes only a single value.
+\code{\link{parabolic_weights}} calls \code{\link{parabolic_weights_fast}} for vectors.
 }
 \details{
 If one has a \code{tapers} object, specify the \code{taper.index} to
 produce a sequence of weights up to the value at that index; the user
-is likely to never need to use this function.
+is likely to never need to use this function though.
 
 Weighting factors, \eqn{W}{w}, are calculated as follows:
 \deqn{
@@ -41,7 +44,9 @@ Weighting factors, \eqn{W}{w}, are calculated as follows:
  w = 6 (k^2 - (K-1)^2) / (k (4 * k - 1) (k + 1))
 }
 where \eqn{n}{k} is the total number of tapers, and
-\eqn{K}{K} is the integer sequence \eqn{[0,n-1]}{[0,K-1]}
+\eqn{K}{K} is the integer sequence \eqn{[0,n-1]}{[0,K-1]}.
+
+The sum of tapers should equal 1, within machine precision, when \eqn{n>0}{k>0}.
 }
 \examples{
 \dontrun{#REX
@@ -113,10 +118,9 @@ WFUN(maxx)
 }#REX
 }
 \author{
-A.J. Barbour <andy.barbour@gmail.com> adapted original by R.L.Parker,
-and authored the optimized version.
+A.J. Barbour adapted the original algorithm (R.L. Parker), and authored the optimized versions.
 }
 \seealso{
-\code{\link{psdcore}}, \code{\link{riedsid}}
+\code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{riedsid}}
 }
 

@@ -27,9 +27,14 @@
 
 SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
 {
-    double * c_ntaps=REAL(R_ntaps);
+    // copy semantics was leading to changes in env vars
+    // so we now protect and duplicate
+    //  http://adv-r.had.co.nz/C-interface.html
+    SEXP R_ntaps_copy = PROTECT(duplicate(R_ntaps));
+    double * c_ntaps=REAL(R_ntaps_copy);
+    UNPROTECT(1);
     int maxslope=REAL(R_maxslope)[0];
-    int ssize=LENGTH(R_ntaps);
+    int ssize=LENGTH(R_ntaps_copy);
     SEXP ntap_con;
     int state, i, im, msize = ssize - 1;
     double slope;
