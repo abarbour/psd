@@ -2,12 +2,15 @@
 % Please edit documentation in R/func_tapers.R
 \name{ctap_loess}
 \alias{ctap_loess}
+\alias{ctap_loess.default}
 \alias{ctap_loess.tapers}
 \title{Taper constraints using loess smoothing}
 \usage{
 ctap_loess(tapvec, ...)
 
-\method{ctap_loess}{tapers}(tapvec, tapseq = NULL, loess.span = 0.3,
+\method{ctap_loess}{tapers}(tapvec, ...)
+
+\method{ctap_loess}{default}(tapvec, tapseq = NULL, loess.span = 0.3,
   loess.degree = 1, verbose = TRUE, ...)
 }
 \arguments{

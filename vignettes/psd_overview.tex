@@ -150,7 +150,10 @@ outliers adversely affect the accuracy of any type PSD estimate, regardless
 of the level of sophistication of the method.
 %%
 \input{figure/Outliers_.tex}
-\input{figure/Outliers.tex}
+%%
+These are readily apparent in the timeseries:
+
+\input{figure/MAGNET-TS.tex}
 
 We can find power spectral density (PSD)
 estimates for the two series quite simply with \Rcmd{pspectrum}:
@@ -302,7 +305,7 @@ $f(x) = \alpha x + \beta + \epsilon$ using ordinary linear least squares,
 setting \Rcmd{AR.max} higher than zero to fit an auto-regressive (AR) model to the 
 data\footnote{Note that the linear trend fitting is removed from the series prior to AR estimation,
 and the residuals from this fit are also returned.}.  
-This fit uses the Akaike infomation criterion (AIC) to select
+This fit uses the Akaike Infomation Criterion (AIC) to select
 the highest order appropriate for the data.
 
 \input{figure/AR_prewhiten.tex}
@@ -511,7 +514,7 @@ the width less than 3 decibels.
 \end{center}
 \end{figure}
 
-\clearpage
+%\clearpage
 
 Returning to the Project MAGNET spectra, we will compare the
 spectral uncertainties from \psd{} to the those from \Rcmd{bspec},

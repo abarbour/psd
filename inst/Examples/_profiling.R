@@ -3,7 +3,7 @@
 #
 library(psd)
 do.prof <- function(PSD){
-  nd <- 1e2 
+  nd <- 1e3 
   X.d <- arima.sim(list(order = c(1,1,0), ar = 0.9),n=nd)
   nt <- 8
   Rprof()
@@ -16,3 +16,8 @@ do.prof <- function(PSD){
 }
 psdprof <- do.prof(PSD=psdcore)
 print(str(psdprof))
+
+# a better way:
+library(profr)
+p <- profr(pspectrum(rnorm(1e4), verbose=FALSE))
+plot(p)

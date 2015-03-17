@@ -17,7 +17,7 @@ plot(ntap, ylim=ylim, main="Tapers: Raw")
 
 ## Constrained tapers:
 ## minspan
-plot(minspan(ntap), ylim=ylim, main="minspan")
+plot(as.tapers(minspan(ntap)), ylim=ylim, main="minspan")
 
 ## loess
 plot(ntap, ylim=ylim, main="loess") # OK, but a bit too smooth: reduce span

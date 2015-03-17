@@ -59,13 +59,7 @@
 pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 
 #' @rdname pilot_spec
-#' @export
-pilot_spec.ts <- function(x, ...){
-  frq <- stats::frequency(x)
-  pilot_spec(as.vector(x), x.frequency=frq, ...)  
-}
-
-#' @rdname pilot_spec
+#' @aliases pilot_spec.default
 #' @export
 pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, ...){
   
@@ -75,12 +69,7 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   stopifnot(length(ntap)==1)
   stopifnot(length(remove.AR)==1)
   stopifnot(length(x.frequency)==1)
-  
-  # setup a common calculator
-  PSDFUN <- function(X.., Xf.., Xk.., AR=FALSE){
-    return(psdcore(X.., Xf.., Xk.., preproc=FALSE, refresh=TRUE, verbose=FALSE))
-  }
-  
+
   # AR spectrum or no?
   REMAR <- ifelse(remove.AR > 0, TRUE, FALSE)
   
@@ -89,6 +78,7 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   
   xprew <- prewhiten(x, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
   
+  ## Remove and AR model
   if (REMAR){
     # AR fit
     ordAR <- xprew[['ardfit']][['order']]
@@ -97,20 +87,20 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
     } else {
       if (verbose) message(sprintf("removed AR(%s) effects from the spectrum", ordAR))
     }
-    xar <- xprew[['prew_ar']]
-    # PSD of the AR fit
-    Pspec_ar <- PSDFUN(xar, x.frequency, ntap, AR=TRUE)
+    # calculate PSD of the AR fit
+    xar <- xprew[['prew_ar']] # ts object
+    Pspec_ar <- psdcore(xar, ntaper=ntap, AR=TRUE, preproc=FALSE, refresh=TRUE, verbose=FALSE)
     arvar <- var(Pspec_ar[['spec']])
     mARs <- mean(Pspec_ar[['spec']])
     Pspec_ar[['spec']] <- Pspec_ar[['spec']] / mARs
   }
-  #
-  # Initial spectrum:
-  Pspec <- PSDFUN(xprew[['prew_lm']], x.frequency, ntap, AR=FALSE)
-  num_frq <- length(Pspec[['freq']])
+  
+  ## Calculate spectrum of non-AR (lm) model:
+  xlm <- xprew[['prew_lm']] # ts object
+  Pspec <- psdcore(xlm, ntaper=ntap, AR=FALSE, preproc=FALSE, refresh=TRUE, verbose=FALSE)
   Ptap <- Pspec[['taper']]
   num_tap <- length(Ptap)
-  #stopifnot(num_tap <= num_frq)
+  num_frq <- Pspec[['numfreq']]
   
   ## generate a series, if necessary
   if (num_tap < num_frq) Ptap <- rep.int(Ptap[1], num_frq)
@@ -155,3 +145,12 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   }
   return(invisible(psd_envAssignGet("pilot_psd", Pspec)))
 }
+
+#' @rdname pilot_spec
+#' @aliases pilot_spec.ts
+#' @export
+pilot_spec.ts <- function(x, ...){
+  frq <- stats::frequency(x)
+  pilot_spec(as.vector(x), x.frequency=frq, ...)  
+}
+

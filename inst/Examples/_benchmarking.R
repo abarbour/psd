@@ -3,6 +3,8 @@
 ## test differences in processing time
 ## between psdcore and spec.mtm
 ##
+## TODO: ensure results are equal, if possible??
+##
 ##
 library(ggplot2)
 library(plyr)
@@ -34,7 +36,7 @@ allbench <- lapply(X=nds, FUN=function(x) run.bench(nd=x))
 # manipulate into data.frame
 allbench.df <- plyr::ldply(allbench)
 # save
-save(allbench.df, file="benchmarking_data.rda")
+save(allbench.df, file="current_benchmarking_data.rda")
 tests <- unique(allbench.df$test)
 # drop some info
 allbench.df.drp <- subset(allbench.df, select = c(test, num_terms, user.self, sys.self, elapsed, relative))

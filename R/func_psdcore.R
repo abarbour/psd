@@ -41,7 +41,7 @@
 #' @param refresh  logical; ensure a free environment prior to execution
 #' @param verbose logical; should warnings and messages be given?
 #' @param ndecimate  now ignored
-#' @param ...  optional parameters; currently ignored
+#' @param ... additional parameters
 #' 
 #' @return An on object of class \code{'amt','spec'}, which has a structure similar to a regular \code{'spec'} object, 
 #' but with a few additional fields, invisibly.
@@ -55,8 +55,12 @@
 psdcore <- function(X.d, ...) UseMethod("psdcore")
 
 #' @rdname psdcore
+#' @aliases psdcore.ts
 #' @export
-#psdcore.ts <- function(X.d, ...) .NotYetImplemented()
+psdcore.ts <- function(X.d, ...){
+  frq <- stats::frequency(X.d)
+  psdcore(as.vector(X.d), X.frq = frq, ...)
+}
 
 #' @rdname psdcore
 #' @aliases psdcore.default
@@ -83,26 +87,29 @@ psdcore.default <- function(X.d,
   # named series
   series <- deparse(substitute(X.d))
   
-  if (is.null(X.frq)){
-    # make an assumption about the sampling rate
-    X.frq <- ifelse(is.ts(X.d), stats::frequency(X.d), 1)
-    if (verbose) message("\tsampling frequency taken to be\t", X.frq)
-  } 
-  
   ## Convert to ts object
-  X.d <- na.action(if (X.frq > 0){
-    # value represents sampling frequency
-    stats::ts(X.d, frequency=X.frq)
-  } else if (X.frq < 0){
-    # value is sampling interval
-    stats::ts(X.d, deltat=abs(X.frq))
-  } else {
-    stop("bad sampling information")
-  })
+  if (!is.ts(X.d)){
+    if (is.null(X.frq)){
+      # make an assumption about the sampling rate
+      X.frq <- 1
+      if (verbose) message("\tsampling frequency not found -- taken to be\t", X.frq)
+    }
+    X.d <- if (X.frq > 0){
+      # value represents sampling frequency
+      stats::ts(X.d, frequency=X.frq)
+    } else if (X.frq < 0){
+      # value is sampling interval
+      stats::ts(X.d, deltat=abs(X.frq))
+    } else {
+      stop("bad sampling information")
+    }
+  }
+  # Smokey says: only you can stop NA fires
+  X.d <- na.action(X.d)
   
   # Refresh sampling rate, and get Nyquist frequency, tapers, and status
   X.frq <- stats::frequency(X.d)
-  Nyq <- X.frq/2
+  Nyq <- X.frq / 2
   len_tapseq <- length(ntaper)
   single.taper.arg <- len_tapseq == 1
   

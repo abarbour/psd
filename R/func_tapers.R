@@ -507,9 +507,17 @@ ctap_loess <- function(tapvec, ...) UseMethod("ctap_loess")
 
 #' @rdname ctap_loess
 #' @export
-ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
+ctap_loess.tapers <- function(tapvec, ...){
   stopifnot(is.tapers(tapvec))
-  # having an x-sequence is absolutely critical to obtaining useful results
+  tapvec.adj <- ctap_loess(as.vector(tapvec), ...)
+  return(as.tapers(tapvec.adj))
+}
+
+
+#' @rdname ctap_loess
+#' @export
+ctap_loess.default <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1, verbose=TRUE, ...){
+  # having an appropriate x-sequence is absolutely critical to obtaining useful results
   if (is.null(tapseq)){
     tapseq <- seq_along(tapvec)
     if (verbose) warning("Generated a position sequence; results may be bogus.")
@@ -522,5 +530,5 @@ ctap_loess.tapers <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=1
                       span=loess.span, degree=loess.degree,
                       control = loess.control(trace.hat = trc))
   tapvec.adj <- stats::predict(loe)
-  return(as.tapers(tapvec.adj))
+  return(tapvec.adj)
 }

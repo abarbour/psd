@@ -3,9 +3,12 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.default}
+\alias{psdcore.ts}
 \title{Multitaper power spectral density estimates of a series}
 \usage{
 psdcore(X.d, ...)
+
+\method{psdcore}{ts}(X.d, ...)
 
 \method{psdcore}{default}(X.d, X.frq = NULL, ntaper = as.tapers(5),
   preproc = TRUE, na.action = stats::na.fail, plotpsd = FALSE,
@@ -14,7 +17,7 @@ psdcore(X.d, ...)
 \arguments{
 \item{X.d}{the series to estimate a spectrum for}
 
-\item{...}{optional parameters; currently ignored}
+\item{...}{additional parameters}
 
 \item{X.frq}{scalar; the sampling information (see section Sampling)}
 

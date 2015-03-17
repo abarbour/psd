@@ -4,22 +4,23 @@
 \alias{prewhiten}
 \alias{prewhiten.default}
 \alias{prewhiten.ts}
-\title{Prewhiten a series.}
+\title{Prewhiten a series}
 \usage{
-prewhiten(tser, AR.max = 0L, detrend = TRUE, demean = TRUE,
-  impute = TRUE, plot = TRUE, verbose = TRUE, x.fsamp = 1,
-  x.start = c(1, 1), ...)
+prewhiten(tser, ...)
 
-\method{prewhiten}{default}(tser, AR.max = 0L, detrend = TRUE,
-  demean = TRUE, impute = TRUE, plot = TRUE, verbose = TRUE,
-  x.fsamp = 1, x.start = c(1, 1), ...)
+\method{prewhiten}{default}(tser, x.fsamp = 1, x.start = c(1, 1), ...)
 
 \method{prewhiten}{ts}(tser, AR.max = 0L, detrend = TRUE, demean = TRUE,
-  impute = TRUE, plot = TRUE, verbose = TRUE, x.fsamp = NA,
-  x.start = NA, ...)
+  impute = TRUE, plot = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{tser}{vector; An object to prewhiten.}
+
+\item{...}{variables passed to \code{prewhiten.ts} (for non \code{ts} objects)}
+
+\item{x.fsamp}{sampling frequency (for non \code{ts} objects)}
+
+\item{x.start}{start time of observations (for non \code{ts} objects)}
 
 \item{AR.max}{numeric; the maximum AR order to fit.}
 
@@ -32,12 +33,6 @@ prewhiten(tser, AR.max = 0L, detrend = TRUE, demean = TRUE,
 \item{plot}{logical; Should the results be plotted?}
 
 \item{verbose}{logical; Should messages be printed?}
-
-\item{x.fsamp}{sampling frequency (for non \code{ts} objects)}
-
-\item{x.start}{start time of observations (for non \code{ts} objects)}
-
-\item{...}{variables passed to \code{prewhiten.ts} (for non \code{ts} objects)}
 }
 \value{
 A list with the model fits (\code{lm} and \code{ar} objects),
@@ -160,8 +155,4 @@ A.J. Barbour <andy.barbour@gmail.com> and Robert L. Parker
 \seealso{
 \code{\link{psdcore}}, \code{\link{pspectrum}}
 }
-\keyword{S3methods}
-\keyword{autoregressive-innovations}
-\keyword{prewhiten}
-\keyword{timeseries}
 

@@ -7,7 +7,9 @@ data(magnet)
 X <- magnet$clean
 ##
 ## spectrum, then riedsid
-kopt <- riedsid(PSD <- psdcore(X, ntaper=10, refresh=TRUE))
+PSD <- psdcore(X, ntaper=10, refresh=TRUE)
+#
+kopt <- riedsid(PSD)
 kopt.loess  <- riedsid(PSD, c.method="loess.smooth")
 #
 plot(kopt, log.y=TRUE, ylim =c(.1, 3e2))
