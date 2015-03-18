@@ -80,28 +80,35 @@ IntegerVector modulo_floor(IntegerVector n, int m = 2){
   return ne;
 }
 
+//In C++ language we able to have set of overloaded functions under cmath such as:
+//float       pow( float base, float exp ) ---- 2
+//double      pow( double base, double exp ) ---- 3
+//long double pow( long double base, long double exp ) ---- 4
+//float       pow( float base, int iexp ) ---- 5
+//double      pow( double base, int iexp ) ---- 6
+//long double pow( long double base, int iexp ) ---- 7
+
 //' @rdname parabolic_weights
 //' @export
 // [[Rcpp::export]]
-List parabolic_weights_rcpp(int ntap = 1) {
+List parabolic_weights_rcpp(const int ntap = 1) {
   //
   // return quadratic spectral weighting factors for a given number of tapers
   // Barbour and Parker (2014) Equation 7
   //
 
-  int K = pow(ntap, 1);
   NumericVector kseq(ntap), wgts(ntap);
-  kseq = abs( seq_len( K ) - 1 );
+  kseq = abs( seq_len( ntap ) - 1 );
   
   // orig: w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
   //   or: w = ( K2 - ksq ) * 6 / ( 4 * K3  +  3 * K2  -  K );
   //   or: w = ( K2 - ksq ) / ( K * (4 * K  -  1) * (K  +  1) );
   
-  wgts = exp(log(1.5) + log( K * K - kseq * kseq ) - log( K * (K - 0.25) * (K + 1) ));
+  wgts = exp(log(1.5) + log( ntap * ntap - kseq * kseq ) - log( ntap * (ntap - 0.25) * (ntap + 1.0) ));
   
   List weights_out = List::create(
-    Named("ntap")=K,
-    Named("taper_seq")=kseq + 1,
+    Named("ntap")=ntap,
+    Named("taper_seq")=kseq + 1.0,
     Named("taper_weights")=wgts
     );
     
@@ -191,7 +198,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
 
   // Select frequencies for PSD evaluation [0:nhalf]
-  NumericVector Freqs = abs(seq_len(nhalf)) - 1; // add one since c++ indexes at zero
+  NumericVector Freqs = abs( seq_len(nhalf) ) - 1; // add one since c++ indexes at zero
   nfreq = Freqs.size();
   
   //
@@ -261,7 +268,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
   
   List psd_out = List::create(
-    Named("freq.inds") = Freqs + 1,
+    Named("freq.inds") = Freqs + 1.0,
     Named("k.capped") = K,
     Named("psd") = psd
     );

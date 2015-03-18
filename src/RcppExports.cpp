@@ -31,12 +31,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // parabolic_weights_rcpp
-List parabolic_weights_rcpp(int ntap);
+List parabolic_weights_rcpp(const int ntap);
 RcppExport SEXP psd_parabolic_weights_rcpp(SEXP ntapSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< int >::type ntap(ntapSEXP);
+    Rcpp::traits::input_parameter< const int >::type ntap(ntapSEXP);
     __result = Rcpp::wrap(parabolic_weights_rcpp(ntap));
     return __result;
 END_RCPP

@@ -7,6 +7,7 @@
 .gitignore
 
 ^src/.gitignore$
+src/test_gpp_compile
 src/deprecated
 src/in.development
 

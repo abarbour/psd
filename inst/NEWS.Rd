@@ -24,6 +24,17 @@
 %
 % 1.0 -- the era of clean code and Rcpp goodness begins
 %
+\section{CHANGES IN \psd{} VERSION 1.0-1 (2015-03-18)}{
+  \itemize{
+	  \item Addresses three minor c++ issues associated with type overloads (not seen until CRAN-build-checks):
+	  \enumerate{
+		  \item \code{resample_fft.cpp:92:22}
+		  \item \code{resample_fft.cpp:104:31}
+	  	\item \code{resample_fft.cpp:264:34}
+	  }
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 1.0-0 (2015-03-17)}{
   \itemize{
     
@@ -42,7 +53,7 @@
     leverages the power of 
     \href{http://cran.r-project.org/package=RcppArmadillo}{\pkg{RcppArmadillo}}.
     
-    \item \code{ctap_simple} has been superceded by \code{ctap_cimple_rcpp}; in
+    \item \code{ctap_simple} has been superceded by \code{ctap_simple_rcpp}; in
     the process of rewriting in c++, a minor bug in the c implementation was
     found (and fixed).
 
@@ -131,4 +142,9 @@
   \itemize{
     \item Added \code{Tohoku} data.
   }
+}
+\section{CHANGES IN \psd{} VERSION 0.1-0}{
+	\itemize{
+		\item First working version
+	}
 }

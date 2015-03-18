@@ -1,0 +1,33 @@
+#!/bin/sh
+#set -e
+#
+# Reproduce Ripley's g++ debug, so CRAN checks dont fail in the future
+#
+#g++ -m32 \
+# -I/home/ripley/R/gcc/include \
+# -DNDEBUG \
+# -I/opt/csw/include \
+# -I/usr/local/include \
+# -I"/home/ripley/R/Lib32/Rcpp/include" \
+# -I"/home/ripley/R/Lib32/RcppArmadillo/include" \
+#
+case $# in
+  1)
+    CPPFI=$1
+  ;;
+  *)
+    $0 RcppExports.cpp
+    $0 ctap_simple_r.cpp
+    $0 resample_fft.cpp
+    exit
+  ;;
+esac
+#
+echo "testing ${CPPFI}..."
+#
+g++ -m32 \
+-I/Library/Frameworks/R.framework/Versions/Current/Headers \
+-I"/Users/abarbour/Library/R/3.1/library/Rcpp/include" \
+-I"/Users/abarbour/Library/R/3.1/library/RcppArmadillo/include" \
+-DNDEBUG \
+-fPIC -g -O2 -c ${CPPFI} -o /tmp/tmp.o

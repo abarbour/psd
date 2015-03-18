@@ -1,8 +1,8 @@
 Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density Estimation
-Version: 1.0-0
-Date: 2015-03-17
+Version: 1.0-1
+Date: 2015-03-18
 Author: Andrew J. Barbour and Robert L. Parker, with contributions from David
     Myer
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
