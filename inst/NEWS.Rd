@@ -22,9 +22,9 @@
 %
 
 %
-% 0.5 -- the era of clean code and Rcpp goodness begins
+% 1.0 -- the era of clean code and Rcpp goodness begins
 %
-\section{CHANGES IN \psd{} VERSION 0.5-0 (2015-03-17)}{
+\section{CHANGES IN \psd{} VERSION 1.0-0 (2015-03-17)}{
   \itemize{
     
     \item This is a major version bump that addresses performance issues by
