@@ -65,7 +65,7 @@ Spectral analysis for physical applications,
 Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007),
 Reducing the bias of multitaper spectrum estimates,
 \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
-\url{http://dx.doi.org/10.1111/j.1365-246X.2007.03592.x}
+\url{http://gji.oxfordjournals.org/content/171/3/1269}
 
 Riedel, K. S., & Sidorenko, A. (1995),
 Minimum bias multiple taper spectral estimation,
