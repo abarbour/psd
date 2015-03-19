@@ -24,7 +24,7 @@
 %
 % 1.0 -- the era of clean code and Rcpp goodness begins
 %
-\section{CHANGES IN \psd{} VERSION 1.0-1 (2015-03-18)}{
+\section{CHANGES IN \psd{} VERSION 1.0-1 (2015-03-19)}{
   \itemize{
 	  \item Addresses three minor c++ issues associated with type overloads (not seen until CRAN-build-checks):
 	  \enumerate{
@@ -32,6 +32,7 @@
 		  \item \code{resample_fft.cpp:104:31}
 	  	\item \code{resample_fft.cpp:264:34}
 	  }
+	  \item Prevents test-failure when fftw is not available.  Thanks again, fftw!
   }
 }
 

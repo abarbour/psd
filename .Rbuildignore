@@ -29,7 +29,7 @@ inst/Examples/Makefile
 inst/Examples/plots
 inst/Examples/tmp*
 inst/Examples/g.c.*
-inst/Examples/*.Rout
+inst/Examples/*\.Rout
 inst/Examples/.Rhistory
 
 Rprof.out
@@ -39,16 +39,16 @@ TODO
 
 vignettes/.gitignore
 vignettes/.Rhistory
-vignettes/.knitr*
-vignettes/.knitr2*
-vignettes/.sweave*
 vignettes/Rplots.pdf
 vignettes/fftw.tex
+vignettes/fftw.synctex.gz
 vignettes/normalization.tex
+vignettes/normalization.synctex.gz
 vignettes/psd_overview.tex
-vignettes/*.ilg
-vignettes/*.out
-vignettes/*.toc
+vignettes/psd_overview.synctex.gz
+vignettes/*\.ilg
+vignettes/*\.out
+vignettes/*\.toc
 vignettes/tmp.R
 vignettes/yuml.fawk*
 vignettes/yuml.sh*

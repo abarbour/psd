@@ -145,6 +145,7 @@ numeric vectors.
 \examples{
 \dontrun{#REX
 library(psd)
+
 ##
 ## Various utilities
 ##
@@ -159,8 +160,10 @@ X <- rnorm(1e2)
 nd <- 5
 na_mat(nd)
 na_mat(nd,nd-1)
+
 # zeros
 zeros(nd)
+
 # and ones
 ones(nd)
 

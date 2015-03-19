@@ -1,15 +1,17 @@
 #' Adaptive sine multitaper power spectral density estimation
 #' 
 #' @description
-#' This is the primary function to be used in this package, and returns
-#' power spectral density estimates where the number of tapers at each
-#' frequency has been iteratively optimized (\code{niter} times).
+#' This is the primary function to be used in this package: it returns
+#' power spectral density estimates of a univariate timeseries, with
+#' an optimal number of tapers at each frequency based on iterative
+#' reweighted spectral derivatives.
 #'
 #' @details
 #' See the \strong{Adaptive estimation} section in the description of
 #' the \code{\link{psd-package}} for details regarding adaptive estimation.
 #' 
-#' \code{\link{pspectrum_basic}} is a simplified implementation.
+#' \code{\link{pspectrum_basic}} is a simplified implementation used mainly for
+#' testing.
 #'
 #' @name pspectrum
 #' @export
@@ -28,7 +30,7 @@
 #' @param plot logical; Should the results be plotted?
 #' @param ... Optional parameters passed to \code{\link{riedsid}}
 #' @param stage integer; the current adaptive stage (0 is pilot)
-#' @param dvar numeric; the spectral variange; see also \code{\link{vardiff}} etc
+#' @param dvar numeric; the spectral variance; see also \code{\link{vardiff}} etc
 #' @return Object with class 'spec', invisibly. It also assigns the object to
 #' \code{"final_psd"} in the working environment.
 #'
