@@ -9,6 +9,7 @@
 
 # this is a temporary hack at a solution, until R is supported by Travis
 language: c
+sudo: required
 
 env:
   global:
