@@ -1,48 +1,35 @@
-# Sample .travis.yml for R projects.
-#
-# See README.md for instructions, or for more configuration options,
-# see the wiki:
-#   https://github.com/craigcitro/r-travis/wiki
-
-# Nabbed from https://github.com/RcppCore/Rcpp/blob/master/.travis.yml
-# modified from devtools
-
-# this is a temporary hack at a solution, until R is supported by Travis
-language: c
+language: r
 sudo: required
 
-env:
-  global:
-    # set to force failure with warnings
-    #- WARNINGS_ARE_ERRORS=1
-    - _R_CHECK_FORCE_SUGGESTS_=0
-    - BOOTSTRAP_LATEX=1
-    - R_BUILD_ARGS="--no-build-vignettes --no-manual"
-    - R_CHECK_ARGS="--no-build-vignettes --no-manual --as-cran"
-    - CRAN="http://cran.us.r-project.org"
+warnings_are_errors: false
 
-before_install:
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
+apt_packages:
+ - libfftw3-dev
 
-install:
-  - ./travis-tool.sh install_aptget libfftw3-dev
-  - ./travis-tool.sh install_aptget r-cran-runit r-cran-matrix 
-  - ./travis-tool.sh install_r Rcpp pkgKitten
-  - ./travis-tool.sh install_r RcppArmadillo
-  - ./travis-tool.sh install_r fftw
-  - ./travis-tool.sh install_r RColorBrewer signal zoo bspec ggplot2 knitr multitaper plyr RSEIS rbenchmark reshape2 testthat
-#  - ./travis-tool.sh install_github hadley/devtools
+r_binary_packages:
+ - Rcpp
+ - RcppArmadillo
+ - RColorBrewer
+ - signal
+ - zoo
+ - bspec
+ - fftw
+ - ggplot2
+ - knitr
+ - multitaper
+ - plyr
+ - RSEIS
+ - rbenchmark
+ - reshape2
+ - testthat
 
-script: 
-  - ./travis-tool.sh run_tests
-
-after_failure:
-  - ./travis-tool.sh dump_logs
+r_github_packages:
+  - jimhester/covr
 
 notifications:
   email:
     on_success: change
     on_failure: change
 
+after_success:
+  - Rscript -e 'covr::codecov()'

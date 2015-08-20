@@ -21,6 +21,10 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 1.0-2 (2015-08-19)}{
+  \itemize{ \item New \code{.travis.yml} and codecov.io coverage }
+}
+
 %
 % 1.0 -- the era of clean code and Rcpp goodness begins
 %
