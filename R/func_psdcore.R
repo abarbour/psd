@@ -208,8 +208,8 @@ psdcore.default <- function(X.d,
       reff <- resample_fft_rcpp(fftz, kseq, verbose=verbose)
 
       # return a valid resampled fft or stop
-	    if (inherits(reff,'try-error')){
-      	stop("Could not resample fft... inspect with psd_envGet(",evars[['fft']],"), etc.")
+      if (inherits(reff,'try-error')){
+        stop("Could not resample fft... inspect with psd_envGet(",evars[['fft']],"), etc.")
       } else {
         reff[['psd']]
       }
@@ -244,12 +244,9 @@ psdcore.default <- function(X.d,
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
   
   ## Update tapers for consistency
-  kseq <- as.tapers(if (do.mt){	
-  	reff[['k.capped']]
-  } else{ 
-  	kseq
-  })
-
+  if (do.mt) kseq <- reff[['k.capped']]
+  kseq <- as.tapers(kseq)
+  
   ## Normalize and convert to one-sided PSD
   #
   # ( using the trapezoidal rule, the principal being that the

@@ -25,6 +25,15 @@ test_that("classes are correct",{
   
 })
 
+test_that("pgram.compare results",{
+  set.seed(1234)
+  x <- rnorm(100)
+  xp <- pspectrum(x, verbose=FALSE)
+  xpc <- pgram_compare(xp)
+  expect_is(xpc, 'list')
+})
+
+
 test_that("pspectrum results are accurate",{
   
   set.seed(1234)
@@ -62,6 +71,17 @@ test_that("pspectrum results are accurate",{
   expect_equal(fn*psumn/nnf, varx, tolerance=tol)
   expect_equal(fn2*psumn2/nnf2, varx, tolerance=tol)
   
+})
+
+test_that("psdcore arguments are tested",{
+  set.seed(1234)
+  x <- rnorm(100)
+  xp1 <- psdcore.default(X.d = x, X.frq = 1)
+  xp2 <- psdcore.default(X.d = x, X.frq = -1)
+  expect_is(xp1, 'spec')
+  expect_is(xp2, 'spec')
+  expect_equal(xp1,xp2)
+  expect_error(psdcore.default(X.d = x, X.frq = "1"))
 })
 
 test_that("psdcore results are accurate",{
