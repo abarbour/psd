@@ -1,5 +1,4 @@
-#psd [![Build Status](https://travis-ci.org/abarbour/psd.png?branch=master)](https://travis-ci.org/abarbour/psd) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![Downloads](http://cranlogs.r-pkg.org/badges/psd?color=blue)](http://www.r-pkg.org/pkg/psd)
-[![Citation](https://img.shields.io/badge/Citation-CAGEO-green.svg?style=flat)](http://dx.doi.org/10.1016/j.cageo.2013.09.015)
+#psd [![Build Status](https://travis-ci.org/abarbour/psd.png?branch=master)](https://travis-ci.org/abarbour/psd) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-white.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![Downloads](http://cranlogs.r-pkg.org/badges/psd?color=blue)](http://www.r-pkg.org/pkg/psd) [![Citation](https://img.shields.io/badge/published-CAGEO-orange.svg?style=flat)](http://dx.doi.org/10.1016/j.cageo.2013.09.015)
 
 
 Adaptive, sine multitaper power spectral density estimation for R
