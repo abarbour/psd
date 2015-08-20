@@ -54,6 +54,9 @@
 #' @exportPattern "^[[:alpha:]]+"
 #' @import RColorBrewer signal zoo
 #' @importFrom Rcpp evalCpp
+#' @importFrom graphics abline layout legend lines mtext par plot title
+#' @importFrom stats acf as.ts frequency is.ts lm loess.control pchisq qchisq residuals spec.pgram start ts var
+#' @importFrom utils head tail
 #'
 #'
 #' @references Barbour, A. J. and R. L. Parker, (2014), 

@@ -22,7 +22,10 @@
 %
 
 \section{CHANGES IN \psd{} VERSION 1.0-2 (2015-08-19)}{
-  \itemize{ \item New \code{.travis.yml} and codecov.io coverage }
+  \itemize{
+  	\item New \code{.travis.yml} and codecov.io coverage 
+	\item Fixing new NAMESPACE requirements with \code{importFrom} statements
+  }
 }
 
 %

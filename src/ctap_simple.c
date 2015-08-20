@@ -125,17 +125,3 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     return(ntap_con);
 }
 
-// http://www.sfu.ca/~sblay/R-C-interface.txt
-// Getting an integer vector from C using .Call
-// to work with real numbers, replace int with double and INTEGER with NUMERIC)
-SEXP setInt() {
-    SEXP myint;
-    int *p_myint; 
-    int len = 5;
-    PROTECT(myint = NEW_INTEGER(len));  // Allocating storage space
-    p_myint = INTEGER_POINTER(myint);
-    p_myint[0] = 7;
-    UNPROTECT(1);
-    return myint;
-}
-
