@@ -5,12 +5,14 @@
 %%\newcommand{\Rlogo}{\if{html}{\figure{../../html/logo.jpg}}\if{latex}{\figure{logo.jpg}{options: width=0.5in}}}
 \newcommand{\GITpkg}{\href{http://www.github.com/abarbour/#1}{github}}
 \newcommand{\CRANpkg}{\href{http://cran.r-project.org/package=#1}{CRAN}}
+\newcommand{\CODEcov}{\href{http://codecov.io/github/abarbour/#1?branch=master}{codecov.io}}
+\newcommand{\Trav}{\href{https://travis-ci.org/abarbour/#1}{Travis-CI}}
 \newcommand{\psd}{\pkg{psd}}
 \newcommand{\gitpsd}{\GITpkg{psd} page}
 \newcommand{\citation}{\href{http://dx.doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
-\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \href{https://travis-ci.org/abarbour/psd}{Travis}}
+\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \Trav{psd} -- \CODEcov{psd}}
 
 \encoding{UTF-8}
 
@@ -21,10 +23,11 @@
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 1.0-2 (2015-08-19)}{
+\section{CHANGES IN \psd{} VERSION 1.0-2 (2015-09-17)}{
   \itemize{
-  	\item New \code{.travis.yml} and codecov.io coverage 
-	\item Fixing new NAMESPACE requirements with \code{importFrom} statements
+  	\item New \code{.travis.yml} and \CODEcov{psd} unit-test coverage 
+  	\item Fixing new NAMESPACE requirements with \code{importFrom} statements
+  	\item Reverse-dependency checking in \code{revdep/}
   }
 }
 
@@ -65,8 +68,7 @@
     the process of rewriting in c++, a minor bug in the c implementation was
     found (and fixed).
 
-    \item \href{https://travis-ci.org/abarbour/psd}{Travis-CI} is now used to track builds; see 
-    also the \gitpsd{}.
+    \item \Trav{psd} is now used to track builds; see also the \gitpsd{}.
     
     \item Issues/pull-requests can be entered on the \href{https://github.com/abarbour/psd/issues}{Issues} page.
     
