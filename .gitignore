@@ -1,5 +1,6 @@
 *.Rapp.history
 *.Rout
+Rplots.pdf
 Rprof.out
 .Rproj.user
 .Rhistory
