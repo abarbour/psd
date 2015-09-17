@@ -179,6 +179,8 @@ adapt_message <- function(stage, dvar=NULL){
       stage
     }
   }
-  message(sprintf("Stage  %s ", stage))
+  msg <- sprintf("Stage  %s ", stage)
+  message(msg)
+  return(invisible(msg))
 }
 

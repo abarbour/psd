@@ -1,7 +1,7 @@
 
 ##
 
-context("Parabolic weighting -- Rcpp implementation")
+context("Parabolic weighting")
 
 PWS <- function(n, verbose=FALSE){
   n <- as.integer(n)

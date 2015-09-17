@@ -1,7 +1,8 @@
 ##
 
-context('Coercion to other objects, etc...')
+context('Coercion')
 
+library(stats)
 set.seed(1234)
 x <- rnorm(100)
 

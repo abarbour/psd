@@ -12,10 +12,12 @@ test_that("classes are correct",{
   pd <- stats::spectrum(x, plot=FALSE)
   pc <- psdcore(x, plot = FALSE, verbose = FALSE)
   pa <- pspectrum(x, plot = FALSE, verbose = FALSE)
+  pa_b <- pspectrum_basic(x, verbose = FALSE)
   
   expect_is(pd, 'spec')
   expect_is(pc, c('amt','spec'))
   expect_is(pa, c('amt','spec'))
+  expect_is(pa_b, c('amt','spec'))
   
   expect_is(normalize(pd, verbose = FALSE), 'spec')
   expect_is(normalize(pa, verbose = FALSE), c('amt','spec'))

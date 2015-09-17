@@ -1,7 +1,7 @@
 
 ##
 
-context("DFT calculations -- stats::fft and fftw::FFT")
+context("DFT calculations -- stats::fft [and fftw::FFT]")
 
 library(stats)
 has.fftw <- require(fftw)

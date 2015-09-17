@@ -1,9 +1,16 @@
 
 ##
 
-context("Utility functions -- decibel conversions")
+context("Utility functions")
 
-test_that("conversions are accurate",{
+test_that("message delivery is working",{
+  expect_message(adapt_message(0))
+  expect_is(adapt_message(0), 'character')
+  expect_message(adapt_message(1))
+  expect_error(adapt_message(-1))
+})
+
+test_that("decibel conversions are accurate",{
   
   expect_equal(dB(2), 10*log10(2))
   expect_equal(dB(1), 0)
@@ -16,19 +23,11 @@ test_that("conversions are accurate",{
   expect_equal(round(dB(70, invert = TRUE, is.power = TRUE)), 3162)
 })
 
-##
-
-context("Utility functions -- variance of difference series")
-
-test_that("difference series are accurate",{
+test_that("variance of difference series are accurate",{
   X <- 1:10
   expect_equal(vardiff(X), 0)
   expect_equal(varddiff(X), 0)
 })
-
-##
-
-context("Utility functions -- matrix generation/manipulation")
 
 test_that("colvec reshapes correctly", {
   m <- na_mat(2,2)
@@ -69,11 +68,7 @@ test_that("zeros and ones are assembled correctly", {
   
 })
 
-##
-
-context("Utility functions -- modulo division")
-
-test_that("values are accurate", {
+test_that("modulo division values are accurate", {
 
   expect_equal(mod(1,2), 1%%2)
   expect_equal(mod(1+1,2+1), (1+1)%%(2+1))
@@ -108,4 +103,5 @@ test_that('plotting functions return correctly', {
   pc <- psdcore(x, plot = FALSE, verbose = FALSE)
   expect_equal(plot(pc), lines(pc))
 })
+
 ##

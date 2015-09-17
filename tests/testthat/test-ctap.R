@@ -1,7 +1,7 @@
 
 ##
 
-context("Taper classes and methods")
+context("Tapers class and methods")
 
 taps.o = c(0,1:10,100)
 taps = c(0,1:10,100)
@@ -29,10 +29,6 @@ test_that("coercion is functioning",{
   
 })
 
-##
-
-context("Taper constraints -- using as.tapers")
-
 test_that("constrained-range is correct",{
   
   expect_equal(min(ataps),  1)
@@ -42,10 +38,6 @@ test_that("constrained-range is correct",{
   expect_equal(max(ataps.s), max(minspan(taps)))
   
 })
-
-##
-
-context("Taper constraints -- constraint algorithms")
 
 test_that("environment variables are protected",{
   
@@ -96,10 +88,6 @@ test_that("constraint coercion is functioning",{
   
 })
 
-##
-
-context("Taper constraints -- Rcpp implementaion of ctap_simple")
-
 test_that("constrained-range is correct",{
   
   taps <- c(0,1:10,100)
@@ -124,11 +112,7 @@ test_that("bad input is handled correctly",{
   
 })
 
-##
-
-context("Taper constraints -- through minspan")
-
-test_that("Length and positivity requirements are checked correcly",{
+test_that("Length and positivity requirements are checked correctly",{
   
   expect_error(minspan(1))
   expect_error(minspan(0))
