@@ -81,7 +81,7 @@ spectral_properties.tapers <- function(x, ...){
 
 #' @rdname spectral_properties
 #' @export
-spectral_properties.default <- function(x, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE){
+spectral_properties.default <- function(x, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
   K <- as.vector(x)
   if (is.null(n.freq)) n.freq <- length(K)
   Nyquist <- f.samp/2
@@ -172,7 +172,7 @@ spec_confint.default <- function(x, ...){
 
 #' @rdname spec_confint
 #' @export
-.spec_confint <- function(dof, p = 0.95, as.db=FALSE) {
+.spec_confint <- function(dof, p = 0.95, as.db=FALSE, ...) {
   # Mostly from spec.ci, lifted from plot.spec
   if (p < 0 || p >= 1) stop("coverage probability out of range [0,1)")
   ptail <- (1 - p)
