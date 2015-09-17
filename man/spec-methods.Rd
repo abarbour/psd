@@ -4,33 +4,30 @@
 \name{spec-methods}
 \alias{as.data.frame.spec}
 \alias{as.list.spec}
-\alias{as.spec}
-\alias{as.spec.amt}
-\alias{data.frame.spec}
+\alias{as.matrix.spec}
 \alias{lines.spec}
 \alias{spec-methods}
+\alias{spec_details}
 \title{Generic methods for objects with class \code{'spec'}}
 \usage{
-\method{as.list}{spec}(x, ...)
-
-as.spec(x, ...)
-
-\method{as.spec}{amt}(x, ...)
-
 \method{lines}{spec}(x, y = NULL, type = "l", ...)
+
+spec_details(x, ...)
 
 \method{as.data.frame}{spec}(x, ...)
 
-data.frame.spec(x, ...)
+\method{as.matrix}{spec}(x, ...)
+
+\method{as.list}{spec}(x, ...)
 }
 \arguments{
 \item{x}{a \code{'spec'} object}
 
-\item{...}{optional arguments}
-
 \item{y}{optional coordinate vector for the y-axis}
 
 \item{type}{character; the type of plot}
+
+\item{...}{optional arguments}
 }
 \description{
 Generic methods for objects with class \code{'spec'}
@@ -39,7 +36,7 @@ Generic methods for objects with class \code{'spec'}
 Objects with class \code{'spec'} are simply lists with spectral estimates and parameters
 \code{as.data.frame} converts the list into a \code{'data.frame'} with individual
 columns for the frequency, PSD, and taper vectors;
-all other information will be retained as an attribute.
+all other information will be retained as a list in the attributes.
 }
 \examples{
 \dontrun{#REX

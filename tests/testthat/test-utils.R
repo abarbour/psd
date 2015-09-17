@@ -102,4 +102,10 @@ test_that("error checking works", {
   
 })
 
+test_that('plotting functions return correctly', {
+  set.seed(1234)
+  x <- rnorm(100)
+  pc <- psdcore(x, plot = FALSE, verbose = FALSE)
+  expect_equal(plot(pc), lines(pc))
+})
 ##

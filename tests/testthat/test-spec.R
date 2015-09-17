@@ -9,7 +9,7 @@ test_that("classes are correct",{
   
   set.seed(1234)
   x <- rnorm(100)
-  pd <- spectrum(x, plot=FALSE)
+  pd <- stats::spectrum(x, plot=FALSE)
   pc <- psdcore(x, plot = FALSE, verbose = FALSE)
   pa <- pspectrum(x, plot = FALSE, verbose = FALSE)
   

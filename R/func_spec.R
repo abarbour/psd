@@ -3,7 +3,7 @@
 #' @details Objects with class \code{'spec'} are simply lists with spectral estimates and parameters 
 #' \code{as.data.frame} converts the list into a \code{'data.frame'} with individual
 #' columns for the frequency, PSD, and taper vectors; 
-#' all other information will be retained as an attribute.
+#' all other information will be retained as a list in the attributes.
 #'
 #' @name spec-methods
 #' @author A.J. Barbour
@@ -19,24 +19,6 @@
 NULL
 
 #' @rdname spec-methods
-#' @export
-as.list.spec <- function(x, ...){
-  class(x) <- 'list'
-  return(x)
-}
-
-#' @rdname spec-methods
-#' @export
-as.spec <- function(x, ...) UseMethod("as.spec")
-
-#' @rdname spec-methods
-#' @export
-as.spec.amt <- function(x, ...){
-  class(x) <- 'spec'
-  return(x)
-}
-
-#' @rdname spec-methods
 #' @aliases lines.spec
 #' @export
 lines.spec <- function(x, y=NULL, type = 'l', ...){
@@ -44,31 +26,31 @@ lines.spec <- function(x, y=NULL, type = 'l', ...){
 }
 
 #' @rdname spec-methods
+#' @export
+spec_details <- function(x, ...){
+  x[-which(names(x) %in% c('freq','spec','taper'))]
+}
+
+#' @rdname spec-methods
 #' @aliases as.data.frame.spec
 #' @export
 as.data.frame.spec <- function(x, ...){
-  
   # get the meat-n-potatoes
   xdf <- data.frame(freq=x[['freq']], spec=x[['spec']], taper = x[['taper']])
-  
-  # keep all else as an attribute -- is there a better way?
-  attr(xdf, "coh")       <- x[['coh']]
-  attr(xdf, "phase")     <- x[['phase']]
-  attr(xdf, "kernel")    <- x[['kernel']]
-  attr(xdf, "df")        <- x[['df']]
-  attr(xdf, "bandwidth") <- x[['bandwidth']]
-  attr(xdf, "n.used")    <- x[['n.used']]
-  attr(xdf, "orig.n")    <- x[['orig.n']]
-  attr(xdf, "series")    <- x[['series']]
-  attr(xdf, "snames")    <- x[['snames']]
-  attr(xdf, "method")    <- x[['method']]
-  attr(xdf, "pad")       <- x[['pad']]
-  attr(xdf, "detrend")   <- x[['detrend']]
-  attr(xdf, "demean")    <- x[['demean']]
-  
+  # keep everything but the mean-n-potatoes as an attribute
+  # trouble is attributes are not always retained
+  attr(xdf, 'spec.details') <- spec_details(x)
   return(xdf)
 }
 
 #' @rdname spec-methods
 #' @export
-data.frame.spec <- as.data.frame.spec
+as.matrix.spec <- function(x, ...){
+  as.matrix(as.data.frame.spec(x), ...)
+}
+
+#' @rdname spec-methods
+#' @export
+as.list.spec <- function(x, ...){
+  return(unclass(x))
+}
