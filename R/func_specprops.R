@@ -40,74 +40,63 @@
 #' @export
 #' @seealso \code{\link{spec_confint}}, \code{\link{psd-package}}
 #'
-#' @param tapvec object with class \code{'tapers'} or \code{'spec'}
-#' @param f.samp scalar; the sampling frequency (e.g. Hz) of the series the tapers are for
-#' @param n.freq scalar; the number of frequencies of the original spectrum 
+#' @param x object to calculate spectral properties for; or a vector of number of tapers
+#' @param f.samp numeric; the sampling frequency (e.g. Hz) of the series the tapers are for
+#' @param n.freq integer; the number of frequencies of the original spectrum 
 #' (if \code{NULL} the length of the tapers object is assumed to be the number)
 #' @param p numeric; the coverage probability, bound within \eqn{[0,1)}
-#' @param  db.ci logical; should the uncertainty confidence intervals be returned as decibels?
-#' @param ... additional arguments (unused)
+#' @param db.ci logical; should the uncertainty confidence intervals be returned as decibels?
+#' @param ... additional arguments
+#' 
 #' @return A list with the following properties (and names):
 #' \itemize{
-#' \item{\code{taper}: The original taper vector.}
-#' \item{\code{stderr.chi .upper, .lower, .median}: results returned from \code{\link{spec_confint}}.}
-#' \item{\code{resolution}: The effective spectral resolution.}
-#' \item{\code{dof}: The number of degrees of freedom.}
-#' \item{\code{bw}: The effective bandwidth of the spectrum.}
+#' \item{\code{taper}: the number of tapers}
+#' \item{\code{stderr.chi .upper, .lower, .median}: results returned from \code{\link{spec_confint}}}
+#' \item{\code{resolution}: effective spectral resolution}
+#' \item{\code{dof}: degrees of freedom; will be slightly inaccurate for single-taper periodograms}
+#' \item{\code{bw}: effective bandwidth of the spectrum}
 #' }
 #'
 #' @example inst/Examples/rdex_spectralproperties.R
-spectral_properties <- function(tapvec, ...) UseMethod("spectral_properties")
+spectral_properties <- function(x, ...) UseMethod("spectral_properties")
 
 #' @rdname spectral_properties
-#' @aliases spectral_properties.spec
 #' @export
-spectral_properties.spec <- function(tapvec, ...){
-  stopifnot(is.spec(Pspec <- tapvec))
-  n.freq <- length(Pspec[['freq']])
-  f.samp <- 2 * Pspec[['freq']][n.freq]
-  tapvec <- Pspec[['taper']]
+spectral_properties.spec <- function(x, ...){
+  frq <- x[['freq']]
+  n.freq <- length(frq)
+  f.samp <- 2 * frq[n.freq]
+  tapvec <- x[['taper']]
+  # correct for case this is not an adaptive spectrum (then tapers is in % length)
+  # this will still lead to too low and uncertainty, since d.o.f. is 1.79 instead of 2
+  if (!is.amt(x)) tapvec <- ceiling(tapvec) 
   spectral_properties(tapvec, f.samp, n.freq, ...)
 }
 
 #' @rdname spectral_properties
-#' @aliases spectral_properties.tapers
 #' @export
-spectral_properties.tapers <- function(tapvec, ...){
-  stopifnot(is.tapers(tapvec))
-  K <- as.integer(tapvec)
-  spectral_properties(K, ...)
+spectral_properties.tapers <- function(x, ...){
+  spectral_properties(as.vector(x), ...)
 }
 
 #' @rdname spectral_properties
-#' @aliases spectral_properties.default
 #' @export
-spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE, ...){
-  
-  K <- as.vector(tapvec)
+spectral_properties.default <- function(x, f.samp=1, n.freq=NULL, p=0.95, db.ci=FALSE){
+  K <- as.vector(x)
   if (is.null(n.freq)) n.freq <- length(K)
-  
   Nyquist <- f.samp/2
-  
-  #Var <- 10 / K / 12
-  ## Deg Freedom: PW93 Ch7 343
-  Dof <- 2 * K
-  #
-  ##BW <- K / n.freq
-  ##Resolu <- BW * Nyquist
-  #
-  ## Bandwidth
-  # Walden et al
-  # half-width W = (K + 1)/{2(N + 1)}
-  # effective bandwidth ~ 2 W (accurate for many spectral windows)
+    ## Deg Freedom: PW93 Ch7 343
+  DOF <- 2 * K
+  ## Half-width
   W <- (K+1)/(2*n.freq)
+  ## Effective bandwidth ~ 2 W (accurate for many spectral windows)
   BW <- 2 * W
   ## Resolution
   Resolu <- 2 * BW
-  ## Uncertainty CI -- how does it compare to StdErr
-  StdErrCI <- spec_confint(Dof, p, as.db=db.ci)
+  ## Uncertainty CI
+  StdErrCI <- .spec_confint(DOF, p, as.db=db.ci)
   ##
-  return(data.frame(taper=K, stderr.chi=StdErrCI, resolution=Resolu, dof=Dof, bw=BW))
+  return(data.frame(taper=K, stderr.chi=StdErrCI, resolution=Resolu, dof=DOF, bw=BW))
 }
 
 #' Confidence intervals for multitaper power spectral density estimates 
@@ -129,13 +118,17 @@ spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, d
 #' Additive uncertainties \eqn{\delta S} are returned, such that 
 #' the spectrum with confidence interval is \eqn{S \pm \delta S}.
 #'
-#' @author A.J. Barbour; some code modified from the \code{spec.ci} function inside \code{plot.spec}
+#' @author A.J. Barbour; some code modified from the \code{spec.ci} function inside \code{stats::plot.spec}
 #' @name spec_confint
 #' @export
-#' @seealso \code{\link{spectral_properties}}, \code{\link{psd-package}}, \code{plot.spec}, \code{\link{dB}}
+#' @seealso \code{\link{spectral_properties}}, \code{\link{psd-package}}, \code{stats::plot.spec}, \code{\link{dB}}
+#' 
+#' @param x object to calculate spectral properties
 #' @param dof numeric; the degrees of freedom \eqn{\nu}
 #' @param p numeric; the coverage probability \eqn{p}, bound within \eqn{[0,1)}
 #' @param as.db logical; should the values be returned as decibels?
+#' @param ... additional arguments
+#' 
 #' @return A \code{data.frame} with the following properties (and names):
 #' \itemize{
 #' \item{\code{lower}: Based on upper tail probabilities (\eqn{p})}
@@ -144,31 +137,26 @@ spectral_properties.default <- function(tapvec, f.samp=1, n.freq=NULL, p=0.95, d
 #' \item{\code{approx}: Approximation based on \eqn{1/\sqrt(\nu - 1)}.}
 #' }
 #' @example inst/Examples/rdex_confint.R
-spec_confint <- function(dof, p = 0.95, as.db=FALSE) UseMethod("spec_confint")
+spec_confint <- function(x, ...) UseMethod("spec_confint")
 
 #' @rdname spec_confint
-#' @aliases spec_confint.spec
 #' @export
-spec_confint.spec <- function(dof, p = 0.95, as.db=FALSE){
-  stopifnot(is.spec(dof))
-  dof <- dof$df
-  spec_confint(dof, p, as.db)
+spec_confint.spec <- function(x, ...){
+  dof <- x[['df']]
+  .spec_confint(dof, ...)
 }
 
 #' @rdname spec_confint
-#' @aliases spec_confint.tapers
 #' @export
-spec_confint.tapers <- function(dof, p = 0.95, as.db=FALSE){
-  stopifnot(is.tapers(dof))
+spec_confint.tapers <- function(x, ...){
   # two degrees of freedom per taper 
-  dof <- 2 * unclass(dof)
-  spec_confint(dof, p, as.db)
+  dof <- 2 * as.vector(x)
+  .spec_confint(dof, ...)
 }
 
 #' @rdname spec_confint
-#' @aliases spec_confint.default
 #' @export
-spec_confint.default <- function(dof, p = 0.95, as.db=FALSE) {
+.spec_confint <- function(dof, p = 0.95, as.db=FALSE) {
   # Mostly from spec.ci, lifted from plot.spec
   if (p < 0 || p >= 1) stop("coverage probability out of range [0,1)")
   ptail <- (1 - p)

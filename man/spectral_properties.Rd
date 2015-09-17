@@ -7,23 +7,23 @@
 \alias{spectral_properties.tapers}
 \title{Calculate properties of multitaper power spectral density estimates}
 \usage{
-spectral_properties(tapvec, ...)
+spectral_properties(x, ...)
 
-\method{spectral_properties}{spec}(tapvec, ...)
+\method{spectral_properties}{spec}(x, ...)
 
-\method{spectral_properties}{tapers}(tapvec, ...)
+\method{spectral_properties}{tapers}(x, ...)
 
-\method{spectral_properties}{default}(tapvec, f.samp = 1, n.freq = NULL,
-  p = 0.95, db.ci = FALSE, ...)
+\method{spectral_properties}{default}(x, f.samp = 1, n.freq = NULL,
+  p = 0.95, db.ci = FALSE)
 }
 \arguments{
-\item{tapvec}{object with class \code{'tapers'} or \code{'spec'}}
+\item{x}{object to calculate spectral properties for; or a vector of number of tapers}
 
-\item{...}{additional arguments (unused)}
+\item{...}{additional arguments}
 
-\item{f.samp}{scalar; the sampling frequency (e.g. Hz) of the series the tapers are for}
+\item{f.samp}{numeric; the sampling frequency (e.g. Hz) of the series the tapers are for}
 
-\item{n.freq}{scalar; the number of frequencies of the original spectrum
+\item{n.freq}{integer; the number of frequencies of the original spectrum
 (if \code{NULL} the length of the tapers object is assumed to be the number)}
 
 \item{p}{numeric; the coverage probability, bound within \eqn{[0,1)}}
@@ -33,11 +33,11 @@ spectral_properties(tapvec, ...)
 \value{
 A list with the following properties (and names):
 \itemize{
-\item{\code{taper}: The original taper vector.}
-\item{\code{stderr.chi .upper, .lower, .median}: results returned from \code{\link{spec_confint}}.}
-\item{\code{resolution}: The effective spectral resolution.}
-\item{\code{dof}: The number of degrees of freedom.}
-\item{\code{bw}: The effective bandwidth of the spectrum.}
+\item{\code{taper}: the number of tapers}
+\item{\code{stderr.chi .upper, .lower, .median}: results returned from \code{\link{spec_confint}}}
+\item{\code{resolution}: effective spectral resolution}
+\item{\code{dof}: degrees of freedom; will be slightly inaccurate for single-taper periodograms}
+\item{\code{bw}: effective bandwidth of the spectrum}
 }
 }
 \description{
