@@ -6,6 +6,8 @@
 .git/
 .gitignore
 
+^revdep$
+
 ^src/.gitignore$
 src/test_gpp_compile
 src/deprecated
