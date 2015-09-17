@@ -3,6 +3,7 @@
 \name{spec_confint}
 \alias{.spec_confint}
 \alias{spec_confint}
+\alias{spec_confint.default}
 \alias{spec_confint.spec}
 \alias{spec_confint.tapers}
 \title{Confidence intervals for multitaper power spectral density estimates}
@@ -12,6 +13,8 @@ spec_confint(x, ...)
 \method{spec_confint}{spec}(x, ...)
 
 \method{spec_confint}{tapers}(x, ...)
+
+\method{spec_confint}{default}(x, ...)
 
 .spec_confint(dof, p = 0.95, as.db = FALSE)
 }

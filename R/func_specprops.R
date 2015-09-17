@@ -142,8 +142,16 @@ spec_confint <- function(x, ...) UseMethod("spec_confint")
 #' @rdname spec_confint
 #' @export
 spec_confint.spec <- function(x, ...){
-  dof <- x[['df']]
-  .spec_confint(dof, ...)
+  res <- if (is.amt(x)){
+    # 'tapers' object
+    taps <- x[['taper']]
+    if (!is.tapers(taps)) taps <- as.tapers(taps)
+    taps
+  } else {
+    # degrees of freedom
+    x[['df']]
+  }
+  spec_confint(res)
 }
 
 #' @rdname spec_confint
@@ -152,6 +160,14 @@ spec_confint.tapers <- function(x, ...){
   # two degrees of freedom per taper 
   dof <- 2 * as.vector(x)
   .spec_confint(dof, ...)
+}
+
+#' @rdname spec_confint
+#' @export
+spec_confint.default <- function(x, ...){
+    # assumes x is the number of degrees of freedom
+    dof <- as.vector(x)
+    .spec_confint(dof, ...)
 }
 
 #' @rdname spec_confint
