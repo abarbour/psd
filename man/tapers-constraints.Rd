@@ -120,9 +120,12 @@ PSD <- psdcore(X, ntaper=10, refresh=TRUE)
 ## optimize tapers
 kopt <- riedsid(PSD)
 kopt.loess  <- riedsid(PSD, c.method="loess.smooth")
+# the preferred function:
+kopt2 <- riedsid2(PSD)
 #
-plot(kopt, log.y=TRUE, ylim =c(.1, 3e2))
-lines(kopt.loess)
+plot(as.tapers(kopt2), ylim =c(0, 60))
+lines(as.tapers(kopt.loess), col='black')
+lines(as.tapers(kopt), col='black', lwd=2)
 
 ##
 ## To compare all the methods at once:
@@ -134,6 +137,6 @@ demo("ctap")
 A.J. Barbour and R.L. Parker
 }
 \seealso{
-\code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
+\code{\link{riedsid1}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 }
 

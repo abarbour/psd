@@ -25,3 +25,7 @@ test_that("riedsid2 works as expected",{
   expect_is(riedsid2(pa), expected)
   expect_is(riedsid2(pa_b), expected)
 })
+
+test_that('riedsid issues deprecation warning',{
+  expect_warning(riedsid(pd))
+})

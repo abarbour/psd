@@ -120,6 +120,6 @@ WFUN(maxx)
 A.J. Barbour adapted the original algorithm (R.L. Parker), and authored the optimized versions.
 }
 \seealso{
-\code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{riedsid}}
+\code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{riedsid2}}
 }
 

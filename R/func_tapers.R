@@ -260,7 +260,7 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #'
 #' @export
 #' @author A.J. Barbour adapted the original algorithm (R.L. Parker), and authored the optimized versions.
-#' @seealso \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{riedsid}}
+#' @seealso \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{riedsid2}}
 #'
 #' @param tapvec \code{'tapers'} object; the number of tapers at each frequency
 #' @param tap.index integer; the index of \code{tapvec} from which to produce a sequence of weights for
@@ -376,7 +376,7 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' @rdname tapers-constraints
 #' @name tapers-constraints
 #' 
-#' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
+#' @seealso \code{\link{riedsid1}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 #' @example inst/Examples/rdex_constraintapers.R
 NULL
 

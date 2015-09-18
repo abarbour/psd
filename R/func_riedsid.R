@@ -53,7 +53,9 @@
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
 #' @example inst/Examples/rdex_riedsid.R
-riedsid <- function(PSD, ...) UseMethod("riedsid")
+riedsid <- function(PSD, ...){
+  UseMethod("riedsid")
+}
 
 #' @rdname riedsid
 #' @export
@@ -76,6 +78,7 @@ riedsid.default <- function(PSD, ntaper = 1L,
                             Deriv.method=c("local_qls","spg"),
                             constrained=TRUE, c.method=NULL,
                             verbose=TRUE, ...) {
+  .Deprecated('riedsid2', package='psd', old='riedsid')
   ## spectral values
   PSD <- as.vector(PSD)
   # num freqs
