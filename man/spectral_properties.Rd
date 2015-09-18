@@ -14,7 +14,7 @@ spectral_properties(x, ...)
 \method{spectral_properties}{tapers}(x, ...)
 
 \method{spectral_properties}{default}(x, f.samp = 1, n.freq = NULL,
-  p = 0.95, db.ci = FALSE)
+  p = 0.95, db.ci = FALSE, ...)
 }
 \arguments{
 \item{x}{object to calculate spectral properties for; or a vector of number of tapers}

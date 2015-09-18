@@ -1,7 +1,7 @@
 
 ##
 
-context("Spectrum estimation tools")
+context("Spectrum estimation tools -- I")
 
 tol <- 0.07
 

@@ -58,15 +58,14 @@ riedsid <- function(PSD, ...) UseMethod("riedsid")
 #' @rdname riedsid
 #' @export
 riedsid.spec <- function(PSD, ...){
-  stopifnot(is.spec(PSD))
   Pspec <- PSD[['spec']]
   Tapseq <- PSD[['freq']]
   ntaper <- if (is.amt(PSD)){
       PSD[['taper']]
   } else {
-      rep.int(1L, length(Pspec))
+      rep.int(x=1L, times=length(Pspec))
   }
-  riedsid.default(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
+  riedsid(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
 }
 
 
@@ -118,7 +117,7 @@ riedsid.default <- function(PSD, ntaper = 1L,
   stopifnot(exists("lsmeth"))
   rss <- if (lsmeth){
     # spectral derivatives the preferred way
-    DFUN <- function(j, 
+    DerivFUN <- function(j, 
                      j1=j-nspan[j]+nadd-1, 
                      j2=j+nspan[j]+nadd-1, 
                      jr=j1:j2, 
@@ -143,7 +142,7 @@ riedsid.default <- function(PSD, ntaper = 1L,
     DX <- seq_len(nf)
     ##
     ## Bottleneck:
-    RSS <- vapply(X=DX, FUN=DFUN, FUN.VALUE=c(1,1,1))
+    RSS <- vapply(X=DX, FUN=DerivFUN, FUN.VALUE=c(1,1,1))
     ##
     attr(RSS, which="lsderiv") <- lsmeth
     RSS <- psd_envAssignGet("spectral_derivatives.ls", RSS)
@@ -190,15 +189,14 @@ riedsid2 <- function(PSD, ...) UseMethod("riedsid2")
 #' @rdname riedsid
 #' @export
 riedsid2.spec <- function(PSD, ...){
-  stopifnot(is.spec(PSD))
   pspec <- PSD[['spec']]
   freqs <- PSD[['freq']]
-  ntaper <- if (is.amt(PSD)){
+  ntap <- if (is.amt(PSD)){
     PSD[['taper']]
   } else {
-    rep.int(1L, length(pspec))
+    rep.int(x=1L, times=length(pspec))
   }
-  riedsid2.default(pspec, ntaper, ...)
+  riedsid2(PSD=pspec, ntaper=ntap, ...)
 }
 
 #' @rdname riedsid
@@ -212,16 +210,16 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
   eps <- 1e-78
   nf <- length(PSD)
   nt <- length(ntaper)
-  if (nt == 1) ntaper <- rep(ntaper, nf)
+  if (nt == 1) ntaper <- rep.int(x=ntaper, times=nf)
   # some constraints
-  nspan <- ceiling( pmin( nf/2, 7*ntaper/5 ) )
+  nspan <- ceiling( pmin.int( nf/2, 7*ntaper/5 ) )
   nadd <- 1 + max(nspan)
   # Create log psd, and pad to handle beginning and end values
   ist <- nadd:2
-  iend <- (nf - 1):(nf - nadd)
+  iend <- seq(from=(nf - 1), to=(nf - nadd))
   S <- as.numeric(c(PSD[ist], PSD, PSD[iend])) + eps
   Y <- log(S)
-  DFUN <- function(j){
+  DerivFUN <- function(j){
     j1 <- j - nspan[j] + nadd - 1
     j2 <- j + nspan[j] + nadd - 1
     jseq <- j1:j2
@@ -239,7 +237,7 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
     return(c(eps=eps, d2Y=d2Y, dYsq=dY*dY))
   }
   # Calculate derivatives
-  yders <- vapply(X=seq_len(nf), FUN=DFUN, FUN.VALUE=c(1,1,1))
+  yders <- vapply(X=seq_len(nf), FUN=DerivFUN, FUN.VALUE=c(1,1,1))
   # and optimal tapers
   sc <- ifelse(TRUE, 473.3736, 480)
   kopt <- round( sc**0.2 / abs(colSums(yders))**0.4 )
@@ -249,5 +247,6 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
   } else {
     as.tapers(kopt)
   }
+  
   return(kopt)
 }

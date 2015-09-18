@@ -16,7 +16,7 @@ spec_confint(x, ...)
 
 \method{spec_confint}{default}(x, ...)
 
-.spec_confint(dof, p = 0.95, as.db = FALSE)
+.spec_confint(dof, p = 0.95, as.db = FALSE, ...)
 }
 \arguments{
 \item{x}{object to calculate spectral properties}

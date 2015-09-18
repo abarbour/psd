@@ -50,15 +50,13 @@ pspectrum.ts <- function(x, ...){
 #' @aliases pspectrum.spec
 #' @export
 pspectrum.spec <- function(x, ...){
-  cant <- "cannot adapt  pspectrum  results without an fft in the psd environment. see ?pspectrum"
-  if (inherits(x, "amt")){
+  if (is.amt(x)){
     name <- getOption("psd.ops")[['names']]
     fft <- psd_envGet(name[['fft']])
     if (is.null(fft)){
-      stop(cant)
+      stop("cannot adapt  pspectrum  results without an fft in the psd environment. see ?pspectrum")
     } else {
-      warning('updating  pspectrum  results is not (yet) supported') 
-      .NotYetImplemented()
+      stop('updating  pspectrum  results is not (yet) implemented') 
     }
   } else {
     .NotYetImplemented()
@@ -150,16 +148,14 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
 pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
   
   if (verbose) adapt_message(0)
+  # Initial spectrum
   P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, refresh=TRUE)
-  ko <- P[['taper']]
-  nf <- length(ko)
-  
-  # Iterate on optimal tapers, and resample spectrum
+  # Iterate and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
   for (iter in seq_len(niter)){
     if (verbose) adapt_message(iter)
     # find optimal tapers
-    ko <- riedsid2(P, ko, verbose=FALSE)
+    ko <- riedsid2(P[['spec']], ntaper=P[['taper']], verbose = FALSE)
     # update spectrum
     P  <- psdcore(x, ntaper=ko, preproc = FALSE)
   }

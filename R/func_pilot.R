@@ -58,7 +58,6 @@
 pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 
 #' @rdname pilot_spec
-#' @aliases pilot_spec.ts
 #' @export
 pilot_spec.ts <- function(x, ...){
   stopifnot(is.ts(x))
@@ -67,7 +66,6 @@ pilot_spec.ts <- function(x, ...){
 }
 
 #' @rdname pilot_spec
-#' @aliases pilot_spec.default
 #' @export
 pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, ...){
   
