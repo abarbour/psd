@@ -376,7 +376,7 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' @rdname tapers-constraints
 #' @name tapers-constraints
 #' 
-#' @seealso \code{\link{riedsid1}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
+#' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 #' @example inst/Examples/rdex_constraintapers.R
 NULL
 
@@ -565,7 +565,7 @@ ctap_loess.default <- function(tapvec, tapseq=NULL, loess.span=.3, loess.degree=
   loe <- stats::loess(y ~ x, 
                       data.frame(x=tapseq, y=as.numeric(tapvec)), 
                       span=loess.span, degree=loess.degree,
-                      control = loess.control(trace.hat = trc))
+                      control = stats::loess.control(trace.hat = trc))
   tapvec.adj <- as.integer(stats::predict(loe))
   return(tapvec.adj)
 }

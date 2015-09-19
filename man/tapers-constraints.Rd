@@ -137,6 +137,6 @@ demo("ctap")
 A.J. Barbour and R.L. Parker
 }
 \seealso{
-\code{\link{riedsid1}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
+\code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 }
 

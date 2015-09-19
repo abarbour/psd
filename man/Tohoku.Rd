@@ -69,9 +69,7 @@ USGS summary page:
 \seealso{
 \code{\link{pspectrum}}, \code{\link{hfsnm}}, \code{\link{magnet}}
 
-\code{TauP.R} for an R-implementation of the traveltime calculations:
-
-\url{http://cran.r-project.org/web/packages/TauP.R/}
+\code{TauP.R} for an R-implementation of the traveltime calculations
 }
 \keyword{datasets}
 
