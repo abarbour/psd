@@ -59,7 +59,7 @@ You can to install the package and it's dependencies
 with [CRAN](http://cran.r-project.org/web/packages/psd/)
 (from within the `R` environment):
 
-    install.packages("psd", dependencies=TRUE)
+    install.packages("psd")
 
 then load the package library
 
@@ -103,13 +103,12 @@ and the spectral uncertainty:
     lines(sprop$stderr.chi.lower)
     lines(sprop$stderr.chi.upper)
 
-##Installing the Development Version##
+### Installing the Development Version
 
 Should you wish to install the development version
 of this software, the [devtools][2] library
 will be useful:
 
-    install.packages("devtools", dependencies=TRUE)
     library(devtools)
     install_github("abarbour/psd")
 
