@@ -1,10 +1,13 @@
-#psd [![Build Status](https://travis-ci.org/abarbour/psd.svg?branch=master)](https://travis-ci.org/abarbour/psd) [![Code Coverage](https://codecov.io/github/abarbour/psd/coverage.svg?branch=master)](https://codecov.io/github/abarbour/psd?branch=master)  [![Downloads](https://cranlogs.r-pkg.org/badges/psd)](https://www.r-pkg.org/pkg/psd) [![License](https://img.shields.io/badge/license-GPL-lightgrey.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Citation](https://img.shields.io/badge/published-CAGEO-red.svg)](https://dx.doi.org/10.1016/j.cageo.2013.09.015)
+# psd 
 
 Adaptive, sine multitaper power spectral density estimation for R
 
 by Andrew J Barbour and Robert L Parker
 
-###Description###
+[![Build Status](https://travis-ci.org/abarbour/psd.svg?branch=master)](https://travis-ci.org/abarbour/psd) [![Code Coverage](https://codecov.io/github/abarbour/psd/coverage.svg?branch=master)](https://codecov.io/github/abarbour/psd?branch=master)  [![Downloads](https://cranlogs.r-pkg.org/badges/psd)](https://www.r-pkg.org/pkg/psd) [![License](https://img.shields.io/badge/license-GPL-lightgrey.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Citation](https://img.shields.io/badge/published-CAGEO-red.svg)](https://dx.doi.org/10.1016/j.cageo.2013.09.015)
+
+## Description
+
 This is an `R`
 package for computing univariate power spectral density
 estimates with little or no tuning effort.
@@ -37,7 +40,7 @@ shape of the spectrum itself.
 spectra with large dynamic range and mixed-bandwidth features|features
 typically found in geophysical datasets.  
 
-##How to Cite##
+## How to Cite
 
 Bob and I have published a 
 [paper in Computers & Geosciences][1]
@@ -50,10 +53,10 @@ you cite our paper.
     citation("psd")
 
 
-##Getting Started##
+## Getting Started
 
-Firstly you'll need to install the package and it's dependencies
-from [CRAN](http://cran.r-project.org/web/packages/psd/)
+You can to install the package and it's dependencies
+with [CRAN](http://cran.r-project.org/web/packages/psd/)
 (from within the `R` environment):
 
     install.packages("psd", dependencies=TRUE)
