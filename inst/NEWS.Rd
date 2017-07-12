@@ -6,13 +6,14 @@
 \newcommand{\GITpkg}{\href{https://www.github.com/abarbour/#1}{github}}
 \newcommand{\CRANpkg}{\href{https://cran.r-project.org/package=#1}{CRAN}}
 \newcommand{\CODEcov}{\href{https://codecov.io/github/abarbour/#1?branch=master}{codecov.io}}
+\newcommand{\Appvey}{\href{https://ci.appveyor.com/project/abarbour/#1}{AppVeyor}}
 \newcommand{\Trav}{\href{https://travis-ci.org/abarbour/#1}{Travis-CI}}
 \newcommand{\psd}{\pkg{psd}}
 \newcommand{\gitpsd}{\GITpkg{psd} page}
 \newcommand{\citation}{\href{https://doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
-\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \Trav{psd} -- \CODEcov{psd}}
+\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \Trav{psd} -- \Appvey{psd} -- \CODEcov{psd}}
 
 \encoding{UTF-8}
 
@@ -23,9 +24,10 @@
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 1.0-2 (2015-09-17)}{
+\section{CHANGES IN \psd{} VERSION 1.0-2 (2017-07-11)}{
   \itemize{
   	\item New \code{.travis.yml} and \CODEcov{psd} unit-test coverage 
+  	\item Windows CI with \Appvey{psd}
   	\item Fixing new NAMESPACE requirements with \code{importFrom} statements
   	\item Reverse-dependency checking in \code{revdep/}
   }
@@ -34,7 +36,7 @@
 %
 % 1.0 -- the era of clean code and Rcpp goodness begins
 %
-\section{1.0-1 (2015-03-19)}{
+\section{VERSION 1.0-1 (2015-03-19)}{
   \itemize{
 	  \item Addresses three minor c++ issues associated with type overloads (not seen until CRAN-build-checks):
 	  \enumerate{
@@ -46,7 +48,7 @@
   }
 }
 
-\section{1.0-0 (2015-03-17)}{
+\section{VERSION 1.0-0 (2015-03-17)}{
   \itemize{
     
     \item This is a major version bump that addresses performance issues by
@@ -80,7 +82,7 @@
 }
 
 
-\section{0.4-3 (2014-10-16)}{
+\section{VERSION 0.4-3 (2014-10-16)}{
   \itemize{ 
     \item Thanks to David Myer for catching a number of mistakes
     in the code and documentation,
@@ -91,14 +93,14 @@
   }
 }
 
-\section{0.4-2 (2014-08-05)}{
+\section{VERSION 0.4-2 (2014-08-05)}{
   \itemize{ 
     \item Removed unused variables in \code{ctap_simple.c} 
     \item Removed deprecated \code{@S3method} statements.
   }
 }
 
-\section{0.4-1 (2014-04-15)}{
+\section{VERSION 0.4-1 (2014-04-15)}{
   \itemize{
   	\item We have published a paper in Computers & Geosciences regarding
 	\psd{}, and the citation is up to date: \code{citation('psd')}
@@ -111,7 +113,7 @@
 }
 %
 %
-\section{0.4-0 (2013-09-19)}{
+\section{VERSION 0.4-0 (2013-09-19)}{
   \itemize{
     \item The taper-constraint methods \code{ctap_markov} and \code{ctap_friedman} are now defunct.
     \item Removed 'units.sty' dependency in vignettes (was causing NOTES and unhappiness).
@@ -122,7 +124,7 @@
 }
 %
 %
-\section{0.3-2 (2013-03-27)}{
+\section{VERSION 0.3-2 (2013-03-27)}{
   \itemize{
     \item Revised discussions regarding AR response spectrum.
     \item Fixed \code{psdcore}: it was applying parabolic weights incorrectly.
@@ -135,7 +137,7 @@
   }
 }
 %
-\section{0.3-1 (2013-03-12)}{
+\section{VERSION 0.3-1 (2013-03-12)}{
   \itemize{
     \item This marks the first release to CRAN: \psd{}.
           We have included three vignettes, one of which is an overview of
@@ -148,7 +150,7 @@
     \item Removed empty \code{.Last.lib} function to prevent CRAN-check note.
   }
 }
-\section{0.3-0 (2013-03-11)}{
+\section{VERSION 0.3-0 (2013-03-11)}{
   \itemize{
     \item Added \code{Tohoku} data.
   }

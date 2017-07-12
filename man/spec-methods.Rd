@@ -29,6 +29,9 @@ spec_details(x, ...)
 
 \item{...}{optional arguments}
 }
+\description{
+Generic methods for objects with class \code{'spec'}
+}
 \details{
 Objects with class \code{'spec'} are simply lists with spectral estimates and parameters 
 \code{as.data.frame} converts the list into a \code{'data.frame'} with individual

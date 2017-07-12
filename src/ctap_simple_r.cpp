@@ -23,8 +23,10 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @title c++ implementation of constrain filter
-//' @param tapvec,maxslope see \code{\link{ctap_simple}}
+//' c++ implementation of constrain filter
+//' 
+//' @inheritParams tapers-refinement
+//' @seealso \code{\link{ctap_simple}}
 //' @export
 // [[Rcpp::export]]
 IntegerVector rcpp_ctap_simple(IntegerVector tapvec, const int maxslope = 1) {

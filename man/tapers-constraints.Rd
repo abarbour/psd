@@ -25,11 +25,11 @@ minspan(tapvec, ...)
 \method{minspan}{default}(tapvec, Kmin = NULL, Kmax = NULL, ...)
 }
 \arguments{
-\item{tapvec}{\code{'tapers'} object; the number of tapers at each frequency}
+\item{tapvec}{integer or \code{'tapers'} object; the number of tapers at each frequency}
 
-\item{...}{optional arguments sent to the constrain function (e.g. \code{\link{ctap_simple}})}
+\item{...}{optional arguments}
 
-\item{tapseq}{vector; positions or frequencies -- necessary for smoother methods}
+\item{tapseq}{numeric; positions or frequencies -- necessary for smoother methods}
 
 \item{constraint.method}{character; method to use for constraints on tapers numbers}
 

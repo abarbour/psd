@@ -58,6 +58,9 @@ data.frame.tapers(x, ...)
 \value{
 \code{plot} returns a list with names: \code{line.colors} (hex values)
 }
+\description{
+Generic methods for objects with class \code{'tapers'}
+}
 \examples{
 ##
 tap <- as.tapers(c(1:49,50:0)+rnorm(1e2))

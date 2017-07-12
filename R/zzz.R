@@ -9,10 +9,11 @@
 # package becomes visible to the user (for example a start-up message) 
 # or need to be run after the package environment has been created.
 
-.onUnload <- function(libpath)
-{
-  library.dynam.unload("psd", libpath)
-}
+#.onUnload <- function(libpath)
+#{
+#  library.dynam.unload("psd", libpath)
+#}
+
 ##
 # executed after .onLoad is executed, once the namespace is visible to user
 .onAttach <- function(...) {

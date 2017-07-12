@@ -14,17 +14,20 @@ ctap_loess(tapvec, ...)
   loess.degree = 1, verbose = TRUE, ...)
 }
 \arguments{
-\item{tapvec}{integer; the number of tapers at each frequency (can be a vector)}
+\item{tapvec}{integer or \code{'tapers'} object; the number of tapers at each frequency}
 
-\item{...}{additional arguments}
+\item{...}{optional arguments}
 
-\item{tapseq}{vector; positions to evaluate derivatives (unused here, but necessary for smoother methods)}
+\item{tapseq}{numeric; positions or frequencies -- necessary for smoother methods}
 
 \item{loess.span}{scalar; the span used in \code{loess}}
 
 \item{loess.degree}{scalar; the polynomial degree}
 
 \item{verbose}{logical; should warnings and messages be given?}
+}
+\description{
+Taper constraints using loess smoothing
 }
 \seealso{
 \code{\link{constrain_tapers}}, \code{\link{ctap_simple_rcpp}}

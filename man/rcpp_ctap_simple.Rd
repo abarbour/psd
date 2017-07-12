@@ -7,5 +7,13 @@
 rcpp_ctap_simple(tapvec, maxslope = 1L)
 }
 \arguments{
-\item{tapvec, maxslope}{see \code{\link{ctap_simple}}}
+\item{tapvec}{integer or \code{'tapers'} object; the number of tapers at each frequency}
+
+\item{maxslope}{integer; constrain based on this maximum first difference}
+}
+\description{
+c++ implementation of constrain filter
+}
+\seealso{
+\code{\link{ctap_simple}}
 }
