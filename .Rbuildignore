@@ -7,22 +7,16 @@
 .gitignore
 
 ^revdep$
-
 ^src/.gitignore$
 src/test_gpp_compile
 src/deprecated
 src/in.development
-
 ^.*/.gitignore$
-
 .travis.yml
-
 paper/
 NOBUILD/
-
 install_rlp
 data/.assemb_data
-
 inst/Makefile
 inst/NEWS.pdf
 inst/Examples/01.run_all_examples
@@ -33,12 +27,9 @@ inst/Examples/tmp*
 inst/Examples/g.c.*
 inst/Examples/*\.Rout
 inst/Examples/.Rhistory
-
 Rprof.out
-
 WISHLISH
 TODO
-
 vignettes/.gitignore
 vignettes/.Rhistory
 vignettes/Rplots.pdf
@@ -54,5 +45,5 @@ vignettes/*\.toc
 vignettes/tmp.R
 vignettes/yuml.fawk*
 vignettes/yuml.sh*
-
 ^packrat/
+^appveyor\.yml$
