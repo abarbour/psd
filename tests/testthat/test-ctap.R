@@ -49,12 +49,6 @@ test_that("environment variables are protected",{
   expect_is(xx <- ctap_simple(ataps), 'tapers')
   expect_equal(taps,taps.o)
 
-  expect_is(xx <- ctap_simple_rcpp(taps), 'integer')
-  expect_equal(taps,taps.o)
-  
-  expect_is(xx <- ctap_simple_rcpp(ataps), 'tapers')
-  expect_equal(taps,taps.o)
-
   expect_warning(xx <- ctap_loess(taps)) # because a sequence is not given
   expect_equal(taps,taps.o)
   
@@ -80,9 +74,6 @@ test_that("constraint coercion is functioning",{
   expect_is(ctap_simple(taps), 'integer')
   expect_is(ctap_simple(ataps), 'tapers')
   
-  expect_is(ctap_simple_rcpp(taps), 'integer')
-  expect_is(ctap_simple_rcpp(ataps), 'tapers')
-  
   expect_is(suppressWarnings(ctap_loess(taps)), 'integer')
   expect_is(suppressWarnings(ctap_loess(ataps)), 'tapers')
   
@@ -92,8 +83,8 @@ test_that("constrained-range is correct",{
   
   taps <- c(0,1:10,100)
   
-  taps.c <- ctap_simple_rcpp(taps, maxslope=1)
-  taps.c2 <- ctap_simple_rcpp(taps, maxslope=2)
+  taps.c <- ctap_simple(taps, maxslope=1)
+  taps.c2 <- ctap_simple(taps, maxslope=2)
   
   expect_equal(min(taps.c), 1)
   expect_equal(min(taps.c2), 1)
@@ -104,11 +95,12 @@ test_that("constrained-range is correct",{
 
 test_that("bad input is handled correctly",{
   
-  expect_equal(ctap_simple_rcpp(NA), 1)
-  expect_warning(ctap_simple_rcpp(Inf))
   expect_error(rcpp_ctap_simple(NULL))
-  expect_equal(ctap_simple_rcpp(NULL), integer(0))
-  expect_error(ctap_simple_rcpp(1, maxslope=-1))
+  
+  expect_equal(ctap_simple(NA), 1)
+  expect_warning(ctap_simple(Inf))
+  expect_equal(ctap_simple(NULL), integer(0))
+  expect_error(ctap_simple(1, maxslope=-1))
   
 })
 

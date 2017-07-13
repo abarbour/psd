@@ -318,8 +318,7 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' set with the \code{constraint.method} argument:
 #' 
 #' \itemize{
-#'   \item \code{'simple.slope.rcpp'} uses \code{\link{ctap_simple_rcpp}}
-#'   \item \code{'simple.slope'} uses \code{\link{ctap_simple}}
+#'   \item \code{'simple.slope'} use \code{\link{ctap_simple}}
 #'   \item \code{'loess.smooth'} uses \code{\link{ctap_loess}}
 #'   \item \code{'none'} returns unbounded tapers.
 #' }
@@ -333,8 +332,7 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' 
 #' \subsection{via first differencing (the default)}{
 #' 
-#' \code{\link{ctap_simple_rcpp}} is the preferred constraint method
-#' (in previous versions \code{\link{ctap_simple}} was).
+#' \code{\link{ctap_simple}} is the preferred constraint method.
 #' The algorithm uses first-differencing to modify the number
 #' of tapers in the previous position.  Effectively, the constraint
 #' is based on a causal, 1st-order Finite Impulse-response Filter (FIR) 
@@ -377,7 +375,7 @@ parabolic_weights_fast <- function(ntap=1L) {
 #' @rdname tapers-constraints
 #' @name tapers-constraints
 #' 
-#' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
+#' @seealso \code{\link{riedsid}}, \code{\link{ctap_simple}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 #' @example inst/Examples/rdex_constraintapers.R
 NULL
 
@@ -394,8 +392,7 @@ constrain_tapers.tapers <- function(tapvec, ...){
 #' @rdname tapers-constraints
 #' @export
 constrain_tapers.default <- function(tapvec, tapseq=NULL,
-                                     constraint.method=c("simple.slope.rcpp",
-                                                         "simple.slope",
+                                     constraint.method=c("simple.slope",
                                                          "loess.smooth",
                                                          "none"),
                                      verbose=TRUE, ...){
@@ -406,9 +403,7 @@ constrain_tapers.default <- function(tapvec, tapseq=NULL,
     tapvec
   } else {
     if (verbose) message(sprintf("Constraining tapers with  ...  %s  ...  method", cmeth))
-    if (cmeth == 'simple.slope.rcpp'){
-      ctap_simple_rcpp(tapvec, ...)
-    } else if (cmeth == 'simple.slope'){
+    if (cmeth == 'simple.slope'){
       ctap_simple(tapvec, ...)
     } else if (cmeth == 'loess.smooth'){
       ctap_loess(tapvec, tapseq=tapseq, ...)
@@ -457,10 +452,6 @@ minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
 #' @name tapers-refinement
 #' @rdname tapers-refinement
 #' 
-#' @details
-#' \code{\link{ctap_simple}} is the original version ported to c, and
-#' \code{\link{ctap_simple_rcpp}} is the recommended version to use.
-#' 
 #' @inheritParams constrain_tapers
 #' @param maxslope integer; constrain based on this maximum first difference
 #' 
@@ -473,10 +464,10 @@ minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
 #' x <- seq_len(n)
 #' xn <- round(runif(n,1,n))
 #' 
-#' xnf <- ctap_simple_rcpp(xn, 0) # flattens out
-#' xnc <- ctap_simple_rcpp(xn, 1) # no change, already only slopes = 1
+#' xnf <- ctap_simple(xn, 0) # flattens out
+#' xnc <- ctap_simple(xn, 1) # no change, already only slopes = 1
 #' try(all.equal(xnc, xn))
-#' xnc2 <- ctap_simple_rcpp(xn, 2) # slopes = 2 only
+#' xnc2 <- ctap_simple(xn, 2) # slopes = 2 only
 #'
 #' plot(xn, type='b', pch=16, ylim=c(0,12))
 #' grid()
@@ -486,57 +477,29 @@ minspan.default <- function(tapvec, Kmin=NULL, Kmax=NULL, ...){
 #' lines(xnc2, type='b', col='blue')
 #' lines(0.2+as.vector(psd::ctap_simple(psd::as.tapers(xn))), type='b', pch=".", col='salmon')
 #'
-#' # compare simple and rcpp implementations
-#' kcr <- ctap_simple_rcpp(xn, 2)
-#' kcs <- ctap_simple(xn, 2)
-#' rbind(kcs, kcr)
-#' try(all.equal(kcr, kcs))
-#'
 #' # more examples:
 NULL
 
 #' @rdname tapers-refinement
-#' @export
-ctap_simple_rcpp <- function(tapvec, ...) UseMethod("ctap_simple_rcpp")
-
-#' @rdname tapers-refinement
-#' @export
-ctap_simple_rcpp.tapers <- function(tapvec, ...){
-  # c++ code used for speed up of forward+backward operations
-  tapvec <- as.integer(tapvec)
-  tapvec.adj <- ctap_simple_rcpp.default(tapvec, ...)
-  return(as.tapers(tapvec.adj))
-}
-
-#' @rdname tapers-refinement
-#' @export
-ctap_simple_rcpp.default <- function(tapvec, maxslope = 1L, ...) {
-  tapvec <- as.integer(tapvec)
-  maxslope <- as.integer(maxslope)
-  tapvec.adj <- rcpp_ctap_simple(tapvec, maxslope)
-  return(tapvec.adj)
-}
-
-#' @rdname tapers-refinement
+#' @aliases ctap_simple
 #' @export
 ctap_simple <- function(tapvec, ...) UseMethod("ctap_simple")
 
 #' @rdname tapers-refinement
 #' @export
 ctap_simple.tapers <- function(tapvec, ...){
-  stopifnot(is.tapers(tapvec))
-  tapvec.adj <- ctap_simple.default(as.vector(tapvec), ...)
+  tapvec <- as.integer(tapvec)
+  tapvec.adj <- ctap_simple.default(tapvec, ...)
   return(as.tapers(tapvec.adj))
 }
 
 #' @rdname tapers-refinement
 #' @export
-ctap_simple.default <- function(tapvec, maxslope=1L, ...){
-  # current code requires real
-  tapvec <- as.numeric(tapvec)
-  maxslope <- as.numeric(maxslope)
-  # c code used for speed up of forward+backward operations
-  tapvec.adj <- as.integer(.Call("rlp_constrain_tapers", tapvec, maxslope, PACKAGE="psd"))
+ctap_simple.default <- function(tapvec, maxslope = 1L, ...) {
+  tapvec <- as.integer(tapvec)
+  maxslope <- as.integer(maxslope)
+  # c++ interface used for speed up of forward+backward filter operations
+  tapvec.adj <- rcpp_ctap_simple(tapvec, maxslope)
   return(tapvec.adj)
 }
 
@@ -547,7 +510,7 @@ ctap_simple.default <- function(tapvec, maxslope=1L, ...){
 #' @inheritParams constrain_tapers
 #' @param loess.span  scalar; the span used in \code{loess}
 #' @param loess.degree  scalar; the polynomial degree
-#' @seealso \code{\link{constrain_tapers}}, \code{\link{ctap_simple_rcpp}}
+#' @seealso \code{\link{constrain_tapers}}, \code{\link{ctap_simple}}
 ctap_loess <- function(tapvec, ...) UseMethod("ctap_loess")
 
 #' @rdname ctap_loess
@@ -557,7 +520,6 @@ ctap_loess.tapers <- function(tapvec, ...){
   tapvec.adj <- ctap_loess(as.vector(tapvec), ...)
   return(as.tapers(tapvec.adj))
 }
-
 
 #' @rdname ctap_loess
 #' @export

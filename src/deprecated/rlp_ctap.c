@@ -1,7 +1,7 @@
 /*
 #   Apply constraints on tapers using simple derivatives
 #
-#     Copyright (C) 2013-2015  Andrew J. Barbour *
+#     Copyright (C) 2013-2017  Andrew J. Barbour *
 #
 #     Robert L. Parker authored the original matlab algorithm
 #
@@ -25,11 +25,12 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
-SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
+// c implementation of original RLP constraint filter
+SEXP rlp_constrain(SEXP R_ntaps, SEXP R_maxslope)
 {
     // copy semantics was leading to changes in env vars
     // so we now protect and duplicate
-    //  http://adv-r.had.co.nz/C-interface.html
+    // http://adv-r.had.co.nz/C-interface.html
     SEXP R_ntaps_copy = PROTECT(duplicate(R_ntaps));
     double * c_ntaps=REAL(R_ntaps_copy);
     UNPROTECT(1);
@@ -41,46 +42,9 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
 
     if (maxslope <= 0)
         Rf_error( "max slope must greater than zero" );
-  
-    //
-    // RLPs algorithm
-    //  #  Scan forward to bound slopes >= 1
-    // state<-0
-    // for ( j  in  2:nf ) {
-    //   slope <- slopes[j]
-    //   if (state == 0) {
-    //     if (slope >= 1 ) {
-    //       state <- 1
-    //       kopt[j] <- kopt[j-1]+1
-    //     }
-    //   } else {
-    //     if (kopt[j] >= kopt[j-1]+1) {
-    //       kopt[j] <- kopt[j-1]+1
-    //     } else {
-    //       state <- 0
-    //     }
-    //   }
-    // }
-    //  #  Scan backward to bound slopes >= -1
-    // 	state <- 0
-    // 	for ( j  in  nf:2 ) {
-    //         if (state == 0) {
-    // 			slope <- kopt[j-1]-kopt[j]
-    // 			if (slope >= 1) {
-    // 				state <- 1
-    // 				kopt[j-1] <- kopt[j]+1
-    // 			}
-    //         } else {
-    // 			if (kopt[j-1] >= kopt[j]+1) {
-    // 				kopt[j-1] <- kopt[j]+1
-    // 			} else {
-    // 				state <- 0
-    // 			}
-    //         }
-    // 	}
+
     // APPLY CONSTRAINTS
     //     FORWARD:
-    
     state = 0;
     for (i = 1; i < ssize; i++){
         im = i - 1;
@@ -100,7 +64,6 @@ SEXP rlp_constrain_tapers(SEXP R_ntaps, SEXP R_maxslope)
     }
     // and BACKWARD:
     state = 0;
-    // was msize - 1
     for (i = msize; i >= 1; i--){
         im = i - 1;
         if (state == 0){

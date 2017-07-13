@@ -2,7 +2,7 @@
 //
 //   Apply constraints on tapers using simple derivatives
 //
-//     Copyright (C) 2015  Andrew J. Barbour *
+//     Copyright (C) 2017  Andrew J. Barbour *
 //
 //     * Robert L. Parker authored the original matlab algorithm
 //
@@ -23,10 +23,9 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' c++ implementation of constrain filter
+//' c++ implementation of the RLP constraint filter
 //' 
 //' @inheritParams tapers-refinement
-//' @seealso \code{\link{ctap_simple}}
 //' @export
 // [[Rcpp::export]]
 IntegerVector rcpp_ctap_simple(IntegerVector tapvec, const int maxslope = 1) {

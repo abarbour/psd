@@ -24,8 +24,9 @@
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 1.0-2 (2017-07-11)}{
+\section{CHANGES IN \psd{} VERSION 1.1.0 (2017-07-13)}{
   \itemize{
+    \item \code{ctap_simple_rcpp} replaces \code{ctap_simple}; associated .c code deprecated 
   	\item New \code{.travis.yml} and \CODEcov{psd} unit-test coverage 
   	\item Windows CI with \Appvey{psd}
   	\item Fixing new NAMESPACE requirements with \code{importFrom} statements

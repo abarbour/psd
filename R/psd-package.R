@@ -7,6 +7,7 @@
 #' spectral shape. The main function to be used is \code{\link{pspectrum}}.
 #'
 #' @details
+#'
 #' In frequency ranges where the spectrum  (\eqn{S})
 #' is relatively flat, more tapers are taken and so a higher accuracy is 
 #' attained at the expense of lower frequency resolution. 
@@ -49,9 +50,8 @@
 #' 
 #' @author Andrew J. Barbour <andy.barbour@@gmail.com> and Robert L. Parker
 #' 
-#' 
 #' @useDynLib psd
-#' @exportPattern "^[[:alpha:]]+"
+#' 
 #' @import RColorBrewer signal zoo
 #' @importFrom Rcpp sourceCpp
 #' @importFrom graphics abline layout legend lines mtext par plot title
@@ -77,7 +77,7 @@
 #' Minimum bias multiple taper spectral estimation,
 #' \emph{Signal Processing, IEEE Transactions on}, \strong{43}(1), 188--195.
 #'
-#' @seealso \code{\link{psdcore}} and \code{\link{riedsid}}
+#' @seealso \code{\link{pspectrum}} (main function); \code{\link{psdcore}} and \code{\link{riedsid}}
 #'  
 NULL
 .psdEnvName = ".psdEnv"

@@ -2,20 +2,11 @@
 % Please edit documentation in R/func_tapers.R
 \name{tapers-refinement}
 \alias{tapers-refinement}
-\alias{ctap_simple_rcpp}
-\alias{ctap_simple_rcpp.tapers}
-\alias{ctap_simple_rcpp.default}
 \alias{ctap_simple}
 \alias{ctap_simple.tapers}
 \alias{ctap_simple.default}
 \title{Taper constraints using simple derivatives}
 \usage{
-ctap_simple_rcpp(tapvec, ...)
-
-\method{ctap_simple_rcpp}{tapers}(tapvec, ...)
-
-\method{ctap_simple_rcpp}{default}(tapvec, maxslope = 1L, ...)
-
 ctap_simple(tapvec, ...)
 
 \method{ctap_simple}{tapers}(tapvec, ...)
@@ -32,10 +23,6 @@ ctap_simple(tapvec, ...)
 \description{
 Taper constraints using simple derivatives
 }
-\details{
-\code{\link{ctap_simple}} is the original version ported to c, and
-\code{\link{ctap_simple_rcpp}} is the recommended version to use.
-}
 \examples{
 
 # generate some random taper series and constrain them based on slopes
@@ -44,10 +31,10 @@ n <- 11
 x <- seq_len(n)
 xn <- round(runif(n,1,n))
 
-xnf <- ctap_simple_rcpp(xn, 0) # flattens out
-xnc <- ctap_simple_rcpp(xn, 1) # no change, already only slopes = 1
+xnf <- ctap_simple(xn, 0) # flattens out
+xnc <- ctap_simple(xn, 1) # no change, already only slopes = 1
 try(all.equal(xnc, xn))
-xnc2 <- ctap_simple_rcpp(xn, 2) # slopes = 2 only
+xnc2 <- ctap_simple(xn, 2) # slopes = 2 only
 
 plot(xn, type='b', pch=16, ylim=c(0,12))
 grid()
@@ -56,12 +43,6 @@ lines(xnf, type='b', col='green')
 lines(xnc, type='b', col='red')
 lines(xnc2, type='b', col='blue')
 lines(0.2+as.vector(psd::ctap_simple(psd::as.tapers(xn))), type='b', pch=".", col='salmon')
-
-# compare simple and rcpp implementations
-kcr <- ctap_simple_rcpp(xn, 2)
-kcs <- ctap_simple(xn, 2)
-rbind(kcs, kcr)
-try(all.equal(kcr, kcs))
 
 # more examples:
 }

@@ -30,5 +30,5 @@ ctap_loess(tapvec, ...)
 Taper constraints using loess smoothing
 }
 \seealso{
-\code{\link{constrain_tapers}}, \code{\link{ctap_simple_rcpp}}
+\code{\link{constrain_tapers}}, \code{\link{ctap_simple}}
 }

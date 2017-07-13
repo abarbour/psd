@@ -15,8 +15,8 @@ constrain_tapers(tapvec, ...)
 \method{constrain_tapers}{tapers}(tapvec, ...)
 
 \method{constrain_tapers}{default}(tapvec, tapseq = NULL,
-  constraint.method = c("simple.slope.rcpp", "simple.slope", "loess.smooth",
-  "none"), verbose = TRUE, ...)
+  constraint.method = c("simple.slope", "loess.smooth", "none"),
+  verbose = TRUE, ...)
 
 minspan(tapvec, ...)
 
@@ -58,8 +58,7 @@ The method by which \code{\link{constrain_tapers}} refines tapers is
 set with the \code{constraint.method} argument:
 
 \itemize{
-  \item \code{'simple.slope.rcpp'} uses \code{\link{ctap_simple_rcpp}}
-  \item \code{'simple.slope'} uses \code{\link{ctap_simple}}
+  \item \code{'simple.slope'} use \code{\link{ctap_simple}}
   \item \code{'loess.smooth'} uses \code{\link{ctap_loess}}
   \item \code{'none'} returns unbounded tapers.
 }
@@ -73,8 +72,7 @@ Details of the constraint methods:
 
 \subsection{via first differencing (the default)}{
 
-\code{\link{ctap_simple_rcpp}} is the preferred constraint method
-(in previous versions \code{\link{ctap_simple}} was).
+\code{\link{ctap_simple}} is the preferred constraint method.
 The algorithm uses first-differencing to modify the number
 of tapers in the previous position.  Effectively, the constraint
 is based on a causal, 1st-order Finite Impulse-response Filter (FIR) 
@@ -135,7 +133,7 @@ demo("ctap")
 }#REX
 }
 \seealso{
-\code{\link{riedsid}}, \code{\link{ctap_simple_rcpp}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
+\code{\link{riedsid}}, \code{\link{ctap_simple}}, \code{\link{ctap_loess}}, \code{\link{tapers}}
 }
 \author{
 A.J. Barbour and R.L. Parker

@@ -69,7 +69,7 @@ Minimum bias multiple taper spectral estimation,
 \emph{Signal Processing, IEEE Transactions on}, \strong{43}(1), 188--195.
 }
 \seealso{
-\code{\link{psdcore}} and \code{\link{riedsid}}
+\code{\link{pspectrum}} (main function); \code{\link{psdcore}} and \code{\link{riedsid}}
 }
 \author{
 Andrew J. Barbour <andy.barbour@gmail.com> and Robert L. Parker

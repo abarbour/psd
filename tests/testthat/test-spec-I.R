@@ -30,7 +30,8 @@ test_that("classes are correct",{
 test_that("pgram.compare results",{
   set.seed(1234)
   x <- rnorm(100)
-  xp <- pspectrum(x, verbose=FALSE)
+  xp <- pspectrum(x, plot = FALSE, verbose=FALSE)
+  expect_is(xp, 'amt')
   xpc <- pgram_compare(xp)
   expect_is(xpc, 'list')
 })
@@ -78,12 +79,12 @@ test_that("pspectrum results are accurate",{
 test_that("psdcore arguments are tested",{
   set.seed(1234)
   x <- rnorm(100)
-  xp1 <- psdcore.default(X.d = x, X.frq = 1)
-  xp2 <- psdcore.default(X.d = x, X.frq = -1)
+  xp1 <- psdcore.default(X.d = x, X.frq = 1, plot = FALSE)
+  xp2 <- psdcore.default(X.d = x, X.frq = -1, plot = FALSE)
   expect_is(xp1, 'spec')
   expect_is(xp2, 'spec')
   expect_equal(xp1,xp2)
-  expect_error(psdcore.default(X.d = x, X.frq = "1"))
+  expect_error(psdcore.default(X.d = x, X.frq = "1", plot = FALSE))
 })
 
 test_that("psdcore results are accurate",{
@@ -96,8 +97,8 @@ test_that("psdcore results are accurate",{
   xt <- ts(x, frequency=1)
   xt2 <- ts(x, frequency=10)
   
-  pc <- psdcore(xt, plot = FALSE, verbose = FALSE)
-  pc2 <- psdcore(xt2, plot = FALSE, verbose = FALSE)
+  pc <- psdcore(xt, verbose = FALSE, plot = FALSE)
+  pc2 <- psdcore(xt2, verbose = FALSE, plot = FALSE)
   
   # make sure Nyquist frequencies are correct
   fn <- max(pc[['freq']])

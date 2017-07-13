@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rcpp_ctap_simple}
 \alias{rcpp_ctap_simple}
-\title{c++ implementation of constrain filter}
+\title{c++ implementation of the RLP constraint filter}
 \usage{
 rcpp_ctap_simple(tapvec, maxslope = 1L)
 }
@@ -12,8 +12,5 @@ rcpp_ctap_simple(tapvec, maxslope = 1L)
 \item{maxslope}{integer; constrain based on this maximum first difference}
 }
 \description{
-c++ implementation of constrain filter
-}
-\seealso{
-\code{\link{ctap_simple}}
+c++ implementation of the RLP constraint filter
 }
