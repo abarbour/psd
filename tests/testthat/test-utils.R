@@ -29,6 +29,25 @@ test_that("variance of difference series are accurate",{
   expect_equal(varddiff(X), 0)
 })
 
+test_that("polygon creation is accurate",{
+  nx <- 10
+  X <- seq_len(nx)
+  Y <- X^2
+  YE <- runif(nx, 2, 5)
+  
+  PX <- create_poly(X, Y, YE, from.lower=FALSE)
+  PXl <- create_poly(X, Y, YE, from.lower=TRUE)
+  
+  expect_is(PX, 'data.frame')
+  expect_is(PXl, 'data.frame')
+  
+  expect_equal(unique(PX$x.x), X)
+  expect_equal(unique(PXl$x.x), X)
+  
+  expect_identical(PX$x.x, PXl$x.x)
+
+})
+
 test_that("colvec reshapes correctly", {
   m <- na_mat(2,2)
   expect_is(colvec(m), 'matrix')

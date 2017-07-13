@@ -242,7 +242,6 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' the weighting factors. 
 #' \code{\link{parabolic_weights_rcpp}} is the fastest implementation, used by
 #' \code{\link{resample_fft_rcpp}}, but it takes only a single value.
-#' \code{\link{parabolic_weights}} calls \code{\link{parabolic_weights_fast}} for vectors.
 #'
 #' If one has a \code{tapers} object, specify the \code{taper.index} to
 #' produce a sequence of weights up to the value at that index; the user
@@ -264,29 +263,29 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
 #' @seealso \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{riedsid2}}
 #'
 #' @inheritParams constrain_tapers
-#' @param tap.index integer; the index of \code{tapvec} from which to produce a sequence of weights for
-#' @param ntap integer; the number of tapers to provide weightings for.
+#' @param ntap integer (or \code{tapers} object); the number of tapers to provide weightings for.
+#' @param tap.index integer; if \code{ntap} is a \code{tapers} object, the index from which to produce a sequence of weights for
 #' 
 #' @return A list with the number of tapers, indices of the taper sequence, and the weights \eqn{W_N}{w}.
 #'
 #' @example inst/Examples/rdex_parabolicweights.R
-parabolic_weights <- function(tapvec, tap.index=1L) UseMethod("parabolic_weights")
+parabolic_weights <- function(ntap, ...) UseMethod("parabolic_weights")
 
 #' @rdname parabolic_weights
 #' @export
-parabolic_weights.tapers <- function(tapvec, tap.index=1L){
-  stopifnot(is.tapers(tapvec) | ((tap.index > 0L) & (tap.index <= length(tapvec))))
-  kWeights <- parabolic_weights_fast(tapvec[as.integer(tap.index)])
+parabolic_weights.tapers <- function(ntap, tap.index=1L){
+  stopifnot(is.tapers(ntap) | ((tap.index > 0L) & (tap.index <= length(ntap))))
+  kWeights <- parabolic_weights.default(ntap[as.integer(tap.index)])
   return(kWeights)
 }
 
 #' @rdname parabolic_weights
 #' @export
-parabolic_weights_fast <- function(ntap=1L) {
-  # Must be long-integer, otherwise overflow for ntap > 1e3
-  K <- as.double(ntap)
+parabolic_weights.default <- function(ntap=1L) {
+  
+  K <- as.integer(ntap)
   kseq <- seq_len(ntap) - 1
-  #
+  
   ksq <- kseq * kseq # vector
   K2 <- K * K   	   # scalar
   K3 <- K2 * K 		   # scalar
@@ -294,7 +293,7 @@ parabolic_weights_fast <- function(ntap=1L) {
   # orig: w = (tapers^2 - (k-1).^2) * (1.5/(tapers*(tapers-0.25)*(tapers+1)));
   # or:       (tapers^2 - (k-1).^2) * 3/(2*K3 + K2*3/2 - K/2)
   # or:
-  return(list(ntap=ntap, taper_seq = kseq + 1, taper_weights = (K2 - ksq) * 6 / ( 4 * K3  +  3 * K2  -  K )))
+  return(list(ntap=K, taper_seq = kseq + 1, taper_weights = (K2 - ksq) * 6 / ( 4 * K3  +  3 * K2  -  K )))
 }
 
 ###

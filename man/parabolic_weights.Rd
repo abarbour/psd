@@ -4,23 +4,23 @@
 \alias{parabolic_weights_rcpp}
 \alias{parabolic_weights}
 \alias{parabolic_weights.tapers}
-\alias{parabolic_weights_fast}
+\alias{parabolic_weights.default}
 \title{Calculate parabolic weighting factors.}
 \usage{
 parabolic_weights_rcpp(ntap = 1L)
 
-parabolic_weights(tapvec, tap.index = 1L)
+parabolic_weights(ntap, ...)
 
-\method{parabolic_weights}{tapers}(tapvec, tap.index = 1L)
+\method{parabolic_weights}{tapers}(ntap, tap.index = 1L)
 
-parabolic_weights_fast(ntap = 1L)
+\method{parabolic_weights}{default}(ntap = 1L)
 }
 \arguments{
-\item{ntap}{integer; the number of tapers to provide weightings for.}
+\item{ntap}{integer (or \code{tapers} object); the number of tapers to provide weightings for.}
 
-\item{tapvec}{integer or \code{'tapers'} object; the number of tapers at each frequency}
+\item{...}{optional arguments}
 
-\item{tap.index}{integer; the index of \code{tapvec} from which to produce a sequence of weights for}
+\item{tap.index}{integer; if \code{ntap} is a \code{tapers} object, the index from which to produce a sequence of weights for}
 }
 \value{
 A list with the number of tapers, indices of the taper sequence, and the weights \eqn{W_N}{w}.
@@ -30,7 +30,6 @@ The resampled spectrum involves summing weighted tapers; this produces
 the weighting factors. 
 \code{\link{parabolic_weights_rcpp}} is the fastest implementation, used by
 \code{\link{resample_fft_rcpp}}, but it takes only a single value.
-\code{\link{parabolic_weights}} calls \code{\link{parabolic_weights_fast}} for vectors.
 }
 \details{
 If one has a \code{tapers} object, specify the \code{taper.index} to
@@ -76,10 +75,10 @@ to_df <- function(W){
 
 ## a roundabout way of bootstrapping y-axis limits:
 #  upper
-WgtsU <- parabolic_weights_fast(5)
+WgtsU <- parabolic_weights(5)
 DfU <- to_df(WgtsU)
 #  lower
-WgtsL <- parabolic_weights_fast(maxx)
+WgtsL <- parabolic_weights(maxx)
 DfL <- to_df(WgtsL)
 
 ylims <- range(pretty(dB(c(DfL$taper_weights, DfU$taper_weights)))) + c(-2,5)
@@ -94,7 +93,7 @@ TFUN <- function(Df.){
 # function for weighting factors and plotting
 WFUN <- function(x){
   message(x)
-  Wgts <- parabolic_weights_fast(x)
+  Wgts <- parabolic_weights(x)
   Df <- to_df(Wgts)
   lcol <- cols[x]
   lines(dB(taper_weights) ~ log10(taper_seq), Df, type="s", lwd=2, col=lcol)

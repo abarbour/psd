@@ -39,6 +39,43 @@ test_that("constrained-range is correct",{
   
 })
 
+test_that("parabolic weighting is applied correctly",{
+  
+  nk <- 10
+  
+  PW <- parabolic_weights(nk)
+  PWr <- parabolic_weights_rcpp(nk)
+  
+  expect_is(PW[['ntap']], 'integer')
+  expect_is(PWr[['ntap']], 'integer')
+  
+  expect_equal(PW[['ntap']], nk)
+  expect_equal(PWr[['ntap']], nk)
+  
+  expect_equal(max(PW[['taper_seq']]), nk)
+  expect_equal(max(PWr[['taper_seq']]), nk)
+  
+  expect_equal(sum(PW[['taper_weights']]), 1)
+  expect_equal(sum(PWr[['taper_weights']]), 1)
+  
+  # num tapers is always integer
+  nkd <- 10.99
+  PWd <- parabolic_weights(nkd)
+  PWdr <- parabolic_weights_rcpp(nkd)
+  
+  expect_is(PWd[['ntap']], 'integer')
+  expect_is(PWdr[['ntap']], 'integer')
+  
+  expect_equal(PWd[['ntap']], PWdr[['ntap']])
+  
+  expect_equal(max(PWd[['taper_seq']]), as.integer(nkd))
+  expect_equal(max(PWdr[['taper_seq']]), as.integer(nkd))
+  
+  expect_equal(sum(PWd[['taper_weights']]), 1)
+  expect_equal(sum(PWdr[['taper_weights']]), 1)
+  
+})
+
 test_that("environment variables are protected",{
   
   expect_equal(taps, taps.o)
@@ -54,8 +91,11 @@ test_that("environment variables are protected",{
   
   expect_is(suppressWarnings(ctap_loess(ataps)), 'tapers')
   
+  expect_error(constrain_tapers(taps, constraint.method = "some.nonexistent.method", verbose = FALSE))
+  
   expect_is(constrain_tapers(taps, constraint.method = "simple.slope", verbose = FALSE), 'integer')
   expect_is(suppressWarnings(constrain_tapers(taps, constraint.method = "loess.smooth", verbose = FALSE)), 'integer')
+  
   expect_equal(taps, constrain_tapers(taps, constraint.method = "none", verbose = FALSE))
   
   expect_is(constrain_tapers(ataps, verbose = FALSE), 'tapers')

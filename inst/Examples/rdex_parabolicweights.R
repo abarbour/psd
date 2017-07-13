@@ -25,10 +25,10 @@ to_df <- function(W){
 
 ## a roundabout way of bootstrapping y-axis limits:
 #  upper
-WgtsU <- parabolic_weights_fast(5)
+WgtsU <- parabolic_weights(5)
 DfU <- to_df(WgtsU)
 #  lower
-WgtsL <- parabolic_weights_fast(maxx)
+WgtsL <- parabolic_weights(maxx)
 DfL <- to_df(WgtsL)
 
 ylims <- range(pretty(dB(c(DfL$taper_weights, DfU$taper_weights)))) + c(-2,5)
@@ -43,7 +43,7 @@ TFUN <- function(Df.){
 # function for weighting factors and plotting
 WFUN <- function(x){
   message(x)
-  Wgts <- parabolic_weights_fast(x)
+  Wgts <- parabolic_weights(x)
   Df <- to_df(Wgts)
   lcol <- cols[x]
   lines(dB(taper_weights) ~ log10(taper_seq), Df, type="s", lwd=2, col=lcol)
