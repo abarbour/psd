@@ -1,6 +1,6 @@
-language: r
+language: R
 sudo: required
-
+cache: packages
 warnings_are_errors: false
 
 apt_packages:
@@ -19,12 +19,10 @@ r_binary_packages:
  - multitaper
  - plyr
  - RSEIS
-# - rbenchmark
+ - rbenchmark
  - reshape2
  - testthat
-
-r_github_packages:
-  - jimhester/covr
+ - covr
 
 notifications:
   email:
@@ -33,3 +31,4 @@ notifications:
 
 after_success:
   - Rscript -e 'covr::codecov()'
+  

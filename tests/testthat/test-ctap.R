@@ -41,28 +41,24 @@ test_that("constrained-range is correct",{
 
 test_that("environment variables are protected",{
   
-  expect_equal(taps,taps.o)
-
-  expect_is(xx <- ctap_simple(taps), 'integer')
-  expect_equal(taps,taps.o)
+  expect_equal(taps, taps.o)
+  expect_equal(ms.taps, as.vector(ms.ataps))
   
-  expect_is(xx <- ctap_simple(ataps), 'tapers')
-  expect_equal(taps,taps.o)
-
-  expect_warning(xx <- ctap_loess(taps)) # because a sequence is not given
-  expect_equal(taps,taps.o)
+  expect_is(ctap_simple(taps), 'integer')
   
-  expect_is(xx <- suppressWarnings(ctap_loess(taps)), 'integer')
-  expect_equal(taps,taps.o)
+  expect_is(ctap_simple(ataps), 'tapers')
   
-  expect_is(xx <- suppressWarnings(ctap_loess(ataps)), 'tapers')
-  expect_equal(taps,taps.o)
+  expect_warning(ctap_loess(taps)) # because a sequence is not given
   
-  expect_is(xx <- constrain_tapers(taps, verbose = FALSE), 'integer')
-  expect_equal(taps,taps.o)
+  expect_is(suppressWarnings(ctap_loess(taps)), 'integer')
   
-  expect_is(xx <- constrain_tapers(ataps, verbose = FALSE), 'tapers')
-  expect_equal(taps,taps.o)
+  expect_is(suppressWarnings(ctap_loess(ataps)), 'tapers')
+  
+  expect_is(constrain_tapers(taps, constraint.method = "simple.slope", verbose = FALSE), 'integer')
+  expect_is(suppressWarnings(constrain_tapers(taps, constraint.method = "loess.smooth", verbose = FALSE)), 'integer')
+  expect_equal(taps, constrain_tapers(taps, constraint.method = "none", verbose = FALSE))
+  
+  expect_is(constrain_tapers(ataps, verbose = FALSE), 'tapers')
   
 })
 
