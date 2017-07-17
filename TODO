@@ -1,23 +1,12 @@
-March 2015
+July 2017
 
-Miscellany
-----------
-[ ] remove untested or unstable options
-[ ] add option for tapcap in pspectrum, rather than hardwire?
+[ ] new class for result of `prewhiten`
+*** [ ] and a new pspectrum-method for new class
 
-Vignettes
----------
-[ ] new for time-varying spectra, in Rmd format (knitr)
+[ ] identify and remove untested or unstable options
+[?] add option for tapcap in pspectrum, rather than hardwire?
 
-Functions
----------
-[ ] write new function, `update`
-*** .spec method, to replace contents in pspectrum for loop and to allow for `updating" results from `spectrum` [ ]
+[ ] new vignette for time-varying spectra, in Rmd format (knitr)
 
-`spectral_properties`
----------------------
-[?] function to plot
-
-Datasets
---------
-[?] add more fields to hfsnm: meter.type== bsm or lsm, location=anza,pfo, etc
+[ ] possibly restructure code to use `update`
+*** [ ] eliminate environment structuring if possible; would need to carry around an fft though -- bloat
