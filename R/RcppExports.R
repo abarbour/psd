@@ -6,7 +6,7 @@
 #' @inheritParams tapers-refinement
 #' @export
 rcpp_ctap_simple <- function(tapvec, maxslope = 1L) {
-    .Call('psd_rcpp_ctap_simple', PACKAGE = 'psd', tapvec, maxslope)
+    .Call('_psd_rcpp_ctap_simple', PACKAGE = 'psd', tapvec, maxslope)
 }
 
 #' @title Nearest value below
@@ -44,13 +44,13 @@ rcpp_ctap_simple <- function(tapvec, maxslope = 1L) {
 #' try(modulo_floor(n, 0))
 #' 
 modulo_floor <- function(n, m = 2L) {
-    .Call('psd_modulo_floor', PACKAGE = 'psd', n, m)
+    .Call('_psd_modulo_floor', PACKAGE = 'psd', n, m)
 }
 
 #' @rdname parabolic_weights
 #' @export
 parabolic_weights_rcpp <- function(ntap = 1L) {
-    .Call('psd_parabolic_weights_rcpp', PACKAGE = 'psd', ntap)
+    .Call('_psd_parabolic_weights_rcpp', PACKAGE = 'psd', ntap)
 }
 
 #' @title Resample an fft using varying numbers of sine tapers
@@ -80,6 +80,6 @@ parabolic_weights_rcpp <- function(ntap = 1L) {
 #' 
 #' @export
 resample_fft_rcpp <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap = 1000L) {
-    .Call('psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers, verbose, dbl, tapcap)
+    .Call('_psd_resample_fft_rcpp', PACKAGE = 'psd', fftz, tapers, verbose, dbl, tapcap)
 }
 

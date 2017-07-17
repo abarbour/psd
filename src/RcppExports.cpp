@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // rcpp_ctap_simple
 IntegerVector rcpp_ctap_simple(IntegerVector tapvec, const int maxslope);
-RcppExport SEXP psd_rcpp_ctap_simple(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
+RcppExport SEXP _psd_rcpp_ctap_simple(SEXP tapvecSEXP, SEXP maxslopeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // modulo_floor
 IntegerVector modulo_floor(IntegerVector n, int m);
-RcppExport SEXP psd_modulo_floor(SEXP nSEXP, SEXP mSEXP) {
+RcppExport SEXP _psd_modulo_floor(SEXP nSEXP, SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,7 +32,7 @@ END_RCPP
 }
 // parabolic_weights_rcpp
 List parabolic_weights_rcpp(const int ntap);
-RcppExport SEXP psd_parabolic_weights_rcpp(SEXP ntapSEXP) {
+RcppExport SEXP _psd_parabolic_weights_rcpp(SEXP ntapSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +43,7 @@ END_RCPP
 }
 // resample_fft_rcpp
 List resample_fft_rcpp(ComplexVector fftz, IntegerVector tapers, bool verbose, const bool dbl, const int tapcap);
-RcppExport SEXP psd_resample_fft_rcpp(SEXP fftzSEXP, SEXP tapersSEXP, SEXP verboseSEXP, SEXP dblSEXP, SEXP tapcapSEXP) {
+RcppExport SEXP _psd_resample_fft_rcpp(SEXP fftzSEXP, SEXP tapersSEXP, SEXP verboseSEXP, SEXP dblSEXP, SEXP tapcapSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,10 +58,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"psd_rcpp_ctap_simple", (DL_FUNC) &psd_rcpp_ctap_simple, 2},
-    {"psd_modulo_floor", (DL_FUNC) &psd_modulo_floor, 2},
-    {"psd_parabolic_weights_rcpp", (DL_FUNC) &psd_parabolic_weights_rcpp, 1},
-    {"psd_resample_fft_rcpp", (DL_FUNC) &psd_resample_fft_rcpp, 5},
+    {"_psd_rcpp_ctap_simple", (DL_FUNC) &_psd_rcpp_ctap_simple, 2},
+    {"_psd_modulo_floor", (DL_FUNC) &_psd_modulo_floor, 2},
+    {"_psd_parabolic_weights_rcpp", (DL_FUNC) &_psd_parabolic_weights_rcpp, 1},
+    {"_psd_resample_fft_rcpp", (DL_FUNC) &_psd_resample_fft_rcpp, 5},
     {NULL, NULL, 0}
 };
 
