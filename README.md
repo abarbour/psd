@@ -8,13 +8,13 @@ by Andrew J Barbour and Robert L Parker
 
 ## Description
 
-This is an `R`
+This is an [R](https://www.r-project.org)
 package for computing univariate power spectral density
 estimates with little or no tuning effort.
 We employ sine multitapers, allowing the number to vary with frequency
 in order to reduce mean square error, the sum of squared bias and
 variance, at each point.  The approximate criterion of
-[Riedel and Sidorenko (1995)](http://dx.doi.org/10.1109/78.365298)
+[Riedel and Sidorenko (1995)](https://doi.org/10.1109/78.365298)
 is modified to prevent runaway averaging that otherwise occurs when
 the curvature of the spectrum goes to zero.  An iterative procedure
 refines the number of tapers employed at each frequency.  The resultant
@@ -42,21 +42,18 @@ typically found in geophysical datasets.
 
 ## How to Cite
 
-Bob and I have published a 
-[paper in Computers & Geosciences][1]
+Bob and I have published a [paper in Computers & Geosciences][1]
 to accompany this software [(download a pdf, 1MB)][pdf]; it describes the theory behind
 the estimation process, and how we apply it in practice.
 If you find `psd` useful in your research, we kindly request
-you cite our paper.
-
+you cite our paper. See also:
 
     citation("psd")
-
 
 ## Getting Started
 
 You can to install the package and it's dependencies
-with [CRAN](http://cran.r-project.org/web/packages/psd/)
+with [CRAN](https://cran.r-project.org/package=psd)
 (from within the `R` environment):
 
     install.packages("psd")
@@ -65,43 +62,45 @@ then load the package library
 
     library(psd)
 
-We have included a dataset to play with, named `Tohoku`, which represents
-recordings of
-high-frequency borehole strainmeter data during
+We have included a dataset to play with, namely `Tohoku`, which represents
+recordings of high-frequency borehole strainmeter data during
 teleseismic waves from the 2011 Mw 9.0 Tohoku 
-earthquake ([source](http://goo.gl/Gx7Ww)).
+earthquake ([original data source](https://goo.gl/Gx7Ww)).
 Access and inspect these data with:
 
     data(Tohoku)
     print(str(Tohoku))
 
 The 'preseismic' data has interesting spectral features, so we
-subset it, and use the areal strain (the change in borehole
+subset it, and analyze the areal strain (the change in borehole
 diameter):
 
     Dat <- subset(Tohoku, epoch=="preseismic")
     Areal <- ts(Dat$areal)
 
-For the purposes of spectral estimation, we remove a linear trend:
+For the purposes of improving the accuracy of the spectrum, we remove a linear trend:
 
     Dat <- prewhiten(Areal, plot=FALSE)
 
 Now we can calculate the adaptive PSD:
 
-    mtpsd <- pspectrum(Dat$prew_lm, plot=TRUE)
+    mtpsd <- pspectrum(Dat[['prew_lm']], plot=TRUE)
     print(class(mtpsd))
 
-We can visualize the spectrum with builtin methods:
+In the previous example the `plot=TRUE` flag produces a comparison with a basic periodogram, but
+we can also visualize the spectrum with builtin plotting methods:
 
     plot(mtpsd, log="dB")
 
-and the spectral uncertainty:
+The spectral uncertainty can be easily calculated:
 
     sprop <- spectral_properties(mtpsd)
-    Ntap <- sprop$taper/max(sprop$taper)
-    plot(Ntap, type="h", ylim=c(0,2), col="dark grey") 
-    lines(sprop$stderr.chi.lower)
-    lines(sprop$stderr.chi.upper)
+    with(sprop, {
+        Ntap <- taper/max(taper)
+        plot(Ntap, type="h", ylim=c(0,2), col="dark grey") 
+        lines(stderr.chi.lower)
+        lines(stderr.chi.upper)
+    }
 
 ### Installing the Development Version
 
@@ -112,6 +111,6 @@ will be useful:
     library(devtools)
     install_github("abarbour/psd")
 
-[1]: http://dx.doi.org/10.1016/j.cageo.2013.09.015
-[2]: http://cran.r-project.org/web/packages/devtools
+[1]: https://doi.org/10.1016/j.cageo.2013.09.015
+[2]: https://cran.r-project.org/package=devtools
 [pdf]: https://github.com/abarbour/psd/raw/master/paper/2014.barbour_parker.official.CAGEO3272.pdf
