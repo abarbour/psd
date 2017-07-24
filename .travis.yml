@@ -1,27 +1,19 @@
-language: R
+language: r
+r:
+ - release
 sudo: required
 cache: packages
 warnings_are_errors: false
+dist: trusty
+
+before_install:
+  - echo "options(repos = c(CRAN='http://cran.rstudio.com'))" > ~/.Rprofile
 
 apt_packages:
  - libfftw3-dev
 
-r_binary_packages:
- - Rcpp
- - RcppArmadillo
- - RColorBrewer
- - signal
- - zoo
- - bspec
+r_packages:
  - fftw
- - ggplot2
- - knitr
- - multitaper
- - plyr
- - RSEIS
- - rbenchmark
- - reshape2
- - testthat
  - covr
 
 notifications:
