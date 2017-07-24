@@ -273,17 +273,20 @@ parabolic_weights <- function(ntap, ...) UseMethod("parabolic_weights")
 
 #' @rdname parabolic_weights
 #' @export
-parabolic_weights.tapers <- function(ntap, tap.index=1L){
-  stopifnot(is.tapers(ntap) | ((tap.index > 0L) & (tap.index <= length(ntap))))
-  kWeights <- parabolic_weights.default(ntap[as.integer(tap.index)])
+parabolic_weights.tapers <- function(ntap, tap.index=1L, ...){
+  stopifnot(is.tapers(ntap) | ((tap.index >= 1L) & (tap.index <= length(ntap))))
+  tap_to_weight <- ntap[as.integer(tap.index)]
+  kWeights <- parabolic_weights.default(tap_to_weight)
   return(kWeights)
 }
 
 #' @rdname parabolic_weights
 #' @export
-parabolic_weights.default <- function(ntap=1L) {
+parabolic_weights.default <- function(ntap=1L, ...) {
   
   K <- as.integer(ntap)
+  stopifnot(K >= 1L)
+  
   kseq <- seq_len(ntap) - 1
   
   ksq <- kseq * kseq # vector
