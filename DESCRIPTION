@@ -2,7 +2,7 @@ Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density Estimation
 Version: 1.1.0
-Date: 2017-07-13
+Date: 2017-07-24
 Author: Andrew J. Barbour and Robert L. Parker
 Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
 Description: Produces power spectral density estimates through iterative
@@ -12,8 +12,8 @@ Description: Produces power spectral density estimates through iterative
     at each frequency, but modified for computational stability.
 License: GPL (>= 2)
 URL: https://github.com/abarbour/psd,
-    Barbour and Parker (2014): http://dx.doi.org/10.1016/j.cageo.2013.09.015,
-    Riedel and Sidorenko (1995): http://dx.doi.org/10.1109/78.365298
+    Barbour and Parker (2014): https://doi.org/10.1016/j.cageo.2013.09.015,
+    Riedel and Sidorenko (1995): https://doi.org/10.1109/78.365298
 BugReports: https://github.com/abarbour/psd/issues
 Depends:
     R (>= 2.14.1)
