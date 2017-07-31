@@ -96,11 +96,10 @@ The spectral uncertainty can be easily calculated:
 
     sprop <- spectral_properties(mtpsd)
     with(sprop, {
-        Ntap <- taper/max(taper)
-        plot(Ntap, type="h", ylim=c(0,2), col="dark grey") 
+        plot(taper/max(taper), type="h", ylim=c(0,2), col="dark grey") 
         lines(stderr.chi.lower)
         lines(stderr.chi.upper)
-    }
+    })
 
 ### Installing the Development Version
 
