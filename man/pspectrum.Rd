@@ -20,7 +20,7 @@ pspectrum(x, ...)
   no.history = FALSE, plot = FALSE, fast = FALSE, ...)
 
 pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE,
-  fast = fast, ...)
+  fast = FALSE, ...)
 
 adapt_message(stage, dvar = NULL)
 }
