@@ -23,6 +23,8 @@
 //   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#define RCPP_ARMADILLO_RETURN_COLVEC_AS_VECTOR
+
 #include <RcppArmadillo.h>
 // do not #include <Rcpp.h> once Arma has been
 using namespace Rcpp; // otherwise add Rcpp::
@@ -135,8 +137,11 @@ arma::vec parabolic_weights_rcpp(const int ntap = 1) {
 //' 
 //' @export
 // [[Rcpp::export]]
-List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers, 
-  bool verbose = true, const bool dbl = true, const int tapcap=1000 ) {
+List resample_fft_rcpp2( const arma::cx_vec& fftz, 
+                        const arma::ivec& tapers,
+                        bool verbose = true, 
+                        const bool dbl = true, 
+                        const int tapcap=1000 ) {
   
   //
   // resample and reweight an fft estimates for a given number of tapers
@@ -154,7 +159,11 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   //  - tapcap: integer -- the maximum number of tapers at any frequency
   //
   
-  int sc, nf, nt, ne, ne2, nhalf, nfreq, m, m2, mleft1, mleft2, j1, j2, Kc, ki, ik;
+  int sc, nf, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
+  double wi;
+  
+  arma::cx_double fdc;
+  
   
   if (dbl){
     // double-length fft estimates assumed by default
@@ -165,8 +174,8 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   }
   
   // even, double, and half lengths
-  nf = fftz.size() / sc; 
-  nt = tapers.size();
+  nf = fftz.n_elem / sc; 
+  nt = tapers.n_elem;
   ne = nf - (nf % 2);
 
   if (verbose){
@@ -181,109 +190,108 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
   ne2 = 2 * ne;
   nhalf = ne / 2;
 
+  arma::ivec taper_vec(nhalf);
+  arma::vec psd(nhalf);
+  psd.zeros();
+  
+  
   if (nhalf < 1){
     stop("cannot operate on length-1 series");
   }
   
+  
   if (nt == 1){
     warning("forced taper length");
-    tapers = rep(tapers, nhalf);
+    taper_vec.fill(tapers[0]);
+  } else {
+    taper_vec = tapers;
   }
-
-  // Select frequencies for PSD evaluation [0:nhalf]
-  NumericVector Freqs = abs( seq_len(nhalf) ) - 1; // add one since c++ indexes at zero
-  nfreq = Freqs.size();
   
+  
+  // set the current number of tapers, limited by a few factors
+  arma::uvec wh = arma::find(taper_vec > nhalf);
+  taper_vec(wh).fill(nhalf);
+  wh = arma::find(taper_vec > tapcap);
+  taper_vec(wh).fill(tapcap);
+  wh = arma::find(taper_vec <= 0);
+  taper_vec(wh).ones();
+  
+
   //
   // Calculate the psd by averaging over tapered estimates
   //
-
-  IntegerVector K(nfreq);
-  NumericVector absdiff(nfreq), psd(nfreq);
   
-  double wi, cpsd;
-  Rcomplex fdc;
-  
-  for (int j = 0; j < nfreq; j++) {
+  for (int j = 0; j < nhalf; j++) {
     
-    m = Freqs[j];
-    m2 = 2*m;
+    m2 = 2*j;
     // number of tapers applied at a given frequency (do not remove m+1 index!)
-    Kc = tapers[j];
-    Kc = tapers[m]; // orig: m+1, but this was leading to an indexing bug
-    
-    // set the current number of tapers, limited by a few factors
-    if (Kc > nhalf){
-      Kc = nhalf;
-      if (Kc > tapcap){
-        Kc = tapcap;
-      }
-    } else if (Kc <= 0){
-      Kc = 1;
-    }
-    K[j] = Kc;
-    
-    IntegerVector k(Kc);
-    NumericVector w(Kc);
-    arma::rowvec sq_absdiff(Kc), psdprod(Kc);
+
+    Kc = taper_vec[j]; // orig: m+1, but this was leading to an indexing bug
     
     // taper sequence and spectral weights
-    List bw = parabolic_weights_rcpp(Kc); // bw is a list of Kc, k, w
-    k = bw[1];
-    w = bw[2];
+    arma::vec w = parabolic_weights_rcpp(Kc);
     
     // scan across ki to get vector of
     // spectral differences based on modulo indices
-    for (ik = 0; ik < Kc; ik++) {
+    for (arma::uword ik = 0; ik < Kc; ik++) {
       
       wi = w[ik];
-      ki = k[ik];
+      ki = ik + 1;
       
       mleft1 = m2 + ne2 - ki;
       mleft2 = m2 + ki;
       
-      j1 = (mleft1 % ne2); // orig: + 1; // spectral indices
-      j2 = (mleft2 % ne2); // orig: + 1;
+      j1 = mleft1 % ne2;
+      j2 = mleft2 % ne2;
       
       fdc = fftz[j1] - fftz[j2];
       
-      // absolute value of fdc, squared:
-      //    (sqrt(Re^2 + Im^2))^2 = Re^2 + Im^2
-      sq_absdiff(ik) = pow(fdc.r, 2) + pow(fdc.i, 2);
-        
-      // at the same time to a scalar product (pre-sum)
-      psdprod(ik) = wi * sq_absdiff(ik);
-      
-    }    
-    // un-normalized psd is vector product of w and (sqrt(Re^2 + Im^2))^2
-    cpsd = sum(psdprod);    
-    psd[j] = cpsd;
+      // un-normalized psd is vector product of w and (sqrt(Re^2 + Im^2))^2
+      // sum as loop progresses
+      psd[j] += (pow(std::real(fdc), 2) +
+                 pow(std::imag(fdc), 2)) * wi;
+
+    }
+
   }
   
-  List psd_out = List::create(
-    Named("freq.inds") = Freqs + 1.0,
-    Named("k.capped") = K,
-    Named("psd") = psd
+  // return list to match previous function definition - jrk
+    return Rcpp::List::create(
+      Named("freq.inds") = arma::regspace<arma::vec>(1, nhalf),
+      Named("k.capped") = taper_vec(arma::span(0, nhalf-1)),
+      Named("psd") = psd
     );
-    return psd_out;
 }
 
 /*** R 
-n. <- 100
+n. <- 5000
 set.seed(1234)
 # random walk
+library(microbenchmark)
+
+
 x <- cumsum(sample(c(-1, 1), n., TRUE))
 fftz <- fft(x)
 taps <- ceiling(runif(n.,10,30))
-try(rsz <- resample_fft_rcpp(fftz, taps))
-str(rsz)
-layout(matrix(1:3))
-par(oma=c(0.2,0.2,0.2,0.2), mar=c(3,4,1,0.1))
-plot(x)
-with(rsz,{
-  plot(freq.inds, psd)
-  plot(freq.inds, k.capped, type='h')
-})
+
+microbenchmark(
+  aa = resample_fft_rcpp2(fftz, taps, verbose = FALSE),
+  bb = resample_fft_rcpp(fftz, taps, verbose = FALSE),
+  times = 30
+)
+
+all.equal(aa, bb)
+
+# 
+# try(rsz <- resample_fft_rcpp(fftz, taps))
+# str(rsz)
+# layout(matrix(1:3))
+# par(oma=c(0.2,0.2,0.2,0.2), mar=c(3,4,1,0.1))
+# plot(x)
+# with(rsz,{
+#   plot(freq.inds, psd)
+#   plot(freq.inds, k.capped, type='h')
+# })
 */
 
 // end all
