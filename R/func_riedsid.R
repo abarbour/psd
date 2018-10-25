@@ -253,3 +253,41 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
   
   return(kopt)
 }
+
+
+
+
+#' @rdname riedsid
+#' @export
+riedsidrcpp <- function(PSD, ...) UseMethod("riedsidrcpp")
+
+#' @rdname riedsid
+#' @export
+riedsidrcpp.spec <- function(PSD, ...){
+  pspec <- PSD[['spec']]
+  freqs <- PSD[['freq']]
+  ntap <- if (is.amt(PSD)){
+    PSD[['taper']]
+  } else {
+    rep.int(x=1L, times=length(pspec))
+  }
+  riedsid2(PSD=pspec, ntaper=ntap, ...)
+}
+
+#' @rdname riedsid
+#' @export
+riedsidrcpp.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...){
+  
+  PSD <- as.vector(PSD)
+  ntaper <- as.vector(ntaper)
+  
+  kopt <- riedsid_rcpp(PSD, ntaper)
+  
+  kopt <- if (constrained){
+    constrain_tapers(tapvec = kopt, verbose = verbose, ...)
+  } else {
+    as.tapers(kopt)
+  }
+  
+  return(kopt)
+}

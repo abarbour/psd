@@ -137,7 +137,7 @@ arma::vec parabolic_weights_rcpp(const int ntap = 1) {
 //' 
 //' @export
 // [[Rcpp::export]]
-List resample_fft_rcpp2( const arma::cx_vec& fftz, 
+List resample_fft_rcpp( const arma::cx_vec& fftz, 
                         const arma::ivec& tapers,
                         bool verbose = true, 
                         const bool dbl = true, 
@@ -263,24 +263,106 @@ List resample_fft_rcpp2( const arma::cx_vec& fftz,
     );
 }
 
+
+
+
+arma::vec pad_data(const arma::vec& psd,
+                   const int n,
+                   const int n_max,
+                   const double eps = 1e-78) {
+  
+  arma::vec ii(n - 1 + (n_max) * 2);
+  
+  ii.head(n_max) = arma::reverse(psd.head(n_max));
+  ii.tail(n_max+1) = arma::reverse(psd.tail(n_max+1));
+  ii(arma::span(n_max-1, n_max + n-2)) = psd;
+  
+  return(ii + eps);
+  
+}
+
+//' @title replaces time consuming portion of riedsid2
+//' 
+//' @param PSD vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers
+//' @param ntaper scalar or vector; number of tapers to apply optimization
+//' 
+//' @return kopt vector
+// [[Rcpp::export]]
+arma::vec riedsid_rcpp(const arma::vec& psd, const arma::ivec& ntaper){
+  
+  double eps = 1e-78;
+  double sc = 473.3736;
+  double uzero, L, L2, CC;
+  int nf = psd.n_elem;
+  int nt = ntaper.n_elem;
+  int j1, j2;
+  
+  arma::ivec taper_vec(nf);
+  
+  // check for single length taper
+  if (nt == 1){
+    taper_vec.fill(ntaper(0));
+  } else {
+    taper_vec = ntaper;
+  }
+  
+  arma::ivec nspan(nf);
+  
+  for (int j = 0; j < nf; j++) {
+    nspan[j] = std::ceil(std::min(7.0 * taper_vec(j) / 5.0, nf / 2.0));
+  }
+  
+  int nadd = 1 + arma::max(nspan);
+  arma::vec y = arma::log(pad_data(psd, nf, nadd, eps = 1e-78));
+  
+  double dy, d2y;
+  arma::vec yders(nf);
+
+  for (int j = 0; j < nf; j++) {
+    
+    j1 = j - nspan[j] + nadd - 1;
+    j2 = j + nspan[j] + nadd - 1;
+    arma::vec u = arma::regspace<arma::vec>(j1+1, j2+1) - (j1+1 + j2+1) / 2;
+    
+    L = j2 - j1 + 1;
+    L2 = L * L;
+    CC = 12;
+    
+    uzero = (L2 - 1) / CC;
+    
+    // first deriv
+    dy = as_scalar(u.t() * y(arma::span(j1, j2)) * CC / (L*(L2 - 1)));
+    
+    // second deriv
+    d2y = as_scalar((u % u - uzero).t() *
+      y(arma::span(j1, j2)) * 360 / (L * (L2 - 1) * (L2 - 4)));
+    
+    yders(j) = fabs(dy*dy + d2y + eps);
+    
+  }
+  
+  return(arma::round(pow(sc, 0.2) / arma::pow(yders, 0.4)));
+  
+}
+
+
 /*** R 
-n. <- 5000
-set.seed(1234)
-# random walk
 library(microbenchmark)
 
-
+n. <- 1000000
+set.seed(1234)
+# random walk
 x <- cumsum(sample(c(-1, 1), n., TRUE))
 fftz <- fft(x)
 taps <- ceiling(runif(n.,10,30))
+psd <- resample_fft_rcpp(fftz, taps)$psd
 
 microbenchmark(
-  aa = resample_fft_rcpp2(fftz, taps, verbose = FALSE),
-  bb = resample_fft_rcpp(fftz, taps, verbose = FALSE),
-  times = 30
+  kopt1 <- riedsidrcpp(psd, taps, constrained = TRUE, verbose = FALSE),
+  kopt2 <- riedsid2(psd, taps, constrained = TRUE, verbose = FALSE), 
+  times = 3
 )
-
-all.equal(aa, bb)
+all.equal(kopt1, as.numeric(kopt2))
 
 # 
 # try(rsz <- resample_fft_rcpp(fftz, taps))

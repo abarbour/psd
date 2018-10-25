@@ -7,6 +7,9 @@
 \alias{riedsid2}
 \alias{riedsid2.spec}
 \alias{riedsid2.default}
+\alias{riedsidrcpp}
+\alias{riedsidrcpp.spec}
+\alias{riedsidrcpp.default}
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method}
 \usage{
 riedsid(PSD, ...)
@@ -22,6 +25,13 @@ riedsid2(PSD, ...)
 \method{riedsid2}{spec}(PSD, ...)
 
 \method{riedsid2}{default}(PSD, ntaper = 1L, constrained = TRUE,
+  verbose = TRUE, ...)
+
+riedsidrcpp(PSD, ...)
+
+\method{riedsidrcpp}{spec}(PSD, ...)
+
+\method{riedsidrcpp}{default}(PSD, ntaper = 1L, constrained = TRUE,
   verbose = TRUE, ...)
 }
 \arguments{
