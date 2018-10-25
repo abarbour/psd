@@ -91,28 +91,21 @@ IntegerVector modulo_floor(IntegerVector n, int m = 2){
 //' @rdname parabolic_weights
 //' @export
 // [[Rcpp::export]]
-List parabolic_weights_rcpp(const int ntap = 1) {
+arma::vec parabolic_weights_rcpp(const int ntap = 1) {
+  
   //
   // return quadratic spectral weighting factors for a given number of tapers
   // Barbour and Parker (2014) Equation 7
   //
-
-  NumericVector kseq(ntap), wgts(ntap);
-  kseq = abs( seq_len( ntap ) - 1 );
   
-  // orig: w = (tapers^2 - (k-1).^2)*(1.5/(tapers*(tapers-0.25)*(tapers+1)));
-  //   or: w = ( K2 - ksq ) * 6 / ( 4 * K3  +  3 * K2  -  K );
-  //   or: w = ( K2 - ksq ) / ( K * (4 * K  -  1) * (K  +  1) );
+  arma::vec kseq = arma::pow(arma::regspace<arma::vec>(0, ntap - 1), 2);
   
-  wgts = exp(log(1.5) + log( ntap * ntap - kseq * kseq ) - log( ntap * (ntap - 0.25) * (ntap + 1.0) ));
+  double t3 = log(ntap * (ntap - 0.25) * (ntap + 1.0));
   
-  List weights_out = List::create(
-    Named("ntap")=ntap,
-    Named("taper_seq")=kseq + 1.0,
-    Named("taper_weights")=wgts
-    );
-    
-    return weights_out;
+  arma::vec wgts = arma::exp(log(1.5) + arma::log(ntap * ntap - kseq) - t3);
+  
+  // return just the weights
+  return wgts;
 }
 
 //' @title Resample an fft using varying numbers of sine tapers
