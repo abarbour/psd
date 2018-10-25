@@ -186,4 +186,23 @@ test_that("pilot_spec results are accurate",{
   
 })
 
+test_that("check fast version",{
+  set.seed(1234)
+  x <- rnorm(100)
+  expect_equal(psdcore(x, verbose = FALSE, plot = FALSE, fast = FALSE),
+               psdcore(x, verbose = FALSE, plot = FALSE, fast = TRUE))
+  expect_equal(pspectrum(x, verbose = FALSE, plot = FALSE, fast = FALSE),
+               pspectrum(x, verbose = FALSE, plot = FALSE, fast = TRUE))
+  expect_equal(pilot_spec(x, verbose = FALSE, plot = FALSE, fast = FALSE),
+               pilot_spec(x, verbose = FALSE, plot = FALSE, fast = TRUE))
+  
+  xt2 <- ts(x, frequency=10)
+  expect_equal(psdcore(xt2, verbose = FALSE, plot = FALSE, fast = FALSE),
+               psdcore(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
+  expect_equal(pspectrum(xt2, verbose = FALSE, plot = FALSE, fast = FALSE),
+               pspectrum(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
+  expect_equal(pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = FALSE),
+               pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
+})
+
 ##

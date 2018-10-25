@@ -48,6 +48,7 @@
 #' @param constrained logical; apply constraints with \code{\link{constrain_tapers}}; \code{FALSE} turns off constraints
 #' @param c.method string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
+#' @param fast logical; use faster method?
 #' @param ... optional argments passed to \code{\link{constrain_tapers}}
 #' @return Object with class \code{'tapers'}
 #' 
@@ -204,46 +205,50 @@ riedsid2.spec <- function(PSD, ...){
 
 #' @rdname riedsid
 #' @export
-riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...){
-  
-  PSD <- as.vector(PSD)
-  ntaper <- as.vector(ntaper)
-  
-  #  A small number to protect against zeros
-  eps <- 1e-78
-  nf <- length(PSD)
-  nt <- length(ntaper)
-  if (nt == 1) ntaper <- rep.int(x=ntaper, times=nf)
-  # some constraints
-  nspan <- ceiling( pmin.int( nf/2, 7*ntaper/5 ) )
-  nadd <- 1 + max(nspan)
-  # Create log psd, and pad to handle beginning and end values
-  ist <- nadd:2
-  iend <- seq(from=(nf - 1), to=(nf - nadd))
-  S <- as.numeric(c(PSD[ist], PSD, PSD[iend])) + eps
-  Y <- log(S)
-  DerivFUN <- function(j){
-    j1 <- j - nspan[j] + nadd - 1
-    j2 <- j + nspan[j] + nadd - 1
-    jseq <- j1:j2
-    u <- jseq - (j1 + j2)/2
-    L <- j2 - j1 + 1
-    CC <- 12
-    #
-    uzero <- (L^2 - 1)/CC
-    #
-    # first deriv
-    dY <- u  %*%  Y[jseq] * CC / (L*(L*L - 1))
-    # second deriv
-    d2Y <- (u*u - uzero)  %*%  Y[jseq] * 360 / (L*(L^2 - 1)*(L^2 - 4))
-    #
-    return(c(eps=eps, d2Y=d2Y, dYsq=dY*dY))
+riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, fast=FALSE, ...){
+  if(fast) {
+    kopt <- riedsid_rcpp(PSD, ntaper)
+  } else {
+    
+    PSD <- as.vector(PSD)
+    ntaper <- as.vector(ntaper)
+    
+    #  A small number to protect against zeros
+    eps <- 1e-78
+    nf <- length(PSD)
+    nt <- length(ntaper)
+    if (nt == 1) ntaper <- rep.int(x=ntaper, times=nf)
+    # some constraints
+    nspan <- ceiling( pmin.int( nf/2, 7*ntaper/5 ) )
+    nadd <- 1 + max(nspan)
+    # Create log psd, and pad to handle beginning and end values
+    ist <- nadd:2
+    iend <- seq(from=(nf - 1), to=(nf - nadd))
+    S <- as.numeric(c(PSD[ist], PSD, PSD[iend])) + eps
+    Y <- log(S)
+    DerivFUN <- function(j){
+      j1 <- j - nspan[j] + nadd - 1
+      j2 <- j + nspan[j] + nadd - 1
+      jseq <- j1:j2
+      u <- jseq - (j1 + j2)/2
+      L <- j2 - j1 + 1
+      CC <- 12
+      #
+      uzero <- (L^2 - 1)/CC
+      #
+      # first deriv
+      dY <- u  %*%  Y[jseq] * CC / (L*(L*L - 1))
+      # second deriv
+      d2Y <- (u*u - uzero)  %*%  Y[jseq] * 360 / (L*(L^2 - 1)*(L^2 - 4))
+      #
+      return(c(eps=eps, d2Y=d2Y, dYsq=dY*dY))
+    }
+    # Calculate derivatives
+    yders <- vapply(X=seq_len(nf), FUN=DerivFUN, FUN.VALUE=c(1,1,1))
+    # and optimal tapers
+    sc <- ifelse(TRUE, 473.3736, 480)
+    kopt <- round( sc**0.2 / abs(colSums(yders))**0.4 )
   }
-  # Calculate derivatives
-  yders <- vapply(X=seq_len(nf), FUN=DerivFUN, FUN.VALUE=c(1,1,1))
-  # and optimal tapers
-  sc <- ifelse(TRUE, 473.3736, 480)
-  kopt <- round( sc**0.2 / abs(colSums(yders))**0.4 )
   
   kopt <- if (constrained){
     constrain_tapers(tapvec = kopt, verbose = verbose, ...)
@@ -256,38 +261,3 @@ riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...
 
 
 
-
-#' @rdname riedsid
-#' @export
-riedsidrcpp <- function(PSD, ...) UseMethod("riedsidrcpp")
-
-#' @rdname riedsid
-#' @export
-riedsidrcpp.spec <- function(PSD, ...){
-  pspec <- PSD[['spec']]
-  freqs <- PSD[['freq']]
-  ntap <- if (is.amt(PSD)){
-    PSD[['taper']]
-  } else {
-    rep.int(x=1L, times=length(pspec))
-  }
-  riedsid2(PSD=pspec, ntaper=ntap, ...)
-}
-
-#' @rdname riedsid
-#' @export
-riedsidrcpp.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, ...){
-  
-  PSD <- as.vector(PSD)
-  ntaper <- as.vector(ntaper)
-  
-  kopt <- riedsid_rcpp(PSD, ntaper)
-  
-  kopt <- if (constrained){
-    constrain_tapers(tapvec = kopt, verbose = verbose, ...)
-  } else {
-    as.tapers(kopt)
-  }
-  
-  return(kopt)
-}

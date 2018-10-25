@@ -25,4 +25,15 @@ test_that("weights sum to 1 when n > 0",{
   expect_equal(PWS(1e4), 1)
 })
 
+
+test_that("parabolic_weights_rcpp sum equals parabolic_weights_rcpp2 sum",{
+  
+  expect_equal(PWS(0),   sum(parabolic_weights_rcpp2(0)))
+  expect_equal(PWS(1),   sum(parabolic_weights_rcpp2(1)))
+  expect_equal(PWS(1e1), sum(parabolic_weights_rcpp2(1e1)))
+  expect_equal(PWS(1e3), sum(parabolic_weights_rcpp2(1e3)))
+  expect_equal(PWS(1e4), sum(parabolic_weights_rcpp2(1e4)))
+  
+})
+
 ##

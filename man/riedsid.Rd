@@ -7,9 +7,6 @@
 \alias{riedsid2}
 \alias{riedsid2.spec}
 \alias{riedsid2.default}
-\alias{riedsidrcpp}
-\alias{riedsidrcpp.spec}
-\alias{riedsidrcpp.default}
 \title{Constrained, optimal tapers using the Riedel & Sidorenko--Parker method}
 \usage{
 riedsid(PSD, ...)
@@ -25,14 +22,7 @@ riedsid2(PSD, ...)
 \method{riedsid2}{spec}(PSD, ...)
 
 \method{riedsid2}{default}(PSD, ntaper = 1L, constrained = TRUE,
-  verbose = TRUE, ...)
-
-riedsidrcpp(PSD, ...)
-
-\method{riedsidrcpp}{spec}(PSD, ...)
-
-\method{riedsidrcpp}{default}(PSD, ntaper = 1L, constrained = TRUE,
-  verbose = TRUE, ...)
+  verbose = TRUE, fast = fast, ...)
 }
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}
@@ -50,6 +40,8 @@ riedsidrcpp(PSD, ...)
 \item{c.method}{string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}}
 
 \item{verbose}{logical; should messages be printed?}
+
+\item{fast}{logical; use faster method?}
 }
 \value{
 Object with class \code{'tapers'}

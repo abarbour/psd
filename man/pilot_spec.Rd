@@ -29,6 +29,8 @@ pilot_spec(x, ...)
 \item{plot}{logical; should a plot be created?}
 
 \item{verbose}{logical; should messages be given?}
+
+\item{fast}{logical; use fast method?}
 }
 \value{
 An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.

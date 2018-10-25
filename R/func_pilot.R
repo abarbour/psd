@@ -51,6 +51,7 @@
 #' @param remove.AR  scalar; the max AR model to be removed from the data.
 #' @param plot  logical; should a plot be created?
 #' @param verbose  logical; should messages be given?
+#' @param fast logical; use fast method?
 #' @param ...  additional parameters passed to \code{\link{psdcore}}
 #' @return An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.
 #'
@@ -67,7 +68,7 @@ pilot_spec.ts <- function(x, ...){
 
 #' @rdname pilot_spec
 #' @export
-pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, ...){
+pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, fast = FALSE, ...){
   
   if (is.null(ntap)) ntap <- 7
   if (is.null(remove.AR)) remove.AR <- 0
@@ -95,7 +96,7 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
     }
     # calculate PSD of the AR fit
     xar <- xprew[['prew_ar']] # ts object
-    Pspec_ar <- psdcore(xar, ntaper=ntap, AR=TRUE, preproc=FALSE, refresh=TRUE, verbose=FALSE)
+    Pspec_ar <- psdcore(xar, ntaper=ntap, AR=TRUE, preproc=FALSE, refresh=TRUE, verbose=FALSE, fast = fast)
     arvar <- var(Pspec_ar[['spec']])
     mARs <- mean(Pspec_ar[['spec']])
     Pspec_ar[['spec']] <- Pspec_ar[['spec']] / mARs
@@ -103,7 +104,7 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   
   ## Calculate spectrum of non-AR (lm) model:
   xlm <- xprew[['prew_lm']] # ts object
-  Pspec <- psdcore(xlm, ntaper=ntap, AR=FALSE, preproc=FALSE, refresh=TRUE, verbose=FALSE)
+  Pspec <- psdcore(xlm, ntaper=ntap, AR=FALSE, preproc=FALSE, refresh=TRUE, verbose=FALSE, fast = fast)
   Ptap <- Pspec[['taper']]
   num_tap <- length(Ptap)
   num_frq <- Pspec[['numfreq']]
