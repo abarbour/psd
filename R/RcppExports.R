@@ -125,7 +125,7 @@ resample_fft_rcpp2 <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap 
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' 
 #' @return kopt vector
-riedsid_rcpp <- function(psd, ntaper) {
-    .Call('_psd_riedsid_rcpp', PACKAGE = 'psd', psd, ntaper)
+riedsid_rcpp <- function(PSD, ntaper) {
+    .Call('_psd_riedsid_rcpp', PACKAGE = 'psd', PSD, ntaper)
 }
 

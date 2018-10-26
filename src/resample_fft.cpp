@@ -485,12 +485,12 @@ arma::vec pad_data(const arma::vec& psd,
 //' 
 //' @return kopt vector
 // [[Rcpp::export]]
-arma::vec riedsid_rcpp(const arma::vec& psd, const arma::ivec& ntaper){
+arma::vec riedsid_rcpp(const arma::vec& PSD, const arma::ivec& ntaper){
   
   double eps = 1e-78;
   double sc = 473.3736;
   double uzero, L, L2, CC;
-  int nf = psd.n_elem;
+  int nf = PSD.n_elem;
   int nt = ntaper.n_elem;
   int j1, j2;
   
@@ -510,7 +510,7 @@ arma::vec riedsid_rcpp(const arma::vec& psd, const arma::ivec& ntaper){
   }
   
   int nadd = 1 + arma::max(nspan);
-  arma::vec y = arma::log(pad_data(psd, nf, nadd, eps = 1e-78));
+  arma::vec y = arma::log(pad_data(PSD, nf, nadd, eps = 1e-78));
   
   double dy, d2y;
   arma::vec yders(nf);

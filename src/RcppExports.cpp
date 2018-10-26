@@ -83,14 +83,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // riedsid_rcpp
-arma::vec riedsid_rcpp(const arma::vec& psd, const arma::ivec& ntaper);
-RcppExport SEXP _psd_riedsid_rcpp(SEXP psdSEXP, SEXP ntaperSEXP) {
+arma::vec riedsid_rcpp(const arma::vec& PSD, const arma::ivec& ntaper);
+RcppExport SEXP _psd_riedsid_rcpp(SEXP PSDSEXP, SEXP ntaperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type psd(psdSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type PSD(PSDSEXP);
     Rcpp::traits::input_parameter< const arma::ivec& >::type ntaper(ntaperSEXP);
-    rcpp_result_gen = Rcpp::wrap(riedsid_rcpp(psd, ntaper));
+    rcpp_result_gen = Rcpp::wrap(riedsid_rcpp(PSD, ntaper));
     return rcpp_result_gen;
 END_RCPP
 }
