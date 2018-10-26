@@ -56,12 +56,53 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// parabolic_weights_rcpp2
+arma::vec parabolic_weights_rcpp2(const int ntap);
+RcppExport SEXP _psd_parabolic_weights_rcpp2(SEXP ntapSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type ntap(ntapSEXP);
+    rcpp_result_gen = Rcpp::wrap(parabolic_weights_rcpp2(ntap));
+    return rcpp_result_gen;
+END_RCPP
+}
+// resample_fft_rcpp2
+List resample_fft_rcpp2(const arma::cx_vec& fftz, const arma::ivec& tapers, bool verbose, const bool dbl, const int tapcap);
+RcppExport SEXP _psd_resample_fft_rcpp2(SEXP fftzSEXP, SEXP tapersSEXP, SEXP verboseSEXP, SEXP dblSEXP, SEXP tapcapSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_vec& >::type fftz(fftzSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type tapers(tapersSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< const bool >::type dbl(dblSEXP);
+    Rcpp::traits::input_parameter< const int >::type tapcap(tapcapSEXP);
+    rcpp_result_gen = Rcpp::wrap(resample_fft_rcpp2(fftz, tapers, verbose, dbl, tapcap));
+    return rcpp_result_gen;
+END_RCPP
+}
+// riedsid_rcpp
+arma::vec riedsid_rcpp(const arma::vec& PSD, const arma::ivec& ntaper);
+RcppExport SEXP _psd_riedsid_rcpp(SEXP PSDSEXP, SEXP ntaperSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type PSD(PSDSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type ntaper(ntaperSEXP);
+    rcpp_result_gen = Rcpp::wrap(riedsid_rcpp(PSD, ntaper));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_psd_rcpp_ctap_simple", (DL_FUNC) &_psd_rcpp_ctap_simple, 2},
     {"_psd_modulo_floor", (DL_FUNC) &_psd_modulo_floor, 2},
     {"_psd_parabolic_weights_rcpp", (DL_FUNC) &_psd_parabolic_weights_rcpp, 1},
     {"_psd_resample_fft_rcpp", (DL_FUNC) &_psd_resample_fft_rcpp, 5},
+    {"_psd_parabolic_weights_rcpp2", (DL_FUNC) &_psd_parabolic_weights_rcpp2, 1},
+    {"_psd_resample_fft_rcpp2", (DL_FUNC) &_psd_resample_fft_rcpp2, 5},
+    {"_psd_riedsid_rcpp", (DL_FUNC) &_psd_riedsid_rcpp, 2},
     {NULL, NULL, 0}
 };
 

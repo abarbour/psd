@@ -26,6 +26,7 @@
 #' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
 #' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param verbose logical; Should messages be given?
+#' @param fast logical; Should the faster method be used?
 #' @param no.history logical; Should the adaptive history \emph{not} be saved?
 #' @param plot logical; Should the results be plotted?
 #' @param ... Optional parameters passed to \code{\link{riedsid}}
@@ -66,7 +67,7 @@ pspectrum.spec <- function(x, ...){
 #' @rdname pspectrum
 #' @aliases pspectrum.default
 #' @export
-pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, ...){
+pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE, Nyquist.normalize=TRUE, verbose=TRUE, no.history=FALSE, plot=FALSE, fast = FALSE, ...){
   
   stopifnot(length(x)>1)
   
@@ -93,7 +94,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       # --- pilot spec ---
       # ** normalization is here:
       Pspec <- pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
-                          remove.AR=ordAR, verbose=verbose, plot=plotpsd_)
+                          remove.AR=ordAR, verbose=verbose, plot=plotpsd_, fast=fast)
       kopt <- Pspec[['taper']]
       
       # ensure series is in the environment
@@ -116,7 +117,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       rverb <- ifelse(stage > 0, FALSE, TRUE)
       
       ## calculate optimal tapers
-      kopt <- riedsid2(Pspec, verbose=rverb, ...)
+      kopt <- riedsid2(Pspec, verbose=rverb, fast = fast, ...)
       
       # get data back for plotting, etc.
       if (stage==niter){
@@ -129,7 +130,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
       # update spectrum with new tapers
       # TODO: here's why preproc flags are wrong...
       Pspec <- psdcore(X.d=x, X.frq=x.frqsamp, ntaper=kopt, 
-                       preproc=FALSE, plot=plotpsd_, verbose=rverb) 
+                       preproc=FALSE, plot=plotpsd_, verbose=rverb, fast = fast) 
       
       # show spectral variance reduction
       if (verbose) adapt_message(stage, varddiff(Pspec)/dvar.o)
@@ -145,19 +146,19 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
 
 #' @rdname pspectrum
 #' @export
-pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
+pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, fast = FALSE, ...){
   
   if (verbose) adapt_message(0)
   # Initial spectrum
-  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, refresh=TRUE)
+  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, refresh=TRUE, fast = fast)
   # Iterate and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
   for (iter in seq_len(niter)){
     if (verbose) adapt_message(iter)
     # find optimal tapers
-    ko <- riedsid2(P[['spec']], ntaper=P[['taper']], verbose = FALSE)
+    ko <- riedsid2(P[['spec']], ntaper=P[['taper']], verbose = FALSE, fast = fast)
     # update spectrum
-    P  <- psdcore(x, ntaper=ko, preproc = FALSE)
+    P  <- psdcore(x, ntaper=ko, preproc = FALSE, fast = fast)
   }
   return(P)
 }

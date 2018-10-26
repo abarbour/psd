@@ -13,7 +13,8 @@ pilot_spec(x, ...)
 \method{pilot_spec}{ts}(x, ...)
 
 \method{pilot_spec}{default}(x, x.frequency = NULL, ntap = NULL,
-  remove.AR = NULL, plot = FALSE, verbose = FALSE, ...)
+  remove.AR = NULL, plot = FALSE, verbose = FALSE, fast = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{vector; the data series to find a pilot spectrum for}
@@ -29,6 +30,8 @@ pilot_spec(x, ...)
 \item{plot}{logical; should a plot be created?}
 
 \item{verbose}{logical; should messages be given?}
+
+\item{fast}{logical; use fast method?}
 }
 \value{
 An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.

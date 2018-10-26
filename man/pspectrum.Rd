@@ -15,11 +15,12 @@ pspectrum(x, ...)
 
 \method{pspectrum}{spec}(x, ...)
 
-\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = NULL, niter = 5,
-  AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
-  no.history = FALSE, plot = FALSE, ...)
+\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = NULL,
+  niter = 5, AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
+  no.history = FALSE, plot = FALSE, fast = FALSE, ...)
 
-pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE, ...)
+pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE,
+  fast = FALSE, ...)
 
 adapt_message(stage, dvar = NULL)
 }
@@ -44,6 +45,8 @@ default in \code{\link{pilot_spec}} is used.}
 \item{no.history}{logical; Should the adaptive history \emph{not} be saved?}
 
 \item{plot}{logical; Should the results be plotted?}
+
+\item{fast}{logical; Should the faster method be used?}
 
 \item{stage}{integer; the current adaptive stage (0 is pilot)}
 

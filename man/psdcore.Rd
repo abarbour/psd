@@ -12,7 +12,7 @@ psdcore(X.d, ...)
 
 \method{psdcore}{default}(X.d, X.frq = NULL, ntaper = as.tapers(5),
   preproc = TRUE, na.action = stats::na.fail, plot = FALSE,
-  refresh = FALSE, verbose = FALSE, ndecimate, ...)
+  refresh = FALSE, verbose = FALSE, fast = FALSE, ndecimate, ...)
 }
 \arguments{
 \item{X.d}{the series to estimate a spectrum for}
@@ -34,6 +34,8 @@ Note that this will add some computation time, since the cosine-tapered periodog
 \item{refresh}{logical; ensure a free environment prior to execution}
 
 \item{verbose}{logical; should warnings and messages be given?}
+
+\item{fast}{logical; use the faster method?}
 
 \item{ndecimate}{now ignored}
 }

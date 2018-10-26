@@ -29,3 +29,13 @@ test_that("riedsid2 works as expected",{
 test_that('riedsid issues deprecation warning',{
   expect_warning(riedsid(pd))
 })
+
+
+test_that("riedsid2 is equal to  riedsidrcpp",{
+  
+  expect_equal(riedsid2(pd), riedsid2(pd, fast = TRUE))
+  expect_equal(riedsid2(pc), riedsid2(pc, fast = TRUE))
+  expect_equal(riedsid2(pa), riedsid2(pa, fast = TRUE))
+  expect_equal(riedsid2(pa_b), riedsid2(pa_b, fast = TRUE))
+  
+})

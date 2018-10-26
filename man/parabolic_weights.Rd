@@ -2,6 +2,7 @@
 % Please edit documentation in R/RcppExports.R, R/func_tapers.R
 \name{parabolic_weights_rcpp}
 \alias{parabolic_weights_rcpp}
+\alias{parabolic_weights_rcpp2}
 \alias{parabolic_weights}
 \alias{parabolic_weights.tapers}
 \alias{parabolic_weights.default}
@@ -9,11 +10,13 @@
 \usage{
 parabolic_weights_rcpp(ntap = 1L)
 
+parabolic_weights_rcpp2(ntap = 1L)
+
 parabolic_weights(ntap, ...)
 
-\method{parabolic_weights}{tapers}(ntap, tap.index = 1L)
+\method{parabolic_weights}{tapers}(ntap, tap.index = 1L, ...)
 
-\method{parabolic_weights}{default}(ntap = 1L)
+\method{parabolic_weights}{default}(ntap = 1L, ...)
 }
 \arguments{
 \item{ntap}{integer (or \code{tapers} object); the number of tapers to provide weightings for.}

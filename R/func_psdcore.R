@@ -40,6 +40,7 @@
 #' \code{\link{pgram_compare}}.
 #' @param refresh  logical; ensure a free environment prior to execution
 #' @param verbose logical; should warnings and messages be given?
+#' @param fast logical; use the faster method?
 #' @param ndecimate  now ignored
 #' @param ... additional parameters
 #' 
@@ -73,6 +74,7 @@ psdcore.default <- function(X.d,
                             plot=FALSE,
                             refresh=FALSE,
                             verbose=FALSE,
+                            fast=FALSE,
                             ndecimate,
                             ...
                            ) {
@@ -205,7 +207,11 @@ psdcore.default <- function(X.d,
       ## resample fft with taper sequence and quadratic weighting
       # ( this is where the majority of the computational work is )
       kseq <- as.integer(kseq) 
-      reff <- resample_fft_rcpp(fftz, kseq, verbose=verbose)
+      if(fast) {
+        reff <- resample_fft_rcpp2(fftz, kseq, verbose=verbose)
+      } else {
+        reff <- resample_fft_rcpp(fftz, kseq, verbose=verbose)
+      }
 
       # return a valid resampled fft or stop
       if (inherits(reff,'try-error')){

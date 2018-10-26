@@ -22,7 +22,7 @@ riedsid2(PSD, ...)
 \method{riedsid2}{spec}(PSD, ...)
 
 \method{riedsid2}{default}(PSD, ntaper = 1L, constrained = TRUE,
-  verbose = TRUE, ...)
+  verbose = TRUE, fast = FALSE, ...)
 }
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}
@@ -40,6 +40,8 @@ riedsid2(PSD, ...)
 \item{c.method}{string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}}
 
 \item{verbose}{logical; should messages be printed?}
+
+\item{fast}{logical; use faster method?}
 }
 \value{
 Object with class \code{'tapers'}
