@@ -43,8 +43,8 @@ pspectrum <- function(x, ...) UseMethod("pspectrum")
 #' @aliases pspectrum.ts
 #' @export
 pspectrum.ts <- function(x, ...){
-  frq <- frequency(x)
-  pspectrum(as.vector(x), x.frqsamp=frq, ...)  
+  frq <- stats::frequency(x)
+  psd::pspectrum(as.vector(x), x.frqsamp=frq, ...)  
 }
 
 #' @rdname pspectrum
@@ -93,7 +93,7 @@ pspectrum.default <- function(x, x.frqsamp=1, ntap.init=NULL, niter=5, AR=FALSE,
 
       # --- pilot spec ---
       # ** normalization is here:
-      Pspec <- pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
+      Pspec <- psd::pilot_spec(x, x.frequency=x.frqsamp, ntap=ntap.init, 
                           remove.AR=ordAR, verbose=verbose, plot=plotpsd_, fast=fast)
       kopt <- Pspec[['taper']]
       

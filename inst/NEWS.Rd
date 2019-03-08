@@ -24,6 +24,12 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 1.2.0 (2019-03-08)}{
+  \itemize{
+    \item
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 1.1.0 (2017-07-13)}{
   \itemize{
     \item \code{ctap_simple_rcpp} replaces \code{ctap_simple}; associated .c code deprecated 

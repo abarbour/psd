@@ -62,7 +62,7 @@ pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 #' @export
 pilot_spec.ts <- function(x, ...){
   stopifnot(is.ts(x))
-  frq <- frequency(x)
+  frq <- stats::frequency(x)
   pilot_spec.default(as.vector(x), x.frequency=frq, ...)  
 }
 
@@ -97,7 +97,7 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
     # calculate PSD of the AR fit
     xar <- xprew[['prew_ar']] # ts object
     Pspec_ar <- psdcore(xar, ntaper=ntap, AR=TRUE, preproc=FALSE, refresh=TRUE, verbose=FALSE, fast = fast)
-    arvar <- var(Pspec_ar[['spec']])
+    arvar <- stats::var(Pspec_ar[['spec']])
     mARs <- mean(Pspec_ar[['spec']])
     Pspec_ar[['spec']] <- Pspec_ar[['spec']] / mARs
   }
@@ -133,9 +133,9 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
     try({
       if (REMAR){
         if (verbose) message('Plotting,', tolower(ttl))
-        par(las=1)
+        graphics::par(las=1)
         plot(Ospec, log=llog, col="red", main=ttl)
-        mtext(sprintf("(with AR(%s) response)", ordAR), line=0.4)
+        graphics::mtext(sprintf("(with AR(%s) response)", ordAR), line=0.4)
         # rescale
         Pspec_ar[['spec']] <- Pspec_ar[['spec']] * mARs
         plot(Pspec_ar, log=llog, col="blue", add=TRUE)

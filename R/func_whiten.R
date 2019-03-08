@@ -105,22 +105,20 @@
 prewhiten <- function(tser, ...) UseMethod("prewhiten")
 
 #' @rdname prewhiten
-#' @aliases prewhiten.default
 #' @export
 prewhiten.default <- function(tser, x.fsamp=1, x.start=c(1, 1), ...){
-  Xts <- ts(tser, frequency=x.fsamp, start=x.start)
+  Xts <- stats::ts(tser, frequency=x.fsamp, start=x.start)
   prewhiten.ts(Xts, ...)
 }
 
 #' @rdname prewhiten
-#' @aliases prewhiten.ts
 #' @export
 prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE, plot=TRUE, verbose=TRUE, ...){
   
   # prelims
   stopifnot(is.ts(tser))
-  sps <- frequency(tser)
-  tstart <- start(tser)
+  sps <- stats::frequency(tser)
+  tstart <- stats::start(tser)
   n.o <- length(tser)
   ttime <- sps*n.o
   
@@ -130,7 +128,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     # twice, to catch leading or trailing NA
     if (any(is.na(tso))){
       # forward l-o-c-f, then reverse
-      as.ts(na.locf(na.locf(as.zoo(tso), na.rm=FALSE), fromLast=TRUE, na.rm=FALSE))
+      as.ts(zoo::na.locf(zoo::na.locf(as.zoo(tso), na.rm=FALSE), fromLast=TRUE, na.rm=FALSE))
     } else {
       tso
     }
@@ -152,12 +150,12 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     
     X <- if (detrend){
       if (verbose) message("\tdetrending (and demeaning)")
-      lmdfit <- lm(y ~ xr, fit.df)
-      as.vector(residuals(lmdfit))
+      lmdfit <- stats::lm(y ~ xr, fit.df)
+      as.vector(stats::residuals(lmdfit))
     } else if (demean) {
       if (verbose) message("\tdemeaning")
-      lmdfit <- lm(y ~ xc, fit.df)
-      as.vector(residuals(lmdfit))
+      lmdfit <- stats::lm(y ~ xc, fit.df)
+      as.vector(stats::residuals(lmdfit))
     } else {
       if (verbose) message("\tnothing was done to the timeseries object")
       tser
@@ -186,9 +184,9 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   
   if (plot){
     
-    opar <- par(no.readonly = TRUE)
-    on.exit(par(opar))
-    par(las=0, xpd=FALSE)
+    opar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(opar))
+    graphics::par(las=0, xpd=FALSE)
     
     pltprew <- if (!is.null(ardfit)){
       # AR + linear
@@ -207,15 +205,15 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     }
     
     PANELFUN <- function(x, col = col, bg = bg, pch = pch, type = type, ...){
-      lines(x, col = col, bg = bg, pch = pch, type = type, ...)
-      abline(h=c(0, mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
+      graphics::lines(x, col = col, bg = bg, pch = pch, type = type, ...)
+      graphics::abline(h=c(0, mean(x)), lty=c(1,3), lwd=2, col=c("dark grey","red"))
     }
     
     plot(pltprew, 
          main="Raw and prewhitened series",
          cex.lab=0.7, cex.axis=0.7, xy.labels=FALSE,
          xaxs="i", yax.flip=TRUE, panel=PANELFUN)
-    mtext(sprintf("%s  (demean %s | detrend %s )", ftyp, demean, detrend), line=0.7, cex=0.7)
+    graphics::mtext(sprintf("%s  (demean %s | detrend %s )", ftyp, demean, detrend), line=0.7, cex=0.7)
     
   }
   
