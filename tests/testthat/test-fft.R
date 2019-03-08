@@ -22,10 +22,6 @@ if (has.fftw){
     expect_is(FFT(xn.), 'complex')
   })
   
-  test_that("fftw::FFT expects numeric or complex", {
-    expect_error(FFT(x.))
-  })
-  
   test_that("stats::fft and fftw::FFT return equivalent results", {
     
     # Forward transform
