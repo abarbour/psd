@@ -1,11 +1,14 @@
 language: r
-r:
- - release
 sudo: required
 cache: packages
-warnings_are_errors: false
 dist: trusty
+warnings_are_errors: false
 
+jobs:
+  include:
+  - r: devel
+  - r: release
+  
 before_install:
   - echo "options(repos = c(CRAN='https://cran.rstudio.com'))" > ~/.Rprofile
 
