@@ -27,6 +27,13 @@
 \section{CHANGES IN \psd{} VERSION 1.2.0 (2019-03-08)}{
   \itemize{
     \item
+    Significant speed improvements in spectral
+    derivative computation implemented in \code{riedsid2} 
+    thanks to \href{https://github.com/jkennel}{@jkennel}; 
+    this will be most apparent for very long
+    timeseries.
+    \item \code{riedsid} is deprecated
+    \item \code{niter} in \code{pspectrum} default set down from 5 to 3
   }
 }
 

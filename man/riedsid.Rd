@@ -57,7 +57,7 @@ Using those derivates the optimal number of tapers is found through the
 RS-RLP formulation.
 Constraints are then placed on the practicable number of tapers.
 
-\code{\link{riedsid2}} is a new implementation which does not allow 
+\code{\link{riedsid2}} is a new (faster) implementation which does not allow 
 for multiple constraint methods; this is the preferred function to use.
 
 \subsection{Taper constraints}{
@@ -77,7 +77,7 @@ to estimate derivatives.
 local least-squares estimation; this can be slower than \code{"spg"}.}
 \item{\code{"spg"}}{ uses \code{\link{splineGrad}}; then, additional arguments
 may be passed to control the smoothness of the derivatives
-(e.g \code{spar} in \code{smooth.spline}).}
+(e.g \code{spar} in \code{\link{smooth.spline}}).}
 }
 }
 }
@@ -112,18 +112,28 @@ riex[riex<25] <- 25
 ried <- dB(riex, invert=TRUE)
 
 # optimize tapers
-rtap <- riedsid(riex, ntaper=ntap)
+rtap <- riedsid(riex, ntaper=ntap) # deprecation warning
 rtap2 <- riedsid2(riex, ntaper=ntap)
+rtap3 <- riedsid2(riex, ntaper=ntap, fast=TRUE)
 
 # plot
 op <- par(no.readonly = TRUE)
 par(mfrow=c(2,1), mar=rep(1.3,4), mai=rep(0.6,4))
 # ... the mock spectrum
-plot(riex, type="h", xaxs="i", ylim=c(0,200), main='Pseudo-spectrum') 
-# ... the optimal tapers
-plot(rtap2, main='Optimal tapers') 
+plot(riex, type="h", xaxs="i", ylim=c(0,200), 
+     main='Pseudo-spectrum') 
+
+# ... tapers
+plot(rtap2, col=NA, xaxs="i",
+     main='Original and Optimized tapers', 
+     ylim=c(0,max(c(ntap, rtap,rtap2,rtap3)))) 
 # original tapers:
+abline(h=ntap, lty=2)
+# optimized tapers
 lines(rtap, col="red")
+# 2 and 2-fast
+lines(rtap2, lwd=3, col="blue")
+lines(rtap3, col="cyan")
 par(op)
 
 }#REX

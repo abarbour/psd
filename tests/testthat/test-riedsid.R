@@ -1,4 +1,4 @@
-
+library(testthat)
 ##
 
 context("Optimal taper estimation")
@@ -18,7 +18,7 @@ FIG <- function(){
   plot(pa_b, add=TRUE, col='red', lty=2)
 }
 
-test_that("riedsid2 works as expected",{
+test_that("riedsid2 returns integer as expected",{
   expected <- 'integer'
   expect_is(riedsid2(pd), expected)
   expect_is(riedsid2(pc), expected)
@@ -26,16 +26,15 @@ test_that("riedsid2 works as expected",{
   expect_is(riedsid2(pa_b), expected)
 })
 
-test_that('riedsid issues deprecation warning',{
+test_that('riedsid issues deprecation warning in favor of riedsid2',{
   expect_warning(riedsid(pd))
 })
 
-
-test_that("riedsid2 is equal to  riedsidrcpp",{
+test_that("riedsid2 R-version is equal to Rcpp version",{
   
-  expect_equal(riedsid2(pd), riedsid2(pd, fast = TRUE))
-  expect_equal(riedsid2(pc), riedsid2(pc, fast = TRUE))
-  expect_equal(riedsid2(pa), riedsid2(pa, fast = TRUE))
-  expect_equal(riedsid2(pa_b), riedsid2(pa_b, fast = TRUE))
+  expect_equal(riedsid2(pd, fast=FALSE), riedsid2(pd, fast = TRUE))
+  expect_equal(riedsid2(pc, fast=FALSE), riedsid2(pc, fast = TRUE))
+  expect_equal(riedsid2(pa, fast=FALSE), riedsid2(pa, fast = TRUE))
+  expect_equal(riedsid2(pa_b, fast=FALSE), riedsid2(pa_b, fast = TRUE))
   
 })

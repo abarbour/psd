@@ -10,7 +10,7 @@
 #' RS-RLP formulation.
 #' Constraints are then placed on the practicable number of tapers.
 #' 
-#' \code{\link{riedsid2}} is a new implementation which does not allow 
+#' \code{\link{riedsid2}} is a new (faster) implementation which does not allow 
 #' for multiple constraint methods; this is the preferred function to use.
 #'
 #' \subsection{Taper constraints}{
@@ -30,7 +30,7 @@
 #' local least-squares estimation; this can be slower than \code{"spg"}.}
 #' \item{\code{"spg"}}{ uses \code{\link{splineGrad}}; then, additional arguments
 #' may be passed to control the smoothness of the derivatives
-#' (e.g \code{spar} in \code{smooth.spline}).}
+#' (e.g \code{spar} in \code{\link{smooth.spline}}).}
 #' }
 #' }
 #'
@@ -114,11 +114,13 @@ riedsid.default <- function(PSD, ntaper = 1L,
   } else {
     tapseq
   }
+  
   #
   # Smooth spectral derivatives
   #
   lsmeth <- switch(match.arg(Deriv.method), local_qls=TRUE, spg=FALSE)
   stopifnot(exists("lsmeth"))
+  
   rss <- if (lsmeth){
     # spectral derivatives the preferred way
     DerivFUN <- function(j, 
@@ -206,7 +208,8 @@ riedsid2.spec <- function(PSD, ...){
 #' @rdname riedsid
 #' @export
 riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, fast=FALSE, ...){
-  if(fast) {
+  
+  if (fast) {
     kopt <- riedsid_rcpp(PSD, ntaper)
   } else {
     
