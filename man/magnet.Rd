@@ -9,7 +9,7 @@
 \describe{
 \item{\code{km}}{Relative along-track distance, in kilometers. The first observation is at zero kilometers.}
 \item{\code{raw}}{Raw intensities, in nanotesla.}
-\item{\code{clean}}{Edited raw intensites, in nanotesla}
+\item{\code{clean}}{Edited raw intensities, in nanotesla}
 \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
 }}
 \source{

@@ -6,7 +6,7 @@
 \alias{spec.pilot}
 \alias{pilot_spec.ts}
 \alias{pilot_spec.default}
-\title{Calculate inital power spectral density estimates}
+\title{Calculate initial power spectral density estimates}
 \usage{
 pilot_spec(x, ...)
 
@@ -53,7 +53,7 @@ The taper series of the returned spectrum is constrained using
 
 The default behaviour (\code{remove.AR <= 0}) is to remove the standard linear 
 model \eqn{[f(x) = \alpha x + \beta]} from the data; however,
-the user can model the effect of an autoregressive process by specifiying
+the user can model the effect of an autoregressive process by specifying
 \code{remove.AR}.
 }
 \section{Removing an AR effect from the spectrum}{

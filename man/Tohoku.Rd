@@ -39,7 +39,7 @@ PBO High Frequency archive:
 \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
 }
 \description{
-The \eqn{M_w 9} Tohoku earthquake happend on March 11, 2011.  The seismic
+The \eqn{M_w 9} Tohoku earthquake happened on March 11, 2011.  The seismic
 waves were recorded at stations across the globe, including by strainmeters
 in the Plate Boundary Observatory (PBO) borehole strainmeters.
 }
@@ -64,7 +64,7 @@ str(Tohoku)
 \references{
 USGS summary page:
 
-\url{http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/}
+\url{https://earthquake.usgs.gov/earthquakes/eventpage/official20110311054624120_30/executive}
 }
 \seealso{
 \code{\link{pspectrum}}, \code{\link{hfsnm}}, \code{\link{magnet}}

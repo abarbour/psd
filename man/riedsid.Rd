@@ -27,7 +27,7 @@ riedsid2(PSD, ...)
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}
 
-\item{...}{optional argments passed to \code{\link{constrain_tapers}}}
+\item{...}{optional arguments passed to \code{\link{constrain_tapers}}}
 
 \item{ntaper}{scalar or vector; number of tapers to apply optimization}
 
