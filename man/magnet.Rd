@@ -13,7 +13,7 @@
 \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
 }}
 \source{
-Project MAGNET page: \url{http://www.ngdc.noaa.gov/geomag/proj_mag.shtml}
+Project MAGNET page: \url{https://www.ngdc.noaa.gov/geomag/proj_mag.shtml}
 }
 \description{
 The Project MAGNET mission 

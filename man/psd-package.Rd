@@ -53,7 +53,7 @@ how these are computed.
 Barbour, A. J. and R. L. Parker, (2014), 
 psd: Adaptive, sine multitaper power spectral density estimation for R,
 \emph{Computers and Geosciences}, \strong{63}, 1--8,
-\url{https://doi.org/10.1016/j.cageo.2013.09.015}
+doi: 10.1016/j.cageo.2013.09.015
 
 Percival, D. B., and A.T. Walden (1993),
 Spectral analysis for physical applications,
@@ -62,7 +62,7 @@ Spectral analysis for physical applications,
 Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007), 
 Reducing the bias of multitaper spectrum estimates,
 \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
-\url{https://doi.org/10.1111/j.1365-246X.2007.03592.x}
+doi: 10.1111/j.1365-246X.2007.03592.x
 
 Riedel, K. S., & Sidorenko, A. (1995), 
 Minimum bias multiple taper spectral estimation,
