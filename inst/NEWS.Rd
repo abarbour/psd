@@ -24,7 +24,7 @@
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 1.2.0 (2019-03-08)}{
+\section{CHANGES IN \psd{} VERSION 1.2.0 (2019-03-20)}{
   \itemize{
     \item
     Significant speed improvements in spectral
@@ -34,6 +34,7 @@
     timeseries.
     \item \code{riedsid} is deprecated
     \item \code{niter} in \code{pspectrum} default set down from 5 to 3
+    \item Modernized revdep checks
   }
 }
 
