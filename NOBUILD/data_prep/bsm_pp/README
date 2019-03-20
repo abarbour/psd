@@ -1,0 +1,25 @@
+README
+/Users/abarbour/kook.processing/R/dev/packages/psd/NOBUILD/data_prep/bsm_pp
+Creation date:	Fri Mar  1 11:26:53 PST 2013
+
+01.nm*
+B081.ppar.long
+B084.ppar.long
+B087.ppar.long
+B088.ppar.long
+README
+Tohoku/
+bsmnm.txt
+lsmnm.txt
+readpbo.R
+hfsnm.R
+hfsnm.rda
+toRda.R
+
+MySQL:
+http://2tbsp.com/content/install_and_configure_mysql_5_macports
+
+sudo port install mysql5 +server
+sudo /opt/local/lib/mysql5/bin/mysql_install_db --user=mysql
+
+sudo -u _mysql /opt/local/lib/mysql55/bin/mysql_install_db

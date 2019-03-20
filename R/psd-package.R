@@ -62,7 +62,7 @@
 #' @references Barbour, A. J. and R. L. Parker, (2014), 
 #' psd: Adaptive, sine multitaper power spectral density estimation for R,
 #' \emph{Computers and Geosciences}, \strong{63}, 1--8,
-#' \url{http://dx.doi.org/10.1016/j.cageo.2013.09.015}
+#' \url{https://doi.org/10.1016/j.cageo.2013.09.015}
 #'
 #' @references Percival, D. B., and A.T. Walden (1993),
 #' Spectral analysis for physical applications,
@@ -71,7 +71,7 @@
 #' @references Prieto, G. A., R. L. Parker, D. J. Thomson, F. L. Vernon, and R. L. Graham  (2007), 
 #' Reducing the bias of multitaper spectrum estimates,
 #' \emph{Geophysical Journal International}, \strong{171}, 1269--1281,
-#' \url{http://gji.oxfordjournals.org/content/171/3/1269}
+#' \url{https://doi.org/10.1111/j.1365-246X.2007.03592.x}
 #' 
 #' @references Riedel, K. S., & Sidorenko, A. (1995), 
 #' Minimum bias multiple taper spectral estimation,
@@ -113,7 +113,7 @@ NULL
 #' \describe{
 #' \item{\code{km}}{Relative along-track distance, in kilometers. The first observation is at zero kilometers.}
 #' \item{\code{raw}}{Raw intensities, in nanotesla.}
-#' \item{\code{clean}}{Edited raw intensites, in nanotesla}
+#' \item{\code{clean}}{Edited raw intensities, in nanotesla}
 #' \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
 #' }
 #'
@@ -133,7 +133,7 @@ NULL
 
 #' Observations of teleseismic strains from the 2011 Tohoku earthquake.
 #'
-#' The \eqn{M_w 9} Tohoku earthquake happend on March 11, 2011.  The seismic
+#' The \eqn{M_w 9} Tohoku earthquake happened on March 11, 2011.  The seismic
 #' waves were recorded at stations across the globe, including by strainmeters
 #' in the Plate Boundary Observatory (PBO) borehole strainmeters.
 #'
@@ -187,7 +187,7 @@ NULL
 #' @keywords datasets
 #'
 #' @references USGS summary page: 
-#' @references \url{http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/}
+#' @references \url{https://earthquake.usgs.gov/earthquakes/eventpage/official20110311054624120_30/executive}
 #' @source PBO High Frequency archive: 
 #' @source \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
 #'

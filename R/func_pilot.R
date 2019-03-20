@@ -1,4 +1,4 @@
-#' Calculate inital power spectral density estimates
+#' Calculate initial power spectral density estimates
 #'
 #' @description
 #' This PSD is used as the starting point -- the pilot spectrum -- for
@@ -17,7 +17,7 @@
 #'
 #' The default behaviour (\code{remove.AR <= 0}) is to remove the standard linear 
 #' model \eqn{[f(x) = \alpha x + \beta]} from the data; however,
-#' the user can model the effect of an autoregressive process by specifiying
+#' the user can model the effect of an autoregressive process by specifying
 #' \code{remove.AR}.
 #'
 #' @section Removing an AR effect from the spectrum:

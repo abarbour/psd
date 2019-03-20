@@ -68,7 +68,7 @@
     
     \item This is a major version bump that addresses performance issues by
     converting known bottlenecks to c++ though the 
-    \href{http://cran.r-project.org/package=Rcpp}{\pkg{Rcpp}} package.
+    \href{https://cran.r-project.org/package=Rcpp}{\pkg{Rcpp}} package.
     There has also been quite a lot of cleanup and rearranging of
     documentation, and making sure methods are consistent.
     Some attempts to be backwards compatible have been made, but
@@ -79,7 +79,7 @@
     is a lightning-fast (by comparison with pure-R) implementation
     of the fft-resampling/reweighting method we use; this new function
     leverages the power of 
-    \href{http://cran.r-project.org/package=RcppArmadillo}{\pkg{RcppArmadillo}}.
+    \href{https://cran.r-project.org/package=RcppArmadillo}{\pkg{RcppArmadillo}}.
     
     \item \code{ctap_simple} has been superceded by \code{ctap_simple_rcpp}; in
     the process of rewriting in c++, a minor bug in the c implementation was

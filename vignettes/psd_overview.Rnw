@@ -308,7 +308,7 @@ $f(x) = \alpha x + \beta + \epsilon$ using ordinary linear least squares,
 setting \Rcmd{AR.max} higher than zero to fit an auto-regressive (AR) model to the 
 data\footnote{Note that the linear trend fitting is removed from the series prior to AR estimation,
 and the residuals from this fit are also returned.}.  
-This fit uses the Akaike Infomation Criterion (AIC) to select
+This fit uses the Akaike Information Criterion (AIC) to select
 the highest order appropriate for the data.
 
 <<eval=TRUE, echo=TRUE, label="AR prewhiten">>=
@@ -525,7 +525,7 @@ dB(mean(psd_ar$spec))
 
 In Figure \ref{fig:arspecvar} we have used \Rcmd{pilot\_spec} to 
 model the spectral response of the AR component of the series (solid
-black line). The non-AR component (labelled "AR-innovations")
+black line). The non-AR component (labeled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 

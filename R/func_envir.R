@@ -13,7 +13,7 @@
 #' 
 #' \code{get_psd_env_name} is a convenience wrapper to get the environment name.
 #'
-#' \code{psd_envRefresh} will clear any variables in the enviroment and reset the initialization stamp.
+#' \code{psd_envRefresh} will clear any variables in the environment and reset the initialization stamp.
 #' 
 #' \code{psd_envClear} clears the contents of the environment.
 #' 

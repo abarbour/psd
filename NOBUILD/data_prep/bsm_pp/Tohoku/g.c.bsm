@@ -1,0 +1,35 @@
+wget -O B081_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B081_20110311_Tohoku.tar
+tar -xvf B081_B.tar
+mv B081_20110311_Tohoku/ B081_B/
+rm -f B081_B.tar B081_B/B???.CH?.*.txt.gz
+mv -f B081_B/B???.tensor.*.txt.gz B081_B/B081.txt.gz
+wget -O B082_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B082_20110311_Tohoku.tar
+tar -xvf B082_B.tar
+mv B082_20110311_Tohoku/ B082_B/
+rm -f B082_B.tar B082_B/B???.CH?.*.txt.gz
+mv -f B082_B/B???.tensor.*.txt.gz B082_B/B082.txt.gz
+wget -O B084_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B084_20110311_Tohoku.tar
+tar -xvf B084_B.tar
+mv B084_20110311_Tohoku/ B084_B/
+rm -f B084_B.tar B084_B/B???.CH?.*.txt.gz
+mv -f B084_B/B???.tensor.*.txt.gz B084_B/B084.txt.gz
+wget -O B086_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B086_20110311_Tohoku.tar
+tar -xvf B086_B.tar
+mv B086_20110311_Tohoku/ B086_B/
+rm -f B086_B.tar B086_B/B???.CH?.*.txt.gz
+mv -f B086_B/B???.tensor.*.txt.gz B086_B/B086.txt.gz
+wget -O B087_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B087_20110311_Tohoku.tar
+tar -xvf B087_B.tar
+mv B087_20110311_Tohoku/ B087_B/
+rm -f B087_B.tar B087_B/B???.CH?.*.txt.gz
+mv -f B087_B/B???.tensor.*.txt.gz B087_B/B087.txt.gz
+wget -O B088_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B088_20110311_Tohoku.tar
+tar -xvf B088_B.tar
+mv B088_20110311_Tohoku/ B088_B/
+rm -f B088_B.tar B088_B/B???.CH?.*.txt.gz
+mv -f B088_B/B???.tensor.*.txt.gz B088_B/B088.txt.gz
+wget -O B089_B.tar http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/B089_20110311_Tohoku.tar
+tar -xvf B089_B.tar
+mv B089_20110311_Tohoku/ B089_B/
+rm -f B089_B.tar B089_B/B???.CH?.*.txt.gz
+mv -f B089_B/B???.tensor.*.txt.gz B089_B/B089.txt.gz

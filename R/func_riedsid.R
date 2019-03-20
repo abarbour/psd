@@ -49,7 +49,7 @@
 #' @param c.method string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
 #' @param fast logical; use faster method?
-#' @param ... optional argments passed to \code{\link{constrain_tapers}}
+#' @param ... optional arguments passed to \code{\link{constrain_tapers}}
 #' @return Object with class \code{'tapers'}
 #' 
 #' @seealso \code{\link{constrain_tapers}}, \code{\link{resample_fft_rcpp}}, \code{\link{psdcore}}, \code{\link{pspectrum}}
