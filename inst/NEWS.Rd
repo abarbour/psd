@@ -24,6 +24,12 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 1.2.1 (2019-03-21)}{
+  \itemize{
+    \item Minor bump to fix incorrect orcid no. in description file
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 1.2.0 (2019-03-20)}{
   \itemize{
     \item
