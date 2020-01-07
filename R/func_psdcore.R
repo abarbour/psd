@@ -60,7 +60,7 @@ psdcore <- function(X.d, ...) UseMethod("psdcore")
 #' @export
 psdcore.ts <- function(X.d, ...){
   frq <- stats::frequency(X.d)
-  psdcore(as.vector(X.d), X.frq = frq, ...)
+  psdcore(as.matrix(X.d), X.frq = frq, ...)
 }
 
 #' @rdname psdcore

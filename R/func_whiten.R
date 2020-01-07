@@ -143,19 +143,15 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   AR.max <- abs(AR.max)
   if (AR.max >= 0){
     
-    # data.frame with fit params
-    fit.df <- data.frame(xr=base::seq_len(n.o), 
-                         xc=base::rep.int(1, n.o), 
-                         y=tser)
-    
+
     X <- if (detrend){
       if (verbose) message("\tdetrending (and demeaning)")
-      lmdfit <- stats::lm(y ~ xr, fit.df)
-      as.vector(stats::residuals(lmdfit))
+      stats::residuals(stats::lm(tser~base::seq_len(n.o)))
+      
     } else if (demean) {
       if (verbose) message("\tdemeaning")
-      lmdfit <- stats::lm(y ~ xc, fit.df)
-      as.vector(stats::residuals(lmdfit))
+      stats::residuals(stats::lm(tser~rep.int(1, n.o)))
+      
     } else {
       if (verbose) message("\tnothing was done to the timeseries object")
       tser
