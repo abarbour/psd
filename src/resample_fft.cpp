@@ -118,6 +118,9 @@ List parabolic_weights_rcpp(const int ntap = 1) {
   return weights_out;
 }
 
+
+
+
 //' @title Resample an fft using varying numbers of sine tapers
 //' 
 //' @description
@@ -463,16 +466,17 @@ List resample_fft_rcpp2( const arma::cx_vec& fftz,
 
 
 
-arma::vec pad_data(const arma::vec& psd,
+arma::mat pad_data(const arma::mat& psd,
                    const int n,
                    const int n_max,
                    const double eps = 1e-78) {
   
-  arma::vec ii(n - 1 + (n_max) * 2);
+  int nc = psd.n_cols;
+  arma::mat ii(n - 1 + (n_max) * 2, nc);
   
-  ii.head(n_max) = arma::reverse(psd.head(n_max));
-  ii.tail(n_max+1) = arma::reverse(psd.tail(n_max+1));
-  ii(arma::span(n_max-1, n_max + n-2)) = psd;
+  ii.head_rows(n_max) = arma::reverse(psd.head_rows(n_max));
+  ii.tail_rows(n_max+1) = arma::reverse(psd.tail_rows(n_max+1));
+  ii(arma::span(n_max-1, n_max + n-2), arma::span::all) = psd;
   
   return(ii + eps);
   
@@ -485,15 +489,17 @@ arma::vec pad_data(const arma::vec& psd,
 //' 
 //' @return kopt vector
 // [[Rcpp::export]]
-arma::vec riedsid_rcpp(const arma::vec& PSD, const arma::ivec& ntaper){
+arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
   
   double eps = 1e-78;
   double sc = 473.3736;
   double uzero, L, L2, CC;
-  int nf = PSD.n_elem;
+  int nf = PSD.n_rows;
+  int nc = PSD.n_cols;
   int nt = ntaper.n_elem;
   int j1, j2;
   
+  arma::vec out(nf);
   arma::ivec taper_vec(nf);
   
   // check for single length taper
@@ -510,10 +516,10 @@ arma::vec riedsid_rcpp(const arma::vec& PSD, const arma::ivec& ntaper){
   }
   
   int nadd = 1 + arma::max(nspan);
-  arma::vec y = arma::log(pad_data(PSD, nf, nadd, eps = 1e-78));
+  arma::mat y = arma::log(pad_data(PSD, nf, nadd, eps = 1e-78));
   
   double dy, d2y;
-  arma::vec yders(nf);
+  arma::mat yders(nf, nc);
   
   for (int j = 0; j < nf; j++) {
     
@@ -527,78 +533,393 @@ arma::vec riedsid_rcpp(const arma::vec& PSD, const arma::ivec& ntaper){
     
     uzero = (L2 - 1) / CC;
     
-    // first deriv
-    dy = as_scalar(u.t() * y(arma::span(j1, j2)) * CC / (L*(L2 - 1)));
     
-    // second deriv
-    d2y = as_scalar((u % u - uzero).t() *
-      y(arma::span(j1, j2)) * 360 / (L * (L2 - 1) * (L2 - 4)));
+    for (int i = 0; i < nc; i++) {
+      
+      // first deriv
+      dy = as_scalar(u.t() * y(arma::span(j1, j2), i) * CC / (L*(L2 - 1)));
+      
+      // second deriv
+      d2y = as_scalar((u % u - uzero).t() *
+        y(arma::span(j1, j2), i) * 360 / (L * (L2 - 1) * (L2 - 4)));
+      
+      yders(j, i) = fabs(dy*dy + d2y + eps);
+    }
     
-    yders(j) = fabs(dy*dy + d2y + eps);
+    out(j) = arma::max(yders.row(j));
     
   }
   
-  return(arma::round(pow(sc, 0.2) / arma::pow(yders, 0.4)));
+  return(arma::round(pow(sc, 0.2) / arma::pow(out, 0.4)));
   
 }
+
+
+
+
+
+// This is for multivariate series  --------------------------------------------
+
+
+// For all but short series this should be faster
+//' @rdname parabolic_weights_field
+//' 
+//' @param ntap the maximum number of tapers
+//' 
+//' @export
+// [[Rcpp::export]]
+arma::field<arma::vec> parabolic_weights_field(const int ntap) {
+  
+  //
+  // return quadratic spectral weighting factors for a given number of tapers
+  // Barbour and Parker (2014) Equation 7
+  //
+  arma::field<arma::vec> f(ntap, 1);
+  arma::vec kseq = arma::pow(arma::regspace<arma::vec>(0, ntap - 1), 2);
+  
+  double t3;
+  for (int i = 1; i < ntap+1; i++) {
+    t3 = log(i * (i - 0.25) * (i + 1.0));
+    f(i-1,0) = arma::exp(log(1.5) + arma::log(i * i - kseq(arma::span(0, i-1))) - t3);
+  }
+  
+  return(f);
+  
+}
+
+//' @title Resample an fft using varying numbers of sine tapers
+//' 
+//' @description
+//' Produce an un-normalized psd based on an fft and a vector of optimal sine 
+//' tapers.
+//' 
+//' @details
+//' To produce a psd estimate with our adaptive spectrum estimation method,
+//' we need only make one fft calculation initially and then apply the weighting
+//' factors given by \code{\link{parabolic_weights_field}}, which this function 
+//' does.
+//' 
+//' @param fftz complex; a matrix representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument
+//' @param tapers integer; a vector of tapers
+//' @param verbose logical; should messages be given?
+//' @param dbl logical; should the code assume \code{fftz} is dual-length or single-length?
+//' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
+//' automatically limited by the length of the series.
+//' 
+//' @return list that includes the auto and cross-spectral density, and the
+//' number of tapers
+//' 
+//' @seealso \code{\link{riedsid}}
+//' 
+//' @examples
+//' fftz <- complex(real=1:8, imaginary = 1:8)
+//' taps <- 1:4
+//' try(resample_mvfft(fftz, taps))
+//' 
+//' @export
+// [[Rcpp::export]]
+List resample_mvfft( const arma::cx_mat& fftz, 
+                     const arma::ivec& tapers,
+                     bool verbose = true, 
+                     const bool dbl = true, 
+                     const int tapcap = 10000 ) {
+  
+  //
+  // resample and reweight an fft estimates for a given number of tapers
+  // using quadratic scaling in Barbour and Parker (2014)
+  //
+  //
+  // needs:
+  //  - fftz: complex vector -- the FFT of the original signal
+  //  - tapers: integer vector -- the number of tapers at each frequency
+  //
+  // optional args:
+  //  - verbose: logical -- should warnings be given?
+  //  - dbl: logical -- should the progam assume 'fftz' is for a double-length (padded) series? 
+  //                    Otherwise a single-length series is assumed.
+  //  - tapcap: integer -- the maximum number of tapers at any frequency
+  //
+  
+  int sc, nf, nc, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
+  double wi;
+  
+  
+  arma::cx_double fdc1, fdc2;
+  
+  
+  if (dbl){
+    // double-length fft estimates assumed by default
+    sc = 2;
+  } else {
+    // but could be single-length
+    sc = 1;
+  }
+  
+  // even, double, and half lengths
+  nf = fftz.n_rows / sc; 
+  nc = fftz.n_cols;
+  nt = tapers.n_elem;
+  ne = nf - (nf % 2);
+  
+  if (verbose){
+    Function msg("message");
+    msg(std::string("\tfft resampling"));
+  }
+  
+  if (ne < nf){
+    warning("fft was not done on an even length series");
+  }
+  
+  ne2 = 2 * ne;
+  nhalf = ne / 2;
+  
+  arma::ivec taper_vec(nhalf);
+  
+  if (nhalf < 1){
+    stop("cannot operate on length-1 series");
+  }
+  
+  
+  if (nt == 1){
+    warning("forced taper length");
+    taper_vec.fill(tapers[0]);
+  } else {
+    taper_vec = tapers;
+  }
+  
+  
+  // set the current number of tapers, limited by a few factors
+  arma::uvec wh = arma::find(taper_vec > nhalf);
+  taper_vec(wh).fill(nhalf);
+  wh = arma::find(taper_vec > tapcap);
+  taper_vec(wh).fill(tapcap);
+  wh = arma::find(taper_vec <= 0);
+  taper_vec(wh).ones();
+  
+  
+  int mm = taper_vec.max();
+  
+  arma::vec w(mm);
+  arma::field<arma::vec> para = parabolic_weights_field(mm);
+  
+  
+  //
+  // Calculate the psd by averaging over tapered estimates
+  //
+  
+  
+  arma::cx_cube psd(nhalf, nc, nc);
+  psd.fill(arma::cx_double(0.0, 0.0));
+  
+  // each frequency
+  for (int jj = 0; jj < nhalf; jj++) {
+    
+    m2 = 2 * jj;
+    // number of tapers applied at a given frequency (do not remove m+1 index!)
+    
+    Kc = taper_vec[jj]; // orig: m+1, but this was leading to an indexing bug
+    
+    // taper sequence and spectral weights
+    w = para(Kc-1, 0);
+    
+    // scan across ki to get vector of
+    // spectral differences based on modulo indices
+    for (int ik = 0; ik < Kc; ik++) {
+      
+      wi = w[ik];
+      ki = ik + 1;
+      
+      mleft1 = m2 + ne2 - ki;
+      mleft2 = m2 + ki;
+      
+      j1 = mleft1 % ne2;
+      j2 = mleft2 % ne2;
+      
+      // sum as loop progresses, auto and cross-spectra
+      
+      for (int ii = 0; ii < nc; ii++) {
+        for (int kk = ii; kk < nc; kk++) {
+          
+          fdc1 = fftz(j1, ii) - fftz(j2, ii);
+          fdc2 = fftz(j1, kk) - fftz(j2, kk);
+          
+          psd(jj, ii, kk) += (fdc1 * std::conj(fdc2)) * wi;
+        }
+      }
+    }
+  }
+  
+  // Add lower triangle for use in transfer function calculation
+  for (int ii = 0; ii < nc; ii++) {
+    for (int kk = 0; kk < nc; kk++) {
+      if (kk < ii){
+        psd(arma::span(), arma::span(ii), arma::span(kk)) = 
+          arma::conj(psd(arma::span(), arma::span(kk), arma::span(ii)));
+      }
+    }
+  }
+  
+  // return list to match previous function definition - jrk
+  return Rcpp::List::create(
+    Named("freq.inds") = arma::regspace<arma::vec>(1, nhalf),
+    Named("k.capped") = taper_vec(arma::span(0, nhalf-1)),
+    Named("psd") = psd
+  );
+}
+
+
+
+// solve for transfer function
+
+
+//' @title
+//' det_vector
+//'
+//' @description
+//' Determinant for an array
+//'
+//' @param x \code{numeric array} values to evaluate
+//'
+//' @return vector of determinants
+//'
+//'
+//' @export
+// [[Rcpp::export]]
+arma::cx_vec det_vector(const arma::cx_cube& x) {
+  
+  std::size_t n = x.n_rows;
+  std::size_t nc = x.n_cols;
+  
+  arma::cx_vec output(n);
+  arma::cx_mat mat(nc, nc);
+  
+  for (std::size_t i = 0; i < n; i++){
+    mat = x(arma::span(i), arma::span::all, arma::span::all);
+    output(i) = arma::det(mat);
+  }
+  
+  return(output);
+  
+}
+
+
+
+// [[Rcpp::export]]
+arma::cx_mat solve_tf(arma::cx_cube x) {
+  
+  unsigned int n  = x.n_rows;
+  unsigned int nr = x.n_cols -1;
+  
+  arma::cx_mat output(n, nr);
+  arma::cx_cube numer_base = x(arma::span::all,
+                               arma::span(1, nr),
+                               arma::span(1, nr));;
+  arma::cx_cube numer(n, nr, nr);
+  
+  
+  arma::cx_cube numer_sol = x(arma::span::all,
+                              arma::span(1, nr),
+                              arma::span(0));
+  
+  arma::cx_vec denom = det_vector(numer_base);
+  
+  for (arma::uword i=0; i < nr; i++){
+    
+    // fill new column
+    numer = numer_base;
+    numer(arma::span::all, arma::span::all, arma::span(i)) = numer_sol;
+    
+    output.col(i) = det_vector(numer) / denom;
+    
+  }
+  
+  return(output);
+  
+}
+
 
 
 
 /*** R 
 
 library(microbenchmark)
-library(psd) 
+library(psd)
 
-n. <- 10000
+n. <- 1000000
 set.seed(1234)
-x <- cumsum(sample(c(-1, 1), n., TRUE))
-fftz <- fft(x)
-taps <- ceiling(runif(n.,10,30))
+nc <- 2
+x <- matrix(cumsum(sample(c(-1, 1), n., TRUE)), ncol=nc)
+fftz <- mvfft(x)
+psd <- Re(fftz * Conj(fftz))
+taps <- ceiling(runif(n./nc,10,300))
 
 microbenchmark(
-  rsz1 <- resample_fft_rcpp(fftz, taps, verbose = FALSE),
-  rsz2 <- resample_fft_rcpp2(fftz, taps, verbose = FALSE),
-  times = 10
+  a1 <- riedsid_rcpp(as.matrix(psd)[, 1, drop = FALSE], taps),
+  a2 <- riedsid_rcpp(psd[, 2, drop = FALSE], taps),
+  b  <- riedsid_rcpp(as.matrix(psd), taps),
+  times = 2
+)
+
+all.equal(apply(cbind(a1,a2), 1, min), b)
+
+
+microbenchmark(
+  rsz1 <- resample_fft_rcpp(fftz[,2], taps, verbose = FALSE),
+  rsz2 <- resample_fft_rcpp2(fftz[,2], taps, verbose = FALSE),
+  rsz3 <- resample_mvfft(fftz, taps, verbose = FALSE),
+  times = 2
 )
 
 all.equal(rsz1, rsz2)
-
-microbenchmark(
-  kopt1 <- riedsid2(PSD = rsz1$psd, ntaper = taps, constrained = FALSE, verbose = FALSE),
-  kopt2 <- riedsid2(PSD = rsz1$psd, ntaper = taps, constrained = FALSE, verbose = FALSE, fast = TRUE),
-  times = 10
-)
-
-all.equal(kopt1, kopt2)
+all.equal(rsz1$psd, Re(rsz3$psd[,2,2]))
 
 
-microbenchmark(
-  psd1 <- psdcore(x, verbose = FALSE),
-  psd2 <- psdcore(x, verbose = FALSE, fast = TRUE),
-  times = 10
-)
+# 
+# microbenchmark(
+#   tf <- solve_tf(rsz3$psd),
+#   times = 5
+# )
 
 
-all.equal(psd1, psd2)
+# 
+# microbenchmark(
+#   kopt1 <- riedsid2(PSD = rsz1$psd, ntaper = taps, constrained = FALSE, verbose = FALSE),
+#   kopt2 <- riedsid2(PSD = rsz1$psd, ntaper = taps, constrained = FALSE, verbose = FALSE, fast = TRUE),
+#   times = 10
+# )
 
 
-
-microbenchmark(
-  pspec1 <- pspectrum(x, verbose = FALSE),
-  pspec2 <- pspectrum(x, verbose = FALSE, fast = TRUE),
-  times = 10
-)
-
-all.equal(pspec1, pspec2)
-
-
-microbenchmark(
-  pilot1 <- pilot_spec(x, verbose = FALSE),
-  pilot2 <- pilot_spec(x, verbose = FALSE, fast = TRUE),
-  times = 10
-)
-
-all.equal(pilot1, pilot2)
+# 
+# all.equal(kopt1, kopt2)
+# 
+# 
+# microbenchmark(
+#   psd1 <- psdcore(x, verbose = FALSE),
+#   psd2 <- psdcore(x, verbose = FALSE, fast = TRUE),
+#   times = 10
+# )
+# 
+# 
+# all.equal(psd1, psd2)
+# 
+# 
+# 
+# microbenchmark(
+#   pspec1 <- pspectrum(x, verbose = FALSE),
+#   pspec2 <- pspectrum(x, verbose = FALSE, fast = TRUE),
+#   times = 10
+# )
+# 
+# all.equal(pspec1, pspec2)
+# 
+# 
+# microbenchmark(
+#   pilot1 <- pilot_spec(x, verbose = FALSE),
+#   pilot2 <- pilot_spec(x, verbose = FALSE, fast = TRUE),
+#   times = 10
+# )
+# 
+# all.equal(pilot1, pilot2)
 
 
 */
