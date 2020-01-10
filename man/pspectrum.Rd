@@ -3,6 +3,7 @@
 \name{pspectrum}
 \alias{pspectrum}
 \alias{pspectrum.ts}
+\alias{pspectrum.matrix}
 \alias{pspectrum.spec}
 \alias{pspectrum.default}
 \alias{pspectrum_basic}
@@ -12,6 +13,8 @@
 pspectrum(x, ...)
 
 \method{pspectrum}{ts}(x, ...)
+
+\method{pspectrum}{matrix}(x, ...)
 
 \method{pspectrum}{spec}(x, ...)
 

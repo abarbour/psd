@@ -119,7 +119,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
   stopifnot(is.ts(tser))
   sps <- stats::frequency(tser)
   tstart <- stats::start(tser)
-  n.o <- length(tser)
+  n.o <- NROW(tser)
   ttime <- sps*n.o
   
   # NA action on input series
@@ -146,11 +146,11 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
 
     X <- if (detrend){
       if (verbose) message("\tdetrending (and demeaning)")
-      stats::residuals(stats::lm(tser~base::seq_len(n.o)))
+      as.matrix(stats::residuals(stats::lm(tser~base::seq_len(n.o))))
       
     } else if (demean) {
       if (verbose) message("\tdemeaning")
-      stats::residuals(stats::lm(tser~rep.int(1, n.o)))
+      as.matrix(stats::residuals(stats::lm(tser~rep.int(1, n.o))))
       
     } else {
       if (verbose) message("\tnothing was done to the timeseries object")
@@ -158,7 +158,7 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     }
     
     # TS object of residuals or equivalent
-    tser_prew_lm <- stats::ts(X, frequency=sps, start=tstart)
+    tser_prew_lm <- stats::ts(as.matrix(X), frequency=sps, start=tstart)
     
   }
   
@@ -171,9 +171,9 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     
     # solve the Yule-Walker equations
     ardfit <- stats::ar.yw(tser_prew_lm, aic=TRUE, order.max=AR.max, demean=TRUE)
-    
+
     # returns a TS object
-    tser_prew_ar <- ardfit[['resid']]
+    tser_prew_ar <- ts(as.matrix(ardfit[['resid']]), frequency=sps, start=tstart)
     if (impute) tser_prew_ar <- NAFUN(tser_prew_ar)
     
   }

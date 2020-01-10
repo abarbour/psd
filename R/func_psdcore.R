@@ -60,7 +60,15 @@ psdcore <- function(X.d, ...) UseMethod("psdcore")
 #' @export
 psdcore.ts <- function(X.d, ...){
   frq <- stats::frequency(X.d)
-  psdcore(as.matrix(X.d), X.frq = frq, ...)
+  psdcore.default(X.d, ...)
+}
+
+#' @rdname psdcore
+#' @aliases psdcore.matrix
+#' @export
+psdcore.matrix <- function(X.d, ...){
+  frq <- stats::frequency(X.d)
+  psdcore(stats::ts(X.d, frequency=frq), ...)
 }
 
 #' @rdname psdcore
@@ -88,7 +96,7 @@ psdcore.default <- function(X.d,
   
   # named series
   series <- deparse(substitute(X.d))
-  
+
   ## Convert to ts object
   if (!is.ts(X.d)){
     if (is.null(X.frq)){
@@ -98,10 +106,10 @@ psdcore.default <- function(X.d,
     }
     X.d <- if (X.frq > 0){
       # value represents sampling frequency
-      stats::ts(X.d, frequency=X.frq)
+      stats::ts(as.matrix(X.d), frequency=X.frq)
     } else if (X.frq < 0){
       # value is sampling interval
-      stats::ts(X.d, deltat=abs(X.frq))
+      stats::ts(as.matrix(X.d), deltat=abs(X.frq))
     } else {
       stop("bad sampling information")
     }
@@ -127,7 +135,7 @@ psdcore.default <- function(X.d,
     # initialize fft and other things, since this usually means a first run
     #
     # original series
-    n.o <- psd_envAssignGet(evars[['n.orig']], length(X.d))
+    n.o <- psd_envAssignGet(evars[['n.orig']], NROW(X.d))
     X <- psd_envAssignGet(evars[['series.orig']], {
       if (preproc){
         # TODO: option for fast-detrend only, assign preproc flag in env (for plotting later)
@@ -139,7 +147,7 @@ psdcore.default <- function(X.d,
     
     # Force series to be even in length (modulo division)
     n.e <- psd_envAssignGet(evars[['n.even']], modulo_floor(n.o))
-    X.even <- ts(X[seq_len(n.e)], frequency=X.frq)
+    X.even <- ts(X[seq_len(n.e),], frequency=X.frq)
     X.even <- psd_envAssignGet(evars[['series.even']], X.even)
     stopifnot(is.ts(X.even))
     
@@ -147,8 +155,7 @@ psdcore.default <- function(X.d,
     nhalf <- psd_envAssignGet(evars[['n.even.half']], n.e/2)
     
     # variance of even series
-    varx <- psd_envAssignGet(evars[['var.even']], drop(stats::var(X.even)))
-    
+    varx <- psd_envAssignGet(evars[['var.even']], stats::var(X.even))
     # create uniform tapers
     kseq <- psd_envAssignGet(evars[['last.taper']], {
       if (len_tapseq == 1){
@@ -160,16 +167,19 @@ psdcore.default <- function(X.d,
       }
     })
     
-    ## zero pad and take double-length fft
-    padded <- as.numeric(c(X.even, rep.int(0, n.e)))
     
+    ## zero pad and take double-length fft
+    pad <- matrix(0.0, nrow = n.e, ncol = NCOL(X.even)) 
+    padded <- rbind(as.matrix(X.even), pad)
+    # padded <- as.matrix(X.even)
+
+
     ## Calculate discrete Fourier tranform
     #   Note fftw is faster for very long series but we are
     #   using stats::fft until fftw is reliably built on CRAN
-    padded.fft <- psd_envAssignGet(evars[['fft.padded']], stats::fft(padded))
-    
+    padded.fft <- psd_envAssignGet(evars[['fft.padded']], stats::mvfft(padded))
     psd_envAssignGet(evars[['fft']], padded.fft)
-  
+
   } else {
     
     if (verbose) warning("Working environment *not* refreshed. Results may be bogus.")
@@ -194,7 +204,6 @@ psdcore.default <- function(X.d,
   ###  Select frequencies for PSD evaluation
   f <- base::seq.int(0, nhalf, by=1)
   nfreq <- length(f)
-  
   ###  Calculate the (un-normalized) PSD
   PSD <- psd_envAssignGet(evars[["last.psdcore"]], {
     
@@ -206,8 +215,10 @@ psdcore.default <- function(X.d,
       
       ## resample fft with taper sequence and quadratic weighting
       # ( this is where the majority of the computational work is )
-      kseq <- as.integer(kseq) 
-      if(fast) {
+      kseq <- as.integer(kseq)
+      if(is.matrix(fftz)) {
+        reff <- resample_mvfft(fftz, tapers = kseq, verbose=verbose)
+      }else if(fast) {
         reff <- resample_fft_rcpp2(fftz, kseq, verbose=verbose)
       } else {
         reff <- resample_fft_rcpp(fftz, kseq, verbose=verbose)
@@ -238,15 +249,15 @@ psdcore.default <- function(X.d,
     }
   })
   
-  # should not be complex at this point!
-  stopifnot(!is.complex(PSD))
+  # should not be complex at this point! - no longer true for cross-spectra -jrk
+  # stopifnot(!is.complex(PSD))
   
   # there should not be any bad values here!
   pNAs <- is.na(PSD)
   if (any(pNAs)) warning("NA psd estimates?!")
   
   ## Nyquist frequencies
-  npsd <- length(PSD)
+  npsd <- NROW(PSD)
   frq <- as.numeric(base::seq.int(0, Nyq, length.out=npsd))
   
   ## Update tapers for consistency
@@ -258,16 +269,24 @@ psdcore.default <- function(X.d,
   # ( using the trapezoidal rule, the principal being that the
   # integrated spectrum should be equal to the variance of the signal )
   #
-  trap.area <- base::sum(PSD, na.rm=TRUE) - mean(PSD[c(1,npsd)], na.rm=TRUE)
-  area.var.ratio <- varx / trap.area
-  PSD <- 2 * PSD * area.var.ratio * nhalf
+
+  spec <- matrix(NA_real_, ncol = NCOL(PSD), nrow = NROW(PSD))
+  for(i in 1:NCOL(PSD)) {
+      trap.area <- base::sum(PSD[, i, i, drop = FALSE], na.rm=TRUE) - mean(PSD[c(1,npsd), i, i, drop = FALSE], na.rm=TRUE)
+      area.var.ratio <- as.matrix(varx)[i,i] / trap.area
+      spec[, i] <- Re(2 * PSD[, i, i] * area.var.ratio * nhalf)
+  }
   
   ## Assemble final results
   mtap <- max(kseq, na.rm=TRUE)
+  if(NCOL(PSD) > 1) {
+  
   PSD.out <- list(freq = as.numeric(frq), 
-                  spec = as.numeric(PSD), 
-                  coh = NULL, 
-                  phase = NULL, 
+                  spec = spec, 
+                  pspec = PSD,
+                  transfer = solve_tf(PSD),
+                  coh = coherence(PSD), 
+                  phase = phase(PSD), 
                   kernel = NULL, 
                   # must be a scalar for plot.spec to give conf ints:
                   df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
@@ -289,6 +308,35 @@ psdcore.default <- function(X.d,
                   timebp = as.numeric(kseq/2),
                   nyquist.frequency = Nyq
   )
+  } else {
+    PSD.out <- list(freq = as.numeric(frq), 
+                    spec = as.numeric(spec), 
+                    pspec = NULL,
+                    transfer = NULL,
+                    coh = NULL, 
+                    phase = NULL, 
+                    kernel = NULL, 
+                    # must be a scalar for plot.spec to give conf ints:
+                    df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
+                    numfreq = npsd,    
+                    ## bandwidth
+                    # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
+                    # half-width W = (K + 1)/{2(N + 1)}
+                    # effective bandwidth ~ 2 W (accurate for many spectral windows)
+                    bandwidth = (mtap + 1) / nhalf, 
+                    n.used = psd_envGet(evars[['n.even']]), 
+                    orig.n = psd_envGet(evars[['n.orig']]), 
+                    series = series, 
+                    snames = colnames(X), 
+                    method = sprintf("sine multitaper"), 
+                    taper = kseq, 
+                    pad = TRUE, # always!
+                    detrend = preproc, # always true?
+                    demean = preproc,
+                    timebp = as.numeric(kseq/2),
+                    nyquist.frequency = Nyq
+    )
+  }
   class(PSD.out) <- c("amt","spec")
   if (plot) pgram_compare(PSD.out, ...)
   return(invisible(PSD.out))
@@ -400,13 +448,14 @@ pgram_compare.amt <- function(x, f=NULL, X=NULL, log.freq=TRUE, db.spec=TRUE, ta
   on.exit(par(opar))
   
   #layout(matrix(c(1,2), ncol=1), c(1,2))
-  layout(matrix(c(1,1,2,2,3,4), 3, 2, byrow = TRUE))
+  layout(matrix(c(1,1,2,2,3,4), nrow=3, ncol=2, byrow = TRUE))
   par(mar=c(2, 3.5, 2.3, 1.2), oma=c(2,2,2,1))
   par(las=1, tcl = -.3, mgp=c(2.2, 0.4, 0))
   par(cex=0.8)
   
   ## Periodogram result first
-  plot(fc., sc., 
+  
+  matplot(fc., sc., 
        col="red", type="l",
        xaxs="i", xlim=flims, 
        yaxs="i", ylim=slims, 
@@ -414,14 +463,13 @@ pgram_compare.amt <- function(x, f=NULL, X=NULL, log.freq=TRUE, db.spec=TRUE, ta
        ylab=slab,
        main="")
   # and adaptive result overlain
-  lines(f., s., type="l")
+  matlines(f., s., type="l", col = 'black')
   legend("bottomleft",
          c(sprintf("spec.pgram (%i%% cosine taper)", 100*tc.), 
            sprintf("psdcore (%i - %i tapers)", min(t.), max(t.)) ), 
          col=c("red","black"), lty=1, lwd=2, cex=0.9)
   mtext(flab, side=1, line=2)
   mtext("Spectral density estimates", adj=0, line=0.2, font=4)
-  
   ## Tapers
   if (is.tapers(t.)){
     plot(t., f., xlim=flims, xaxs="i")
@@ -434,13 +482,19 @@ pgram_compare.amt <- function(x, f=NULL, X=NULL, log.freq=TRUE, db.spec=TRUE, ta
   ## Original series
   main.pre <- ifelse(detrend | demean, "Modified e", "E")
   main.post <- sprintf("(dem. %s detr. %s)", detrend, demean) 
-  plot(X, type="l", ylab="units", xlab="", xaxs="i", main="")
+  matplot(X, type="l", ylab="units", xlab="", xaxs="i", main="", col=c('black', 'blue', 'green', 'orange'))
   mtext(paste0(main.pre, "ven-length series"), line=1, font=4)
   mtext(main.post, cex=0.6)
   mtext(expression("time"), side=1, line=1.7)
   
   ## autocorrelation
-  acf(X, main="")
+  a <- acf(X, main="", plot = FALSE)
+  a_plot <- matrix(NA, ncol = NCOL(a$acf), nrow=NROW(a$acf))
+  for(i in 1:NCOL(X)) {
+    a_plot[, i] <- a$acf[, i, i]    
+  }
+  matplot(a$lag[,1,1], a_plot, type = 'hp', col=c('black', 'blue', 'green', 'orange'), ylab = "ACF")
+
   mtext(expression("lag, time"), side=1, line=1.7)
   mtext("Auto-correlation function", line=1, font=4)
   

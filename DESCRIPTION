@@ -34,7 +34,7 @@ Suggests:
     RSEIS,
     rbenchmark,
     reshape2,
-    testthat
+    testthat (>= 2.1.0)
 Encoding: UTF-8
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo

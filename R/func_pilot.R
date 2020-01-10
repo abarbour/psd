@@ -62,9 +62,19 @@ pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 #' @export
 pilot_spec.ts <- function(x, ...){
   stopifnot(is.ts(x))
-  frq <- stats::frequency(x)
-  pilot_spec.default(as.vector(x), x.frequency=frq, ...)  
+  # frq <- stats::frequency(x)
+  pilot_spec.default(x, ...)  
 }
+
+
+#' @rdname pilot_spec
+#' @aliases pilot_spec.matrix
+#' @export
+pilot_spec.matrix <- function(x, ...){
+  frq <- stats::frequency(x)
+  pilot_spec(stats::ts(x, frequency=frq), ...)
+}
+
 
 #' @rdname pilot_spec
 #' @export
@@ -84,7 +94,6 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   if (REMAR) remove.AR <- max(1, min(100, abs(remove.AR)))
   
   xprew <- prewhiten(x, x.fsamp=x.frequency, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
-  
   ## Remove and AR model
   if (REMAR){
     # AR fit
