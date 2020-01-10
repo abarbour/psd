@@ -64,9 +64,9 @@ riedsid.spec <- function(PSD, ...){
   Pspec <- PSD[['spec']]
   Tapseq <- PSD[['freq']]
   ntaper <- if (is.amt(PSD)){
-      PSD[['taper']]
+    PSD[['taper']]
   } else {
-      rep.int(x=1L, times=length(Pspec))
+    rep.int(x=1L, times=length(Pspec))
   }
   riedsid(PSD=Pspec, ntaper=ntaper, tapseq=Tapseq, ...)
 }
@@ -124,11 +124,11 @@ riedsid.default <- function(PSD, ntaper = 1L,
   rss <- if (lsmeth){
     # spectral derivatives the preferred way
     DerivFUN <- function(j, 
-                     j1=j-nspan[j]+nadd-1, 
-                     j2=j+nspan[j]+nadd-1, 
-                     jr=j1:j2, 
-                     logY=lY[jr], 
-                     dEps=eps){
+                         j1=j-nspan[j]+nadd-1, 
+                         j2=j+nspan[j]+nadd-1, 
+                         jr=j1:j2, 
+                         logY=lY[jr], 
+                         dEps=eps){
       u <- jr - (j1 + j2)/2 # rowvec 
       u2 <- u*u             # rowvec
       L <- j2-j1+1          # constant
@@ -188,6 +188,9 @@ riedsid.default <- function(PSD, ntaper = 1L,
   return(kopt)
 } 
 
+
+
+
 #' @rdname riedsid
 #' @export
 riedsid2 <- function(PSD, ...) UseMethod("riedsid2")
@@ -197,20 +200,23 @@ riedsid2 <- function(PSD, ...) UseMethod("riedsid2")
 riedsid2.spec <- function(PSD, ...){
   pspec <- PSD[['spec']]
   freqs <- PSD[['freq']]
+  
   ntap <- if (is.amt(PSD)){
     PSD[['taper']]
   } else {
-    rep.int(x=1L, times=length(pspec))
+    rep.int(x=1L, times=NROW(pspec))
   }
+  
   riedsid2(PSD=pspec, ntaper=ntap, ...)
 }
+
 
 #' @rdname riedsid
 #' @export
 riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, fast=FALSE, ...){
   
   if (fast) {
-    kopt <- riedsid_rcpp(PSD, ntaper)
+    kopt <- riedsid_rcpp(as.matrix(PSD), ntaper)
   } else {
     
     PSD <- as.vector(PSD)
