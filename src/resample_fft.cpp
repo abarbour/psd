@@ -560,11 +560,15 @@ arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
 
 // This is for multivariate series  --------------------------------------------
 
-
 // For all but short series this should be faster
-//' @rdname parabolic_weights_field
+//' @title Pre-calculation of weight vectors.  
+//' 
+//' @description
+//' Generate a field of weights for subsetting.
 //' 
 //' @param ntap the maximum number of tapers
+//' 
+//' @return arma::field of weights
 //' 
 //' @export
 // [[Rcpp::export]]
