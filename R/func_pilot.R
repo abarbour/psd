@@ -62,7 +62,6 @@ pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 #' @export
 pilot_spec.ts <- function(x, ...){
   stopifnot(is.ts(x))
-  # frq <- stats::frequency(x)
   pilot_spec.default(x, ...)  
 }
 

@@ -2,13 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{parabolic_weights_field}
 \alias{parabolic_weights_field}
-\title{parabolic_weights_field}
+\title{Pre-calculation of weight vectors.}
 \usage{
 parabolic_weights_field(ntap)
 }
 \arguments{
 \item{ntap}{the maximum number of tapers}
 }
+\value{
+arma::field of weights
+}
 \description{
-parabolic_weights_field
+Generate a field of weights for subsetting.
 }

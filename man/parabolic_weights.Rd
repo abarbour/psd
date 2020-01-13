@@ -3,14 +3,17 @@
 \name{parabolic_weights_rcpp}
 \alias{parabolic_weights_rcpp}
 \alias{parabolic_weights_rcpp2}
+\alias{parabolic_weights_field}
 \alias{parabolic_weights}
 \alias{parabolic_weights.tapers}
 \alias{parabolic_weights.default}
-\title{Calculate parabolic weighting factors.}
+\title{parabolic_weights_field}
 \usage{
 parabolic_weights_rcpp(ntap = 1L)
 
 parabolic_weights_rcpp2(ntap = 1L)
+
+parabolic_weights_field(ntap)
 
 parabolic_weights(ntap, ...)
 
@@ -19,11 +22,13 @@ parabolic_weights(ntap, ...)
 \method{parabolic_weights}{default}(ntap = 1L, ...)
 }
 \arguments{
-\item{ntap}{integer (or \code{tapers} object); the number of tapers to provide weightings for.}
+\item{ntap}{the maximum number of tapers}
 
 \item{...}{optional arguments}
 
 \item{tap.index}{integer; if \code{ntap} is a \code{tapers} object, the index from which to produce a sequence of weights for}
+
+\item{ntap}{integer (or \code{tapers} object); the number of tapers to provide weightings for.}
 }
 \value{
 A list with the number of tapers, indices of the taper sequence, and the weights \eqn{W_N}{w}.

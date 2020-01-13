@@ -151,7 +151,7 @@ parabolic_weights_field <- function(ntap) {
 #' @details
 #' To produce a psd estimate with our adaptive spectrum estimation method,
 #' we need only make one fft calculation initially and then apply the weighting
-#' factors given by \code{\link{parabolic_weights_field}}, which this function 
+#' factors given by \code{\link{parabolic_weights}}, which this function 
 #' does.
 #' 
 #' @param fftz complex; a matrix representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument
