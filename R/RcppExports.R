@@ -125,15 +125,19 @@ resample_fft_rcpp2 <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap 
 #' @param ntaper scalar or vector; number of tapers to apply optimization
 #' 
 #' @return kopt vector
+#' @export
+#' 
 riedsid_rcpp <- function(PSD, ntaper) {
     .Call('_psd_riedsid_rcpp', PACKAGE = 'psd', PSD, ntaper)
 }
 
-#' @rdname parabolic_weights_field
+#' @title parabolic_weights_field
+#' @rdname parabolic_weights
 #' 
 #' @param ntap the maximum number of tapers
 #' 
 #' @export
+#' 
 parabolic_weights_field <- function(ntap) {
     .Call('_psd_parabolic_weights_field', PACKAGE = 'psd', ntap)
 }

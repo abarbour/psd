@@ -62,5 +62,8 @@ test_that("multivariate riedsid2 works",{
   expect_equal(r_mv_spec, r_s)
   
   
-})  
+})
+
+
+
   

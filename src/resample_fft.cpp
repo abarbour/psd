@@ -488,6 +488,8 @@ arma::mat pad_data(const arma::mat& psd,
 //' @param ntaper scalar or vector; number of tapers to apply optimization
 //' 
 //' @return kopt vector
+//' @export
+//' 
 // [[Rcpp::export]]
 arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
   
@@ -562,11 +564,13 @@ arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
 
 
 // For all but short series this should be faster
-//' @rdname parabolic_weights_field
+//' @title parabolic_weights_field
+//' @rdname parabolic_weights
 //' 
 //' @param ntap the maximum number of tapers
 //' 
 //' @export
+//' 
 // [[Rcpp::export]]
 arma::field<arma::vec> parabolic_weights_field(const int ntap) {
   
