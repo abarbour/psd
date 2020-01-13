@@ -43,8 +43,17 @@ pspectrum <- function(x, ...) UseMethod("pspectrum")
 #' @export
 pspectrum.ts <- function(x, ...){
   frq <- stats::frequency(x)
-  psd::pspectrum(as.vector(x), x.frqsamp=frq, ...)  
+  pspectrum.default(x, x.frqsamp=frq, ...)  
 }
+
+#' @rdname pspectrum
+#' @aliases pspectrum.matrix
+#' @export
+pspectrum.matrix <- function(x, ...){
+  frq <- stats::frequency(x)
+  pspectrum(stats::ts(x, frequency=frq), ...)
+}
+
 
 #' @rdname pspectrum
 #' @aliases pspectrum.spec
@@ -75,8 +84,9 @@ pspectrum.default <- function(x,
                               verbose=TRUE, no.history=FALSE, 
                               plot=FALSE, ...){
   
-  stopifnot(length(x)>1)
+  stopifnot(NROW(x)>1)
   
+
   # plotting and iterations
   if (is.null(niter)) stopifnot(niter>=0)
   plotpsd_ <- FALSE
@@ -124,7 +134,6 @@ pspectrum.default <- function(x,
       
       ## calculate optimal tapers
       kopt <- riedsid2(Pspec, verbose=rverb, fast = TRUE, ...)
-      
       # get data back for plotting, etc.
       if (stage==niter){
         x <- psd_envGet("original_pspectrum_series")

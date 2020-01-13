@@ -19,6 +19,9 @@ r_packages:
  - fftw
  - covr
 
+r_github_packages:
+   - gagolews/stringi
+   
 notifications:
   email:
     on_success: change

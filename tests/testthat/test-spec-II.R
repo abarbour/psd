@@ -18,4 +18,5 @@ test_that("'updating' spectrum is not yet implemented",{
   
   pa_b <- pspectrum_basic(x, verbose = FALSE)
   expect_error(pspectrum(pa_b, plot = FALSE, verbose = FALSE))
+  
 })

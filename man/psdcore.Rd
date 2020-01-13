@@ -3,12 +3,15 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.ts}
+\alias{psdcore.matrix}
 \alias{psdcore.default}
 \title{Multitaper power spectral density estimates of a series}
 \usage{
 psdcore(X.d, ...)
 
 \method{psdcore}{ts}(X.d, ...)
+
+\method{psdcore}{matrix}(X.d, ...)
 
 \method{psdcore}{default}(X.d, X.frq = NULL, ntaper = as.tapers(5),
   preproc = TRUE, na.action = stats::na.fail, plot = FALSE,

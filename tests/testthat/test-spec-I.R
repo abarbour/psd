@@ -79,12 +79,12 @@ test_that("pspectrum results are accurate",{
 test_that("psdcore arguments are tested",{
   set.seed(1234)
   x <- rnorm(100)
-  xp1 <- psdcore.default(X.d = x, X.frq = 1, plot = FALSE)
-  xp2 <- psdcore.default(X.d = x, X.frq = -1, plot = FALSE)
+  xp1 <- psdcore(X.d = x, X.frq = 1, plot = FALSE)
+  xp2 <- psdcore(X.d = x, X.frq = -1, plot = FALSE)
   expect_is(xp1, 'spec')
   expect_is(xp2, 'spec')
   expect_equal(xp1,xp2)
-  expect_error(psdcore.default(X.d = x, X.frq = "1", plot = FALSE))
+  expect_error(psdcore(X.d = x, X.frq = "1", plot = FALSE))
 })
 
 test_that("psdcore results are accurate",{
@@ -205,4 +205,113 @@ test_that("check fast version",{
                pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
 })
 
-##
+
+test_that("check multivariate autospectra for psdcore",{
+
+  set.seed(1234)
+  x1 <- rnorm(100)
+  x2 <- x1 * 2
+  x <- cbind(x1, x2)  
+  ps  <- psdcore(x, verbose = FALSE, plot = FALSE, fast = TRUE)
+  
+  ps1 <- psdcore(x[,1], verbose = FALSE, plot = FALSE, fast = TRUE)
+  ps2 <- psdcore(x[,2], verbose = FALSE, plot = FALSE, fast = TRUE)
+  
+  expect_equal(ps$spec[,1], ps1$spec)
+  expect_equal(ps$spec[,2], ps2$spec)
+  
+  
+  ps1 <- psdcore(x[,1], verbose = FALSE, plot = FALSE, fast = FALSE)
+  ps2 <- psdcore(x[,2], verbose = FALSE, plot = FALSE, fast = FALSE)
+  
+  expect_equal(ps$spec[,1], ps1$spec)
+  expect_equal(ps$spec[,2], ps2$spec)
+  
+  # ps <- pspectrum(x)
+})
+
+
+
+test_that("check multivariate autospectra for pilot_spec",{
+  
+  set.seed(1234)
+  x <- matrix(rnorm(200), ncol = 2)
+  
+  ps1 <- pilot_spec(x[,1], verbose = FALSE, plot = FALSE, fast = FALSE)
+  ps2 <- pilot_spec(x[,2], verbose = FALSE, plot = FALSE, fast = FALSE)
+  
+  ps  <- pilot_spec(x, verbose = FALSE, plot = FALSE, fast = TRUE)
+  
+  expect_equal(ps$spec[,1], ps1$spec)
+  expect_equal(ps$spec[,2], ps2$spec)
+  
+  
+  ps <- pspectrum(x, plot = FALSE)
+
+})
+
+
+test_that("check multivariate autospectra, coherence, and phase for psdcore",{
+  
+  # compare spec.pgram to psdcore - the methods aren't equivalent but give 
+  # similar results
+  
+  set.seed(1234)
+  x <- matrix(rnorm(2000), ncol = 2)
+
+  pd <- spec.pgram(x, plot = FALSE, spans = 5)
+  pd <- normalize(pd, 1, "spectrum", verbose = FALSE)
+  pc <- psdcore(x, plot = FALSE, verbose = FALSE,  ntaper = as.tapers(5))
+  
+  # is there an indexing issue here, need to remove the first value in psdcore
+  # to get alignment
+
+  pc$coh <- pc$coh[-1]
+  pc$phase <- pc$phase[-1]
+  pc$spec <- pc$spec[-1, ]
+  
+  n <- length(pd$coh)
+  pd$coh <- pd$coh[-n]
+  pd$phase <- pd$phase[-n]
+  pd$spec <- pd$spec[-n, ]
+  
+  
+  # select narrow range to avoid wrap around issues for phase
+  sub_range <- 1.2
+  wh1 <- which(pd$phase < pi/sub_range & pd$phase > -pi/sub_range)
+  wh2 <- which(pc$phase < pi/sub_range & pc$phase > -pi/sub_range)
+  wh  <- intersect(wh1, wh2)
+  
+  # do regression between methods
+  phase_coef   <- coefficients(lm(pd$phase[wh]~pc$phase[wh]))
+  coh_coef     <- coefficients(lm(pd$coh~pc$coh))
+  spec_coef_1  <- coefficients(lm(pd$spec[,1]~pc$spec[,1]))
+  spec_coef_2  <- coefficients(lm(pd$spec[,2]~pc$spec[,2]))
+  
+  
+  # check intercept
+  expect_lte(abs(phase_coef[1]), 0.05)
+  expect_lte(abs(coh_coef[1]), 0.05)
+  expect_lte(abs(spec_coef_1[1]), 0.05)
+  expect_lte(abs(spec_coef_2[1]), 0.05)
+  
+  
+  # check slope 
+  expect_lte(abs(phase_coef[2]-1), 0.05)
+  expect_lte(abs(coh_coef[2]-1), 0.05)
+  expect_lte(abs(spec_coef_1[2]-1), 0.05)
+  expect_lte(abs(spec_coef_2[2]-1), 0.05)
+
+  
+  # plot(pd$spec[,1])
+  # points(pc$spec[,1], type='l')
+  # plot(pd$spec[,2])
+  # points(pc$spec[,2], type='l')
+  # plot(pd$coh)
+  # points(pc$coh, type='l')
+  # plot(pd$phase)
+  # points(pc$phase, type='l')
+
+  
+})
+  
