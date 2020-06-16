@@ -13,9 +13,19 @@ psdcore(X.d, ...)
 
 \method{psdcore}{matrix}(X.d, ...)
 
-\method{psdcore}{default}(X.d, X.frq = NULL, ntaper = as.tapers(5),
-  preproc = TRUE, na.action = stats::na.fail, plot = FALSE,
-  refresh = FALSE, verbose = FALSE, fast = FALSE, ndecimate, ...)
+\method{psdcore}{default}(
+  X.d,
+  X.frq = NULL,
+  ntaper = as.tapers(5),
+  preproc = TRUE,
+  na.action = stats::na.fail,
+  plot = FALSE,
+  refresh = FALSE,
+  verbose = FALSE,
+  fast = FALSE,
+  ndecimate,
+  ...
+)
 }
 \arguments{
 \item{X.d}{the series to estimate a spectrum for}

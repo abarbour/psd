@@ -22,13 +22,11 @@ parabolic_weights(ntap, ...)
 \method{parabolic_weights}{default}(ntap = 1L, ...)
 }
 \arguments{
-\item{ntap}{the maximum number of tapers}
+\item{ntap}{integer (or \code{tapers} object); the number of tapers to provide weightings for.}
 
 \item{...}{optional arguments}
 
 \item{tap.index}{integer; if \code{ntap} is a \code{tapers} object, the index from which to produce a sequence of weights for}
-
-\item{ntap}{integer (or \code{tapers} object); the number of tapers to provide weightings for.}
 }
 \value{
 A list with the number of tapers, indices of the taper sequence, and the weights \eqn{W_N}{w}.

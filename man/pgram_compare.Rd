@@ -7,8 +7,15 @@
 \usage{
 pgram_compare(x, ...)
 
-\method{pgram_compare}{amt}(x, f = NULL, X = NULL, log.freq = TRUE,
-  db.spec = TRUE, taper = 0.2, ...)
+\method{pgram_compare}{amt}(
+  x,
+  f = NULL,
+  X = NULL,
+  log.freq = TRUE,
+  db.spec = TRUE,
+  taper = 0.2,
+  ...
+)
 }
 \arguments{
 \item{x}{a single \code{\link{psdcore}} object}

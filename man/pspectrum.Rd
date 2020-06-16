@@ -18,16 +18,26 @@ pspectrum(x, ...)
 
 \method{pspectrum}{spec}(x, ...)
 
-\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = NULL,
-  niter = 3, AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
-  no.history = FALSE, plot = FALSE, ...)
+\method{pspectrum}{default}(
+  x,
+  x.frqsamp = 1,
+  ntap.init = NULL,
+  niter = 3,
+  AR = FALSE,
+  Nyquist.normalize = TRUE,
+  verbose = TRUE,
+  no.history = FALSE,
+  plot = FALSE,
+  ...
+)
 
 pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE, ...)
 
 adapt_message(stage, dvar = NULL)
 }
 \arguments{
-\item{x}{vector; series to find PSD estimates for}
+\item{x}{vector; series to find PSD estimates for; if this is a multicolumn object, a cross spectrum will
+be calculated.}
 
 \item{...}{Optional parameters passed to \code{\link{riedsid2}}}
 
@@ -60,11 +70,16 @@ Object with class 'spec', invisibly. It also assigns the object to
 This is the primary function to be used in this package: it returns
 power spectral density estimates of a univariate timeseries, with
 an optimal number of tapers at each frequency based on iterative
-reweighted spectral derivatives.
+reweighted spectral derivatives. If the object given is a multicolumn
+object, the cross spectrum will be calculated using the same
+iterative procedure.
 }
 \details{
 See the \strong{Adaptive estimation} section in the description of
 the \code{\link{psd-package}} for details regarding adaptive estimation.
+
+NEW as of version 2.0: use \code{\link{pspectrum}} to calculate the
+cross spectrum if \code{x} is a multi-column array.
 
 \code{\link{pspectrum_basic}} is a simplified implementation used mainly for
 testing.

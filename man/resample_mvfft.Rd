@@ -4,24 +4,9 @@
 \alias{resample_mvfft}
 \title{Resample an fft using varying numbers of sine tapers}
 \usage{
-resample_mvfft(fftz, tapers, verbose = TRUE, dbl = TRUE,
-  tapcap = 10000L)
-
-resample_mvfft(fftz, tapers, verbose = TRUE, dbl = TRUE,
-  tapcap = 10000L)
+resample_mvfft(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap = 10000L)
 }
 \arguments{
-\item{fftz}{complex; a matrix representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument}
-
-\item{tapers}{integer; a vector of tapers}
-
-\item{verbose}{logical; should messages be given?}
-
-\item{dbl}{logical; should the code assume \code{fftz} is dual-length or single-length?}
-
-\item{tapcap}{integer; the maximum number of tapers which can be applied; note that the length is
-automatically limited by the length of the series.}
-
 \item{fftz}{complex; a matrix representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument}
 
 \item{tapers}{integer; a vector of tapers}
@@ -36,26 +21,15 @@ automatically limited by the length of the series.}
 \value{
 list that includes the auto and cross-spectral density, and the
 number of tapers
-
-list that includes the auto and cross-spectral density, and the
-number of tapers
 }
 \description{
-Produce an un-normalized psd based on an fft and a vector of optimal sine 
-tapers.
-
 Produce an un-normalized psd based on an fft and a vector of optimal sine 
 tapers.
 }
 \details{
 To produce a psd estimate with our adaptive spectrum estimation method,
 we need only make one fft calculation initially and then apply the weighting
-factors given by \code{\link{parabolic_weights_field}}, which this function 
-does.
-
-To produce a psd estimate with our adaptive spectrum estimation method,
-we need only make one fft calculation initially and then apply the weighting
-factors given by \code{\link{parabolic_weights_field}}, which this function 
+factors given by \code{\link{parabolic_weights}}, which this function 
 does.
 }
 \examples{
@@ -63,13 +37,7 @@ fftz <- complex(real=1:8, imaginary = 1:8)
 taps <- 1:4
 try(resample_mvfft(fftz, taps))
 
-fftz <- complex(real=1:8, imaginary = 1:8)
-taps <- 1:4
-try(resample_mvfft(fftz, taps))
-
 }
 \seealso{
-\code{\link{riedsid}}
-
 \code{\link{riedsid}}
 }

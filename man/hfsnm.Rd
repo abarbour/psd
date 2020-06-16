@@ -4,7 +4,8 @@
 \name{hfsnm}
 \alias{hfsnm}
 \title{Noise levels found in PBO strainmeter data at seismic frequencies.}
-\format{A dataframe with 141 observations on the following 4 variables:
+\format{
+A dataframe with 141 observations on the following 4 variables:
 
 \describe{
 \item{\code{freq}}{Frequencies, in Hertz.}
@@ -17,7 +18,8 @@ and 2 attributes:
 \describe{
 \item{\code{source.doi}}{The DOI number of the source publication.}
 \item{\code{generator}}{The structure of a function which will refresh the values from the supplemental files of the original publication.}
-}}
+}
+}
 \source{
 Barbour, A. J., and Agnew, D. C. (2011), Noise Levels on Plate Boundary Observatory Borehole Strainmeters in Southern California,
 \emph{Bulletin of the Seismological Society of America},

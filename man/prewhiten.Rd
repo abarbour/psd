@@ -10,8 +10,16 @@ prewhiten(tser, ...)
 
 \method{prewhiten}{default}(tser, x.fsamp = 1, x.start = c(1, 1), ...)
 
-\method{prewhiten}{ts}(tser, AR.max = 0L, detrend = TRUE,
-  demean = TRUE, impute = TRUE, plot = TRUE, verbose = TRUE, ...)
+\method{prewhiten}{ts}(
+  tser,
+  AR.max = 0L,
+  detrend = TRUE,
+  demean = TRUE,
+  impute = TRUE,
+  plot = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{tser}{vector; An object to prewhiten.}

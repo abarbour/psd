@@ -1,12 +1,23 @@
 Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density Estimation
-Version: 1.2.1
-Date: 2019-03-20
-Author: Andrew J. Barbour [aut, cre] (<https://orcid.org/0000-0002-6890-2452>), 
-    Robert L. Parker [cre],
-    Jonathan Kennel [ctb]
-Maintainer: Andrew J. Barbour <andy.barbour@gmail.com>
+Version: 2.0.0
+Date: 2020-06-16
+Author: Andrew J. Barbour [aut, cre] (<https://orcid.org/0000-0002-6890-2452>),
+    Jonathan Kennel [aut],
+    Robert L. Parker [aut]
+Authors@R:
+    c(person(given = "Andrew",
+             family = "Barbour",
+             role = c("aut", "cre"),
+             email = "andy.barbour@gmail.com",
+             comment = c(ORCID = "0000-0002-6890-2452")),
+      person(given = "Jonathan",
+             family = "Kennel",
+             role = "aut"),
+      person(given = "Robert",
+             family = "Parker",
+             role = "aut"))
 Description: Produces power spectral density estimates through iterative
     refinement of the optimal number of sine-tapers at each frequency. This
     optimization procedure is based on the method of Riedel and Sidorenko
@@ -38,4 +49,4 @@ Suggests:
 Encoding: UTF-8
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

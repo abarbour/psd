@@ -27,8 +27,15 @@ data.frame.tapers(x, ...)
 
 \method{points}{tapers}(x, pch = "_", cex = 1, ...)
 
-\method{plot}{tapers}(x, xi = NULL, color.pal = c("Blues", "Spectral"),
-  ylim = NULL, hv.lines = FALSE, log.y = FALSE, ...)
+\method{plot}{tapers}(
+  x,
+  xi = NULL,
+  color.pal = c("Blues", "Spectral"),
+  ylim = NULL,
+  hv.lines = FALSE,
+  log.y = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{tapers object}

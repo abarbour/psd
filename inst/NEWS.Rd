@@ -24,6 +24,14 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 2.0.0 (2020-06-16)}{
+  \itemize{
+    \item Major bump which adds multivariate calculations (i.e., the cross spectrum)
+    using the same optimization feature.
+    # [ ] need to fill in details
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 1.2.1 (2019-03-21)}{
   \itemize{
     \item Minor bump to fix incorrect orcid no. in description file

@@ -13,8 +13,13 @@ normalize(Spec, ...)
 
 \method{normalize}{list}(Spec, ...)
 
-\method{normalize}{spec}(Spec, Fsamp = 1, src = c("spectrum",
-  "double.sided", "psd", "single.sided"), verbose = TRUE, ...)
+\method{normalize}{spec}(
+  Spec,
+  Fsamp = 1,
+  src = c("spectrum", "double.sided", "psd", "single.sided"),
+  verbose = TRUE,
+  ...
+)
 
 \method{normalize}{amt}(Spec, ...)
 }

@@ -10,8 +10,14 @@ ctap_loess(tapvec, ...)
 
 \method{ctap_loess}{tapers}(tapvec, ...)
 
-\method{ctap_loess}{default}(tapvec, tapseq = NULL, loess.span = 0.3,
-  loess.degree = 1, verbose = TRUE, ...)
+\method{ctap_loess}{default}(
+  tapvec,
+  tapseq = NULL,
+  loess.span = 0.3,
+  loess.degree = 1,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{tapvec}{integer or \code{'tapers'} object; the number of tapers at each frequency}

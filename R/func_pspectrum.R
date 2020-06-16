@@ -4,11 +4,16 @@
 #' This is the primary function to be used in this package: it returns
 #' power spectral density estimates of a univariate timeseries, with
 #' an optimal number of tapers at each frequency based on iterative
-#' reweighted spectral derivatives.
+#' reweighted spectral derivatives. If the object given is a multicolumn
+#' object, the cross spectrum will be calculated using the same
+#' iterative procedure.
 #'
 #' @details
 #' See the \strong{Adaptive estimation} section in the description of
 #' the \code{\link{psd-package}} for details regarding adaptive estimation.
+#' 
+#' NEW as of version 2.0: use \code{\link{pspectrum}} to calculate the
+#' cross spectrum if \code{x} is a multi-column array.
 #' 
 #' \code{\link{pspectrum_basic}} is a simplified implementation used mainly for
 #' testing.
@@ -18,7 +23,8 @@
 #' @author A.J. Barbour adapted original by R.L. Parker
 #' @seealso \code{\link{psdcore}}, \code{\link{pilot_spec}}, \code{\link{riedsid2}}, \code{\link{prewhiten}}
 #' 
-#' @param x vector; series to find PSD estimates for
+#' @param x vector; series to find PSD estimates for; if this is a multicolumn object, a cross spectrum will
+#' be calculated.
 #' @param x.frqsamp scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.
 #' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation; if \code{NULL} then the
 #' default in \code{\link{pilot_spec}} is used.
