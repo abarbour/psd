@@ -53,13 +53,18 @@ pspectrum.ts <- function(x, ...){
 }
 
 #' @rdname pspectrum
+#' @aliases pspectrum.mts
+#' @export
+pspectrum.mts <- function(x, ...){
+  pspectrum.ts(x, ...)
+}
+
+#' @rdname pspectrum
 #' @aliases pspectrum.matrix
 #' @export
 pspectrum.matrix <- function(x, ...){
-  frq <- stats::frequency(x)
-  pspectrum(stats::ts(x, frequency=frq), ...)
+  pspectrum.default(x, ...)
 }
-
 
 #' @rdname pspectrum
 #' @aliases pspectrum.spec
@@ -90,9 +95,8 @@ pspectrum.default <- function(x,
                               verbose=TRUE, no.history=FALSE, 
                               plot=FALSE, ...){
   
-  stopifnot(NROW(x)>1)
+  stopifnot(NROW(x)>2)
   
-
   # plotting and iterations
   if (is.null(niter)) stopifnot(niter>=0)
   plotpsd_ <- FALSE
