@@ -64,11 +64,17 @@ psdcore.ts <- function(X.d, ...){
 }
 
 #' @rdname psdcore
+#' @aliases psdcore.mts
+#' @export
+psdcore.mts <- function(X.d, ...){
+  psdcore.ts(x, ...)
+}
+
+#' @rdname psdcore
 #' @aliases psdcore.matrix
 #' @export
 psdcore.matrix <- function(X.d, ...){
-  frq <- stats::frequency(X.d)
-  psdcore(stats::ts(X.d, frequency=frq), ...)
+  psdcore.default(X.d, ...)
 }
 
 #' @rdname psdcore

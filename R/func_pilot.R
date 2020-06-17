@@ -51,9 +51,10 @@
 #' @param remove.AR  scalar; the max AR model to be removed from the data.
 #' @param plot  logical; should a plot be created?
 #' @param verbose  logical; should messages be given?
-#' @param fast logical; use fast method?
+#' @param fast logical; use fast method in \code{\link{psdcore}}?
 #' @param ...  additional parameters passed to \code{\link{psdcore}}
-#' @return An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.
+#' @return Invisibly, an object with class \code{'spec'}, and 
+#' \code{"pilot_psd"} in the working environment.
 #'
 #' @example inst/Examples/rdex_pilotspec.R
 pilot_spec <- function(x, ...) UseMethod("pilot_spec")
@@ -62,18 +63,23 @@ pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 #' @export
 pilot_spec.ts <- function(x, ...){
   stopifnot(is.ts(x))
-  pilot_spec.default(x, ...)  
+  frq <- stats::frequency(x)
+  pilot_spec.default(x, x.frequency=frq, ...)  
 }
 
+#' @rdname pilot_spec
+#' @aliases pilot_spec.mts
+#' @export
+pilot_spec.mts <- function(x, ...){
+  pilot_spec.ts(x, ...)
+}
 
 #' @rdname pilot_spec
 #' @aliases pilot_spec.matrix
 #' @export
 pilot_spec.matrix <- function(x, ...){
-  frq <- stats::frequency(x)
-  pilot_spec(stats::ts(x, frequency=frq), ...)
+  pilot_spec.default(x, ...)
 }
-
 
 #' @rdname pilot_spec
 #' @export

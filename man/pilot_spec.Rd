@@ -5,6 +5,7 @@
 \alias{pilot_spectrum}
 \alias{spec.pilot}
 \alias{pilot_spec.ts}
+\alias{pilot_spec.mts}
 \alias{pilot_spec.matrix}
 \alias{pilot_spec.default}
 \title{Calculate initial power spectral density estimates}
@@ -12,6 +13,8 @@
 pilot_spec(x, ...)
 
 \method{pilot_spec}{ts}(x, ...)
+
+\method{pilot_spec}{mts}(x, ...)
 
 \method{pilot_spec}{matrix}(x, ...)
 
@@ -41,10 +44,11 @@ pilot_spec(x, ...)
 
 \item{verbose}{logical; should messages be given?}
 
-\item{fast}{logical; use fast method?}
+\item{fast}{logical; use fast method in \code{\link{psdcore}}?}
 }
 \value{
-An object with class 'spec', invisibly, and \code{"pilot_psd"} in the working environment.
+Invisibly, an object with class \code{'spec'}, and 
+\code{"pilot_psd"} in the working environment.
 }
 \description{
 This PSD is used as the starting point -- the pilot spectrum -- for
