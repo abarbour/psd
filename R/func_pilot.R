@@ -64,22 +64,22 @@ pilot_spec <- function(x, ...) UseMethod("pilot_spec")
 pilot_spec.ts <- function(x, ...){
   stopifnot(is.ts(x))
   frq <- stats::frequency(x)
-  pilot_spec.default(x, x.frequency=frq, ...)  
-}
-
-#' @rdname pilot_spec
-#' @aliases pilot_spec.mts
-#' @export
-pilot_spec.mts <- function(x, ...){
-  frq <- stats::frequency(x)
-  pilot_spec.default(x, x.frequency=frq, ...)  
+  args <- list(...)
+  args[['x']] <- x
+  args[['x.frequency']] <- frq
+  do.call('pilot_spec.default', args)
 }
 
 #' @rdname pilot_spec
 #' @aliases pilot_spec.matrix
 #' @export
-pilot_spec.matrix <- function(x, ...){
-  pilot_spec.default(x, ...)
+pilot_spec.matrix <- function(x, x.frequency, ...){
+  frq <- if (missing(x.frequency)){
+    stats::frequency(x)
+  } else {
+    x.frequency
+  }
+  pilot_spec(stats::ts(x, frequency=frq), ...)
 }
 
 #' @rdname pilot_spec

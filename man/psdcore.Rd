@@ -3,7 +3,6 @@
 \name{psdcore}
 \alias{psdcore}
 \alias{psdcore.ts}
-\alias{psdcore.mts}
 \alias{psdcore.matrix}
 \alias{psdcore.default}
 \title{Multitaper power spectral density estimates of a series}
@@ -12,9 +11,7 @@ psdcore(X.d, ...)
 
 \method{psdcore}{ts}(X.d, ...)
 
-\method{psdcore}{mts}(X.d, ...)
-
-\method{psdcore}{matrix}(X.d, ...)
+\method{psdcore}{matrix}(X.d, X.frq, ...)
 
 \method{psdcore}{default}(
   X.d,

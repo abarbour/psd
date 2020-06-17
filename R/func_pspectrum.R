@@ -48,23 +48,24 @@ pspectrum <- function(x, ...) UseMethod("pspectrum")
 #' @aliases pspectrum.ts
 #' @export
 pspectrum.ts <- function(x, ...){
+  stopifnot(is.ts(x))
   frq <- stats::frequency(x)
-  pspectrum.default(x, x.frqsamp=frq, ...)  
-}
-
-#' @rdname pspectrum
-#' @aliases pspectrum.mts
-#' @export
-pspectrum.mts <- function(x, ...){
-  frq <- stats::frequency(x)
-  pspectrum.default(x, x.frqsamp=frq, ...)  
+  args <- list(...)
+  args[['x']] <- x
+  args[['x.frqsamp']] <- frq
+  do.call('pspectrum.default', args)
 }
 
 #' @rdname pspectrum
 #' @aliases pspectrum.matrix
 #' @export
-pspectrum.matrix <- function(x, ...){
-  pspectrum.default(x, ...)
+pspectrum.matrix <- function(x, x.frqsamp, ...){
+  frq <- if (missing(x.frqsamp)){
+    stats::frequency(x)
+  } else {
+    x.frqsamp
+  }
+  pspectrum(stats::ts(x, frequency=frq), ...)
 }
 
 #' @rdname pspectrum

@@ -5,7 +5,6 @@
 \alias{pilot_spectrum}
 \alias{spec.pilot}
 \alias{pilot_spec.ts}
-\alias{pilot_spec.mts}
 \alias{pilot_spec.matrix}
 \alias{pilot_spec.default}
 \title{Calculate initial power spectral density estimates}
@@ -14,9 +13,7 @@ pilot_spec(x, ...)
 
 \method{pilot_spec}{ts}(x, ...)
 
-\method{pilot_spec}{mts}(x, ...)
-
-\method{pilot_spec}{matrix}(x, ...)
+\method{pilot_spec}{matrix}(x, x.frequency, ...)
 
 \method{pilot_spec}{default}(
   x,

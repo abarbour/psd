@@ -3,7 +3,6 @@
 \name{pspectrum}
 \alias{pspectrum}
 \alias{pspectrum.ts}
-\alias{pspectrum.mts}
 \alias{pspectrum.matrix}
 \alias{pspectrum.spec}
 \alias{pspectrum.default}
@@ -15,9 +14,7 @@ pspectrum(x, ...)
 
 \method{pspectrum}{ts}(x, ...)
 
-\method{pspectrum}{mts}(x, ...)
-
-\method{pspectrum}{matrix}(x, ...)
+\method{pspectrum}{matrix}(x, x.frqsamp, ...)
 
 \method{pspectrum}{spec}(x, ...)
 

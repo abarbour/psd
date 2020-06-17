@@ -186,6 +186,37 @@ test_that("pilot_spec results are accurate",{
   
 })
 
+
+test_that("sampling rates for ts objects are honored",{
+  set.seed(1234)
+  x <- rnorm(100)
+  f <- 1.2313
+  xt <- stats::ts(x, frequency = f)
+  
+  p <- psdcore(xt)
+  expect_equal(p[['nyquist.frequency']], f/2)
+  expect_equal(f/2, max(p[['freq']]))
+  
+  pil <- pilot_spec(xt)
+  expect_equal(pil[['nyquist.frequency']], f/2)
+  expect_equal(f/2, max(pil[['freq']]))
+  
+  ps <- pspectrum(xt)
+  expect_equal(ps[['nyquist.frequency']], f/2)
+  expect_equal(f/2, max(ps[['freq']]))
+  
+  # make sure we cant trick ourselves into a new sampling rate
+  expect_equal(p, psdcore(xt, X.frq = 99))
+  expect_equal(pil, pilot_spec(xt, x.frequency = 99))
+  expect_equal(ps, pspectrum(xt, x.frqsamp = 99))
+  
+  XT <- cbind(xt, xt)
+  expect_equal(psdcore(XT), psdcore(XT, X.frq = 99))
+  expect_equal(pilot_spec(XT), pilot_spec(XT, x.frequency = 99))
+  expect_equal(pspectrum(XT), pspectrum(XT, x.frqsamp = 99))
+})
+
+
 test_that("check fast version",{
   set.seed(1234)
   x <- rnorm(100)
@@ -204,7 +235,6 @@ test_that("check fast version",{
   expect_equal(pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = FALSE),
                pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
 })
-
 
 test_that("check multivariate autospectra for psdcore",{
 

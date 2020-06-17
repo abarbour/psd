@@ -76,9 +76,9 @@ test_that("check forced taper length", {
   expect_warning(resample_fft_rcpp2(fftz[,1], 3, verbose = FALSE))
   expect_warning(resample_mvfft(fftz, 3, verbose = FALSE))
   
-  expect_equal(unique(resample_fft_rcpp(fftz, 3, verbose = FALSE)$k.capped), 3)
-  expect_equal(unique(resample_fft_rcpp2(fftz, 3, verbose = FALSE)$k.capped), 3)
-  expect_equal(unique(resample_mvfft(fftz, 3, verbose = FALSE)$k.capped), 3)
+  expect_warning(expect_equal(unique(resample_fft_rcpp(fftz, 3, verbose = FALSE)$k.capped), 3))
+  expect_warning(expect_equal(unique(resample_fft_rcpp2(fftz, 3, verbose = FALSE)$k.capped), 3))
+  expect_warning(expect_equal(unique(resample_mvfft(fftz, 3, verbose = FALSE)$k.capped), 3))
   
 })
 
@@ -99,7 +99,7 @@ test_that("test odd length fft", {
   
 })
 
-test_that("short series gives error", {
+test_that("short series gives error and warning", {
   
   n. <- 2
   set.seed(1234)
@@ -109,9 +109,9 @@ test_that("short series gives error", {
   psd <- Re(fftz * Conj(fftz))
   taps <- ceiling(runif(n./nc,10,300))
   
-  expect_error(resample_fft_rcpp(fftz[,1], taps, verbose = FALSE))
-  expect_error(resample_fft_rcpp2(fftz[,1], taps, verbose = FALSE))
-  expect_error(resample_mvfft(fftz, taps, verbose = FALSE))
+  expect_warning(expect_error(resample_fft_rcpp(fftz[,1], taps, verbose = FALSE)))
+  expect_warning(expect_error(resample_fft_rcpp2(fftz[,1], taps, verbose = FALSE)))
+  expect_warning(expect_error(resample_mvfft(fftz, taps, verbose = FALSE)))
   
 })
 

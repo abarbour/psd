@@ -59,22 +59,25 @@ psdcore <- function(X.d, ...) UseMethod("psdcore")
 #' @aliases psdcore.ts
 #' @export
 psdcore.ts <- function(X.d, ...){
+  stopifnot(is.ts(X.d))
   frq <- stats::frequency(X.d)
-  psdcore.default(X.d, ...)
-}
-
-#' @rdname psdcore
-#' @aliases psdcore.mts
-#' @export
-psdcore.mts <- function(X.d, ...){
-  psdcore.ts(x, ...)
+  args <- list(...)
+  args[['X.d']] <- X.d
+  args[['X.frq']] <- frq
+  do.call('psdcore.default', args)
 }
 
 #' @rdname psdcore
 #' @aliases psdcore.matrix
 #' @export
-psdcore.matrix <- function(X.d, ...){
-  psdcore.default(X.d, ...)
+psdcore.matrix <- function(X.d, X.frq, ...){
+  frq <- if (missing(X.frq)){
+    stats::frequency(X.d)
+  } else {
+    X.frq
+  }
+  frq <- stats::frequency(X.d)
+  psdcore(stats::ts(X.d, frequency=frq), ...)
 }
 
 #' @rdname psdcore
