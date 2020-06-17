@@ -1,6 +1,6 @@
 \documentclass[10pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
-%% maxwidth is the original width if it is less than linewidth
-%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
 \def\maxwidth{ %
   \ifdim\Gin@nat@width>\linewidth
@@ -21,6 +21,7 @@
 \newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
 \newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
 \newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
 
 \usepackage{framed}
 \makeatletter
@@ -304,7 +305,7 @@ $f(x) = \alpha x + \beta + \epsilon$ using ordinary linear least squares,
 setting \Rcmd{AR.max} higher than zero to fit an auto-regressive (AR) model to the 
 data\footnote{Note that the linear trend fitting is removed from the series prior to AR estimation,
 and the residuals from this fit are also returned.}.  
-This fit uses the Akaike Infomation Criterion (AIC) to select
+This fit uses the Akaike Information Criterion (AIC) to select
 the highest order appropriate for the data.
 
 \input{figure/AR_prewhiten.tex}
@@ -454,7 +455,7 @@ of about $~16$ decibels for a 1 km sampling interval.
 
 In Figure \ref{fig:arspecvar} we have used \Rcmd{pilot\_spec} to 
 model the spectral response of the AR component of the series (solid
-black line). The non-AR component (labelled "AR-innovations")
+black line). The non-AR component (labeled "AR-innovations")
 contributes approximately $\pm 3$ dB to the original spectrum.
 Overlain on these series is the adaptive spectrum found previously.
 

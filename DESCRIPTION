@@ -2,12 +2,9 @@ Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density Estimation
 Version: 2.0.0
-Date: 2020-06-16
-Author: Andrew J. Barbour [aut, cre] (<https://orcid.org/0000-0002-6890-2452>),
-    Jonathan Kennel [aut],
-    Robert L. Parker [aut]
+Date: 2020-06-17
 Authors@R:
-    c(person(given = "Andrew",
+    c(person(given = c("Andrew","J"),
              family = "Barbour",
              role = c("aut", "cre"),
              email = "andy.barbour@gmail.com",
@@ -15,7 +12,7 @@ Authors@R:
       person(given = "Jonathan",
              family = "Kennel",
              role = "aut"),
-      person(given = "Robert",
+      person(given = c("Robert","L"),
              family = "Parker",
              role = "aut"))
 Description: Produces power spectral density estimates through iterative
@@ -39,12 +36,14 @@ Suggests:
     bspec,
     fftw (>= 1.0.3),
     ggplot2 (>= 0.9),
-    knitr,
     multitaper,
     plyr,
     RSEIS,
     rbenchmark,
     reshape2,
+    knitr,
+    rmarkdown,
+    formatR,
     testthat (>= 2.1.0)
 Encoding: UTF-8
 VignetteBuilder: knitr
