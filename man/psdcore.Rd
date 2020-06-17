@@ -40,7 +40,7 @@ psdcore(X.d, ...)
 
 \item{na.action}{function to deal with \code{NA} values}
 
-\item{plot}{logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
+\item{plot}{logical; should the estimates be shown compared to the \code{\link{spectrum}}-based estimates?
 Note that this will add some computation time, since the cosine-tapered periodogram is calculated inside
 \code{\link{pgram_compare}}.}
 

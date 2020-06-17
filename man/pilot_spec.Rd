@@ -62,7 +62,7 @@ criteria to speak of).
 The taper series of the returned spectrum is constrained using
 \code{as.tapers(..., minspan=TRUE)}.
 
-The default behaviour (\code{remove.AR <= 0}) is to remove the standard linear 
+The default behavior (\code{remove.AR <= 0}) is to remove the standard linear 
 model \eqn{[f(x) = \alpha x + \beta]} from the data; however,
 the user can model the effect of an autoregressive process by specifying
 \code{remove.AR}.
@@ -83,7 +83,7 @@ If the AR order is much larger than this, it's unclear how \code{\link{prewhiten
 will perform and whether the AR model is appropriate.
 
 \emph{Note that this function does not produce a parametric spectrum estimation; rather,
-it will return the amplitude response of the best-fitting AR model as \code{\link[stats]{spec.ar}}
+it will return the amplitude response of the best-fitting AR model as \code{\link{spec.ar}}
 would. \strong{Interpret these results with caution, as an AR response spectrum
 can be misleading.}}
 }
@@ -109,7 +109,7 @@ plot(pilot_spec(xc, remove.AR=10), log="dB", add=TRUE, col="red")
 }#REX
 }
 \seealso{
-\code{\link{psdcore}}, \code{\link{prewhiten}}, \code{\link[stats]{spec.ar}}
+\code{\link{psdcore}}, \code{\link{prewhiten}}, \code{\link{spec.ar}}
 }
 \author{
 A.J. Barbour

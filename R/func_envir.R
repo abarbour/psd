@@ -45,7 +45,7 @@
 #' a fresh environment is desired: typically only if, for example, \code{\link{psdcore}} is 
 #' used rather than \code{\link{pspectrum}}.
 #'
-#' @section Assigning and Retieving:
+#' @section Assigning and Retrieving:
 #' \code{psd_envAssign} and \code{psd_envGet} perform the assignments and retrieval
 #' of objects in the environment.  A convenience function, \code{psd_envAssignGet},
 #' is included so that both assignment and retrieval may be performed at the same

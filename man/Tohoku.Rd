@@ -36,14 +36,15 @@ calculation.}
 }
 }
 \source{
-PBO High Frequency archive:
+High frequency strain data archive:
 
 \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
 }
 \description{
 The \eqn{M_w 9} Tohoku earthquake happened on March 11, 2011.  The seismic
-waves were recorded at stations across the globe, including by strainmeters
-in the Plate Boundary Observatory (PBO) borehole strainmeters.
+waves were recorded at stations across the globe, including by borehole strainmeters
+in the Network of the Americas (NOTA), which was previously
+known as the Plate Boundary Observatory (PBO) network.
 }
 \details{
 These data are for station B084, which is located approximately 8500 km away from

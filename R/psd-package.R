@@ -134,8 +134,9 @@ NULL
 #' Observations of teleseismic strains from the 2011 Tohoku earthquake.
 #'
 #' The \eqn{M_w 9} Tohoku earthquake happened on March 11, 2011.  The seismic
-#' waves were recorded at stations across the globe, including by strainmeters
-#' in the Plate Boundary Observatory (PBO) borehole strainmeters.
+#' waves were recorded at stations across the globe, including by borehole strainmeters
+#' in the Network of the Americas (NOTA), which was previously
+#' known as the Plate Boundary Observatory (PBO) network.
 #'
 #' These data are for station B084, which is located approximately 8500 km away from
 #' the epicenter. Because this distance is large, the seismic waves didn't arrive
@@ -188,7 +189,7 @@ NULL
 #'
 #' @references USGS summary page: 
 #' @references \url{https://earthquake.usgs.gov/earthquakes/eventpage/official20110311054624120_30/executive}
-#' @source PBO High Frequency archive: 
+#' @source High frequency strain data archive: 
 #' @source \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
 #'
 #' @examples

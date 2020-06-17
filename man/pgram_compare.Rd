@@ -39,7 +39,7 @@ A list with the cosine-tapered estimates and the adaptive estimates, invisibly.
 }
 \description{
 Plot the results of \code{\link{psdcore}} against the results of 
-\code{\link[stats]{spec.pgram}}
+\code{\link{spec.pgram}}
 }
 \examples{
 set.seed(1234)

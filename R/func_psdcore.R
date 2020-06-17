@@ -35,7 +35,7 @@
 #' @param ntaper  scalar, vector, or \code{\link{tapers}}; the number of sine tapers to apply at each frequency
 #' @param preproc  logical; should \code{X.d} have a linear trend removed?
 #' @param na.action  function to deal with \code{NA} values
-#' @param plot  logical; should the estimates be shown compared to the \code{\link[stats]{spectrum}}-based estimates?
+#' @param plot  logical; should the estimates be shown compared to the \code{\link{spectrum}}-based estimates?
 #' Note that this will add some computation time, since the cosine-tapered periodogram is calculated inside
 #' \code{\link{pgram_compare}}.
 #' @param refresh  logical; ensure a free environment prior to execution
@@ -356,7 +356,7 @@ psdcore.default <- function(X.d,
 #' 
 #' @description
 #' Plot the results of \code{\link{psdcore}} against the results of 
-#' \code{\link[stats]{spec.pgram}}
+#' \code{\link{spec.pgram}}
 #' 
 #' @name pgram_compare
 #' @export

@@ -66,7 +66,7 @@ given PSD, using a modified Riedel-Sidorenko MSE recipe (RS-RLP).
 \details{
 The optimization is as follows. First, weighted derivatives of the 
 input PSD are computed.
-Using those derivates the optimal number of tapers is found through the 
+Using those derivatives the optimal number of tapers is found through the 
 RS-RLP formulation.
 Constraints are then placed on the practicable number of tapers.
 
