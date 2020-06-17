@@ -56,7 +56,8 @@ pspectrum.ts <- function(x, ...){
 #' @aliases pspectrum.mts
 #' @export
 pspectrum.mts <- function(x, ...){
-  pspectrum.ts(x, ...)
+  frq <- stats::frequency(x)
+  pspectrum.default(x, x.frqsamp=frq, ...)  
 }
 
 #' @rdname pspectrum

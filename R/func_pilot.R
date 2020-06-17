@@ -71,7 +71,8 @@ pilot_spec.ts <- function(x, ...){
 #' @aliases pilot_spec.mts
 #' @export
 pilot_spec.mts <- function(x, ...){
-  pilot_spec.ts(x, ...)
+  frq <- stats::frequency(x)
+  pilot_spec.default(x, x.frequency=frq, ...)  
 }
 
 #' @rdname pilot_spec
@@ -99,6 +100,8 @@ pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, p
   if (REMAR) remove.AR <- max(1, min(100, abs(remove.AR)))
   
   xprew <- prewhiten(x, x.fsamp=x.frequency, AR.max=remove.AR, detrend=TRUE, impute=TRUE, plot=FALSE, verbose=verbose)
+  # (result is ts)
+
   ## Remove and AR model
   if (REMAR){
     # AR fit
