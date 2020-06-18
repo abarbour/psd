@@ -1,11 +1,13 @@
 ## Test environments
-* local OS X install, R 3.5.3
-* Debian Linux (on r-hub)
-* ubuntu 14.04 (on travis-ci), R 3.5.3 (and devel)
-* win-builder (on appveyor) (devel and release)
+* local R installation, R 4.0.1
+* Debian Linux (on rhub)
+* remote R installation (on travis-ci), R devel (2020-06-17 r78704)
+* ubuntu 16.04 (on travis-ci), R 4.0.1 (and devel)
+* win-builder (devel)
 
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
-* This is an update to include new features and address all previous checks (https://cran.r-project.org/web/checks/check_results_psd.html) as requested in an email from K. Hornik on Mar 8 2019
+* This is a major version bump to expand functionality.
+* Reverse-dependency checks reveal no disruption to linked packages

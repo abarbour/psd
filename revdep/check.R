@@ -1,10 +1,12 @@
-if (!require(revdepcheck)) source("https://install-github.me/r-lib/revdepcheck") #install
-library(revdepcheck)
-res <- revdepcheck::revdep_check(num_workers = 4)
-revdepcheck::revdep_check()
+library(devtools)
+library(remotes)
 
-library(withr)
-withr::with_output_sink(
-  "revdep/cran.md",
-  revdepcheck::revdep_report_cran()
-)
+if (!require(revdepcheck)){
+    install_github('r-lib/revdepcheck')
+    library(revdepcheck)
+}
+
+pkg <- ".."
+revdepcheck::revdep_check(pkg, num_workers = 3)
+revdep_report(pkg)
+revdep_report_summary(pkg)
