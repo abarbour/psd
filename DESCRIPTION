@@ -4,7 +4,7 @@ Title: Adaptive, Sine-Multitaper Power Spectral Density Estimation
 Version: 2.0.0
 Date: 2020-06-17
 Authors@R:
-    c(person(given = c("Andrew","J"),
+    c(person(given = c("Andrew","J."),
              family = "Barbour",
              role = c("aut", "cre"),
              email = "andy.barbour@gmail.com",
@@ -12,7 +12,7 @@ Authors@R:
       person(given = "Jonathan",
              family = "Kennel",
              role = "aut"),
-      person(given = c("Robert","L"),
+      person(given = c("Robert","L."),
              family = "Parker",
              role = "aut"))
 Description: Produces power spectral density estimates through iterative
