@@ -115,6 +115,7 @@ tapers <- as.tapers
 #' @param ylim optional limits for y-axis
 #' @param hv.lines logical; should horizontal (log2) and vertical reference lines be plotted?
 #' @param log.y logical; should the vertical scale be logarithmic?
+#' @param xlab,ylab character; labels for plot axes
 #' @param ... optional arguments
 #' @return \code{plot} returns a list with names: \code{line.colors} (hex values)
 #' @examples
@@ -192,7 +193,12 @@ points.tapers <- function(x, pch="_", cex=1, ...){
 #' @rdname tapers-methods
 #' @aliases plot.tapers
 #' @export
-plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, hv.lines=FALSE, log.y=FALSE, ...){
+plot.tapers <- function(x, xi=NULL, 
+                        color.pal=c("Blues","Spectral"), 
+                        ylim=NULL, 
+                        hv.lines=FALSE, 
+                        log.y=FALSE, 
+                        xlab="taper index", ylab="number of tapers", ...){
   stopifnot(is.tapers(x))
   nt <- length(x)
   if (is.null(xi)){
@@ -210,8 +216,8 @@ plot.tapers <- function(x, xi=NULL, color.pal=c("Blues","Spectral"), ylim=NULL, 
   if (is.null(ylim)) ylim <- c(1, 1.1*mx)
   
   graphics::plot.default(xi, x,
-                         ylab = "number of tapers",
-                         xlab = "taper index",
+                         ylab = ylab,
+                         xlab = xlab,
                          ylim = ylim, 
                          yaxs = "i", xaxs = "i",
                          lwd = 1.8,

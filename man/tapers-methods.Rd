@@ -34,6 +34,8 @@ data.frame.tapers(x, ...)
   ylim = NULL,
   hv.lines = FALSE,
   log.y = FALSE,
+  xlab = "taper index",
+  ylab = "number of tapers",
   ...
 )
 }
@@ -61,6 +63,8 @@ data.frame.tapers(x, ...)
 \item{hv.lines}{logical; should horizontal (log2) and vertical reference lines be plotted?}
 
 \item{log.y}{logical; should the vertical scale be logarithmic?}
+
+\item{xlab, ylab}{character; labels for plot axes}
 }
 \value{
 \code{plot} returns a list with names: \code{line.colors} (hex values)
