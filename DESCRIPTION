@@ -2,7 +2,7 @@ Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density Estimation
 Version: 2.0.0
-Date: 2020-06-17
+Date: 2020-06-18
 Authors@R:
     c(person(given = c("Andrew","J."),
              family = "Barbour",
@@ -11,7 +11,8 @@ Authors@R:
              comment = c(ORCID = "0000-0002-6890-2452")),
       person(given = "Jonathan",
              family = "Kennel",
-             role = "aut"),
+             role = "aut",
+             comment = c(ORCID = "0000-0003-4474-6886")),
       person(given = c("Robert","L."),
              family = "Parker",
              role = "aut"))
