@@ -18,18 +18,9 @@ pspectrum(x, ...)
 
 \method{pspectrum}{spec}(x, ...)
 
-\method{pspectrum}{default}(
-  x,
-  x.frqsamp = 1,
-  ntap.init = NULL,
-  niter = 3,
-  AR = FALSE,
-  Nyquist.normalize = TRUE,
-  verbose = TRUE,
-  no.history = FALSE,
-  plot = FALSE,
-  ...
-)
+\method{pspectrum}{default}(x, x.frqsamp = 1, ntap.init = NULL,
+  niter = 3, AR = FALSE, Nyquist.normalize = TRUE, verbose = TRUE,
+  no.history = FALSE, plot = FALSE, ...)
 
 pspectrum_basic(x, ntap.init = 7, niter = 5, verbose = TRUE, ...)
 

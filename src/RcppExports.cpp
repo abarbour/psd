@@ -83,14 +83,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // riedsid_rcpp
-arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper);
-RcppExport SEXP _psd_riedsid_rcpp(SEXP PSDSEXP, SEXP ntaperSEXP) {
+arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper, int riedsid_column);
+RcppExport SEXP _psd_riedsid_rcpp(SEXP PSDSEXP, SEXP ntaperSEXP, SEXP riedsid_columnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type PSD(PSDSEXP);
     Rcpp::traits::input_parameter< const arma::ivec& >::type ntaper(ntaperSEXP);
-    rcpp_result_gen = Rcpp::wrap(riedsid_rcpp(PSD, ntaper));
+    Rcpp::traits::input_parameter< int >::type riedsid_column(riedsid_columnSEXP);
+    rcpp_result_gen = Rcpp::wrap(riedsid_rcpp(PSD, ntaper, riedsid_column));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -150,7 +151,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_psd_resample_fft_rcpp", (DL_FUNC) &_psd_resample_fft_rcpp, 5},
     {"_psd_parabolic_weights_rcpp2", (DL_FUNC) &_psd_parabolic_weights_rcpp2, 1},
     {"_psd_resample_fft_rcpp2", (DL_FUNC) &_psd_resample_fft_rcpp2, 5},
-    {"_psd_riedsid_rcpp", (DL_FUNC) &_psd_riedsid_rcpp, 2},
+    {"_psd_riedsid_rcpp", (DL_FUNC) &_psd_riedsid_rcpp, 3},
     {"_psd_parabolic_weights_field", (DL_FUNC) &_psd_parabolic_weights_field, 1},
     {"_psd_resample_mvfft", (DL_FUNC) &_psd_resample_mvfft, 5},
     {"_psd_det_vector", (DL_FUNC) &_psd_det_vector, 1},

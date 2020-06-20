@@ -4,7 +4,7 @@
 \alias{riedsid_rcpp}
 \title{replaces time consuming portion of riedsid2}
 \usage{
-riedsid_rcpp(PSD, ntaper)
+riedsid_rcpp(PSD, ntaper, riedsid_column = 0L)
 }
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}

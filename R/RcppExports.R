@@ -127,8 +127,8 @@ resample_fft_rcpp2 <- function(fftz, tapers, verbose = TRUE, dbl = TRUE, tapcap 
 #' @return kopt vector
 #' @export
 #' 
-riedsid_rcpp <- function(PSD, ntaper) {
-    .Call('_psd_riedsid_rcpp', PACKAGE = 'psd', PSD, ntaper)
+riedsid_rcpp <- function(PSD, ntaper, riedsid_column = 0L) {
+    .Call('_psd_riedsid_rcpp', PACKAGE = 'psd', PSD, ntaper, riedsid_column)
 }
 
 #' @title parabolic_weights_field

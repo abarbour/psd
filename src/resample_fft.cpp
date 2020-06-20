@@ -491,7 +491,9 @@ arma::mat pad_data(const arma::mat& psd,
 //' @export
 //' 
 // [[Rcpp::export]]
-arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
+arma::vec riedsid_rcpp(const arma::mat& PSD,
+                       const arma::ivec& ntaper,
+                       int riedsid_column = 0){
   
   double eps = 1e-78;
   double sc = 473.3736;
@@ -523,6 +525,17 @@ arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
   double dy, d2y;
   arma::mat yders(nf, nc);
   
+// determine columns to use for riedsid
+  int i_start, i_end;
+  if (riedsid_column <= 0) {
+    i_start = 0;
+    i_end = nc;
+  } else {
+    i_start = riedsid_column - 1;
+    i_end = riedsid_column;
+  }
+  
+  
   for (int j = 0; j < nf; j++) {
     
     j1 = j - nspan[j] + nadd - 1;
@@ -536,7 +549,7 @@ arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
     uzero = (L2 - 1) / CC;
     
     
-    for (int i = 0; i < nc; i++) {
+    for (int i = i_start; i < i_end; i++) {
       
       // first deriv
       dy = as_scalar(u.t() * y(arma::span(j1, j2), i) * CC / (L*(L2 - 1)));
@@ -548,7 +561,13 @@ arma::vec riedsid_rcpp(const arma::mat& PSD, const arma::ivec& ntaper){
       yders(j, i) = fabs(dy*dy + d2y + eps);
     }
     
-    out(j) = arma::max(yders.row(j));
+    if (riedsid_column == 0) {
+      out(j) = arma::max(yders.row(j));
+    } else if (riedsid_column < 0) {
+      out(j) = arma::min(yders.row(j));
+    } else {
+      out(j) = yders(j, i_start);
+    }
     
   }
   

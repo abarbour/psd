@@ -1,7 +1,7 @@
 #' coherence
 #'
 #' Calculate coherence from the spectra and cross-spectra. This method is the same as
-#' used in \Rcmd{spec.pgram}.
+#' used in \code{spec.pgram}.
 #'
 #' @param pgram \code{numeric array} must be multivariate
 #'
@@ -43,7 +43,7 @@ coherence <- function(pgram) {
 #' phase
 #'
 #' Calculate phase from the spectra and cross-spectra. This method is the same as
-#' used in \Rcmd{spec.pgram}.
+#' used in \code{spec.pgram}.
 #'
 #' @param pgram \code{numeric array} must be multivariate
 #'

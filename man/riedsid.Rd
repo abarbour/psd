@@ -13,29 +13,16 @@ riedsid(PSD, ...)
 
 \method{riedsid}{spec}(PSD, ...)
 
-\method{riedsid}{default}(
-  PSD,
-  ntaper = 1L,
-  tapseq = NULL,
-  Deriv.method = c("local_qls", "spg"),
-  constrained = TRUE,
-  c.method = NULL,
-  verbose = TRUE,
-  ...
-)
+\method{riedsid}{default}(PSD, ntaper = 1L, tapseq = NULL,
+  Deriv.method = c("local_qls", "spg"), constrained = TRUE,
+  c.method = NULL, verbose = TRUE, ...)
 
 riedsid2(PSD, ...)
 
 \method{riedsid2}{spec}(PSD, ...)
 
-\method{riedsid2}{default}(
-  PSD,
-  ntaper = 1L,
-  constrained = TRUE,
-  verbose = TRUE,
-  fast = FALSE,
-  ...
-)
+\method{riedsid2}{default}(PSD, ntaper = 1L, constrained = TRUE,
+  verbose = TRUE, fast = FALSE, riedsid_column = 0, ...)
 }
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}
@@ -55,6 +42,8 @@ riedsid2(PSD, ...)
 \item{verbose}{logical; should messages be printed?}
 
 \item{fast}{logical; use faster method?}
+
+\item{riedsid_column}{scalar integer; which column to use in multivariate optimization. If the value is 0 the maximum number of tapers for all columns is chosen. If the value is < 0 the minimum number of tapers for all columns is chosen. If the value is 1, 2, 3, etc. the number of tapers is based on the column selected.}
 }
 \value{
 Object with class \code{'tapers'}
