@@ -1,43 +1,54 @@
 #' coherence
 #'
-#' calculate coherency from the spectra and cross-spectra
+#' Calculate coherence from the spectra and cross-spectra. This method is the same as
+#' used in \Rcmd{spec.pgram}.
 #'
 #' @param pgram \code{numeric array} must be multivariate
 #'
 #'
-#' @return list of coherency
+#' @return list of coherency. For multivariate time series, a matrix containing the squared coherency between different series. Column i + (j - 1) * (j - 2)/2 of coh contains the squared coherency between columns i and j of x, where i < j.
 #'
 #' @export
 #'
 #'
 coherence <- function(pgram) {
-
-    dims = dim(pgram)
-    n_ser <- dims[2]
-    n_r <- dims[1]
-    
-    if (n_ser == 1) {
-      warning('Cannot calculate coherency for a single periodogram')
-      return(NA)
-    }
-    
-    coh <- matrix(NA_real_, nrow = n_r, ncol = (n_ser - 1))
-    
-    for (i in 2L:(n_ser)) {
-      coh[, i-1]   <- Re(Mod(pgram[, 1, i])^2 / (pgram[, 1, 1] * pgram[, i, i]))
-    }
-    
-    return(coh)
+  
+  dims = dim(pgram)
+  n_ser <- dims[2]
+  n_r <- dims[1]
+  
+  if (n_ser == 1) {
+    warning('Cannot calculate coherency for a single periodogram')
+    return(NA)
   }
+  
+  coh <- matrix(NA_real_, nrow = n_r, ncol = n_ser * (n_ser - 1L) / 2L)
+  
+  for (i in 1L:(n_ser-1)) {
+    
+    for (j in (i + 1):n_ser) {
+      
+      ind <- i + (j - 1) * (j - 2) / 2
+      
+      coh[, ind]   <- Re(Mod(pgram[, i, j])^2 / 
+                           (pgram[, i, i] * pgram[, j, j]))
+      
+    }
+  }
+  
+  return(coh)
+}
+
 
 #' phase
 #'
-#' calculate phase from the spectra and cross-spectra
+#' Calculate phase from the spectra and cross-spectra. This method is the same as
+#' used in \Rcmd{spec.pgram}.
 #'
 #' @param pgram \code{numeric array} must be multivariate
 #'
 #'
-#' @return list of phase
+#' @return list of phase. For multivariate time series a matrix containing the cross-spectrum phase between different series. The format is the same as coh.
 #'
 #' @export
 #'
@@ -52,12 +63,18 @@ phase <- function(pgram) {
     return(NA)
   }
   
-  phase <- matrix(NA_real_, nrow = n_r, ncol = (n_ser - 1))
   
-  for (i in 2L:(n_ser)) {
+  phase <- matrix(NA_real_, nrow = n_r, ncol = n_ser * (n_ser - 1L) / 2L)
   
-    phase[, i-1] <- Arg(pgram[, 1, i])
- 
+  for (i in 1L:(n_ser-1)) {
+    
+    for (j in (i + 1):n_ser) {
+      
+      ind <- i + (j - 1) * (j - 2) / 2
+      
+      phase[, ind] <- Arg(pgram[, i, j])
+      
+    }
   }
   
   return(phase)
