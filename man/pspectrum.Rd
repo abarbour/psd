@@ -23,6 +23,7 @@ pspectrum(x, ...)
   x.frqsamp = 1,
   ntap.init = NULL,
   niter = 3,
+  output_column = NULL,
   AR = FALSE,
   Nyquist.normalize = TRUE,
   verbose = TRUE,
