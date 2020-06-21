@@ -336,6 +336,7 @@ arma::mat pad_data(const arma::mat& psd,
 //' 
 //' @param PSD vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers
 //' @param ntaper scalar or vector; number of tapers to apply optimization
+//' @param riedsid_column scalar integer; which column to use in multivariate optimization. If the value is 0 the maximum number of tapers for all columns is chosen. If the value is < 0 the minimum number of tapers for all columns is chosen. If the value is 1, 2, 3, etc. the number of tapers is based on the column selected.
 //' 
 //' @return kopt vector
 //' @export

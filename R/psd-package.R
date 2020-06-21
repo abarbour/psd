@@ -236,3 +236,48 @@ NULL
 #' try(dat <- FUN(molten=FALSE)) # may fail without library-access to BSSA
 #' try(all.equal(dat[,1:4], hfsnm[,1:4]))
 NULL
+
+
+
+#' A single line of Project MAGNET horizontal field intensity
+#' 
+#' The Project MAGNET mission 
+#' provided a wealth of airborne-magnetometer data
+#' spanning the globe (Coleman, 1992).  
+#' This dataset represents a single track of horizontal field
+#' intensities (a very small subset of the full collection!).
+#'
+#' \subsection{Raw and Clean Sets}{
+#' There are non-real data points in raw MAGNET series; these are 
+#' instrumental artefacts, and can severely affect
+#' power spectral density (PSD) estimates.  
+#' A clean series has been included
+#' so that a comparison of PSDs may be made.
+#'
+#' Some command like \code{subset(magnet, abs(mdiff) > 0)}
+#' can be used to identify the rows where edits have been made.
+#' }
+#' 
+#' @name wipp30
+#' @docType data
+#' @format A matrix with 13413 rows following 4 variables.
+#'
+#' \describe{
+#' \item{\code{time}}{Time (hours)}
+#' \item{\code{wl}}{Water levels (psi)}
+#' \item{\code{baro}}{Barometric pressure (psi)}
+#' \item{\code{et}}{Earth tide gravity potential (nanometers/second^2)}
+#' }
+#'
+#' @seealso \code{\link{pspectrum}}}
+#'
+#' @references Toll, N.J., Rasmussen, T.C., (2007),
+#'  Removal of Barometric Pressure Effects and Earth Tides from Observed Water Levels.
+#'  \emph{Ground Water}, \strong{45}, 101–105. \url{https://doi.org/10.1111/j.1745-6584.2006.00254.x}
+#' 
+#' @source BETCO page: \url{http://www.hydrology.uga.edu/rasmussen/betco/}
+#' @keywords datasets
+#' @examples
+#' data(wipp30)
+#' summary(wipp30)
+NULL

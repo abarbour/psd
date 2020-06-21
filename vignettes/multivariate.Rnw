@@ -60,7 +60,7 @@ rng <- c(0.7, 2.2)
 
 \section{Multivariate Power Spectral Densities}
 
-To calculate the multivariate power spectral density the \Rcmd{pspectrum} function is also used. As an example, the WIPP 30 dataset from BETCO will be used \citet{Toll2007}. There are three data series provided in this dataset corresponding to water levels, barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate series takes a matrix input with each column referring to a different series. The first column refers to the output, and the other columns are the inputs.  The method currently only handles one output but can take multiple inputs.  The following outputs in addition to the univariate output of \Rcmd{pspectrum} are returned:
+To calculate the multivariate power spectral density the \Rcmd{pspectrum} function is also used. As an example, the WIPP 30 dataset from BETCO will be used (\citet{Toll2007}). There are three data series provided in this dataset corresponding to water levels, barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate series takes a matrix input with each column referring to a different series. The first column(s) refers to the input, and the last columns are the outputs.  This order can also be changed if desired.  The method currently only handles one output but can take multiple inputs.  The following outputs in addition to the typical univariate output of \Rcmd{pspectrum} are returned:
 
 \begin{itemize}
 \item Auto-spectra and cross-spectra (complex matrix)
@@ -74,12 +74,13 @@ To calculate the multivariate power spectral density the \Rcmd{pspectrum} functi
 
 library(psd)
 data(wipp30)
-wipp30 <- as.matrix(wipp30[, c(3,4,2)]) # output as last column, input as first two
-freqs <- 1:(nrow(wipp30)/2) * (24) / nrow(wipp30) # frequency in cpd
+dat <- wipp30[, c(3,4,2)] # output as last column, input as first two
+dat <- window(ts(dat), 100, 2400)
+freqs <- 1:(nrow(dat)/2) * (24) / nrow(dat) # frequency in cpd
 @
 
 <<eval=TRUE, echo=TRUE, label="calcmv">>=
-mv <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = FALSE)
+mv <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = FALSE)
 @
 
 
@@ -88,7 +89,7 @@ names(mv)
 @
 
 <<eval=TRUE, echo=TRUE, label="plotnames", fig.height = 7>>=
-pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = TRUE)
+pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = TRUE)
 @
 
 
@@ -108,11 +109,11 @@ For the multivariate psd method, the same numbers of tapers at a given frequency
 
 <<eval=TRUE, echo=TRUE, label="Tapers">>=
 
-mn <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE)   # minimum number 
-mx <- pspectrum(wipp30, riedsid_column=-1L, verbose = FALSE)   # maximum number
-c1 <- pspectrum(wipp30, riedsid_column= 1L, verbose = FALSE)   # column 1
-c2 <- pspectrum(wipp30, riedsid_column= 2L, verbose = FALSE)   # column 2
-c3 <- pspectrum(wipp30, riedsid_column= 3L, verbose = FALSE)   # column 3
+mn <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE)   # minimum number 
+mx <- pspectrum(dat, riedsid_column=-1L, verbose = FALSE)   # maximum number
+c1 <- pspectrum(dat, riedsid_column= 1L, verbose = FALSE)   # column 1
+c2 <- pspectrum(dat, riedsid_column= 2L, verbose = FALSE)   # column 2
+c3 <- pspectrum(dat, riedsid_column= 3L, verbose = FALSE)   # column 3
 
 @
 <<eval=TRUE, echo=FALSE, label="Taper plot", fig.height = 4.8>>=
@@ -140,7 +141,7 @@ The number of tapers can also be specified as a single value.
 
 <<eval=TRUE, echo=TRUE, label="taper specification", fig.height = 3>>=
 par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
-one_val <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE,
+one_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap.init = 11, plot = TRUE)
 plot(one_val$taper)
 @
@@ -149,8 +150,9 @@ The number of tapers can also be specified as a vector of values.  The length of
 
 <<eval=TRUE, echo=TRUE, label="taper specification2", fig.height = 3>>=
 par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
-vec_val <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE,
-                 niter = 0, ntap = as.tapers(1:(nrow(wipp30) %/% 2) %/% 7 + 7), plot = TRUE)
+vec_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
+                 niter = 0, ntap = as.tapers(1:(nrow(dat) %/% 2) %/% 7 + 7),
+                 plot = TRUE)
 plot(vec_val$taper)
 @
 
@@ -165,7 +167,7 @@ plot(vec_val$taper)
 
 \item  $ phase_{xy} = Arg(G_{xy})$
 
-\item  \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the \Rcmd{pspec} as the input.
+\item  \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input.
 
 \item $ gain = Mod(transfer) $
 \item $ phase = Arg(transfer) $
@@ -181,7 +183,7 @@ The auto-spectra and cross-spectra are stored in the \Rcmd{pspec} list item retu
 
 <<eval=TRUE, echo=TRUE, label="pspec">>=
 
-spec <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE)$pspec
+spec <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE)$pspec
 dim(spec)
 
 @
@@ -197,9 +199,9 @@ The coherence is stored in result from pspectrum and contains the coherence betw
 
 
 <<eval=TRUE, echo=TRUE, label="coh">>=
-coh <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE,
+coh <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap.init = 11)$coh
-coh_base <- spec.pgram(wipp30[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$coh
+coh_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$coh
 @
 
 <<eval=TRUE, echo=FALSE, label="coh_ba_plot", fig.height=3.3>>=
@@ -235,9 +237,9 @@ The phase is stored in result from pspectrum and contains the cross-spectrum pha
 
 
 <<eval=TRUE, echo=TRUE, label="phase">>=
-phase <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE,
+phase <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap.init = 11)$phase
-phase_base <- spec.pgram(wipp30[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$phase
+phase_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$phase
 @
 
 <<eval=TRUE, echo=FALSE, label="phase_ba_plot", fig.height=3.3>>=
@@ -270,7 +272,7 @@ points(y = phase_base[,2], x = freqs, type='l',  col = 'red')
 The multivariate method calculates the auto and cross-spectra and also solves for a frequency response.  The frequency response is stored as a complex number matrix.  A three column matrix was provided to pspectrum which results a two column matrix of frequency responses. 
 
 <<eval=TRUE, echo=TRUE, label="transfer gain", fig.height=3.3>>=
-transfer <- pspectrum(wipp30, riedsid_column= -1L, verbose = FALSE)$transfer
+transfer <- pspectrum(dat, riedsid_column= -1L, verbose = FALSE)$transfer
 gain <- Mod(transfer)
 @
 
