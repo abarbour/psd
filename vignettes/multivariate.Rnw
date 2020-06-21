@@ -74,12 +74,12 @@ To calculate the multivariate power spectral density the \Rcmd{pspectrum} functi
 
 library(psd)
 data(wipp30)
-wipp30 <- as.matrix(wipp30[, -1]) # remove the time column for this vignette
+wipp30 <- as.matrix(wipp30[, c(3,4,2)]) # output as last column, input as first two
 freqs <- 1:(nrow(wipp30)/2) * (24) / nrow(wipp30) # frequency in cpd
 @
 
 <<eval=TRUE, echo=TRUE, label="calcmv">>=
-mv <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = FALSE, output_column = 1)
+mv <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = FALSE)
 @
 
 
@@ -199,7 +199,7 @@ The coherence is stored in result from pspectrum and contains the coherence betw
 <<eval=TRUE, echo=TRUE, label="coh">>=
 coh <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap.init = 11)$coh
-coh_base <- spec.pgram(wipp30, spans = c(11), fast = FALSE, plot = FALSE)$coh
+coh_base <- spec.pgram(wipp30[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$coh
 @
 
 <<eval=TRUE, echo=FALSE, label="coh_ba_plot", fig.height=3.3>>=
@@ -237,7 +237,7 @@ The phase is stored in result from pspectrum and contains the cross-spectrum pha
 <<eval=TRUE, echo=TRUE, label="phase">>=
 phase <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap.init = 11)$phase
-phase_base <- spec.pgram(wipp30, spans = c(11), fast = FALSE, plot = FALSE)$phase
+phase_base <- spec.pgram(wipp30[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$phase
 @
 
 <<eval=TRUE, echo=FALSE, label="phase_ba_plot", fig.height=3.3>>=

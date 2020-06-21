@@ -127,7 +127,7 @@ To calculate the multivariate power spectral density the \Rcmd{pspectrum} functi
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (2.0.0) -- Adaptive multitaper spectrum estimation; to start, see ?pspectrum}}\begin{alltt}
 \hlkwd{data}\hlstd{(wipp30)}
-\hlstd{wipp30} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(wipp30[,} \hlopt{-}\hlnum{1}\hlstd{])} \hlcom{# remove the time column for this vignette}
+\hlstd{wipp30} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(wipp30[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{,}\hlnum{2}\hlstd{)])} \hlcom{# output as last column, input as first two}
 \hlstd{freqs} \hlkwb{<-} \hlnum{1}\hlopt{:}\hlstd{(}\hlkwd{nrow}\hlstd{(wipp30)}\hlopt{/}\hlnum{2}\hlstd{)} \hlopt{*} \hlstd{(}\hlnum{24}\hlstd{)} \hlopt{/} \hlkwd{nrow}\hlstd{(wipp30)} \hlcom{# frequency in cpd}
 \end{alltt}
 \end{kframe}
@@ -136,7 +136,7 @@ To calculate the multivariate power spectral density the \Rcmd{pspectrum} functi
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mv} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(wipp30,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{output_column} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{mv} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(wipp30,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -293,7 +293,7 @@ The coherence is stored in result from pspectrum and contains the coherence betw
 \begin{alltt}
 \hlstd{coh} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(wipp30,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,}
                  \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap.init} \hlstd{=} \hlnum{11}\hlstd{)}\hlopt{$}\hlstd{coh}
-\hlstd{coh_base} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(wipp30,} \hlkwc{spans} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{),} \hlkwc{fast} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{coh}
+\hlstd{coh_base} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(wipp30[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)],} \hlkwc{spans} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{),} \hlkwc{fast} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{coh}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -321,7 +321,7 @@ The phase is stored in result from pspectrum and contains the cross-spectrum pha
 \begin{alltt}
 \hlstd{phase} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(wipp30,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,}
                  \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap.init} \hlstd{=} \hlnum{11}\hlstd{)}\hlopt{$}\hlstd{phase}
-\hlstd{phase_base} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(wipp30,} \hlkwc{spans} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{),} \hlkwc{fast} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{phase}
+\hlstd{phase_base} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(wipp30[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)],} \hlkwc{spans} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{),} \hlkwc{fast} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{phase}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
