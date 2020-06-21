@@ -2,7 +2,6 @@
 % Please edit documentation in R/RcppExports.R, R/func_tapers.R
 \name{parabolic_weights_rcpp}
 \alias{parabolic_weights_rcpp}
-\alias{parabolic_weights_rcpp2}
 \alias{parabolic_weights_field}
 \alias{parabolic_weights}
 \alias{parabolic_weights.tapers}
@@ -10,8 +9,6 @@
 \title{parabolic_weights_field}
 \usage{
 parabolic_weights_rcpp(ntap = 1L)
-
-parabolic_weights_rcpp2(ntap = 1L)
 
 parabolic_weights_field(ntap)
 

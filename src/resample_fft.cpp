@@ -120,6 +120,35 @@ List parabolic_weights_rcpp(const int ntap = 1) {
 
 
 
+// For all but short series this should be faster
+//' @title parabolic_weights_field
+//' @rdname parabolic_weights
+//' 
+//' @param ntap the maximum number of tapers
+//' 
+//' @export
+//' 
+// [[Rcpp::export]]
+arma::field<arma::vec> parabolic_weights_field(const int ntap) {
+  
+  //
+  // return quadratic spectral weighting factors for a given number of tapers
+  // Barbour and Parker (2014) Equation 7
+  //
+  arma::field<arma::vec> f(ntap, 1);
+  arma::vec kseq = arma::pow(arma::regspace<arma::vec>(0, ntap - 1), 2);
+  
+  double t3;
+  for (int i = 1; i < ntap+1; i++) {
+    t3 = log(i * (i - 0.25) * (i + 1.0));
+    f(i-1,0) = arma::exp(log(1.5) + arma::log(i * i - kseq(arma::span(0, i-1))) - t3);
+  }
+  
+  return(f);
+  
+}
+
+
 
 //' @title Resample an fft using varying numbers of sine tapers
 //' 
@@ -257,7 +286,7 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
       
       j1 = (mleft1 % ne2); // orig: + 1; // spectral indices
       j2 = (mleft2 % ne2); // orig: + 1;
-      
+
       fdc = fftz[j1] - fftz[j2];
       
       // absolute value of fdc, squared:
@@ -283,185 +312,6 @@ List resample_fft_rcpp( ComplexVector fftz, IntegerVector tapers,
 
 
 
-// Modified Codes below --------------------------------------------------------
-
-
-//' @rdname parabolic_weights
-//' @export
-// [[Rcpp::export]]
-arma::vec parabolic_weights_rcpp2(const int ntap = 1) {
-  
-  //
-  // return quadratic spectral weighting factors for a given number of tapers
-  // Barbour and Parker (2014) Equation 7
-  //
-  if(ntap == 0) {
-    return(arma::zeros(1));
-  }
-  
-  arma::vec kseq = arma::pow(arma::regspace<arma::vec>(0, ntap - 1), 2);
-  
-  
-  double t3 = log(ntap * (ntap - 0.25) * (ntap + 1.0));
-  
-  arma::vec wgts = arma::exp(log(1.5) + arma::log(ntap * ntap - kseq) - t3);
-  
-  // return just the weights
-  return wgts;
-}
-
-//' @title Resample an fft using varying numbers of sine tapers
-//' 
-//' @description
-//' Produce an un-normalized psd based on an fft and a vector of optimal sine tapers
-//' 
-//' @details
-//' To produce a psd estimate with our adaptive spectrum estimation method, we need only make one 
-//' fft calculation initially and then
-//' apply the weighting factors given by \code{\link{parabolic_weights_rcpp}}, which this
-//' function does.
-//' 
-//' @param fftz complex; a vector representing the dual-length \code{\link{fft}}; see also the \code{dbl} argument
-//' @param tapers integer; a vector of tapers
-//' @param verbose logical; should messages be given?
-//' @param dbl logical; should the code assume \code{fftz} is dual-length or single-length?
-//' @param tapcap integer; the maximum number of tapers which can be applied; note that the length is
-//' automatically limited by the length of the series.
-//' 
-//' @seealso \code{\link{riedsid}}
-//' 
-//' @examples
-//' fftz <- complex(real=1:8, imaginary = 1:8)
-//' taps <- 1:4
-//' try(resample_fft_rcpp2(fftz, taps))
-//' 
-//' @export
-// [[Rcpp::export]]
-List resample_fft_rcpp2( const arma::cx_vec& fftz, 
-                         const arma::ivec& tapers,
-                         bool verbose = true, 
-                         const bool dbl = true, 
-                         const int tapcap=1000 ) {
-  
-  //
-  // resample and reweight an fft estimates for a given number of tapers
-  // using quadratic scaling in Barbour and Parker (2014)
-  //
-  //
-  // needs:
-  //  - fftz: complex vector -- the FFT of the original signal
-  //  - tapers: integer vector -- the number of tapers at each frequency
-  //
-  // optional args:
-  //  - verbose: logical -- should warnings be given?
-  //  - dbl: logical -- should the progam assume 'fftz' is for a double-length (padded) series? 
-  //                    Otherwise a single-length series is assumed.
-  //  - tapcap: integer -- the maximum number of tapers at any frequency
-  //
-  
-  int sc, nf, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
-  double wi;
-  
-  arma::cx_double fdc;
-  
-  
-  if (dbl){
-    // double-length fft estimates assumed by default
-    sc = 2;
-  } else {
-    // but could be single-length
-    sc = 1;
-  }
-  
-  // even, double, and half lengths
-  nf = fftz.n_elem / sc; 
-  nt = tapers.n_elem;
-  ne = nf - (nf % 2);
-  
-  if (verbose){
-    Function msg("message");
-    msg(std::string("\tfft resampling"));
-  }
-  
-  if (ne < nf){
-    warning("fft was not done on an even length series");
-  }
-  
-  ne2 = 2 * ne;
-  nhalf = ne / 2;
-  
-  arma::ivec taper_vec(nhalf);
-  arma::vec psd(nhalf);
-  psd.zeros();
-  
-  
-  if (nhalf < 1){
-    stop("cannot operate on length-1 series");
-  }
-  
-  
-  if (nt == 1){
-    warning("forced taper length");
-    taper_vec.fill(tapers[0]);
-  } else {
-    taper_vec = tapers;
-  }
-  
-  
-  // set the current number of tapers, limited by a few factors
-  arma::uvec wh = arma::find(taper_vec > nhalf);
-  taper_vec(wh).fill(nhalf);
-  wh = arma::find(taper_vec > tapcap);
-  taper_vec(wh).fill(tapcap);
-  wh = arma::find(taper_vec <= 0);
-  taper_vec(wh).ones();
-  
-  
-  //
-  // Calculate the psd by averaging over tapered estimates
-  //
-  
-  for (int j = 0; j < nhalf; j++) {
-    
-    m2 = 2*j;
-    // number of tapers applied at a given frequency (do not remove m+1 index!)
-    
-    Kc = taper_vec[j]; // orig: m+1, but this was leading to an indexing bug
-    
-    // taper sequence and spectral weights
-    arma::vec w = parabolic_weights_rcpp2(Kc);
-    
-    // scan across ki to get vector of
-    // spectral differences based on modulo indices
-    for (arma::uword ik = 0; ik < Kc; ik++) {
-      
-      wi = w[ik];
-      ki = ik + 1;
-      
-      mleft1 = m2 + ne2 - ki;
-      mleft2 = m2 + ki;
-      
-      j1 = mleft1 % ne2;
-      j2 = mleft2 % ne2;
-      
-      fdc = fftz[j1] - fftz[j2];
-      
-      // un-normalized psd is vector product of w and (sqrt(Re^2 + Im^2))^2
-      // sum as loop progresses
-      psd[j] += (pow(std::real(fdc), 2) +
-        pow(std::imag(fdc), 2)) * wi;
-      
-    }
-    
-  }
-  
-  // return list to match previous function definition - jrk
-  return Rcpp::List::create(
-    Named("freq.inds") = arma::regspace<arma::vec>(1, nhalf),
-    Named("k.capped") = taper_vec(arma::span(0, nhalf-1)),
-    Named("psd") = psd
-  );
-}
 
 
 
@@ -530,6 +380,10 @@ arma::vec riedsid_rcpp(const arma::mat& PSD,
   if (riedsid_column <= 0) {
     i_start = 0;
     i_end = nc;
+  } else if (riedsid_column > nc) {
+    Rcpp::warning("riedsid_column is greater than the input number of columns. Setting to the maximum column number");
+    i_start = nc-1;
+    i_end = nc;
   } else {
     i_start = riedsid_column - 1;
     i_end = riedsid_column;
@@ -582,33 +436,6 @@ arma::vec riedsid_rcpp(const arma::mat& PSD,
 // This is for multivariate series  --------------------------------------------
 
 
-// For all but short series this should be faster
-//' @title parabolic_weights_field
-//' @rdname parabolic_weights
-//' 
-//' @param ntap the maximum number of tapers
-//' 
-//' @export
-//' 
-// [[Rcpp::export]]
-arma::field<arma::vec> parabolic_weights_field(const int ntap) {
-  
-  //
-  // return quadratic spectral weighting factors for a given number of tapers
-  // Barbour and Parker (2014) Equation 7
-  //
-  arma::field<arma::vec> f(ntap, 1);
-  arma::vec kseq = arma::pow(arma::regspace<arma::vec>(0, ntap - 1), 2);
-  
-  double t3;
-  for (int i = 1; i < ntap+1; i++) {
-    t3 = log(i * (i - 0.25) * (i + 1.0));
-    f(i-1,0) = arma::exp(log(1.5) + arma::log(i * i - kseq(arma::span(0, i-1))) - t3);
-  }
-  
-  return(f);
-  
-}
 
 //' @title Resample an fft using varying numbers of sine tapers
 //' 
@@ -663,7 +490,7 @@ List resample_mvfft( const arma::cx_mat& fftz,
   //  - tapcap: integer -- the maximum number of tapers at any frequency
   //
   
-  int sc, nf, nc, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
+  int sc, nf, nr, nc, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
   double wi;
   
   
@@ -679,10 +506,13 @@ List resample_mvfft( const arma::cx_mat& fftz,
   }
   
   // even, double, and half lengths
+  nr = fftz.n_rows;
   nf = fftz.n_rows / sc; 
   nc = fftz.n_cols;
   nt = tapers.n_elem;
   ne = nf - (nf % 2);
+  
+
   
   if (verbose){
     Function msg("message");
@@ -762,14 +592,15 @@ List resample_mvfft( const arma::cx_mat& fftz,
       
       for (int ii = 0; ii < nc; ii++) {
         for (int kk = ii; kk < nc; kk++) {
-          
-          fdc1 = fftz(j1, ii) - fftz(j2, ii);
-          fdc2 = fftz(j1, kk) - fftz(j2, kk);
+            
+            fdc1 = fftz(j1, ii) - fftz(j2, ii);
+            fdc2 = fftz(j1, kk) - fftz(j2, kk);
           
           psd(jj, ii, kk) += (fdc1 * std::conj(fdc2)) * wi;
         }
       }
     }
+    
   }
   
   // Add lower triangle for use in transfer function calculation
@@ -784,7 +615,7 @@ List resample_mvfft( const arma::cx_mat& fftz,
   
   // return list to match previous function definition - jrk
   return Rcpp::List::create(
-    Named("freq.inds") = arma::regspace<arma::vec>(1, nhalf),
+    Named("freq.inds") = arma::regspace<arma::ivec>(1, nhalf),
     Named("k.capped") = taper_vec(arma::span(0, nhalf-1)),
     Named("psd") = psd
   );
@@ -888,7 +719,7 @@ all.equal(apply(cbind(a1,a2), 1, min), b)
 
 microbenchmark(
   rsz1 <- resample_fft_rcpp(fftz[,2], taps, verbose = FALSE),
-  rsz2 <- resample_fft_rcpp2(fftz[,2], taps, verbose = FALSE),
+  # rsz2 <- resample_fft_rcpp2(fftz[,2], taps, verbose = FALSE),
   rsz3 <- resample_mvfft(fftz, taps, verbose = FALSE),
   times = 2
 )

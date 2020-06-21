@@ -226,13 +226,7 @@ psdcore.default <- function(X.d,
       # ( this is where the majority of the computational work is )
       kseq <- as.integer(kseq)
       
-      # if(is.matrix(fftz)) {
       reff <- resample_mvfft(fftz, tapers = kseq, verbose=verbose)
-      # } else if(fast) {
-      #   reff <- resample_fft_rcpp2(fftz, kseq, verbose=verbose)
-      # } else {
-      #   reff <- resample_fft_rcpp(fftz, kseq, verbose=verbose)
-      # }
 
       # return a valid resampled fft or stop
       if (inherits(reff,'try-error')){

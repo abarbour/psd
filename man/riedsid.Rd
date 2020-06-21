@@ -22,7 +22,7 @@ riedsid2(PSD, ...)
 \method{riedsid2}{spec}(PSD, ...)
 
 \method{riedsid2}{default}(PSD, ntaper = 1L, constrained = TRUE,
-  verbose = TRUE, fast = FALSE, riedsid_column = 0, ...)
+  verbose = TRUE, fast = FALSE, riedsid_column = 0L, ...)
 }
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}

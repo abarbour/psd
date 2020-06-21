@@ -28,11 +28,12 @@ test_that("weights sum to 1 when n > 0",{
 
 test_that("parabolic_weights_rcpp sum equals parabolic_weights_rcpp2 sum",{
   
-  expect_equal(PWS(0),   sum(parabolic_weights_rcpp2(0)))
-  expect_equal(PWS(1),   sum(parabolic_weights_rcpp2(1)))
-  expect_equal(PWS(1e1), sum(parabolic_weights_rcpp2(1e1)))
-  expect_equal(PWS(1e3), sum(parabolic_weights_rcpp2(1e3)))
-  expect_equal(PWS(1e4), sum(parabolic_weights_rcpp2(1e4)))
+  PWSF <- parabolic_weights_field(1e3)
+  
+  expect_equal(PWS(1e0), sum(as.numeric(PWSF[[1e0]])))
+  expect_equal(PWS(1e1), sum(as.numeric(PWSF[[1e1]])))
+  expect_equal(PWS(1e2), sum(as.numeric(PWSF[[1e1]])))
+  expect_equal(PWS(1e3), sum(as.numeric(PWSF[[1e3]])))
   
 })
 
