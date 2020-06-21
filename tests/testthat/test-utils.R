@@ -123,4 +123,23 @@ test_that('plotting functions return correctly', {
   expect_equal(plot(pc), lines(pc))
 })
 
+
+test_that('vector_reshape works', {
+  
+  x <- matrix(rnorm(10), ncol = 1)
+  
+  expect_equal(vector_reshape(x, vec.shape = 'horizontal'),t(x))
+  expect_equal(vector_reshape(x, vec.shape = 'vertical'),as.matrix(x))
+  
+})
+
+test_that('checking classes works', {
+  s <- pspectrum(rnorm(10))
+  
+  expect_equal(is.spec(s), TRUE)
+  expect_equal(is.amt(s), TRUE)
+  expect_equal(is.tapers(s$taper), TRUE)
+
+})
+
 ##

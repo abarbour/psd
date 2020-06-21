@@ -12,7 +12,7 @@
 \usage{
 pspectrum(x, ...)
 
-\method{pspectrum}{ts}(x, ...)
+\method{pspectrum}{ts}(x, output_column = NULL, ...)
 
 \method{pspectrum}{matrix}(x, x.frqsamp, ...)
 
@@ -23,6 +23,7 @@ pspectrum(x, ...)
   x.frqsamp = 1,
   ntap.init = NULL,
   niter = 3,
+  output_column = NULL,
   AR = FALSE,
   Nyquist.normalize = TRUE,
   verbose = TRUE,
@@ -40,6 +41,8 @@ adapt_message(stage, dvar = NULL)
 be calculated.}
 
 \item{...}{Optional parameters passed to \code{\link{riedsid2}}}
+
+\item{output_column}{scalar integer; If the series contains multiple columns, which column contains the output.  The default assumes the last column is the output and the others are all inputs.}
 
 \item{x.frqsamp}{scalar; the sampling rate (e.g. Hz) of the series \code{x}; equivalent to \code{\link{frequency}}.}
 

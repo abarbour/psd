@@ -32,7 +32,6 @@ Depends:
 Imports:
     Rcpp (>= 0.11.5),
     RColorBrewer,
-    signal,
     zoo
 Suggests:
     bspec,
@@ -45,6 +44,7 @@ Suggests:
     reshape2,
     knitr,
     rmarkdown,
+    signal,
     formatR,
     testthat (>= 2.1.0)
 Encoding: UTF-8

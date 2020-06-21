@@ -10,8 +10,9 @@ coherence(pgram)
 \item{pgram}{\code{numeric array} must be multivariate}
 }
 \value{
-list of coherency
+list of coherency. For multivariate time series, a matrix containing the squared coherency between different series. Column i + (j - 1) * (j - 2)/2 of coh contains the squared coherency between columns i and j of x, where i < j.
 }
 \description{
-calculate coherency from the spectra and cross-spectra
+Calculate coherence from the spectra and cross-spectra. This method is the same as
+used in \code{spec.pgram}.
 }

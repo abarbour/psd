@@ -49,6 +49,7 @@
 #' @param c.method string; constraint method to use with \code{\link{constrain_tapers}}, only if \code{constrained=TRUE}
 #' @param verbose logical; should messages be printed?
 #' @param fast logical; use faster method?
+#' @param riedsid_column scalar integer; which column to use in multivariate optimization. If the value is 0 the maximum number of tapers for all columns is chosen. If the value is < 0 the minimum number of tapers for all columns is chosen. If the value is 1, 2, 3, etc. the number of tapers is based on the column selected.
 #' @param ... optional arguments passed to \code{\link{constrain_tapers}}
 #' @return Object with class \code{'tapers'}
 #' 
@@ -77,7 +78,8 @@ riedsid.spec <- function(PSD, ...){
 riedsid.default <- function(PSD, ntaper = 1L, 
                             tapseq=NULL, 
                             Deriv.method=c("local_qls","spg"),
-                            constrained=TRUE, c.method=NULL,
+                            constrained=TRUE,
+                            c.method=NULL,
                             verbose=TRUE, ...) {
   .Deprecated('riedsid2', package='psd', old='riedsid')
   ## spectral values
@@ -213,10 +215,16 @@ riedsid2.spec <- function(PSD, ...){
 
 #' @rdname riedsid
 #' @export
-riedsid2.default <- function(PSD, ntaper=1L, constrained=TRUE, verbose=TRUE, fast=FALSE, ...){
+riedsid2.default <- function(PSD,
+                             ntaper=1L,
+                             constrained=TRUE,
+                             verbose=TRUE,
+                             fast=FALSE, 
+                             riedsid_column = 0L, 
+                             ...){
   
   if (fast) {
-    kopt <- riedsid_rcpp(as.matrix(PSD), ntaper)
+    kopt <- riedsid_rcpp(as.matrix(PSD), ntaper, riedsid_column)
   } else {
     
     PSD <- as.vector(PSD)

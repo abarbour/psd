@@ -1,0 +1,333 @@
+\documentclass[11pt]{article}
+% !Rnw weave = knitr
+%% \VignetteIndexEntry{Multivariate PSD}
+%% \VignetteEngine{knitr}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{url}
+\usepackage{upquote}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{geometry}
+\geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
+\usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+\usepackage{color}
+%%
+\input{supp_mathsyms}
+%%
+\newcommand{\SC}[1]{\textsc{#1}}
+\newcommand{\SCY}[0]{\SC{Yes}}
+\newcommand{\SCN}[0]{\SC{No}}
+\newcommand{\Rcmd}[1]{\texttt{#1}}
+\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\naive}[0]{na\"{\i}ve}
+\newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
+\newcommand{\idx}[1]{\index{#1}{#1}} 
+%
+\title{Multivariate methods for the \Rcmd{psd} package}
+\author{Jonathan R. Kennel & Andrew J. Barbour}
+%
+\begin{document}
+\maketitle
+%
+\begin{abstract}
+%
+\begin{quote}
+This vignette provides a brief description of the outputs of the multivariate methods contained in the \Rcmd{psd} package. Multivariate methods are commonly used for investigating relationships between inputs and outputs. 
+\end{quote}
+%
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+\section{Univariate Power Spectral Densities}
+
+To calculate the univariate power spectral density please see the psd overview vignette. 
+
+<<eval=TRUE, echo=FALSE>>=
+rm(list=ls())
+rng_et <- c(0.7, 2.2)
+rng_ba <- c(0.0, 10)
+@
+
+
+\section{Multivariate Power Spectral Densities}
+
+To calculate the multivariate power spectral density the \Rcmd{pspectrum} function is also used. As an example, the WIPP 30 dataset from BETCO will be used (\citet{Toll2007}). There are three data series provided in this dataset corresponding to water levels, barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate series takes a matrix input with each column referring to a different series. The first column(s) refers to the input, and the last columns are the outputs.  This order can also be changed if desired.  The method currently only handles one output but can take multiple inputs.  The following outputs in addition to the typical univariate output of \Rcmd{pspectrum} are returned:
+
+\begin{itemize}
+\item Auto-spectra and cross-spectra (complex matrix)
+\item Coherence (real matrix)
+\item Phase (real matrix)
+\item Transfer functions (complex matrix)
+\end{itemize}
+
+
+<<eval=TRUE, echo=TRUE>>=
+
+library(psd)
+data(wipp30)
+dat <- wipp30[, c(3,4,2)] # output as last column, input as first two
+dat <- window(ts(dat), 100, 2400)
+freqs <- 1:(nrow(dat)/2) * (24) / nrow(dat) # frequency in cpd
+@
+
+<<eval=TRUE, echo=TRUE, label="calcmv">>=
+mv <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = FALSE)
+@
+
+
+<<eval=TRUE, echo=TRUE, label="names">>=
+names(mv)
+@
+
+<<eval=TRUE, echo=TRUE, label="plotnames", fig.height = 7>>=
+pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = TRUE)
+@
+
+
+
+
+\newpage
+
+\subsection{Number of tapers}
+
+For the multivariate psd method, the same numbers of tapers at a given frequency is used for each series. These numbers can be chosen in one of three ways using the \Rcmd{riedsid\_column} parameter:
+
+\begin{itemize}
+\item The maximum number of tapers of all the series for each frequency (riedsid\_column = 0)
+\item The minimum number of tapers of all the series for each frequency (riedsid\_column < 0);
+\item The number of tapers can be selected based on a specific series (riedsid\_column = column\_number).
+\end{itemize}
+
+<<eval=TRUE, echo=TRUE, label="Tapers">>=
+
+mn <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE)   # minimum number 
+mx <- pspectrum(dat, riedsid_column=-1L, verbose = FALSE)   # maximum number
+c1 <- pspectrum(dat, riedsid_column= 1L, verbose = FALSE)   # column 1
+c2 <- pspectrum(dat, riedsid_column= 2L, verbose = FALSE)   # column 2
+c3 <- pspectrum(dat, riedsid_column= 3L, verbose = FALSE)   # column 3
+
+@
+<<eval=TRUE, echo=FALSE, label="Taper plot", fig.height = 4.8>>=
+
+ylim <- c(0, max(mx$taper))
+layout(matrix(1:6, ncol = 1, nrow = 6), heights = c(rep(0.19, 5), 0.05))
+par(mar = c(0.5, 4, 0, 0), mgp = c(2, 0.5, 0))
+plot(mn$taper, ylim = ylim, xaxt="n")
+legend('topleft', 'minimum')
+plot(mx$taper, ylim = ylim, xaxt="n")
+legend('topleft', 'maximum')
+plot(c1$taper, ylim = ylim, xaxt="n")
+legend('topleft', 'Water level column')
+plot(c2$taper, ylim = ylim, xaxt="n")
+legend('topleft', 'Barometric column')
+plot(c3$taper, ylim = ylim)
+legend('topleft', 'Earth tide column')
+mtext('taper index', 1, line = 1.2, cex = 0.8)
+
+@
+
+\subsubsection{Specifying the number of tapers}
+
+The number of tapers can also be specified as a single value.
+
+<<eval=TRUE, echo=TRUE, label="taper specification", fig.height = 3>>=
+par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
+one_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
+                 niter = 0, ntap.init = 11, plot = TRUE)
+plot(one_val$taper)
+@
+
+The number of tapers can also be specified as a vector of values.  The length of the vector is equal to one-half the number of rows rounded down (i.e. integer division). The example below uses an approximately linearly increasing taper vector.
+
+<<eval=TRUE, echo=TRUE, label="taper specification2", fig.height = 3>>=
+par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
+vec_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
+                 niter = 0, ntap = as.tapers(1:(nrow(dat) %/% 2) %/% 7 + 7),
+                 plot = TRUE)
+plot(vec_val$taper)
+@
+
+\newpage 
+
+\subsection{Equations}
+
+
+\begin{itemize}
+
+\item  $ coherence_{xy}  = |G_{xy}|^2 / (G_{xx} * G_{yy})$
+
+\item  $ phase_{xy} = Arg(G_{xy})$
+
+\item  \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input.
+
+\item $ gain = Mod(transfer) $
+\item $ phase = Arg(transfer) $
+
+\end{itemize}
+
+
+
+\subsection{Auto-spectra and Cross-spectra}
+
+The auto-spectra and cross-spectra are stored in the \Rcmd{pspec} list item returned from \Rcmd{pspectrum}.  It is a complex numbered three-dimensional array with the dimensions equal to the length of the psd X number of variables X number of variables.  The diagonal of the array are the auto-spectra and the off diagonals are the cross-spectra.
+
+
+<<eval=TRUE, echo=TRUE, label="pspec">>=
+
+spec <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE)$pspec
+dim(spec)
+
+@
+
+
+\newpage 
+
+\subsection{Coherence}
+
+The coherence is stored in result from pspectrum and contains the coherence between input and each of the outputs. In this section we will use a constant number of tapers to get a result similar to \Rcmd{spec.pgram}.   
+
+
+
+
+<<eval=TRUE, echo=TRUE, label="coh">>=
+coh <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
+                 niter = 0, ntap.init = 11)$coh
+coh_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$coh
+@
+
+<<eval=TRUE, echo=FALSE, label="coh_ba_plot", fig.height=3.3>>=
+par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
+plot(coh[,1]~freqs, type='l', 
+     ylab = 'WL and Barometric',
+     xlab = 'Frequency (cpd)',
+     xlim = rng_ba,
+     main = 'Coherence')
+points(y = coh_base[,1], x = freqs, type='l',  col = 'red')
+legend('bottomleft', 
+       legend = c('psd', 'base'), 
+       col = c('black', 'red'), lty = 1)
+@
+<<eval=TRUE, echo=FALSE, label="coh_et_plot", fig.height=3.3>>=
+par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
+
+plot(coh[,2]~freqs, type='l', 
+     ylab = 'WL and Earth tide',
+     xlab = 'Frequency (cpd)',
+     xlim = rng_et,
+     main = 'Coherence')
+points(y = coh_base[,2], x = freqs, type='l',  col = 'red')
+
+
+@
+
+
+\subsection{Phase}
+
+The phase is stored in result from pspectrum and contains the cross-spectrum phase.  The Earth tide phase fluctuates rapidly because for many frequencies the spectral power is very small.
+
+
+
+<<eval=TRUE, echo=TRUE, label="phase">>=
+phase <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
+                 niter = 0, ntap.init = 11)$phase
+phase_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$phase
+@
+
+<<eval=TRUE, echo=FALSE, label="phase_ba_plot", fig.height=3.3>>=
+par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
+plot(phase[,1]~freqs, type='l', 
+     ylab = 'WL and Barometric',
+     xlab = 'Frequency (cpd)',
+     xlim = rng_ba,
+     main = 'Phase Difference')
+points(y = phase_base[,1], x = freqs, type='l',  col = 'red')
+legend('bottomleft', 
+       legend = c('psd', 'base'), 
+       col = c('black', 'red'), lty = 1)
+@
+<<eval=TRUE, echo=FALSE, label="phase_et_plot", fig.height=3.3>>=
+par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
+
+plot(phase[,2]~freqs, type='l', 
+     ylab = 'WL and Earth tide',
+     xlab = 'Frequency (cpd)',
+     xlim = rng_et,
+     main = 'Phase')
+points(y = phase_base[,2], x = freqs, type='l',  col = 'red')
+
+
+@
+
+\subsection{Frequency Response}
+
+The multivariate method calculates the auto and cross-spectra and also solves for a frequency response.  The frequency response is stored as a complex number matrix.  A three column matrix was provided to pspectrum which results a two column matrix of frequency responses. 
+
+<<eval=TRUE, echo=TRUE, label="transfer gain", fig.height=3.3>>=
+transfer <- pspectrum(dat, riedsid_column= -1L, verbose = FALSE)$transfer
+gain <- Mod(transfer)
+@
+
+<<eval=TRUE, echo=FALSE, label="transfer gain plot", fig.height=3.3>>=
+
+
+par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
+plot(gain[, 1]~freqs, type='l', 
+     xlim = rng_ba, 
+     ylim = c(0, 1),
+     ylab = 'WL and Barometric',
+     xlab = 'Frequency (cpd)',
+     main = 'Gain')
+plot(gain[, 2]~freqs, type='l', 
+     xlim = rng_et,
+     ylim = c(0, 0.00005),
+     ylab = 'WL and Earth tide',
+     xlab = 'Frequency (cpd)',
+     main = 'Gain')
+@
+
+
+<<eval=TRUE, echo=TRUE, label="transfer phase", fig.height=3.3>>=
+phase <- Arg(transfer)
+@
+<<eval=TRUE, echo=FALSE, label="transfer phase plot", fig.height=3.3>>=
+par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
+
+plot(phase[, 1]~freqs, type='l', xlim = rng_ba,
+     ylab = 'WL and Barometric',
+     xlab = 'Frequency (cpd)',
+     main = 'Phase')
+plot(phase[, 2]~freqs, type='l', xlim = rng_et, 
+     ylab = 'WL and Earth tide',
+     xlab = 'Frequency (cpd)',
+     main = 'Phase')
+@
+
+\section{Conclusion}
+
+The \Rcmd{psd} package can handle multivariate time series and provides results including the auto and cross-spectra, phase, coherence, and the frequency response function.  
+
+%\pagebreak
+
+\subsection{References}
+
+
+\section*{Session Info}
+<<eval=TRUE, echo=TRUE, label=SI>>=
+utils::sessionInfo()
+@
+
+%% bib and index
+\bibliographystyle{apalike}
+\bibliography{REFS}
+
+\end{document}
