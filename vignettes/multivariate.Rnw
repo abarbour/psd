@@ -54,7 +54,8 @@ To calculate the univariate power spectral density please see the psd overview v
 
 <<eval=TRUE, echo=FALSE>>=
 rm(list=ls())
-rng <- c(0.7, 2.2)
+rng_et <- c(0.7, 2.2)
+rng_ba <- c(0.0, 10)
 @
 
 
@@ -209,7 +210,7 @@ par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(coh[,1]~freqs, type='l', 
      ylab = 'WL and Barometric',
      xlab = 'Frequency (cpd)',
-     xlim = rng,
+     xlim = rng_ba,
      main = 'Coherence')
 points(y = coh_base[,1], x = freqs, type='l',  col = 'red')
 legend('bottomleft', 
@@ -222,7 +223,7 @@ par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(coh[,2]~freqs, type='l', 
      ylab = 'WL and Earth tide',
      xlab = 'Frequency (cpd)',
-     xlim = rng,
+     xlim = rng_et,
      main = 'Coherence')
 points(y = coh_base[,2], x = freqs, type='l',  col = 'red')
 
@@ -247,7 +248,7 @@ par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(phase[,1]~freqs, type='l', 
      ylab = 'WL and Barometric',
      xlab = 'Frequency (cpd)',
-     xlim = rng,
+     xlim = rng_ba,
      main = 'Phase Difference')
 points(y = phase_base[,1], x = freqs, type='l',  col = 'red')
 legend('bottomleft', 
@@ -260,7 +261,7 @@ par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(phase[,2]~freqs, type='l', 
      ylab = 'WL and Earth tide',
      xlab = 'Frequency (cpd)',
-     xlim = rng,
+     xlim = rng_et,
      main = 'Phase')
 points(y = phase_base[,2], x = freqs, type='l',  col = 'red')
 
@@ -280,11 +281,15 @@ gain <- Mod(transfer)
 
 
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
-plot(gain[, 1]~freqs, type='l', xlim = rng,
+plot(gain[, 1]~freqs, type='l', 
+     xlim = rng_ba, 
+     ylim = c(0, 1),
      ylab = 'WL and Barometric',
      xlab = 'Frequency (cpd)',
-     main = 'Gain', ylim = c(0, 3))
-plot(gain[, 2]~freqs, type='l', xlim = rng, ylim = c(0, 0.0001),
+     main = 'Gain')
+plot(gain[, 2]~freqs, type='l', 
+     xlim = rng_et,
+     ylim = c(0, 0.00005),
      ylab = 'WL and Earth tide',
      xlab = 'Frequency (cpd)',
      main = 'Gain')
@@ -297,11 +302,11 @@ phase <- Arg(transfer)
 <<eval=TRUE, echo=FALSE, label="transfer phase plot", fig.height=3.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
-plot(phase[, 1]~freqs, type='l', xlim = rng,
+plot(phase[, 1]~freqs, type='l', xlim = rng_ba,
      ylab = 'WL and Barometric',
      xlab = 'Frequency (cpd)',
      main = 'Phase')
-plot(phase[, 2]~freqs, type='l', xlim = rng, 
+plot(phase[, 2]~freqs, type='l', xlim = rng_et, 
      ylab = 'WL and Earth tide',
      xlab = 'Frequency (cpd)',
      main = 'Phase')
