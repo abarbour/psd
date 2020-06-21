@@ -26,8 +26,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
-\newcommand{\naive}[0]{na\"{\i}ve}
+\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
 %
@@ -50,7 +49,8 @@ This vignette provides a brief description of the outputs of the multivariate me
 
 \section{Univariate Power Spectral Densities}
 
-To calculate the univariate power spectral density please see the psd overview vignette. 
+To calculate the univariate power spectral density, simply pass a
+single timeseries to \Rcmd{pspectrum}. Please see the psd overview vignette for more information.
 
 <<eval=TRUE, echo=FALSE>>=
 rm(list=ls())
@@ -61,7 +61,15 @@ rng_ba <- c(0.0, 10)
 
 \section{Multivariate Power Spectral Densities}
 
-To calculate the multivariate power spectral density the \Rcmd{pspectrum} function is also used. As an example, the WIPP 30 dataset from BETCO will be used (\citet{Toll2007}). There are three data series provided in this dataset corresponding to water levels, barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate series takes a matrix input with each column referring to a different series. The first column(s) refers to the input, and the last columns are the outputs.  This order can also be changed if desired.  The method currently only handles one output but can take multiple inputs.  The following outputs in addition to the typical univariate output of \Rcmd{pspectrum} are returned:
+The \Rcmd{pspectrum} function can also used to calculate the multivariate power spectral density. 
+As an example, the WIPP 30 dataset from BETCO will be used (\citet{Toll2007}). 
+There are three data series provided in this dataset corresponding to water levels, 
+barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate 
+series takes a matrix input with each column referring to a different series. 
+The first column(s) refers to the input, and the last columns are the outputs.  
+This order can also be changed if desired.  The method currently only handles 
+one output but can take multiple inputs.  The following outputs in addition 
+to the typical univariate output of \Rcmd{pspectrum} are returned:
 
 \begin{itemize}
 \item Auto-spectra and cross-spectra (complex matrix)
@@ -72,9 +80,9 @@ To calculate the multivariate power spectral density the \Rcmd{pspectrum} functi
 
 
 <<eval=TRUE, echo=TRUE>>=
-
 library(psd)
 data(wipp30)
+str(wipp30)
 dat <- wipp30[, c(3,4,2)] # output as last column, input as first two
 dat <- window(ts(dat), 100, 2400)
 freqs <- 1:(nrow(dat)/2) * (24) / nrow(dat) # frequency in cpd
@@ -161,17 +169,16 @@ plot(vec_val$taper)
 
 \subsection{Equations}
 
-
 \begin{itemize}
 
-\item  $ coherence_{xy}  = |G_{xy}|^2 / (G_{xx} * G_{yy})$
+\item [\Rcmd{`coh'}:] $ \text{coherence}_{xy}  = |G_{xy}|^2 / (G_{xx} * G_{yy})$
 
-\item  $ phase_{xy} = Arg(G_{xy})$
+\item [\Rcmd{`phase'}:] $ \text{phase}_{xy} = Arg(G_{xy})$
 
-\item  \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input.
+\item [\Rcmd{`transfer'}:] \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input. Thus:
 
-\item $ gain = Mod(transfer) $
-\item $ phase = Arg(transfer) $
+\item $ \text{gain} = Mod(\text{transfer}) $
+\item $ \text{phase} = Arg(\text{transfer}) $
 
 \end{itemize}
 

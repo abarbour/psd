@@ -1,0 +1,441 @@
+\documentclass[11pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+% !Rnw weave = knitr
+%% \VignetteIndexEntry{Multivariate PSD}
+%% \VignetteEngine{knitr}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{url}
+\usepackage{upquote}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{geometry}
+\geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
+\usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
+\usepackage{color}
+%%
+\input{supp_mathsyms}
+%%
+\newcommand{\SC}[1]{\textsc{#1}}
+\newcommand{\SCY}[0]{\SC{Yes}}
+\newcommand{\SCN}[0]{\SC{No}}
+\newcommand{\Rcmd}[1]{\texttt{#1}}
+\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
+\newcommand{\idx}[1]{\index{#1}{#1}} 
+%
+\title{Multivariate methods for the \Rcmd{psd} package}
+\author{Jonathan R. Kennel & Andrew J. Barbour}
+%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\maketitle
+%
+\begin{abstract}
+%
+\begin{quote}
+This vignette provides a brief description of the outputs of the multivariate methods contained in the \Rcmd{psd} package. Multivariate methods are commonly used for investigating relationships between inputs and outputs. 
+\end{quote}
+%
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+\section{Univariate Power Spectral Densities}
+
+To calculate the univariate power spectral density, simply pass a
+single timeseries to \Rcmd{pspectrum}. Please see the psd overview vignette for more information.
+
+
+
+
+\section{Multivariate Power Spectral Densities}
+
+The \Rcmd{pspectrum} function can also used to calculate the multivariate power spectral density. 
+As an example, the WIPP 30 dataset from BETCO will be used (\citet{Toll2007}). 
+There are three data series provided in this dataset corresponding to water levels, 
+barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate 
+series takes a matrix input with each column referring to a different series. 
+The first column(s) refers to the input, and the last columns are the outputs.  
+This order can also be changed if desired.  The method currently only handles 
+one output but can take multiple inputs.  The following outputs in addition 
+to the typical univariate output of \Rcmd{pspectrum} are returned:
+
+\begin{itemize}
+\item Auto-spectra and cross-spectra (complex matrix)
+\item Coherence (real matrix)
+\item Phase (real matrix)
+\item Transfer functions (complex matrix)
+\end{itemize}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(psd)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (2.0.0) -- Adaptive multitaper spectrum estimation; to start, see ?pspectrum}}\begin{alltt}
+\hlkwd{data}\hlstd{(wipp30)}
+\hlkwd{str}\hlstd{(wipp30)}
+\end{alltt}
+\begin{verbatim}
+##  num [1:13413, 1:4] 20 21 22 23 24 25 26 27 28 29 ...
+##  - attr(*, "dimnames")=List of 2
+##   ..$ : NULL
+##   ..$ : chr [1:4] "time" "wl" "baro" "et"
+\end{verbatim}
+\begin{alltt}
+\hlstd{dat} \hlkwb{<-} \hlstd{wipp30[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{,}\hlnum{2}\hlstd{)]} \hlcom{# output as last column, input as first two}
+\hlstd{dat} \hlkwb{<-} \hlkwd{window}\hlstd{(}\hlkwd{ts}\hlstd{(dat),} \hlnum{100}\hlstd{,} \hlnum{2400}\hlstd{)}
+\hlstd{freqs} \hlkwb{<-} \hlnum{1}\hlopt{:}\hlstd{(}\hlkwd{nrow}\hlstd{(dat)}\hlopt{/}\hlnum{2}\hlstd{)} \hlopt{*} \hlstd{(}\hlnum{24}\hlstd{)} \hlopt{/} \hlkwd{nrow}\hlstd{(dat)} \hlcom{# frequency in cpd}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mv} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{names}\hlstd{(mv)}
+\end{alltt}
+\begin{verbatim}
+##  [1] "freq"              "spec"              "pspec"            
+##  [4] "transfer"          "coh"               "phase"            
+##  [7] "kernel"            "df"                "numfreq"          
+## [10] "bandwidth"         "n.used"            "orig.n"           
+## [13] "series"            "snames"            "method"           
+## [16] "taper"             "pad"               "detrend"          
+## [19] "demean"            "timebp"            "nyquist.frequency"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/plotnames-1} 
+
+\end{knitrout}
+
+
+
+
+\newpage
+
+\subsection{Number of tapers}
+
+For the multivariate psd method, the same numbers of tapers at a given frequency is used for each series. These numbers can be chosen in one of three ways using the \Rcmd{riedsid\_column} parameter:
+
+\begin{itemize}
+\item The maximum number of tapers of all the series for each frequency (riedsid\_column = 0)
+\item The minimum number of tapers of all the series for each frequency (riedsid\_column < 0);
+\item The number of tapers can be selected based on a specific series (riedsid\_column = column\_number).
+\end{itemize}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mn} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}   \hlcom{# minimum number }
+\hlstd{mx} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=}\hlopt{-}\hlnum{1L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}   \hlcom{# maximum number}
+\hlstd{c1} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{1L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}   \hlcom{# column 1}
+\hlstd{c2} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{2L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}   \hlcom{# column 2}
+\hlstd{c3} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{3L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}   \hlcom{# column 3}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/Taper_plot-1} 
+
+\end{knitrout}
+
+\subsubsection{Specifying the number of tapers}
+
+The number of tapers can also be specified as a single value.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwc{mgp} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0}\hlstd{))}
+\hlstd{one_val} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+                 \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap.init} \hlstd{=} \hlnum{11}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/taper_specification-1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{plot}\hlstd{(one_val}\hlopt{$}\hlstd{taper)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/taper_specification-2} 
+
+\end{knitrout}
+
+The number of tapers can also be specified as a vector of values.  The length of the vector is equal to one-half the number of rows rounded down (i.e. integer division). The example below uses an approximately linearly increasing taper vector.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwc{mgp} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0}\hlstd{))}
+\hlstd{vec_val} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+                 \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap} \hlstd{=} \hlkwd{as.tapers}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{(}\hlkwd{nrow}\hlstd{(dat)} \hlopt{%/%} \hlnum{2}\hlstd{)} \hlopt{%/%} \hlnum{7} \hlopt{+} \hlnum{7}\hlstd{),}
+                 \hlkwc{plot} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/taper_specification2-1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{plot}\hlstd{(vec_val}\hlopt{$}\hlstd{taper)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/taper_specification2-2} 
+
+\end{knitrout}
+
+\newpage 
+
+\subsection{Equations}
+
+\begin{itemize}
+
+\item [\Rcmd{`coh'}:] $ \text{coherence}_{xy}  = |G_{xy}|^2 / (G_{xx} * G_{yy})$
+
+\item [\Rcmd{`phase'}:] $ \text{phase}_{xy} = Arg(G_{xy})$
+
+\item [\Rcmd{`transfer'}:] \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input. Thus:
+
+\item $ \text{gain} = Mod(\text{transfer}) $
+\item $ \text{phase} = Arg(\text{transfer}) $
+
+\end{itemize}
+
+
+
+\subsection{Auto-spectra and Cross-spectra}
+
+The auto-spectra and cross-spectra are stored in the \Rcmd{pspec} list item returned from \Rcmd{pspectrum}.  It is a complex numbered three-dimensional array with the dimensions equal to the length of the psd X number of variables X number of variables.  The diagonal of the array are the auto-spectra and the off diagonals are the cross-spectra.
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{spec} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{pspec}
+\hlkwd{dim}\hlstd{(spec)}
+\end{alltt}
+\begin{verbatim}
+## [1] 1150    3    3
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\newpage 
+
+\subsection{Coherence}
+
+The coherence is stored in result from pspectrum and contains the coherence between input and each of the outputs. In this section we will use a constant number of tapers to get a result similar to \Rcmd{spec.pgram}.   
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{coh} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+                 \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap.init} \hlstd{=} \hlnum{11}\hlstd{)}\hlopt{$}\hlstd{coh}
+\hlstd{coh_base} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(dat[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)],} \hlkwc{spans} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{),} \hlkwc{fast} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{coh}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/coh_ba_plot-1} 
+
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/coh_et_plot-1} 
+
+\end{knitrout}
+
+
+\subsection{Phase}
+
+The phase is stored in result from pspectrum and contains the cross-spectrum phase.  The Earth tide phase fluctuates rapidly because for many frequencies the spectral power is very small.
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{phase} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+                 \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap.init} \hlstd{=} \hlnum{11}\hlstd{)}\hlopt{$}\hlstd{phase}
+\hlstd{phase_base} \hlkwb{<-} \hlkwd{spec.pgram}\hlstd{(dat[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)],} \hlkwc{spans} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{11}\hlstd{),} \hlkwc{fast} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{phase}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/phase_ba_plot-1} 
+
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/phase_et_plot-1} 
+
+\end{knitrout}
+
+\subsection{Frequency Response}
+
+The multivariate method calculates the auto and cross-spectra and also solves for a frequency response.  The frequency response is stored as a complex number matrix.  A three column matrix was provided to pspectrum which results a two column matrix of frequency responses. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{transfer} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(dat,} \hlkwc{riedsid_column}\hlstd{=} \hlopt{-}\hlnum{1L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}\hlopt{$}\hlstd{transfer}
+\hlstd{gain} \hlkwb{<-} \hlkwd{Mod}\hlstd{(transfer)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/transfer_gain_plot-1} 
+
+\includegraphics[width=\maxwidth]{figure/transfer_gain_plot-2} 
+
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{phase} \hlkwb{<-} \hlkwd{Arg}\hlstd{(transfer)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/transfer_phase_plot-1} 
+
+\includegraphics[width=\maxwidth]{figure/transfer_phase_plot-2} 
+
+\end{knitrout}
+
+\section{Conclusion}
+
+The \Rcmd{psd} package can handle multivariate time series and provides results including the auto and cross-spectra, phase, coherence, and the frequency response function.  
+
+%\pagebreak
+
+\subsection{References}
+
+
+\section*{Session Info}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{utils}\hlopt{::}\hlkwd{sessionInfo}\hlstd{()}
+\end{alltt}
+\begin{verbatim}
+## R version 4.0.1 (2020-06-06)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Mojave 10.14.6
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] psd_2.0.0  knitr_1.28
+## 
+## loaded via a namespace (and not attached):
+##  [1] zoo_1.8-8          compiler_4.0.1     magrittr_1.5       tools_4.0.1       
+##  [5] RColorBrewer_1.1-2 Rcpp_1.0.4.6       stringi_1.4.6      highr_0.8         
+##  [9] grid_4.0.1         stringr_1.4.0      xfun_0.14          lattice_0.20-41   
+## [13] evaluate_0.14
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+%% bib and index
+\bibliographystyle{apalike}
+\bibliography{REFS}
+
+\end{document}

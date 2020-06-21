@@ -29,7 +29,9 @@
 #' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation; if \code{NULL} then the
 #' default in \code{\link{pilot_spec}} is used.
 #' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum is estimated.
-#' @param output_column scalar integer; If the series contains multiple columns, which column contains the output.  The default assumes the last column is the output and the others are all inputs.
+#' @param output_column scalar integer; If the series contains multiple columns,  specify
+#' which column contains the output.  
+#' The default assumes the last column is the output and the others are all inputs.
 #' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
 #' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param verbose logical; Should messages be given?
@@ -119,13 +121,15 @@ pspectrum.default <- function(x,
   # plotting and iterations
   if (is.null(niter)) stopifnot(niter>=0)
   plotpsd_ <- FALSE
+  
   # iteration stages (0 is pilot)
-  iter_stages <- 0:niter
+  iter_stages <- seq.int(0L, niter)
   
   # retain history
   save_hist <- ifelse((niter < 10) & !no.history, TRUE, FALSE)
   
   # AR switch
+  # [ ] add options to change 100
   ordAR <- ifelse(AR, 100, 0)
 
   for (stage in iter_stages){

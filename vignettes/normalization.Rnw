@@ -27,7 +27,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
@@ -74,7 +74,7 @@ on the subject\footnote{
 The type of
 confusion common in spectral analyses
 is illustrated in this thread on \Rcmd{R-help}:
-\url{http://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html}
+\url{https://r.789695.n4.nabble.com/Re-How-do-I-normalize-a-PSD-td792902.html}
 }.
 Commonly one finds similarly sounding phrases, including ``amplitude spectrum",
 ``energy spectral density", ``power", ``power spectra", and even ``spectra".

@@ -42,7 +42,7 @@ typically found in geophysical datasets.
 
 ## How to Cite
 
-Bob and I have published a [paper in Computers & Geosciences][1]
+Bob and Andy have a [paper in Computers & Geosciences][1]
 to accompany this software [(download a pdf, 1MB)][pdf]; it describes the theory behind
 the estimation process, and how we apply it in practice.
 If you find `psd` useful in your research, we kindly request
