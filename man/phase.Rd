@@ -10,9 +10,10 @@ phase(pgram)
 \item{pgram}{\code{numeric array} must be multivariate}
 }
 \value{
-list of phase. For multivariate time series a matrix containing the cross-spectrum phase between different series. The format is the same as coh.
+list of phase. For multivariate time series a matrix containing the cross 
+spectrum phase between different series. The format is the same as \code{\link{coherence}}.
 }
 \description{
-Calculate phase from the spectra and cross-spectra. This method is the same as
+Calculate phase from the spectra and cross spectrum. This method is the same as
 used in \code{spec.pgram}.
 }

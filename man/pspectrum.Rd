@@ -73,10 +73,10 @@ Object with class 'spec', invisibly. It also assigns the object to
 }
 \description{
 This is the primary function to be used in this package: it returns
-power spectral density estimates of a univariate timeseries, with
+power spectral density estimates of a timeseries, with
 an optimal number of tapers at each frequency based on iterative
 reweighted spectral derivatives. If the object given is a multicolumn
-object, the cross spectrum will be calculated using the same
+object, the cross spectrum (multivariate PSD) will be calculated using the same
 iterative procedure.
 }
 \details{

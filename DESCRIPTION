@@ -2,7 +2,7 @@ Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density and Cross Spectrum Estimation
 Version: 2.0.0
-Date: 2020-06-18
+Date: 2020-06-21
 Authors@R:
     c(person(given = c("Andrew","J."),
              family = "Barbour",

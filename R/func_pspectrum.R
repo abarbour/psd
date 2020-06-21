@@ -2,10 +2,10 @@
 #' 
 #' @description
 #' This is the primary function to be used in this package: it returns
-#' power spectral density estimates of a univariate timeseries, with
+#' power spectral density estimates of a timeseries, with
 #' an optimal number of tapers at each frequency based on iterative
 #' reweighted spectral derivatives. If the object given is a multicolumn
-#' object, the cross spectrum will be calculated using the same
+#' object, the cross spectrum (multivariate PSD) will be calculated using the same
 #' iterative procedure.
 #'
 #' @details
@@ -54,10 +54,10 @@ pspectrum.ts <- function(x, output_column = NULL, ...){
   stopifnot(is.ts(x))
   
   # Make sure the output column is the first column
-  if(inherits(x, 'matrix')){
+  if (inherits(x, 'matrix')){
   # assume output is last column
     nc <- ncol(x)
-    if(is.null(output_column)) {
+    if (is.null(output_column)) {
       x <- x[, c(nc, 1:(nc-1))]
     } else {
       other_cols <- setdiff(1:nc, output_column)
@@ -98,6 +98,7 @@ pspectrum.spec <- function(x, ...){
       stop('updating  pspectrum  results is not (yet) implemented') 
     }
   } else {
+    # would be nice to have an 'update' method [ ]
     .NotYetImplemented()
   }
 }

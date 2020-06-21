@@ -24,11 +24,10 @@
 %}
 %
 
-\section{CHANGES IN \psd{} VERSION 2.0.0 (2020-06-18)}{
+\section{CHANGES IN \psd{} VERSION 2.0.0 (2020-06-21)}{
   \itemize{
     \item Major bump which adds multivariate calculations (i.e., the cross spectrum)
     using the same optimization feature.
-    # [ ] need to fill in details
   }
 }
 

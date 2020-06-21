@@ -22,7 +22,7 @@ which is based on an estimate of the second derivative of the PSD (\eqn{S''}).
 The process is repeated \code{niter} times; further iteration may be necessary 
 to reach convergence, or an acceptably low spectral variance. 
 In this context the term "acceptable" is rather subjective: one can 
-usually detect an unconverged state by a rather jagged appearence of the spectrum,
+usually detect an unconverged state by a rather jagged appearance of the spectrum,
 but this is uncommon in our experience.
 
 \subsection{Adaptive estimation}{
@@ -72,5 +72,5 @@ Minimum bias multiple taper spectral estimation,
 \code{\link{pspectrum}} (main function); \code{\link{psdcore}} and \code{\link{riedsid}}
 }
 \author{
-Andrew J. Barbour <andy.barbour@gmail.com> and Robert L. Parker
+Andrew J. Barbour <andy.barbour@gmail.com>, Jonathan Kennel, and Robert L. Parker
 }

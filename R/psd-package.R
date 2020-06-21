@@ -17,7 +17,7 @@
 #' The process is repeated \code{niter} times; further iteration may be necessary 
 #' to reach convergence, or an acceptably low spectral variance. 
 #' In this context the term "acceptable" is rather subjective: one can 
-#' usually detect an unconverged state by a rather jagged appearence of the spectrum,
+#' usually detect an unconverged state by a rather jagged appearance of the spectrum,
 #' but this is uncommon in our experience.
 #'
 #' \subsection{Adaptive estimation}{
@@ -48,7 +48,7 @@
 #' @name psd-package
 #' @aliases psd spec.psd
 #' 
-#' @author Andrew J. Barbour <andy.barbour@@gmail.com> and Robert L. Parker
+#' @author Andrew J. Barbour <andy.barbour@@gmail.com>, Jonathan Kennel, and Robert L. Parker
 #' 
 #' @useDynLib psd
 #' 
@@ -239,24 +239,12 @@ NULL
 
 
 
-#' A single line of Project MAGNET horizontal field intensity
+#' Water levels from borehole WIPP30
 #' 
-#' The Project MAGNET mission 
-#' provided a wealth of airborne-magnetometer data
-#' spanning the globe (Coleman, 1992).  
-#' This dataset represents a single track of horizontal field
-#' intensities (a very small subset of the full collection!).
-#'
-#' \subsection{Raw and Clean Sets}{
-#' There are non-real data points in raw MAGNET series; these are 
-#' instrumental artefacts, and can severely affect
-#' power spectral density (PSD) estimates.  
-#' A clean series has been included
-#' so that a comparison of PSDs may be made.
-#'
-#' Some command like \code{subset(magnet, abs(mdiff) > 0)}
-#' can be used to identify the rows where edits have been made.
-#' }
+#' Observed water levels and barometric pressure from
+#' well WIPP30 (WIPP: Waste Isolation Pilot Plant)
+#' 
+#' @details This is the dataset used in the multivariate PSD vignette
 #' 
 #' @name wipp30
 #' @docType data

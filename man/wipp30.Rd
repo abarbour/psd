@@ -3,7 +3,7 @@
 \docType{data}
 \name{wipp30}
 \alias{wipp30}
-\title{A single line of Project MAGNET horizontal field intensity}
+\title{Water levels from borehole WIPP30}
 \format{
 A matrix with 13413 rows following 4 variables.
 
@@ -18,23 +18,11 @@ A matrix with 13413 rows following 4 variables.
 BETCO page: \url{http://www.hydrology.uga.edu/rasmussen/betco/}
 }
 \description{
-The Project MAGNET mission 
-provided a wealth of airborne-magnetometer data
-spanning the globe (Coleman, 1992).  
-This dataset represents a single track of horizontal field
-intensities (a very small subset of the full collection!).
+Observed water levels and barometric pressure from
+well WIPP30 (WIPP: Waste Isolation Pilot Plant)
 }
 \details{
-\subsection{Raw and Clean Sets}{
-There are non-real data points in raw MAGNET series; these are 
-instrumental artefacts, and can severely affect
-power spectral density (PSD) estimates.  
-A clean series has been included
-so that a comparison of PSDs may be made.
-
-Some command like \code{subset(magnet, abs(mdiff) > 0)}
-can be used to identify the rows where edits have been made.
-}
+This is the dataset used in the multivariate PSD vignette
 }
 \examples{
 data(wipp30)
