@@ -52,7 +52,7 @@
 #' 
 #' @useDynLib psd
 #' 
-#' @import RColorBrewer signal zoo
+#' @import RColorBrewer zoo
 #' @importFrom Rcpp sourceCpp
 #' @importFrom graphics abline layout legend lines mtext par plot title matlines matplot
 #' @importFrom stats acf as.ts frequency is.ts lm loess loess.control pchisq qchisq residuals spec.pgram start ts var
