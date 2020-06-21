@@ -269,7 +269,7 @@ NULL
 #' \item{\code{et}}{Earth tide gravity potential (nanometers/second^2)}
 #' }
 #'
-#' @seealso \code{\link{pspectrum}}}
+#' @seealso \code{\link{pspectrum}}
 #'
 #' @references Toll, N.J., Rasmussen, T.C., (2007),
 #'  Removal of Barometric Pressure Effects and Earth Tides from Observed Water Levels.
