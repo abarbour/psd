@@ -3,8 +3,8 @@
 #
 # DO NOT EXCLUDE FROM BUILD!
 
-TEXS = fftw.tex normalization.tex psd_overview.tex multivariate.tex
-PDFS = fftw.pdf normalization.pdf psd_overview.pdf multivariate.pdf
+TEXS = fftw.tex normalization.tex psd_overview.tex
+PDFS = fftw.pdf normalization.pdf psd_overview.pdf
 
 all: $(PDFS)
 
