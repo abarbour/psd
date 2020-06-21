@@ -46,8 +46,7 @@ update_adapt_history(PSD, stage, ...)
 
 \method{update_adapt_history}{spec}(PSD, stage, ...)
 
-\method{update_adapt_history}{default}(PSD, stage, ntap = NA,
-  freq = NULL, ...)
+\method{update_adapt_history}{default}(PSD, stage, ntap = NA, freq = NULL, ...)
 
 new_adapt_history(adapt_stages)
 }

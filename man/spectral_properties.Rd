@@ -13,8 +13,7 @@ spectral_properties(x, ...)
 
 \method{spectral_properties}{tapers}(x, ...)
 
-\method{spectral_properties}{default}(x, f.samp = 1, n.freq = NULL,
-  p = 0.95, db.ci = FALSE, ...)
+\method{spectral_properties}{default}(x, f.samp = 1, n.freq = NULL, p = 0.95, db.ci = FALSE, ...)
 }
 \arguments{
 \item{x}{object to calculate spectral properties for; or a vector of number of tapers}
@@ -130,7 +129,7 @@ lines(c(2,1,1,2)*0.01,c(5,5,8.01,8.01)-8)
 text(.05, -1.4, "3.01 dB")
 polygon(psppu$xx, (psppu$yy), col="light grey", border="black", lwd=0.5)
 polygon(pspp$xx, (pspp$yy), col="dark grey", border=NA)
-text(0.15, 6, "With adaptive\\ntaper refinement", cex=1.2)
+text(0.15, 6, "With adaptive\ntaper refinement", cex=1.2)
 polygon(pspau$xx, (pspau$yy)-10, col="light grey", border="black", lwd=0.5)
 polygon(pspa$xx, (pspa$yy)-10, col="dark grey", border=NA)
 text(0.35, 22, "Uniform tapering", cex=1.2)

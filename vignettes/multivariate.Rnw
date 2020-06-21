@@ -79,7 +79,7 @@ freqs <- 1:(nrow(wipp30)/2) * (24) / nrow(wipp30) # frequency in cpd
 @
 
 <<eval=TRUE, echo=TRUE, label="calcmv">>=
-mv <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = FALSE)
+mv <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = FALSE, output_column = 1)
 @
 
 

@@ -15,9 +15,16 @@ pilot_spec(x, ...)
 
 \method{pilot_spec}{matrix}(x, x.frequency, ...)
 
-\method{pilot_spec}{default}(x, x.frequency = NULL, ntap = NULL,
-  remove.AR = NULL, plot = FALSE, verbose = FALSE, fast = FALSE,
-  ...)
+\method{pilot_spec}{default}(
+  x,
+  x.frequency = NULL,
+  ntap = NULL,
+  remove.AR = NULL,
+  plot = FALSE,
+  verbose = FALSE,
+  fast = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{vector; the data series to find a pilot spectrum for}

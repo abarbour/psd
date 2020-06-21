@@ -4,14 +4,16 @@
 \name{magnet}
 \alias{magnet}
 \title{A single line of Project MAGNET horizontal field intensity}
-\format{A dataframe with 2048 observations on the following 4 variables.
+\format{
+A dataframe with 2048 observations on the following 4 variables.
 
 \describe{
 \item{\code{km}}{Relative along-track distance, in kilometers. The first observation is at zero kilometers.}
 \item{\code{raw}}{Raw intensities, in nanotesla.}
 \item{\code{clean}}{Edited raw intensities, in nanotesla}
 \item{\code{mdiff}}{The difference between \code{clean} and \code{raw} intensities, in nanotesla.}
-}}
+}
+}
 \source{
 Project MAGNET page: \url{https://www.ngdc.noaa.gov/geomag/proj_mag.shtml}
 }

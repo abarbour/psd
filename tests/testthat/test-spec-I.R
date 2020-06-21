@@ -345,3 +345,19 @@ test_that("check multivariate autospectra, coherence, and phase for psdcore",{
   
 })
   
+
+test_that("check multivariate output column selection works",{
+  
+library(psd)
+data(wipp30)
+wipp30 <- as.matrix(wipp30[, -1])
+
+mv1 <- pspectrum(wipp30, riedsid_column= 0L, verbose = FALSE, plot = FALSE, output_column = 1)
+mv2 <- pspectrum(wipp30[, c(2,3,1)], riedsid_column= 0L, verbose = FALSE, plot = FALSE, output_column = 3)
+mv3 <- pspectrum(wipp30[, c(2,1,3)], riedsid_column= 0L, verbose = FALSE, plot = FALSE, output_column = 2)
+
+all.equal(mv1, mv2)
+all.equal(mv1, mv3)
+
+
+})

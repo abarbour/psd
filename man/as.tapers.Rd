@@ -5,11 +5,21 @@
 \alias{tapers}
 \title{Coerce an object into a \code{'tapers'} object.}
 \usage{
-as.tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE,
-  record.last = FALSE)
+as.tapers(
+  x,
+  min_taper = 1,
+  max_taper = NULL,
+  setspan = FALSE,
+  record.last = FALSE
+)
 
-tapers(x, min_taper = 1, max_taper = NULL, setspan = FALSE,
-  record.last = FALSE)
+tapers(
+  x,
+  min_taper = 1,
+  max_taper = NULL,
+  setspan = FALSE,
+  record.last = FALSE
+)
 }
 \arguments{
 \item{x}{An object to set}
@@ -55,10 +65,10 @@ the half-length of the spectrum.
 
 Various classes can be coerced into a \code{'tapers'} object; those
 tested sofar include: scalar, vector, matrix, data.frame, 
-and list.
+and list.  
 
 Multiple objects are concatenated into a single
-vector dimension.
+vector dimension.  
 
 Enabling \code{setspan} will only override
 \code{max_taper} should it be larger than the half-width of the series.

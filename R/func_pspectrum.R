@@ -29,6 +29,7 @@
 #' @param ntap.init scalar; the number of sine tapers to use in the pilot spectrum estimation; if \code{NULL} then the
 #' default in \code{\link{pilot_spec}} is used.
 #' @param niter scalar; the number of adaptive iterations to execute after the pilot spectrum is estimated.
+#' @param output_column scalar integer; If the series contains multiple columns, which column contains the output.  The default assumes the last column is the output and the others are all inputs.
 #' @param AR logical; should the effects of an AR model be removed from the pilot spectrum?
 #' @param Nyquist.normalize  logical; should the units be returned on Hz, rather than Nyquist?
 #' @param verbose logical; Should messages be given?
@@ -47,8 +48,22 @@ pspectrum <- function(x, ...) UseMethod("pspectrum")
 #' @rdname pspectrum
 #' @aliases pspectrum.ts
 #' @export
-pspectrum.ts <- function(x, ...){
+pspectrum.ts <- function(x, output_column = NULL, ...){
   stopifnot(is.ts(x))
+  
+  # Make sure the output column is the first column
+  if(inherits(x, 'matrix')){
+  # assume output is last column
+    nc <- ncol(x)
+    if(is.null(output_column)) {
+      x <- x[, c(nc, 1:(nc-1))]
+    } else {
+      other_cols <- setdiff(1:nc, output_column)
+      x <- x[, c(output_column, other_cols)]
+    }
+    
+  }
+  
   frq <- stats::frequency(x)
   args <- list(...)
   args[['x']] <- x
@@ -94,7 +109,8 @@ pspectrum.default <- function(x,
                               niter=3, 
                               AR=FALSE, 
                               Nyquist.normalize=TRUE, 
-                              verbose=TRUE, no.history=FALSE, 
+                              verbose=TRUE, 
+                              no.history=FALSE, 
                               plot=FALSE, ...){
   
   stopifnot(NROW(x)>2)

@@ -14,9 +14,13 @@ constrain_tapers(tapvec, ...)
 
 \method{constrain_tapers}{tapers}(tapvec, ...)
 
-\method{constrain_tapers}{default}(tapvec, tapseq = NULL,
+\method{constrain_tapers}{default}(
+  tapvec,
+  tapseq = NULL,
   constraint.method = c("simple.slope", "loess.smooth", "none"),
-  verbose = TRUE, ...)
+  verbose = TRUE,
+  ...
+)
 
 minspan(tapvec, ...)
 

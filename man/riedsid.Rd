@@ -13,16 +13,30 @@ riedsid(PSD, ...)
 
 \method{riedsid}{spec}(PSD, ...)
 
-\method{riedsid}{default}(PSD, ntaper = 1L, tapseq = NULL,
-  Deriv.method = c("local_qls", "spg"), constrained = TRUE,
-  c.method = NULL, verbose = TRUE, ...)
+\method{riedsid}{default}(
+  PSD,
+  ntaper = 1L,
+  tapseq = NULL,
+  Deriv.method = c("local_qls", "spg"),
+  constrained = TRUE,
+  c.method = NULL,
+  verbose = TRUE,
+  ...
+)
 
 riedsid2(PSD, ...)
 
 \method{riedsid2}{spec}(PSD, ...)
 
-\method{riedsid2}{default}(PSD, ntaper = 1L, constrained = TRUE,
-  verbose = TRUE, fast = FALSE, riedsid_column = 0L, ...)
+\method{riedsid2}{default}(
+  PSD,
+  ntaper = 1L,
+  constrained = TRUE,
+  verbose = TRUE,
+  fast = FALSE,
+  riedsid_column = 0L,
+  ...
+)
 }
 \arguments{
 \item{PSD}{vector or class \code{'amt'} or \code{'spec'}; the spectral values used to optimize taper numbers}

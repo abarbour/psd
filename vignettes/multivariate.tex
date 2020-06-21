@@ -136,7 +136,7 @@ To calculate the multivariate power spectral density the \Rcmd{pspectrum} functi
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mv} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(wipp30,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{mv} \hlkwb{<-} \hlkwd{pspectrum}\hlstd{(wipp30,} \hlkwc{riedsid_column}\hlstd{=} \hlnum{0L}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{output_column} \hlstd{=} \hlnum{1}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -215,11 +215,11 @@ The number of tapers can also be specified as a single value.
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/taper_specification-1} 
 \begin{kframe}\begin{alltt}
-\hlkwd{plot}\hlstd{(vec_val}\hlopt{$}\hlstd{taper)}
+\hlkwd{plot}\hlstd{(one_val}\hlopt{$}\hlstd{taper)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/taper_specification-2} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot(vec\_val\$taper): object 'vec\_val' not found}}\end{kframe}
 \end{knitrout}
 
 The number of tapers can also be specified as a vector of values.  The length of the vector is equal to one-half the number of rows rounded down (i.e. integer division). The example below uses an approximately linearly increasing taper vector.
@@ -252,7 +252,7 @@ The number of tapers can also be specified as a vector of values.  The length of
 
 \item  $ phase_{xy} = Arg(G_{xy})$
 
-\item  \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the pspec as the input.
+\item  \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the \Rcmd{pspec} as the input.
 
 \item $ gain = Mod(transfer) $
 \item $ phase = Arg(transfer) $
