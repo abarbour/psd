@@ -177,7 +177,7 @@ pspectrum_basic <- function(x, ntap.init=7, niter=5, verbose=TRUE, ...){
   
   if (verbose) adapt_message(0)
   # Initial spectrum
-  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, refresh=TRUE, fast = TRUE)
+  P <- psdcore(x, ntaper=ntap.init, preproc = FALSE, refresh=TRUE, fast = TRUE, ...)
   # Iterate and resample spectrum
   if (verbose & niter > 0) message("Iterative refinement of spectrum (", niter, " iterations)")
   for (iter in seq_len(niter)){

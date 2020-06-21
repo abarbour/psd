@@ -176,12 +176,10 @@ psdcore.default <- function(X.d,
       }
     })
     
-    
     ## zero pad and take double-length fft
     pad <- matrix(0.0, nrow = n.e, ncol = NCOL(X.even)) 
     padded <- rbind(as.matrix(X.even), pad)
     # padded <- as.matrix(X.even)
-
 
     ## Calculate discrete Fourier tranform
     #   Note fftw is faster for very long series but we are

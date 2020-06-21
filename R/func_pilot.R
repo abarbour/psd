@@ -85,11 +85,10 @@ pilot_spec.matrix <- function(x, x.frequency, ...){
 #' @rdname pilot_spec
 #' @export
 pilot_spec.default <- function(x, x.frequency=NULL, ntap=NULL, remove.AR=NULL, plot=FALSE, verbose=FALSE, fast = FALSE, ...){
-  
   if (is.null(ntap)) ntap <- 7
   if (is.null(remove.AR)) remove.AR <- 0
   if (is.null(x.frequency)) x.frequency <- 1
-  stopifnot(length(ntap)==1)
+  stopifnot(length(ntap)==1 | length(ntap)==nrow(x) %/% 2)
   stopifnot(length(remove.AR)==1)
   stopifnot(length(x.frequency)==1)
 
