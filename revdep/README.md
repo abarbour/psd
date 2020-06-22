@@ -10,7 +10,7 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |America/Los_Angeles          |
-|date     |2020-06-17                   |
+|date     |2020-06-21                   |
 
 # Dependencies
 
@@ -20,7 +20,7 @@
 |RColorBrewer  |1.1-2       |1.1-2       |   |
 |Rcpp          |1.0.4.6     |1.0.4.6     |   |
 |RcppArmadillo |0.9.900.1.0 |0.9.900.1.0 |   |
-|signal        |0.7-6       |0.7-6       |   |
+|signal        |0.7-6       |NA          |*  |
 |zoo           |1.8-8       |1.8-8       |   |
 
 # Revdeps
