@@ -14,16 +14,7 @@
 #  library.dynam.unload("psd", libpath)
 #}
 
-##
-# executed after .onLoad is executed, once the namespace is visible to user
-.onAttach <- function(...) {
-  ##
-  ## add some info to the environment
-  psd::psd_envAssign("init", "initialized upon attach")
-  ##
-  packageStartupMessage(
-    sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation; to start, see ?pspectrum",
-            utils::packageVersion("psd")))
+.onLoad <- function(...){
   ##
   ## options which can be reset by the user
   options(psd.ops=list(
@@ -41,6 +32,19 @@
       n.even.half = "len_even_half",
       series.orig = "ser_orig",
       n.orig = "len_orig"
-      )
+    )
   ))
+}
+
+##
+# executed after .onLoad is executed, once the namespace is visible to user
+.onAttach <- function(...) {
+  ##
+  ## add some info to the environment
+  psd::psd_envAssign("init", "initialized upon attach")
+  ##
+  packageStartupMessage(
+    sprintf("Loaded psd (%s) -- Adaptive multitaper spectrum estimation; to start, see ?pspectrum",
+            utils::packageVersion("psd")))
+
 }
