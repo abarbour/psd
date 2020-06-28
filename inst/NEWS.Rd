@@ -24,6 +24,13 @@
 %}
 %
 
+\section{CHANGES IN \psd{} VERSION 2.1.0 (2020-06-28)}{
+  \itemize{
+    \item Fixed an issue related to how psd initiates its internal options.
+    \item New flag in \code{psdcore} indivating if calculations are multivariate or not.
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 2.0.0 (2020-06-21)}{
   \itemize{
     \item Major bump which adds multivariate calculations (i.e., the cross spectrum)

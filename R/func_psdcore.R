@@ -281,62 +281,73 @@ psdcore.default <- function(X.d,
   
   ## Assemble final results
   mtap <- max(kseq, na.rm=TRUE)
-  if(NCOL(PSD) > 1) {
+  is.mvt <- NCOL(PSD) > 1
   
-  PSD.out <- list(freq = as.numeric(frq), 
-                  spec = spec, 
-                  pspec = PSD,
-                  transfer = solve_tf(PSD),
-                  coh = coherence(PSD), 
-                  phase = phase(PSD), 
-                  kernel = NULL, 
-                  # must be a scalar for plot.spec to give conf ints:
-                  df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
-                  numfreq = npsd,    
-                  ## bandwidth
-                  # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
-                  # half-width W = (K + 1)/{2(N + 1)}
-                  # effective bandwidth ~ 2 W (accurate for many spectral windows)
-                  bandwidth = (mtap + 1) / nhalf, 
-                  n.used = psd_envGet(evars[['n.even']]), 
-                  orig.n = psd_envGet(evars[['n.orig']]), 
-                  series = series, 
-                  snames = colnames(X), 
-                  method = sprintf("sine multitaper"), 
-                  taper = kseq, 
-                  pad = TRUE, # always!
-                  detrend = preproc, # always true?
-                  demean = preproc,
-                  timebp = as.numeric(kseq/2),
-                  nyquist.frequency = Nyq
-  )
+  if (is.mvt) {
+    PSD.out <- list(
+      freq = as.numeric(frq),
+      spec = spec,
+      pspec = PSD,
+      transfer = solve_tf(PSD),
+      coh = coherence(PSD),
+      phase = phase(PSD),
+      kernel = NULL,
+      # must be a scalar for plot.spec to give conf ints:
+      df = 2 * mtap,
+      # 2 DOF per taper, Percival and Walden eqn (370b)
+      numfreq = npsd,
+      ## bandwidth
+      # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
+      # half-width W = (K + 1)/{2(N + 1)}
+      # effective bandwidth ~ 2 W (accurate for many spectral windows)
+      bandwidth = (mtap + 1) / nhalf,
+      n.used = psd_envGet(evars[['n.even']]),
+      orig.n = psd_envGet(evars[['n.orig']]),
+      series = series,
+      snames = colnames(X),
+      method = sprintf("sine multitaper"),
+      taper = kseq,
+      pad = TRUE,
+      # always!
+      detrend = preproc,
+      # always true?
+      demean = preproc,
+      timebp = as.numeric(kseq / 2),
+      nyquist.frequency = Nyq,
+      is.multivariate = is.mvt
+    )
   } else {
-    PSD.out <- list(freq = as.numeric(frq), 
-                    spec = as.numeric(spec), 
-                    pspec = NULL,
-                    transfer = NULL,
-                    coh = NULL, 
-                    phase = NULL, 
-                    kernel = NULL, 
-                    # must be a scalar for plot.spec to give conf ints:
-                    df = 2 * mtap, # 2 DOF per taper, Percival and Walden eqn (370b)
-                    numfreq = npsd,    
-                    ## bandwidth
-                    # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
-                    # half-width W = (K + 1)/{2(N + 1)}
-                    # effective bandwidth ~ 2 W (accurate for many spectral windows)
-                    bandwidth = (mtap + 1) / nhalf, 
-                    n.used = psd_envGet(evars[['n.even']]), 
-                    orig.n = psd_envGet(evars[['n.orig']]), 
-                    series = series, 
-                    snames = colnames(X), 
-                    method = sprintf("sine multitaper"), 
-                    taper = kseq, 
-                    pad = TRUE, # always!
-                    detrend = preproc, # always true?
-                    demean = preproc,
-                    timebp = as.numeric(kseq/2),
-                    nyquist.frequency = Nyq
+    PSD.out <- list(
+      freq = as.numeric(frq),
+      spec = as.numeric(spec),
+      pspec = NULL,
+      transfer = NULL,
+      coh = NULL,
+      phase = NULL,
+      kernel = NULL,
+      # must be a scalar for plot.spec to give conf ints:
+      df = 2 * mtap,
+      # 2 DOF per taper, Percival and Walden eqn (370b)
+      numfreq = npsd,
+      ## bandwidth
+      # http://biomet.oxfordjournals.org/content/82/1/201.full.pdf
+      # half-width W = (K + 1)/{2(N + 1)}
+      # effective bandwidth ~ 2 W (accurate for many spectral windows)
+      bandwidth = (mtap + 1) / nhalf,
+      n.used = psd_envGet(evars[['n.even']]),
+      orig.n = psd_envGet(evars[['n.orig']]),
+      series = series,
+      snames = colnames(X),
+      method = sprintf("sine multitaper"),
+      taper = kseq,
+      pad = TRUE,
+      # always!
+      detrend = preproc,
+      # always true?
+      demean = preproc,
+      timebp = as.numeric(kseq / 2),
+      nyquist.frequency = Nyq,
+      is.multivariate = is.mvt
     )
   }
   class(PSD.out) <- c("amt","spec")

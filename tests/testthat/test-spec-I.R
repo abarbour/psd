@@ -275,9 +275,13 @@ test_that("check multivariate autospectra for pilot_spec",{
   expect_equal(ps$spec[,1], ps1$spec)
   expect_equal(ps$spec[,2], ps2$spec)
   
+  psps <- pspectrum(x, plot = FALSE)
   
-  ps <- pspectrum(x, plot = FALSE)
-
+  expect_false(ps1[['is.multivariate']])
+  expect_false(ps2[['is.multivariate']])
+  expect_true(ps[['is.multivariate']])
+  expect_true(psps[['is.multivariate']])
+  
 })
 
 
@@ -292,6 +296,11 @@ test_that("check multivariate autospectra, coherence, and phase for psdcore",{
   pd <- spec.pgram(x, plot = FALSE, spans = 5)
   pd <- normalize(pd, 1, "spectrum", verbose = FALSE)
   pc <- psdcore(x, plot = FALSE, verbose = FALSE,  ntaper = as.tapers(5))
+
+  
+  expect_null(pd[['is.multivariate']])
+  expect_true(pc[['is.multivariate']])
+  
   
   # is there an indexing issue here, need to remove the first value in psdcore
   # to get alignment
@@ -358,4 +367,8 @@ test_that("check multivariate output column selection works",{
   expect_equal(mv1, mv2)
   expect_equal(mv1, mv3)
 
+  expect_true(mv1[['is.multivariate']])
+  expect_true(mv2[['is.multivariate']])
+  expect_true(mv3[['is.multivariate']])
+  
 })
