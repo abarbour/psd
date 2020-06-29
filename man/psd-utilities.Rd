@@ -2,6 +2,9 @@
 % Please edit documentation in R/func_utils.R
 \name{psd-utilities}
 \alias{psd-utilities}
+\alias{na_locf}
+\alias{na_locf.matrix}
+\alias{na_locf.default}
 \alias{vardiff}
 \alias{varddiff}
 \alias{varddiff.spec}
@@ -22,6 +25,12 @@
 \alias{mod}
 \title{Various utility functions.}
 \usage{
+na_locf(x)
+
+\method{na_locf}{matrix}(x)
+
+\method{na_locf}{default}(x)
+
 vardiff(x, double.diff = FALSE)
 
 varddiff(x)
@@ -96,6 +105,10 @@ equivalent to \code{(x) \%\% (y)}.
 }
 \description{
 \emph{The various utility functions are:}
+
+\code{\link{na_locf}} is meant as a simple replacement for zoo::na.locf
+which carries the last observation forward; here we force both directions, meaning
+the first observation is carried backwards as well.
 
 \code{\link{vardiff}} returns the variance of the first (or second) 
 difference of the series. \code{\link{varddiff}} is a convenience wrapper

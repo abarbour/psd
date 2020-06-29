@@ -3,6 +3,45 @@
 
 context("Utility functions")
 
+test_that("na_locf expected behavior", {
+  n <- 5
+  ntot <- 2 * n + 1
+  y0 <- y0na <- seq_len(ntot)
+  y0na[n + 1] <- NA
+  numna <- 3
+  nas <- rep(NA, numna)
+  yl <- c(nas, y0)
+  yr <- c(y0, nas)
+  ylr <- c(nas, y0, nas)
+  ylrna <- c(nas, y0na, nas)
+  bad <- NULL
+  
+  expect_is(y0, 'integer')
+  expect_is(na_locf(y0), 'numeric')
+  expect_equal(y0, na_locf(y0))
+  expect_equal(y0na, na_locf(y0na))
+  expect_equal(as.numeric(as.character(y0na)), na_locf(y0na))
+  
+  ylLocf <- na_locf(yl)
+  yrLocf <- na_locf(yr)
+  ylrLocf <- na_locf(ylr)
+  ylrnaLocf <- na_locf(ylrna)
+  expect_length(ylLocf, length(yl))
+  expect_length(yrLocf, length(yr))
+  expect_length(ylrLocf, length(ylr))
+  expect_length(ylrnaLocf, length(ylrna))
+  expect_equal(range(ylLocf, na.rm=TRUE), range(yl, na.rm=TRUE))
+  expect_equal(range(yrLocf, na.rm=TRUE), range(yr, na.rm=TRUE))
+  expect_equal(range(ylrLocf, na.rm=TRUE), range(ylr, na.rm=TRUE))
+  expect_equal(range(ylrnaLocf, na.rm=TRUE), range(ylrna, na.rm=TRUE))
+  
+  expect_warning(expect_identical(bad, na_locf(bad)))
+  
+  Y <- cbind(yl, yr)
+  expect_equal(dim(Y), dim(na_locf(Y)))
+  expect_true(!any(is.na(na_locf(Y))))
+})
+
 test_that("message delivery is working",{
   expect_message(adapt_message(0))
   expect_is(adapt_message(0), 'character')

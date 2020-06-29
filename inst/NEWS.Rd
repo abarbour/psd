@@ -27,7 +27,10 @@
 \section{CHANGES IN \psd{} VERSION 2.1.0 (2020-06-28)}{
   \itemize{
     \item Fixed an issue related to how psd initiates its internal options.
-    \item New flag in \code{psdcore} indivating if calculations are multivariate or not.
+    \item New flag in \code{psdcore} indivating if calculations are multivariate or not; this
+    will be used in the future to make plotting functions more robust.
+    \item With the addition of a new function \code{na_locf},
+    the dependency on \pkg{zoo} has been removed.
   }
 }
 

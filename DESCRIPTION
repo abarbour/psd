@@ -31,8 +31,7 @@ Depends:
     R (>= 2.14.1)
 Imports:
     Rcpp (>= 0.11.5),
-    RColorBrewer,
-    zoo
+    RColorBrewer
 Suggests:
     bspec,
     fftw (>= 1.0.3),

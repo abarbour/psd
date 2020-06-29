@@ -128,7 +128,8 @@ prewhiten.ts <- function(tser, AR.max=0L, detrend=TRUE, demean=TRUE, impute=TRUE
     # twice, to catch leading or trailing NA
     if (any(is.na(tso))){
       # forward l-o-c-f, then reverse
-      as.ts(zoo::na.locf(zoo::na.locf(as.zoo(tso), na.rm=FALSE), fromLast=TRUE, na.rm=FALSE))
+      #as.ts(zoo::na.locf(zoo::na.locf(as.zoo(tso), na.rm=FALSE), fromLast=TRUE, na.rm=FALSE))
+      tso[] <- na_locf(tso)
     } else {
       tso
     }

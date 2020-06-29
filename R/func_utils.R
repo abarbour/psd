@@ -9,6 +9,54 @@
 #' @example inst/Examples/rdex_utilities.R
 NULL
 
+#' @description \code{\link{na_locf}} is meant as a simple replacement for zoo::na.locf
+#' which carries the last observation forward; here we force both directions, meaning
+#' the first observation is carried backwards as well.
+#' @rdname psd-utilities
+#' @export
+na_locf <- function(x) UseMethod('na_locf')
+#' @rdname psd-utilities
+#' @export
+na_locf.matrix <- function(x){
+  apply(X=x, MARGIN=2, FUN=na_locf.default)
+}
+#' @rdname psd-utilities
+#' @export
+na_locf.default <- function(x){
+  x0 <- x
+  x <- as.vector(x)
+  x <- as.numeric(x)
+  nx <- length(x)
+  x_is_na <- is.na(x)
+  xnew <- if (length(x_is_na)){
+    
+    nna <- which(!x_is_na)
+    first_nna <- min(nna)
+    last_nna <- max(nna)
+    
+    if (first_nna > 1){
+      fnna <- x[first_nna]
+      repl <- seq.int(1, first_nna - 1)
+      x[repl] <- fnna
+    }
+    if ((last_nna < nx) & (last_nna > first_nna)){
+      lnna <- x[last_nna]
+      lrepl <- seq.int(last_nna + 1, nx)
+      x[lrepl] <- lnna
+    }
+    
+    x
+    
+  } else {
+    warning('could not replace leading/trailing NAs')
+    
+    x0
+  }
+  
+  return(xnew)
+  
+}
+
 #' @description \code{\link{vardiff}} returns the variance of the first (or second) 
 #' difference of the series. \code{\link{varddiff}} is a convenience wrapper
 #' to return variance for the second difference.
