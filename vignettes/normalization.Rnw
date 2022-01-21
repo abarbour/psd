@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{Normalization of power spectral density estimates}
-%% \VignetteEngine{knitr}
+%% \VignetteEngine{knitr::knitr}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -187,7 +187,7 @@ from spectral leakage, seen just outside the
 edges of the pass-band.
 %and near the zero frequency.
 %
-<<eval=TRUE, echo=TRUE, label="Filtered signal analogy.">>=
+<<eval=TRUE, echo=TRUE, label="Filteredsignalanalogy">>=
 set.seed(1234)
 N <- 1028
 x <- rnorm(N, mean = 0, sd = 1)
@@ -409,7 +409,7 @@ A proper DFT is normalized by the length of the series; however, most
 DFT calculators (including \Rcmd{stats::fft}) eschew this normalization for 
 efficiency's sake.
 }.
-<<eval=TRUE, echo=TRUE, label="Synthetic white noise and a DFT.">>=
+<<eval=TRUE, echo=TRUE, label="SyntheticwhitenoiseandaDFT">>=
 # using x from the filter analogy section
 xv <- var(x)
 X <- fft(x)
@@ -423,7 +423,7 @@ estimates\footnote{
 Note the equivalence
 between the complex conjugate based estimates.
 }:
-<<eval=TRUE, echo=TRUE, label="Amplitude and phase spectra.">>=
+<<eval=TRUE, echo=TRUE, label="Amplitudeandphasespectra">>=
 Sa <- Mod(X) # Amplitude spectrum
 Sp <- Arg(X) # Phase spectrum
 XC <- Conj(X)
@@ -433,7 +433,7 @@ all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
 The single-sided \idx{power spectral density} estimates
 follow once we have the Nyquist frequency,
 defined as half the sampling rate:
-<<eval=TRUE, echo=TRUE, label="Nyquist frequencies.">>=
+<<eval=TRUE, echo=TRUE, label="Nyquistfrequencies">>=
 fsamp <- 1  # sampling freq, e.g. Hz
 fNyq <- fsamp/2   # Nyquist freq
 Nf <- N/2  # number of freqs
@@ -457,7 +457,7 @@ a ``Q-Q" plot, which shows PSD quantiles values as a function of $\chi^2$ quanti
 using the optimized value of the number of degrees of freedom; this
 is shown in Figure \ref{fig:qqchi}.
 
-<<eval=TRUE, echo=TRUE, label=OPTIM_EXPECT>>=
+<<eval=TRUE, echo=TRUE, label=OPTIMEXPECT>>=
 # 0) Setup optimization function for dof, using conjugate gradients\\
 #    min L1 |PSD - Chi^2(dof)|
 Chifit <- function(PSD){optim(list(df=mean(PSD)), function(dof){
@@ -470,7 +470,7 @@ print(dof <- Schi$par[[1]])
 While the optimal degrees of freedom is very nearly the correct value of two (2), 
 the value produced by \Rcmd{mean} is different by merely one percent (this is
 certainly an acceptable bias for our purposes).
-<<eval=TRUE, echo=TRUE, label=MEAN_EXPECT>>=
+<<eval=TRUE, echo=TRUE, label=MEANEXPECT>>=
 # compare with the mean and median
 c(mSn <- mean(S), median(S))
 @
@@ -518,7 +518,7 @@ Figure \ref{fig:psdN} plots the PSD of our white noise series with
 the value of $\nu$ from the optimization, 
 with which we can perform a variance--normalization
 test:
-<<eval=TRUE, echo=TRUE, label="Test normalization.">>=
+<<eval=TRUE, echo=TRUE, label="Testnormalization">>=
 mSn <- dof
 test_norm <- function(sval, nyq, xvar){svar <- sval * nyq; return(svar/xvar)}
 print(xv_1 <- test_norm(mSn, fNyq, xv))
@@ -533,7 +533,7 @@ and PSD
 with the sampling rate
 to obtain the properly-normalized spectra.
 
-<<eval=TRUE, echo=TRUE, label="Apply correct normalization.">>=
+<<eval=TRUE, echo=TRUE, label="Applycorrectnormalization">>=
 fsamp <- 20
 fNyq <- fsamp / 2
 freqs <- fsamp * nyfreqs 
@@ -590,7 +590,7 @@ for the input series is 1, and normalizes accordingly; however,
 the sampling information may be specified by creating a \Rcmd{ts}
 object from the series prior to spectrum estimation:
 
-<<eval=TRUE, echo=TRUE, label="Change the sampling frequency.">>=
+<<eval=TRUE, echo=TRUE, label="Changethesamplingfrequency">>=
 fsamp <- 20
 xt <- ts(x, frequency=fsamp)
 pgram20 <- spec.pgram(xt, pad=1, taper=0, plot=FALSE)
@@ -632,7 +632,7 @@ Because the frequencies are clearly correct, this factor of two likely means
 the spectra will fail our
 simple variance-normalization test. They do fail, by a factor of two,
 again too low:
-<<eval=TRUE, echo=TRUE, label="Test the normalization again.">>=
+<<eval=TRUE, echo=TRUE, label="Testthenormalizationagain">>=
 test_norm(mean(pgram01$spec), 0.5, xv)
 test_norm(mean(pgram20$spec), 10, xv)
 @
@@ -647,7 +647,7 @@ We can illustrate this with the following example, where
 we compare the PSDs from \Rcmd{spec.pgram} for a real
 and complex series:
 
-<<eval=TRUE, echo=TRUE, label="Double sided PSD from spectrum.">>=
+<<eval=TRUE, echo=TRUE, label="DoublesidedPSDfromspectrum">>=
 psd1 <- spec.pgram(x, plot=FALSE)
 psd2 <- spec.pgram(xc<-complex(real=x, imag=x), plot=FALSE, demean=TRUE)
 mx <- mean(Mod(x))

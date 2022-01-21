@@ -24,6 +24,13 @@
 %}
 %
 
+
+\section{CHANGES IN \psd{} VERSION 2.1.1 (2022-01-20)}{
+  \itemize{
+	\item Fixes some build check errors on cran related to vignettes
+  }
+}
+
 \section{CHANGES IN \psd{} VERSION 2.1.0 (2020-06-28)}{
   \itemize{
     \item Fixed an issue related to how psd initiates its internal options.

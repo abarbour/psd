@@ -1,7 +1,7 @@
 \documentclass[10pt]{article}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{An overview of psd}
-%% \VignetteEngine{knitr}
+%% \VignetteEngine{knitr::knitr}
 %
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -83,7 +83,7 @@ knit_hooks$set(par = function(before, options, envir){
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
 %% libload
-<<eval=TRUE, echo=TRUE, label="Load_library">>=
+<<eval=TRUE, echo=TRUE, label="Loadlibrary">>=
 library(psd)
 @ 
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
@@ -97,13 +97,13 @@ The sampling interval is
 once every kilometer (km), so the data will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% Project MAGNET data
-<<eval=TRUE, eval=TRUE, label="Load_Project_MAGNET_data">>=
+<<eval=TRUE, eval=TRUE, label="LoadProjectMAGNETdata">>=
 data(magnet)
 @ 
 The format of the data set is a \Rcmd{data.frame} with four
 sets of information:
 %%
-<<eval=TRUE, eval=TRUE, label="Show_contents_of_Project_MAGNET">>=
+<<eval=TRUE, eval=TRUE, label="ShowcontentsofProjectMAGNET">>=
 names(magnet)
 @ 
 The \Rcmd{raw} and \Rcmd{clean} names represent raw
@@ -120,7 +120,7 @@ subset(magnet, abs(mdiff)>0)
 %%
 These are readily apparent in the timeseries:
 
-<<eval=TRUE, echo=FALSE, fig.width=6.0, fig.height=3.0, label=MAGNET-TS, par=TRUE>>=
+<<eval=TRUE, echo=FALSE, fig.width=6.0, fig.height=3.0, label=MAGNETTS, par=TRUE>>=
 par(mar=c(4,4,1,0.4))
 plot(raw ~ km, magnet, col=NA, ylab="Magnetic anomaly", xlab="Along-track distance, km")
 abline(v=subset(magnet, abs(mdiff)>0)$km, col='grey')
@@ -244,7 +244,7 @@ Our method is non-parametric; hence, we will compare to the latter.
 Included in \Rcmd{psdcore} is an option to compare the 
 results with cosine-tapered periodogram,
 found with a command equivalent to this:
-<<eval=FALSE, echo=TRUE, label="Naive_spectrum_estimation">>=
+<<eval=FALSE, echo=TRUE, label="Naivespectrumestimation">>=
 spec.pgram(X, pad=1, taper=0.2, detrend=FALSE, demean=FALSE, plot=FALSE)
 @
 Within \Rcmd{psdcore} the comparison is made with the logical argument \Rcmd{preproc} 
@@ -296,7 +296,7 @@ double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods:
-<<eval=TRUE, echo=TRUE, label="Load RSEIS package">>=
+<<eval=TRUE, echo=TRUE, label="LoadRSEISpackage">>=
 library(RSEIS)
 dt=1 # km
 # prewhiten the data after adding a linear trend + offset
@@ -311,7 +311,7 @@ and the residuals from this fit are also returned.}.
 This fit uses the Akaike Information Criterion (AIC) to select
 the highest order appropriate for the data.
 
-<<eval=TRUE, echo=TRUE, label="AR prewhiten">>=
+<<eval=TRUE, echo=TRUE, label="ARprewhiten">>=
 summary(atsar <- prewhiten(mc, AR.max=100, plot=FALSE))
 # linear model:
 str(atsar[['lmdfit']])
@@ -343,14 +343,14 @@ but, supposing the sampling information was based on an interval, we could have 
 a negative value for \Rcmd{X.frq}, with which \Rcmd{psdcore}
 would interpret as an interval (instead of a frequency). 
 A quick example highlights the equivalency:
-<<eval=TRUE, echo=TRUE, label="Sampling rate versus interval">>=
+<<eval=TRUE, echo=TRUE, label="Samplingrateversusinterval">>=
 a <- rnorm(32)
 all.equal(psdcore(a,1), psdcore(a,-1))
 @
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
 estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
-<<eval=TRUE, echo=TRUE, label="Compute PSD with mtapspec">>=
+<<eval=TRUE, echo=TRUE, label="ComputePSDwithmtapspec">>=
 tapinit <- 10
 Mspec <- mtapspec(ats_lm, deltat(ats_lm), MTP=list(kind=2, inorm=3, nwin=tapinit, npi=0))
 @
@@ -358,7 +358,7 @@ where \Rcmd{nwin} is the number of tapers taken and
 \Rcmd{npi} is, from the documentation, the ``number of Pi-prolate functions" (we
 leave it out for the sake of comparison). Note that the object returned
 is \emph{not} of class \Rcmd{`spec'}:
-<<eval=TRUE, echo=TRUE, label="Structure of mtapspec-psd">>=
+<<eval=TRUE, echo=TRUE, label="Structureofmtapspecpsd">>=
 str(Mspec)
 @
 
@@ -373,7 +373,7 @@ and we will need to correct for normalization factors, as necessary, with
 set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
-<<eval=TRUE, echo=TRUE, label="Comparative spectra: mtapspec vs pspectrum">>=
+<<eval=TRUE, echo=TRUE, label="Comparativespectramtapspecvspspectrum">>=
 Xspec <- spec.pgram(ats_lm, pad=1, taper=0.2, detrend=TRUE, demean=TRUE, plot=FALSE)
 Pspec <- psdcore(ats_lm, ntaper=tapinit)
 Aspec <- pspectrum(ats_lm, ntap.init=tapinit)
@@ -415,14 +415,14 @@ Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
-<<eval=TRUE, echo=TRUE, label="Interpolate results">>=
+<<eval=TRUE, echo=TRUE, label="Interpolateresults">>=
 library(signal, warn.conflicts=FALSE)
 pltpi <- interp1(pltf, pltp, Pspec[['freq']])
 @
 We regress the spectral values from \Rcmd{mtapspec} against
 the \Rcmd{psdcore} results because we have used them to produce uniformly tapered spectra
 with an equal number of sine tapers.
-<<eval=TRUE, echo=TRUE, label="Summarize regression statistics">>=
+<<eval=TRUE, echo=TRUE, label="Summarizeregressionstatistics">>=
 df <- data.frame(x=dB(Pspec[['spec']]), y=pltpi, tap=unclass(Aspec[['taper']]))
 summary(dflm <- lm(y ~ x + 0, df))
 df$res <- residuals(dflm)
@@ -517,7 +517,7 @@ The estimated variance of the innovations is about $~20$ nT$^2$.
 If the innovation spectrum is flat (as we expect), this variance translates to power levels
 of about $~16$ decibels for a 1 km sampling interval.  
 
-<<eval=TRUE, echo=TRUE, label="AR spectrum">>=
+<<eval=TRUE, echo=TRUE, label="ARspectrum">>=
 ntap <- 7
 psd_ar <- psdcore(ats_ar, ntaper=ntap, refresh=TRUE)
 dB(mean(psd_ar$spec))
@@ -614,7 +614,7 @@ spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
 the Bayesian method, for a coverage probability of
 95\%. Figure \ref{fig:magerr} shows the uncertainties as bounded polygons,
 which we calculate here:
-<<eval=TRUE, echo=TRUE, label="Compute spectral properties">>=
+<<eval=TRUE, echo=TRUE, label="Computespectralproperties">>=
 spp <- spectral_properties(Pspec[['taper']], db.ci=TRUE)
 spa <- spectral_properties(Aspec[['taper']], db.ci=TRUE)
 str(spa)
@@ -702,12 +702,12 @@ Specifically, it saves the frequencies, spectral values, and number of tapers at
 procedure, accessible with \Rcmd{get\_adapt\_history}. To ensure a fresh calculation and to 
 add a few more iterations to visualize, we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
-<<eval=TRUE, echo=TRUE, label="Get adaptive history">>=
+<<eval=TRUE, echo=TRUE, label="Getadaptivehistory">>=
 pspectrum(ats_lm, niter=4, plot=FALSE)
 str(AH <- get_adapt_history())
 @
 Followed by some trivial manipulation:
-<<eval=TRUE, echo=TRUE, label="and manipulate it a bit">>=
+<<eval=TRUE, echo=TRUE, label="andmanipulateitabit">>=
 Freqs <- AH[['freq']]
 Dat <- AH[['stg_psd']]
 numd <- length(Freqs)

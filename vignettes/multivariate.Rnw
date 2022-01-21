@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{Multivariate PSD}
-%% \VignetteEngine{knitr}
+%% \VignetteEngine{knitr::knitr}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -125,7 +125,7 @@ c2 <- pspectrum(dat, riedsid_column= 2L, verbose = FALSE)   # column 2
 c3 <- pspectrum(dat, riedsid_column= 3L, verbose = FALSE)   # column 3
 
 @
-<<eval=TRUE, echo=FALSE, label="Taper plot", fig.height = 4.8>>=
+<<eval=TRUE, echo=FALSE, label="Taperplot", fig.height = 4.8>>=
 
 ylim <- c(0, max(mx$taper))
 layout(matrix(1:6, ncol = 1, nrow = 6), heights = c(rep(0.19, 5), 0.05))
@@ -148,7 +148,7 @@ mtext('taper index', 1, line = 1.2, cex = 0.8)
 
 The number of tapers can also be specified as a single value.
 
-<<eval=TRUE, echo=TRUE, label="taper specification", fig.height = 3>>=
+<<eval=TRUE, echo=TRUE, label="taperspecification", fig.height = 3>>=
 par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
 one_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap.init = 11, plot = TRUE)
@@ -157,7 +157,7 @@ plot(one_val$taper)
 
 The number of tapers can also be specified as a vector of values.  The length of the vector is equal to one-half the number of rows rounded down (i.e. integer division). The example below uses an approximately linearly increasing taper vector.
 
-<<eval=TRUE, echo=TRUE, label="taper specification2", fig.height = 3>>=
+<<eval=TRUE, echo=TRUE, label="taperspecification2", fig.height = 3>>=
 par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
 vec_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
                  niter = 0, ntap = as.tapers(1:(nrow(dat) %/% 2) %/% 7 + 7),
@@ -212,7 +212,7 @@ coh <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
 coh_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$coh
 @
 
-<<eval=TRUE, echo=FALSE, label="coh_ba_plot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="cohbaplot", fig.height=3.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(coh[,1]~freqs, type='l', 
      ylab = 'WL and Barometric',
@@ -224,7 +224,7 @@ legend('bottomleft',
        legend = c('psd', 'base'), 
        col = c('black', 'red'), lty = 1)
 @
-<<eval=TRUE, echo=FALSE, label="coh_et_plot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="cohetplot", fig.height=3.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
 plot(coh[,2]~freqs, type='l', 
@@ -250,7 +250,7 @@ phase <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
 phase_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$phase
 @
 
-<<eval=TRUE, echo=FALSE, label="phase_ba_plot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="phasebaplot", fig.height=3.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(phase[,1]~freqs, type='l', 
      ylab = 'WL and Barometric',
@@ -262,7 +262,7 @@ legend('bottomleft',
        legend = c('psd', 'base'), 
        col = c('black', 'red'), lty = 1)
 @
-<<eval=TRUE, echo=FALSE, label="phase_et_plot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="phaseetplot", fig.height=3.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
 plot(phase[,2]~freqs, type='l', 
@@ -279,12 +279,12 @@ points(y = phase_base[,2], x = freqs, type='l',  col = 'red')
 
 The multivariate method calculates the auto and cross-spectra and also solves for a frequency response.  The frequency response is stored as a complex number matrix.  A three column matrix was provided to pspectrum which results a two column matrix of frequency responses. 
 
-<<eval=TRUE, echo=TRUE, label="transfer gain", fig.height=3.3>>=
+<<eval=TRUE, echo=TRUE, label="transfergain", fig.height=3.3>>=
 transfer <- pspectrum(dat, riedsid_column= -1L, verbose = FALSE)$transfer
 gain <- Mod(transfer)
 @
 
-<<eval=TRUE, echo=FALSE, label="transfer gain plot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="transfergainplot", fig.height=3.3>>=
 
 
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
@@ -303,10 +303,10 @@ plot(gain[, 2]~freqs, type='l',
 @
 
 
-<<eval=TRUE, echo=TRUE, label="transfer phase", fig.height=3.3>>=
+<<eval=TRUE, echo=TRUE, label="transferphase", fig.height=3.3>>=
 phase <- Arg(transfer)
 @
-<<eval=TRUE, echo=FALSE, label="transfer phase plot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="transferphaseplot", fig.height=3.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
 plot(phase[, 1]~freqs, type='l', xlim = rng_ba,

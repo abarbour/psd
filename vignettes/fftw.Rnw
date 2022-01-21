@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{DFT benchmarks: fft vs FFT}
-%% \VignetteEngine{knitr}
+%% \VignetteEngine{knitr::knitr}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -85,7 +85,7 @@ library(reshape2)
 library(ggplot2)
 @
 and create a benchmark function:
-<<eval=FALSE, echo=TRUE, label="Benchmark function">>=
+<<eval=FALSE, echo=TRUE, label="Benchmarkfunction">>=
 reps <- 10
 dftbm <- function(nd, repls=reps){
 	set.seed(1234)
@@ -104,14 +104,14 @@ This is the reason for the \Rcmd{stats::nextn} function.
 }, specifically multiples of (2,3,5).
 
 So, we create a vector of series lengths we wish to benchmark
-<<eval=TRUE, echo=TRUE, label="Num. terms to bench.">>=
+<<eval=TRUE, echo=TRUE, label="Numtermstobench">>=
 (nterms.even <- round(2**seq.int(from=4,to=20,by=1)))
 @
 and use it with \Rcmd{lapply} and the benchmark function
 previously defined.
 These data are further distilled into a usable format
 with \Rcmd{ldply}:
-<<eval=FALSE, echo=TRUE, label="Use lapply to do benching.">>=
+<<eval=FALSE, echo=TRUE, label="Uselapplytodobenching">>=
 bench.even <- function(){
   benchdat.e <- plyr::ldply(lapply(X=nterms.even, FUN=dftbm))
   }
@@ -123,12 +123,12 @@ DFT algorithms can have drastically reduced performance
 if the series length is not highly composite (NHC).
 We now test NHC series by adding one to the HC series-length
 vector (also restricting the total length for sanity's sake):
-<<eval=FALSE, echo=TRUE, label="Setup non highly composite lengths.">>=
+<<eval=FALSE, echo=TRUE, label="Setupnonhighlycompositelengths">>=
 nterms.odd <- nterms.even + 1
 nterms.odd <- nterms.odd[nterms.odd < 50e3] # painfully long otherwise!
 @
 and performing the full set of benchmarks again:
-<<eval=FALSE, echo=TRUE, label="Do benching.">>=
+<<eval=FALSE, echo=TRUE, label="Dobenching">>=
 bench.odd <- function(){
   benchdat.o <- plyr::ldply(lapply(X=nterms.odd, FUN=dftbm))
   }
@@ -150,7 +150,7 @@ are \Rcmd{user.self}, \Rcmd{sys.self}, \Rcmd{elapsed}, and \Rcmd{relative}.
 The results are shown
 in Figure \ref{fig:results}.
 
-<<eval=FALSE, echo=TRUE, label="Map/Reduce/Summarize etc">>=
+<<eval=FALSE, echo=TRUE, label="MapReduceSummarize">>=
 pltbench <- function(lentyp=c("even","odd")){
   benchdat <- switch(match.arg(lentyp), even=benchdat.e, odd=benchdat.o)
   stopifnot(exists("benchdat"))
@@ -201,7 +201,7 @@ pltbench <- function(lentyp=c("even","odd")){
 }
 @
 
-<<eval=FALSE, echo=TRUE,  label="Plot non highly composite results.">>=
+<<eval=FALSE, echo=TRUE,  label="Plotnonhighlycompositeresults">>=
 pltbench("even")
 allmeds.prev <- allmeds
 pltbench("odd")
