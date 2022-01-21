@@ -4,7 +4,14 @@ Adaptive, sine multitaper power spectral density estimation for R
 
 by Andrew J Barbour, Jonathan Kennel, and Robert L Parker
 
-[![](https://www.r-pkg.org/badges/version-last-release/psd?color=green)](https://cran.r-project.org/package=psd) [![Travis Build Status](https://travis-ci.org/abarbour/psd.svg?branch=master)](https://travis-ci.org/abarbour/psd) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/abarbour/psd?branch=master&svg=true)](https://ci.appveyor.com/project/abarbour/psd) [![Code Coverage](https://codecov.io/github/abarbour/psd/coverage.svg?branch=master)](https://codecov.io/github/abarbour/psd?branch=master)  [![Downloads](https://cranlogs.r-pkg.org/badges/psd)](https://www.r-pkg.org/pkg/psd) [![License](https://img.shields.io/badge/license-GPL-lightgrey.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Citation](https://img.shields.io/badge/published-CAGEO-red.svg)](https://doi.org/10.1016/j.cageo.2013.09.015)
+<!--
+[![Travis Build Status](https://travis-ci.org/abarbour/psd.svg?branch=master)](https://travis-ci.org/abarbour/psd) 
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/abarbour/psd?branch=master&svg=true)](https://ci.appveyor.com/project/abarbour/psd) 
+-->
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/abarbour/psd/workflows/R-CMD-check/badge.svg)](https://github.com/abarbour/psd/actions) [![](https://www.r-pkg.org/badges/version-last-release/psd?color=green)](https://cran.r-project.org/package=psd) [![Code Coverage](https://codecov.io/github/abarbour/psd/coverage.svg?branch=master)](https://codecov.io/github/abarbour/psd?branch=master) [![Downloads](https://cranlogs.r-pkg.org/badges/psd)](https://www.r-pkg.org/pkg/psd) [![License](https://img.shields.io/badge/license-GPL-lightgrey.svg)](https://www.gnu.org/licenses/gpl-2.0.html) [![Citation](https://img.shields.io/badge/published-CAGEO-red.svg)](https://doi.org/10.1016/j.cageo.2013.09.015)
+
+<!-- badges: end -->
 
 ### **_Latest News_**
 

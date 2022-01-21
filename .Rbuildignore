@@ -49,3 +49,4 @@ vignettes/yuml.fawk*
 vignettes/yuml.sh*
 ^packrat/
 ^appveyor\.yml$
+^\.github$
