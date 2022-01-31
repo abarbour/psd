@@ -20,11 +20,9 @@ allclean: clean
 
 refresh: allclean all
 
-#$(R_HOME)/bin/
 %.pdf: %.Rnw
-	Rscript -e "if (getRversion() >= '3.0.0') knitr::knit2pdf('$*.Rnw') else tools::texi2pdf('$*.tex')"
+	$(R_HOME)/bin/Rscript -e "if (getRversion() >= '3.0.0') knitr::knit2pdf('$*.Rnw') else tools::texi2pdf('$*.tex')"
 
-#$(R_HOME)/bin/
 %.html: %.Rmd
-	Rscript -e "if (getRversion() >= '3.0.0') knitr::knit2html('$*.Rmd')"
+	$(R_HOME)/bin/Rscript -e "if (getRversion() >= '3.0.0') knitr::knit2html('$*.Rmd')"
 
