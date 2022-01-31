@@ -427,7 +427,11 @@ between the complex conjugate based estimates.
 Sa <- Mod(X) # Amplitude spectrum
 Sp <- Arg(X) # Phase spectrum
 XC <- Conj(X)
-all.equal(Se <- Sa**2, Se_2 <- Mod(XC * X), Se_2R <- Mod(X * XC))
+Se <- Sa**2
+Se_2 <- Mod(XC * X)
+all.equal(Se, Se_2)
+Se_2R <- Mod(X * XC)
+all.equal(Se, Se_2R)
 @
 
 The single-sided \idx{power spectral density} estimates
@@ -669,9 +673,10 @@ similar functionality to \psd{}
 is relatively limited; however, there are at least four which
 can produce sophisticated PSD estimates.   We have
 summarized the available functions in Table \ref{tbl:methods}
-so far as we know\footnote{
-As of this writing (Jun 2020), \Rcmd{sapa} has been removed from CRAN.
-}.
+so far as we know.
+%\footnote{
+%As of this writing (Jun 2020), \Rcmd{sapa} has been removed from CRAN.
+%}.
 
 \input{supp_specprogs}
 
