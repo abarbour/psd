@@ -49,3 +49,4 @@ vignettes/yuml*
 ^packrat/
 ^appveyor\.yml$
 ^\.github$
+^CRAN-SUBMISSION$
