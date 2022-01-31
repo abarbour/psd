@@ -176,6 +176,9 @@ test_that("pilot_spec results are accurate",{
   
   expect_warning(pa <- pilot_spec(xt, remove.AR = TRUE, plot = FALSE, verbose = FALSE)) # because there is no AR structure!
   expect_warning(pa2 <- pilot_spec(xt2, remove.AR = TRUE, plot = FALSE, verbose = FALSE))
+  # add fake autocorrelated structure
+  expect_message(pilot_spec(xt+cumsum(xt), remove.AR = TRUE, plot = FALSE, verbose = TRUE))
+  expect_message(pilot_spec(xt+cumsum(xt), remove.AR = 10, plot = FALSE, verbose = TRUE))
   
   # make sure Nyquist frequencies are correct
   fn <- max(pa[['freq']])
@@ -200,7 +203,7 @@ test_that("sampling rates for ts objects are honored",{
   pil <- pilot_spec(xt)
   expect_equal(pil[['nyquist.frequency']], f/2)
   expect_equal(f/2, max(pil[['freq']]))
-  
+
   ps <- pspectrum(xt)
   expect_equal(ps[['nyquist.frequency']], f/2)
   expect_equal(f/2, max(ps[['freq']]))
@@ -234,6 +237,26 @@ test_that("check fast version",{
   #             pspectrum(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
   expect_equal(pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = FALSE),
                pilot_spec(xt2, verbose = FALSE, plot = FALSE, fast = TRUE))
+})
+
+test_that('pilot spec matrix method options work',{
+  set.seed(1234)
+  xm <- rnorm(100)
+  
+  pil0f <- pilot_spec(xm)
+  expect_equal(pil0f[['nyquist.frequency']], 1/2)
+  expect_equal(1/2, max(pil0f[['freq']])) 
+  
+  f1 <- 1
+  pil1f <- pilot_spec(xm, x.frequency=f1)
+  expect_equal(pil1f[['nyquist.frequency']], f1/2)
+  expect_equal(f1/2, max(pil1f[['freq']])) 
+  expect_equal(pil0f[['nyquist.frequency']], pil1f[['nyquist.frequency']])
+  
+  f2 <- 2
+  pil2f <- pilot_spec(xm, x.frequency=f2)
+  expect_equal(pil2f[['nyquist.frequency']], f2/2)
+  expect_equal(f2/2, max(pil2f[['freq']]))  
 })
 
 test_that("check multivariate autospectra for psdcore",{
