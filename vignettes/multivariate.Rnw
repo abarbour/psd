@@ -11,36 +11,32 @@
 \usepackage{upquote}
 \usepackage{graphicx}
 \usepackage{grffile}
-\usepackage{amsmath}
-\usepackage{amssymb}
 \usepackage{float}
 \usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{geometry}
 \geometry{verbose,tmargin=3cm,bmargin=5cm,lmargin=2.5cm,rmargin=2.5cm}
 \usepackage[font=sf, labelfont={sf,bf}, margin=2cm]{caption}
 \usepackage{color}
+\usepackage{txfonts}
+
 %%
-\input{supp_mathsyms}
+%\input{supp_mathsyms}
 %%
-\newcommand{\SC}[1]{\textsc{#1}}
-\newcommand{\SCY}[0]{\SC{Yes}}
-\newcommand{\SCN}[0]{\SC{No}}
+
 \newcommand{\Rcmd}[1]{\texttt{#1}}
 \newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
-\newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
-\newcommand{\idx}[1]{\index{#1}{#1}} 
-%
+
 \title{Multivariate methods for the \Rcmd{psd} package}
-\author{Jonathan R. Kennel & Andrew J. Barbour}
+\author{Jonathan R. Kennel and Andrew J. Barbour}
 %
 \begin{document}
 \maketitle
 %
 \begin{abstract}
 %
-\begin{quote}
 This vignette provides a brief description of the outputs of the multivariate methods contained in the \Rcmd{psd} package. Multivariate methods are commonly used for investigating relationships between inputs and outputs. 
-\end{quote}
 %
 \end{abstract}
 
@@ -52,7 +48,17 @@ This vignette provides a brief description of the outputs of the multivariate me
 To calculate the univariate power spectral density, simply pass a
 single timeseries to \Rcmd{pspectrum}. Please see the psd overview vignette for more information.
 
-<<eval=TRUE, echo=FALSE>>=
+<<eval=TRUE, echo=FALSE, label='prereq'>>= 
+library(knitr)
+options(width=72)
+knitr::opts_chunk$set(tidy = TRUE, size="small", split=TRUE, par=TRUE, fig.width=6)
+knit_hooks$set(par = function(before, options, envir){
+  if (before && options$fig.show!='none'){
+    par(cex.lab=.95,cex.axis=.9,mgp=c(2.7,.6,0),tcl=-.4)
+    par(las=1, lend='square', ljoin='mitre')
+  }
+})
+
 rm(list=ls())
 rng_et <- c(0.7, 2.2)
 rng_ba <- c(0.0, 10)
@@ -64,7 +70,7 @@ rng_ba <- c(0.0, 10)
 The \Rcmd{pspectrum} function can also used to calculate the multivariate power spectral density. 
 As an example, the WIPP 30 dataset from BETCO will be used (\citet{Toll2007}). 
 There are three data series provided in this dataset corresponding to water levels, 
-barometric pressure and Earth tide datasets.  \Rcmd{pspectrum} for a multivariate 
+barometric pressure changes and Earth tides.  \Rcmd{pspectrum} for a multivariate 
 series takes a matrix input with each column referring to a different series. 
 The first column(s) refers to the input, and the last columns are the outputs.  
 This order can also be changed if desired.  The method currently only handles 
@@ -79,12 +85,13 @@ to the typical univariate output of \Rcmd{pspectrum} are returned:
 \end{itemize}
 
 
-<<eval=TRUE, echo=TRUE>>=
+<<eval=TRUE, echo=TRUE, label='loadwipp'>>=
 library(psd)
 data(wipp30)
 str(wipp30)
-dat <- wipp30[, c(3,4,2)] # output as last column, input as first two
+dat <- wipp30[, c('baro','et','wl')] # output as last column, inputs as first two
 dat <- window(ts(dat), 100, 2400)
+head(dat)
 freqs <- 1:(nrow(dat)/2) * (24) / nrow(dat) # frequency in cpd
 @
 
@@ -97,14 +104,12 @@ mv <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = FALSE)
 names(mv)
 @
 
-<<eval=TRUE, echo=TRUE, label="plotnames", fig.height = 7>>=
+<<eval=TRUE, echo=TRUE, label="plotnames">>=
 pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = TRUE)
 @
 
 
-
-
-\newpage
+\clearpage
 
 \subsection{Number of tapers}
 
@@ -125,7 +130,7 @@ c2 <- pspectrum(dat, riedsid_column= 2L, verbose = FALSE)   # column 2
 c3 <- pspectrum(dat, riedsid_column= 3L, verbose = FALSE)   # column 3
 
 @
-<<eval=TRUE, echo=FALSE, label="Taperplot", fig.height = 4.8>>=
+<<eval=TRUE, echo=FALSE, label="Taperplot", fig.height = 4.8, fig.width=5.6>>=
 
 ylim <- c(0, max(mx$taper))
 layout(matrix(1:6, ncol = 1, nrow = 6), heights = c(rep(0.19, 5), 0.05))
@@ -148,21 +153,28 @@ mtext('taper index', 1, line = 1.2, cex = 0.8)
 
 The number of tapers can also be specified as a single value.
 
-<<eval=TRUE, echo=TRUE, label="taperspecification", fig.height = 3>>=
-par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
-one_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
-                 niter = 0, ntap.init = 11, plot = TRUE)
-plot(one_val$taper)
+<<eval=TRUE, echo=TRUE, label="taperspecification", fig.height =5.5>>=
+par(mar = c(3, 4, 1, 2), mgp = c(2, 0.5, 0))
+layout(matrix(1:2), heights=c(3,1.2))
+nti <- 11
+one_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = TRUE,
+                     niter = 0, 
+                     ntap.init = nti)
+with(one_val,{plot(taper, xi=freq, xlab='frequency')})
+axis(4, at=nti)
 @
 
 The number of tapers can also be specified as a vector of values.  The length of the vector is equal to one-half the number of rows rounded down (i.e. integer division). The example below uses an approximately linearly increasing taper vector.
 
-<<eval=TRUE, echo=TRUE, label="taperspecification2", fig.height = 3>>=
-par(mar = c(3, 4, 1, 0), mgp = c(2, 0.5, 0))
-vec_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
-                 niter = 0, ntap = as.tapers(1:(nrow(dat) %/% 2) %/% 7 + 7),
-                 plot = TRUE)
-plot(vec_val$taper)
+<<eval=TRUE, echo=TRUE, label="taperspecification2", fig.height = 5.5>>=
+par(mar = c(3, 4, 1, 2), mgp = c(2, 0.5, 0), xaxs='i')
+layout(matrix(1:2), heights=c(3,1.2))
+vec_val <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE, plot = TRUE,
+                 niter = 0, 
+                 ntap = as.tapers(seq_len(nrow(dat) %/% 2) %/% 7 + 7))
+
+with(vec_val,{plot(taper, xi=freq, xlab='frequency')})
+axis(4, at=nti)
 @
 
 \newpage 
@@ -171,11 +183,11 @@ plot(vec_val$taper)
 
 \begin{itemize}
 
-\item [\Rcmd{`coh'}:] $ \text{coherence}_{xy}  = |G_{xy}|^2 / (G_{xx} * G_{yy})$
+\item \Rcmd{`coh'}: $ \text{coherence}_{xy}  = |G_{xy}|^2 / (G_{xx} * G_{yy})$
 
-\item [\Rcmd{`phase'}:] $ \text{phase}_{xy} = Arg(G_{xy})$
+\item \Rcmd{`phase'}: $ \text{phase}_{xy} = Arg(G_{xy})$
 
-\item [\Rcmd{`transfer'}:] \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input. Thus:
+\item \Rcmd{`transfer'}: \href{https://en.wikipedia.org/wiki/Cramer%27s_rule}{Cramer's Rule} is used to solve for the transfer function with the complex array \Rcmd{pspec} as the input. Thus:
 
 \item $ \text{gain} = Mod(\text{transfer}) $
 \item $ \text{phase} = Arg(\text{transfer}) $
@@ -207,12 +219,16 @@ The coherence is stored in result from pspectrum and contains the coherence betw
 
 
 <<eval=TRUE, echo=TRUE, label="coh">>=
-coh <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
-                 niter = 0, ntap.init = 11)$coh
-coh_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$coh
+scoh <- pspectrum(dat, riedsid_column= 0L, 
+                 verbose = FALSE,
+                 niter = 0, ntap.init = 11)
+coh <- scoh[['coh']]
+scoh_base <- stats::spec.pgram(dat[, c(3,1,2)], spans = c(11), 
+                              fast = FALSE, plot = FALSE)
+coh_base <- scoh_base[['coh']]
 @
 
-<<eval=TRUE, echo=FALSE, label="cohbaplot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="cohbaplot", fig.height=2.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(coh[,1]~freqs, type='l', 
      ylab = 'WL and Barometric',
@@ -220,11 +236,12 @@ plot(coh[,1]~freqs, type='l',
      xlim = rng_ba,
      main = 'Coherence')
 points(y = coh_base[,1], x = freqs, type='l',  col = 'red')
-legend('bottomleft', 
-       legend = c('psd', 'base'), 
-       col = c('black', 'red'), lty = 1)
+legend('topright', 
+       legend = c('psd::pspectrum', 'stats::spec.pgram'), 
+       col = c('black', 'red'), lty = 1, cex=0.8)
 @
-<<eval=TRUE, echo=FALSE, label="cohetplot", fig.height=3.3>>=
+
+<<eval=TRUE, echo=FALSE, label="cohetplot", fig.height=2.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
 plot(coh[,2]~freqs, type='l', 
@@ -250,7 +267,7 @@ phase <- pspectrum(dat, riedsid_column= 0L, verbose = FALSE,
 phase_base <- spec.pgram(dat[, c(3,1,2)], spans = c(11), fast = FALSE, plot = FALSE)$phase
 @
 
-<<eval=TRUE, echo=FALSE, label="phasebaplot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="phasebaplot", fig.height=2.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 plot(phase[,1]~freqs, type='l', 
      ylab = 'WL and Barometric',
@@ -259,10 +276,11 @@ plot(phase[,1]~freqs, type='l',
      main = 'Phase Difference')
 points(y = phase_base[,1], x = freqs, type='l',  col = 'red')
 legend('bottomleft', 
-       legend = c('psd', 'base'), 
-       col = c('black', 'red'), lty = 1)
+       legend = c('psd', 'base'), inset=c(0.1,0),
+       col = c('black', 'red'), lty = 1, cex=0.8)
 @
-<<eval=TRUE, echo=FALSE, label="phaseetplot", fig.height=3.3>>=
+
+<<eval=TRUE, echo=FALSE, label="phaseetplot", fig.height=2.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
 plot(phase[,2]~freqs, type='l', 
@@ -284,7 +302,7 @@ transfer <- pspectrum(dat, riedsid_column= -1L, verbose = FALSE)$transfer
 gain <- Mod(transfer)
 @
 
-<<eval=TRUE, echo=FALSE, label="transfergainplot", fig.height=3.3>>=
+<<eval=TRUE, echo=FALSE, label="transfergainplot", fig.height=2.3>>=
 
 
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
@@ -294,19 +312,21 @@ plot(gain[, 1]~freqs, type='l',
      ylab = 'WL and Barometric',
      xlab = 'Frequency (cpd)',
      main = 'Gain')
-plot(gain[, 2]~freqs, type='l', 
+ysc <- 1e5
+plot(ysc*gain[, 2]~freqs, type='l', 
      xlim = rng_et,
-     ylim = c(0, 0.00005),
+     ylim = ysc*c(0, 0.00005),
      ylab = 'WL and Earth tide',
      xlab = 'Frequency (cpd)',
-     main = 'Gain')
+     main = parse(text=sprintf('bold("Gain") ~ "(times" ~ 10^%s * ")"',log10(ysc))))
 @
 
 
-<<eval=TRUE, echo=TRUE, label="transferphase", fig.height=3.3>>=
+<<eval=TRUE, echo=TRUE, label="transferphase">>=
 phase <- Arg(transfer)
 @
-<<eval=TRUE, echo=FALSE, label="transferphaseplot", fig.height=3.3>>=
+
+<<eval=TRUE, echo=FALSE, label="transferphaseplot", fig.height=2.3>>=
 par(mar = c(3, 3, 2, 0), mgp = c(2, 1, 0))
 
 plot(phase[, 1]~freqs, type='l', xlim = rng_ba,
@@ -323,15 +343,12 @@ plot(phase[, 2]~freqs, type='l', xlim = rng_et,
 
 The \Rcmd{psd} package can handle multivariate time series and provides results including the auto and cross-spectra, phase, coherence, and the frequency response function.  
 
-%\pagebreak
-
-\subsection{References}
-
 
 \section*{Session Info}
 <<eval=TRUE, echo=TRUE, label=SI>>=
 utils::sessionInfo()
 @
+
 
 %% bib and index
 \bibliographystyle{apalike}
