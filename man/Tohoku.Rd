@@ -38,7 +38,7 @@ calculation.}
 \source{
 High frequency strain data archive:
 
-\url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
+\url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/}
 }
 \description{
 The \eqn{M_w 9} Tohoku earthquake happened on March 11, 2011.  The seismic

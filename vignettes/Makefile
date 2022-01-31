@@ -3,13 +3,14 @@
 #
 # DO NOT EXCLUDE FROM BUILD!
 
-TEXS = fftw.tex normalization.tex psd_overview.tex
-PDFS = fftw.pdf normalization.pdf psd_overview.pdf
+TEXS = fftw.tex normalization.tex psd_overview.tex multivariate.tex
+PDFS = fftw.pdf normalization.pdf psd_overview.pdf multivariate.pdf
 
 all: $(PDFS)
 
 clean:
 	rm -rf *-concordance.tex *.bbl *.blg *.aux *.out *.log *.spl *.md figure/ *.idx *.ilg *.ind *.toc
+	rm -f *.synctex.gz
 	rm -f $(TEXS)
 
 %.pdf: %.Rnw

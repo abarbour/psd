@@ -1,3 +1,4 @@
+vignettes/*.R
 
 *.Rapp.history
 *.Rout

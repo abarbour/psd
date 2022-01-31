@@ -45,8 +45,7 @@ vignettes/*\.ilg
 vignettes/*\.out
 vignettes/*\.toc
 vignettes/tmp.R
-vignettes/yuml.fawk*
-vignettes/yuml.sh*
+vignettes/yuml*
 ^packrat/
 ^appveyor\.yml$
 ^\.github$

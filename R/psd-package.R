@@ -190,8 +190,7 @@ NULL
 #' @references USGS summary page: 
 #' @references \url{https://earthquake.usgs.gov/earthquakes/eventpage/official20110311054624120_30/executive}
 #' @source High frequency strain data archive: 
-#' @source \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311}
-#'
+#' @source \url{http://borehole.unavco.org/bsm/earthquakes/NeartheEastCoastofHonshuJapan_20110311/}
 #' @examples
 #' data(Tohoku)
 #' str(Tohoku)
@@ -261,7 +260,8 @@ NULL
 #'
 #' @references Toll, N.J., Rasmussen, T.C., (2007),
 #'  Removal of Barometric Pressure Effects and Earth Tides from Observed Water Levels.
-#'  \emph{Ground Water}, \strong{45}, 101–105. \url{https://doi.org/10.1111/j.1745-6584.2006.00254.x}
+#'  \emph{Ground Water}, \strong{45}, 101–105,
+#'  doi: 10.1111/j.1745-6584.2006.00254.x
 #' 
 #' @source BETCO page: \url{http://www.hydrology.uga.edu/rasmussen/betco/}
 #' @keywords datasets

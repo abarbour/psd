@@ -234,7 +234,7 @@ modulo_floor(1:10, 3)
 \references{
 For \code{\link{mod}}: see Peter Dalgaard's explanation of 
 the non-bug (#14771) I raised (instead I should've asked it on R-help): 
-\url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
+\url{https://bugs.r-project.org/show_bug.cgi?id=14771}
 }
 \seealso{
 \code{\link{psd-package}}, \code{\link{as.tapers}}, \code{\link{modulo_floor}}

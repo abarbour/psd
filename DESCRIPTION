@@ -47,6 +47,7 @@ Suggests:
     formatR,
     testthat (>= 2.1.0)
 Encoding: UTF-8
+Language: en-US
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

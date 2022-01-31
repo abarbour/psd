@@ -24,7 +24,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 %
 \title{An overview of \psd{}: Adaptive sine multitaper power spectral density estimation in R}
 \author{Andrew J. Barbour and Robert L. Parker}
@@ -726,7 +726,7 @@ seqcols <- seq_len(numit)
 itseq <- seqcols - 1
 toadd <- matrix(rep(itseq, numd), ncol=numit, byrow=TRUE)
 PltStg <- StgPsd + (sc<-6)*toadd
-par(xpd=TRUE, oma=rep(0,4), mar=c(0.4,4,3,2), tcl=-0.4)
+par(xpd=TRUE, oma=rep(0,4), mar=c(2,4,3,2), tcl=-0.3, mgp=c(2,0.5,0))
 matplot(Freqs, PltStg, type="l", lty=1, lwd=2, col="black",
         main="Adaptive estimation history", ylab="", xlab="",
         yaxt="n", frame.plot=FALSE,
@@ -738,7 +738,7 @@ mtext("(a)", font=2, adj=-0.15, line=-0.3)
 mtext("PSDs by stage", line=-0.3, font=4)
 @
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.4, label=HIST2, par=TRUE>>=
-par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(0.4,4,2,2), tcl=-0.4)
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(2,4,2,2), tcl=-0.3, mgp=c(2,0.5,0))
 Cols <- rev(rev(brewer.pal(9, "PuBuGn"))[seqcols])
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Dat=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
@@ -769,7 +769,7 @@ mtext("(b)", font=2, adj=-0.15, line=0.5)
 mtext("Tapers by stage", line=0.5, font=4)
 @
 <<eval=TRUE, echo=FALSE, fig.width=4.8, fig.height=2.7, label=HIST3, par=TRUE>>=
-par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(3.5,4,2,2), tcl=-0.4)
+par(xpd=TRUE, las=1, oma=rep(0,4), mar=c(3.5,4,2,2), tcl=-0.3, mgp=c(2,0.5,0))
 invisible(lapply(rev(seqcols), FUN=function(mcol, niter=numit, Frq=Freqs, Tap=StgTap, cols=Cols){
   iter <- (niter+1)-mcol
   tap <- Tap[,mcol]
@@ -817,23 +817,23 @@ and (C) the relative uncertainties of the PSDs.
 
 %%
 %\pagebreak
-\section{Call overview}
-
-Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
-functions involved in the adaptive estimation process. 
-The primary function is \Rcmd{pspectrum}, which calls 
-\Rcmd{psdcore} followed by \Rcmd{riedsid} repeatedly (\Rcmd{niter} times)
-to produce the final result.
-
-\begin{figure}[!htbp]
- \centering
- \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
- \includegraphics[width=0.3\textwidth]{yuml_n.png}
- \caption{Simplified call graph for \psd{}. The dashed lines show a
- simplified circuit
- which the spectra and its tapers make during the iterative process.}
- \label{fig:calls}
-\end{figure}
+% \section{Call overview}
+% 
+% Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
+% functions involved in the adaptive estimation process. 
+% The primary function is \Rcmd{pspectrum}, which calls 
+% \Rcmd{psdcore} followed by \Rcmd{riedsid} repeatedly (\Rcmd{niter} times)
+% to produce the final result.
+% 
+% \begin{figure}[!htbp]
+%  \centering
+%  \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
+%  \includegraphics[width=0.3\textwidth]{yuml_n.png}
+%  \caption{Simplified call graph for \psd{}. The dashed lines show a
+%  simplified circuit
+%  which the spectra and its tapers make during the iterative process.}
+%  \label{fig:calls}
+% \end{figure}
 
 \clearpage
 

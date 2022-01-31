@@ -27,7 +27,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 \newcommand{\naive}[0]{na\"{\i}ve}
 \newcommand{\bidx}[1]{\index{#1}{\textbf{#1}}} 
 \newcommand{\idx}[1]{\index{#1}{#1}} 
@@ -142,7 +142,7 @@ perform some map/reduce operations on the data
 figures with row-wise summary information\footnote{
 Based on this post:\\
 {\small
-\url{http://geokook.wordpress.com/2012/12/29/row-wise-summary-curves-in-faceted-ggplot2-figures/}
+\url{https://geokook.wordpress.com/2012/12/29/row-wise-summary-curves-in-faceted-ggplot2-figures/}
 }
 } so we can easily intercompare the benchmark data.
 The benchmark data we will show

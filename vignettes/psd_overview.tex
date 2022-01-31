@@ -12,6 +12,9 @@
 \makeatother
 
 \definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\makeatletter
+\@ifundefined{AddToHook}{}{\AddToHook{package/xcolor/after}{\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}}}
+\makeatother
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
 \newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
 \newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
@@ -46,12 +49,20 @@
 \definecolor{messagecolor}{rgb}{0, 0, 0}
 \definecolor{warningcolor}{rgb}{1, 0, 1}
 \definecolor{errorcolor}{rgb}{1, 0, 0}
+\makeatletter
+\@ifundefined{AddToHook}{}{\AddToHook{package/xcolor/after}{
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+}}
+\makeatother
 \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 \usepackage{alltt}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{An overview of psd}
-%% \VignetteEngine{knitr}
+%% \VignetteEngine{knitr::knitr}
 %
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -74,11 +85,12 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{http://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 %
 \title{An overview of \psd{}: Adaptive sine multitaper power spectral density estimation in R}
 \author{Andrew J. Barbour and Robert L. Parker}
 %
+
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -124,7 +136,7 @@
 \section{Quick start: A minimal example.}
 First, we load the package into the namespace:
 %% libload
-\input{figure/Load_library.tex}
+\input{figure/Loadlibrary.tex}
 For a series to analyze, we can use \Rcmd{magnet}, included in \psd{},
 which represents along-track measurements
 of horizontal magnetic-field strength from a gimbaled, airborne magnetometer.
@@ -136,11 +148,11 @@ The sampling interval is
 once every kilometer (km), so the data will represent
 crustal magnetization with wavelengths longer than 2 km.
 %% Project MAGNET data
-\input{figure/Load_Project_MAGNET_data.tex}
+\input{figure/LoadProjectMAGNETdata.tex}
 The format of the data set is a \Rcmd{data.frame} with four
 sets of information:
 %%
-\input{figure/Show_contents_of_Project_MAGNET.tex}
+\input{figure/ShowcontentsofProjectMAGNET.tex}
 The \Rcmd{raw} and \Rcmd{clean} names represent raw
 and edited intensities respectively, expressed in units of nanotesla; 
 \Rcmd{mdiff} is the difference between them.
@@ -153,7 +165,7 @@ of the level of sophistication of the method.
 %%
 These are readily apparent in the timeseries:
 
-\input{figure/MAGNET-TS.tex}
+\input{figure/MAGNETTS.tex}
 
 We can find power spectral density (PSD)
 estimates for the two series quite simply with \Rcmd{pspectrum}:
@@ -251,7 +263,7 @@ Our method is non-parametric; hence, we will compare to the latter.
 Included in \Rcmd{psdcore} is an option to compare the 
 results with cosine-tapered periodogram,
 found with a command equivalent to this:
-\input{figure/Naive_spectrum_estimation.tex}
+\input{figure/Naivespectrumestimation.tex}
 Within \Rcmd{psdcore} the comparison is made with the logical argument \Rcmd{preproc} 
 passed to \Rcmd{spec.pgram}, which is \SC{True} by default.
 
@@ -298,7 +310,7 @@ double-sided spectra to single-sided spectra).
 
 We assume \Rcmd{mtapspec} doesn't remove a mean and trend from the
 input series.  We can do this easily with the \Rcmd{prewhiten} methods:
-\input{figure/Load_RSEIS_package.tex}
+\input{figure/LoadRSEISpackage.tex}
 
 Although the default operation of  \Rcmd{prewhiten} is to fit a linear model of the form 
 $f(x) = \alpha x + \beta + \epsilon$ using ordinary linear least squares,
@@ -308,7 +320,7 @@ and the residuals from this fit are also returned.}.
 This fit uses the Akaike Information Criterion (AIC) to select
 the highest order appropriate for the data.
 
-\input{figure/AR_prewhiten.tex}
+\input{figure/ARprewhiten.tex}
 \label{sxn:prew}
 
 \begin{figure}[!htbp]
@@ -328,16 +340,16 @@ but, supposing the sampling information was based on an interval, we could have 
 a negative value for \Rcmd{X.frq}, with which \Rcmd{psdcore}
 would interpret as an interval (instead of a frequency). 
 A quick example highlights the equivalency:
-\input{figure/Sampling_rate_versus_interval.tex}
+\input{figure/Samplingrateversusinterval.tex}
 
 Returning the the \Rcmd{RSEIS} comparison, we first 
 estimate the PSD from \Rcmd{mtapspec} with 10 tapers:
-\input{figure/Compute_PSD_with_mtapspec.tex}
+\input{figure/ComputePSDwithmtapspec.tex}
 where \Rcmd{nwin} is the number of tapers taken and
 \Rcmd{npi} is, from the documentation, the ``number of Pi-prolate functions" (we
 leave it out for the sake of comparison). Note that the object returned
 is \emph{not} of class \Rcmd{`spec'}:
-\input{figure/Structure_of_mtapspec-psd.tex}
+\input{figure/Structureofmtapspecpsd.tex}
 
 We will calculate the comparative spectra from
 \begin{enumerate}
@@ -350,7 +362,7 @@ and we will need to correct for normalization factors, as necessary, with
 set within \Rcmd{pspectrum} (with \Rcmd{normalize}) once the adaptive procedure
 is finished.
 
-\input{figure/Comparative_spectra:_mtapspec_vs_pspectrum.tex}
+\input{figure/Comparativespectramtapspecvspspectrum.tex}
 These estimates are shown on the same scale in Figure \ref{fig:psdcomp}.
 
 \begin{figure}[!htbp]
@@ -367,11 +379,11 @@ Because we did not specify the length of the FFT in \Rcmd{mtapspec}
 we end up with different length spectra.  So, to form some statistical measure
 of the results, we can interpolate PSD levels onto the \psd{}-based frequencies
 (or reciprocally): 
-\input{figure/Interpolate_results.tex}
+\input{figure/Interpolateresults.tex}
 We regress the spectral values from \Rcmd{mtapspec} against
 the \Rcmd{psdcore} results because we have used them to produce uniformly tapered spectra
 with an equal number of sine tapers.
-\input{figure/Summarize_regression_statistics.tex}
+\input{figure/Summarizeregressionstatistics.tex}
 We show the regression residuals in Figure \ref{fig:psdreg}.  
 The structure visible at low power levels might be from curvature bias in
 the \Rcmd{mtapspec} results, which manifests at short wavelengths
@@ -451,7 +463,7 @@ The estimated variance of the innovations is about $~20$ nT$^2$.
 If the innovation spectrum is flat (as we expect), this variance translates to power levels
 of about $~16$ decibels for a 1 km sampling interval.  
 
-\input{figure/AR_spectrum.tex}
+\input{figure/ARspectrum.tex}
 
 In Figure \ref{fig:arspecvar} we have used \Rcmd{pilot\_spec} to 
 model the spectral response of the AR component of the series (solid
@@ -521,7 +533,7 @@ spectral uncertainties from \psd{} to the those from \Rcmd{bspec},
 the Bayesian method, for a coverage probability of
 95\%. Figure \ref{fig:magerr} shows the uncertainties as bounded polygons,
 which we calculate here:
-\input{figure/Compute_spectral_properties.tex}
+\input{figure/Computespectralproperties.tex}
 
 \begin{figure}[!htbp]
 \begin{center}
@@ -570,9 +582,9 @@ Specifically, it saves the frequencies, spectral values, and number of tapers at
 procedure, accessible with \Rcmd{get\_adapt\_history}. To ensure a fresh calculation and to 
 add a few more iterations to visualize, we repeat the adaptive spectral analysis, 
 and then bring the stage history into the \Rcmd{.GlobalEnv} environment:
-\input{figure/Get_adaptive_history.tex}
+\input{figure/Getadaptivehistory.tex}
 Followed by some trivial manipulation:
-\input{figure/and_manipulate_it_a_bit.tex}
+\input{figure/andmanipulateitabit.tex}
 We can plot these easily with \Rcmd{matplot} or other tools.  We show
 the adaptive history in Figure \ref{fig:psdhist}.  
 
@@ -607,23 +619,23 @@ and (C) the relative uncertainties of the PSDs.
 
 %%
 %\pagebreak
-\section{Call overview}
-
-Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
-functions involved in the adaptive estimation process. 
-The primary function is \Rcmd{pspectrum}, which calls 
-\Rcmd{psdcore} followed by \Rcmd{riedsid} repeatedly (\Rcmd{niter} times)
-to produce the final result.
-
-\begin{figure}[!htbp]
- \centering
- \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
- \includegraphics[width=0.3\textwidth]{yuml_n.png}
- \caption{Simplified call graph for \psd{}. The dashed lines show a
- simplified circuit
- which the spectra and its tapers make during the iterative process.}
- \label{fig:calls}
-\end{figure}
+% \section{Call overview}
+% 
+% Shown in Figure \ref{fig:calls} is a flow chart highlighting the essential
+% functions involved in the adaptive estimation process. 
+% The primary function is \Rcmd{pspectrum}, which calls 
+% \Rcmd{psdcore} followed by \Rcmd{riedsid} repeatedly (\Rcmd{niter} times)
+% to produce the final result.
+% 
+% \begin{figure}[!htbp]
+%  \centering
+%  \includegraphics[width=0.5\textwidth]{yuml_d.png}%%
+%  \includegraphics[width=0.3\textwidth]{yuml_n.png}
+%  \caption{Simplified call graph for \psd{}. The dashed lines show a
+%  simplified circuit
+%  which the spectra and its tapers make during the iterative process.}
+%  \label{fig:calls}
+% \end{figure}
 
 \clearpage
 

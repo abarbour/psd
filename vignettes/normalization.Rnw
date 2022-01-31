@@ -605,7 +605,7 @@ the sampling rate, which puts the spectra about a factor of 2 too low:
 mSn/mean(pgram20$spec)
 @
 
-\begin{figure}[h!]
+\begin{figure}[htb!]
 \begin{center}
 <<eval=TRUE, echo=FALSE, fig.width=6, fig.height=3.5, label=NORMS>>=
 par(las=1)

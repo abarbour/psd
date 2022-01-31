@@ -12,6 +12,9 @@
 \makeatother
 
 \definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\makeatletter
+\@ifundefined{AddToHook}{}{\AddToHook{package/xcolor/after}{\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}}}
+\makeatother
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
 \newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
 \newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
@@ -46,12 +49,20 @@
 \definecolor{messagecolor}{rgb}{0, 0, 0}
 \definecolor{warningcolor}{rgb}{1, 0, 1}
 \definecolor{errorcolor}{rgb}{1, 0, 0}
+\makeatletter
+\@ifundefined{AddToHook}{}{\AddToHook{package/xcolor/after}{
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+}}
+\makeatother
 \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 \usepackage{alltt}
 % !Rnw weave = knitr
 %% \VignetteIndexEntry{Multivariate PSD}
-%% \VignetteEngine{knitr}
+%% \VignetteEngine{knitr::knitr}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -83,6 +94,7 @@
 \title{Multivariate methods for the \Rcmd{psd} package}
 \author{Jonathan R. Kennel & Andrew J. Barbour}
 %
+
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -133,7 +145,7 @@ to the typical univariate output of \Rcmd{pspectrum} are returned:
 \end{alltt}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (2.0.0) -- Adaptive multitaper spectrum estimation; to start, see ?pspectrum}}\begin{alltt}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loaded psd (2.1.1) -- Adaptive multitaper spectrum estimation; to start, see ?pspectrum}}\begin{alltt}
 \hlkwd{data}\hlstd{(wipp30)}
 \hlkwd{str}\hlstd{(wipp30)}
 \end{alltt}
@@ -173,6 +185,7 @@ to the typical univariate output of \Rcmd{pspectrum} are returned:
 ## [13] "series"            "snames"            "method"           
 ## [16] "taper"             "pad"               "detrend"          
 ## [19] "demean"            "timebp"            "nyquist.frequency"
+## [22] "is.multivariate"
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -184,7 +197,6 @@ to the typical univariate output of \Rcmd{pspectrum} are returned:
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/plotnames-1} 
-
 \end{knitrout}
 
 
@@ -215,8 +227,7 @@ For the multivariate psd method, the same numbers of tapers at a given frequency
 \end{knitrout}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/Taper_plot-1} 
-
+\includegraphics[width=\maxwidth]{figure/Taperplot-1} 
 \end{knitrout}
 
 \subsubsection{Specifying the number of tapers}
@@ -231,13 +242,12 @@ The number of tapers can also be specified as a single value.
                  \hlkwc{niter} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{ntap.init} \hlstd{=} \hlnum{11}\hlstd{,} \hlkwc{plot} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/taper_specification-1} 
+\includegraphics[width=\maxwidth]{figure/taperspecification-1} 
 \begin{kframe}\begin{alltt}
 \hlkwd{plot}\hlstd{(one_val}\hlopt{$}\hlstd{taper)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/taper_specification-2} 
-
+\includegraphics[width=\maxwidth]{figure/taperspecification-2} 
 \end{knitrout}
 
 The number of tapers can also be specified as a vector of values.  The length of the vector is equal to one-half the number of rows rounded down (i.e. integer division). The example below uses an approximately linearly increasing taper vector.
@@ -251,13 +261,12 @@ The number of tapers can also be specified as a vector of values.  The length of
                  \hlkwc{plot} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/taper_specification2-1} 
+\includegraphics[width=\maxwidth]{figure/taperspecification2-1} 
 \begin{kframe}\begin{alltt}
 \hlkwd{plot}\hlstd{(vec_val}\hlopt{$}\hlstd{taper)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/taper_specification2-2} 
-
+\includegraphics[width=\maxwidth]{figure/taperspecification2-2} 
 \end{knitrout}
 
 \newpage 
@@ -318,13 +327,11 @@ The coherence is stored in result from pspectrum and contains the coherence betw
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/coh_ba_plot-1} 
-
+\includegraphics[width=\maxwidth]{figure/cohbaplot-1} 
 \end{knitrout}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/coh_et_plot-1} 
-
+\includegraphics[width=\maxwidth]{figure/cohetplot-1} 
 \end{knitrout}
 
 
@@ -346,13 +353,11 @@ The phase is stored in result from pspectrum and contains the cross-spectrum pha
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/phase_ba_plot-1} 
-
+\includegraphics[width=\maxwidth]{figure/phasebaplot-1} 
 \end{knitrout}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/phase_et_plot-1} 
-
+\includegraphics[width=\maxwidth]{figure/phaseetplot-1} 
 \end{knitrout}
 
 \subsection{Frequency Response}
@@ -370,10 +375,9 @@ The multivariate method calculates the auto and cross-spectra and also solves fo
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/transfer_gain_plot-1} 
+\includegraphics[width=\maxwidth]{figure/transfergainplot-1} 
 
-\includegraphics[width=\maxwidth]{figure/transfer_gain_plot-2} 
-
+\includegraphics[width=\maxwidth]{figure/transfergainplot-2} 
 \end{knitrout}
 
 
@@ -386,10 +390,9 @@ The multivariate method calculates the auto and cross-spectra and also solves fo
 \end{knitrout}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/transfer_phase_plot-1} 
+\includegraphics[width=\maxwidth]{figure/transferphaseplot-1} 
 
-\includegraphics[width=\maxwidth]{figure/transfer_phase_plot-2} 
-
+\includegraphics[width=\maxwidth]{figure/transferphaseplot-2} 
 \end{knitrout}
 
 \section{Conclusion}
@@ -408,13 +411,13 @@ The \Rcmd{psd} package can handle multivariate time series and provides results 
 \hlstd{utils}\hlopt{::}\hlkwd{sessionInfo}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## R version 4.0.1 (2020-06-06)
+## R version 4.1.2 (2021-11-01)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Mojave 10.14.6
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -423,13 +426,12 @@ The \Rcmd{psd} package can handle multivariate time series and provides results 
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] psd_2.0.0  knitr_1.28
+## [1] psd_2.1.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zoo_1.8-8          compiler_4.0.1     magrittr_1.5       tools_4.0.1       
-##  [5] RColorBrewer_1.1-2 Rcpp_1.0.4.6       stringi_1.4.6      highr_0.8         
-##  [9] grid_4.0.1         stringr_1.4.0      xfun_0.14          lattice_0.20-41   
-## [13] evaluate_0.14
+##  [1] compiler_4.1.2     magrittr_2.0.2     tools_4.1.2        RColorBrewer_1.1-2
+##  [5] Rcpp_1.0.8         stringi_1.7.6      highr_0.9          knitr_1.37        
+##  [9] stringr_1.4.0      xfun_0.29          evaluate_0.14
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

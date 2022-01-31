@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // rcpp_ctap_simple
 IntegerVector rcpp_ctap_simple(IntegerVector tapvec, const int maxslope);
 RcppExport SEXP _psd_rcpp_ctap_simple(SEXP tapvecSEXP, SEXP maxslopeSEXP) {

@@ -205,7 +205,7 @@ ones <- function(nrow) {
 #' 
 #' @references For \code{\link{mod}}: see Peter Dalgaard's explanation of 
 #' the non-bug (#14771) I raised (instead I should've asked it on R-help): 
-#' \url{https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14771\#c2}
+#' \url{https://bugs.r-project.org/show_bug.cgi?id=14771}
 #' 
 #' @rdname psd-utilities
 #' @export
