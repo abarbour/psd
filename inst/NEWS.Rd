@@ -3,7 +3,7 @@
 % -*- coding: utf-8 -*-
 %%\newcommand{\PR}{\Sexpr[results=rd]{tools:::Rd_expr_PR(#1)}}
 %%\newcommand{\Rlogo}{\if{html}{\figure{../../html/logo.jpg}}\if{latex}{\figure{logo.jpg}{options: width=0.5in}}}
-\newcommand{\GITpkg}{\href{https://www.github.com/abarbour/#1}{github}}
+\newcommand{\GITpkg}{\href{https://github.com/abarbour/#1}{github}}
 \newcommand{\CRANpkg}{\href{https://cran.r-project.org/package=#1}{CRAN}}
 \newcommand{\CODEcov}{\href{https://codecov.io/github/abarbour/#1?branch=master}{codecov.io}}
 \newcommand{\Appvey}{\href{https://ci.appveyor.com/project/abarbour/#1}{AppVeyor}}

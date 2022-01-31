@@ -25,7 +25,7 @@
 \newcommand{\SCY}[0]{\SC{Yes}}
 \newcommand{\SCN}[0]{\SC{No}}
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{https://github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 %
 \title{An overview of \psd{}: Adaptive sine multitaper power spectral density estimation in R}
 \author{Andrew J. Barbour and Robert L. Parker}

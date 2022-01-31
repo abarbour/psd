@@ -26,7 +26,7 @@
 %%
 
 \newcommand{\Rcmd}[1]{\texttt{#1}}
-\newcommand{\psd}[0]{\href{https://www.github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
+\newcommand{\psd}[0]{\href{https://github.com/abarbour/psd/}{\color{blue}\Rcmd{psd}}}
 
 \title{Multivariate methods for the \Rcmd{psd} package}
 \author{Jonathan R. Kennel and Andrew J. Barbour}
