@@ -21,7 +21,8 @@ Description: Produces power spectral density estimates through iterative
     optimization procedure is based on the method of Riedel and Sidorenko
     (1995), which minimizes the Mean Square Error (sum of variance and bias)
     at each frequency, but modified for computational stability. The same
-    procedure can now be used to calculate the cross spectrum.
+    procedure can now be used to calculate the cross spectrum (multivariate
+    analyses).
 License: GPL (>= 2)
 URL: https://github.com/abarbour/psd,
     Barbour and Parker (2014): https://doi.org/10.1016/j.cageo.2013.09.015,

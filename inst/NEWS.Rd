@@ -25,9 +25,10 @@
 %
 
 
-\section{CHANGES IN \psd{} VERSION 2.1.1 (2022-01-20)}{
+\section{CHANGES IN \psd{} VERSION 2.1.1 (2022-02-01)}{
   \itemize{
 	\item Fixes some build check errors on cran related to vignettes
+	\item Added some additional unit tests
   }
 }
 
