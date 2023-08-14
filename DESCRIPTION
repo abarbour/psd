@@ -51,4 +51,4 @@ Encoding: UTF-8
 Language: en-US
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
