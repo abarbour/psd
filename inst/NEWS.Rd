@@ -5,13 +5,12 @@
 %%\newcommand{\Rlogo}{\if{html}{\figure{../../html/logo.jpg}}\if{latex}{\figure{logo.jpg}{options: width=0.5in}}}
 \newcommand{\GITpkg}{\href{https://github.com/abarbour/#1}{github}}
 \newcommand{\CRANpkg}{\href{https://cran.r-project.org/package=#1}{CRAN}}
-\newcommand{\CODEcov}{\href{https://codecov.io/github/abarbour/#1?branch=master}{codecov.io}}
 \newcommand{\psd}{\pkg{psd}}
 \newcommand{\gitpsd}{\GITpkg{psd} page}
 \newcommand{\citation}{\href{https://doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
-\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \CODEcov{psd}}
+\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd}}
 
 \encoding{UTF-8}
 
@@ -77,7 +76,7 @@
 \section{CHANGES IN \psd{} VERSION 1.1.0 (2017-07-13)}{
   \itemize{
     \item \code{ctap_simple_rcpp} replaces \code{ctap_simple}; associated .c code deprecated 
-  	\item New \code{.travis.yml} and \CODEcov{psd} unit-test coverage 
+  	\item New unit-test coverage 
   	\item Windows CI 
   	\item Fixing new NAMESPACE requirements with \code{importFrom} statements
   	\item Reverse-dependency checking in \code{revdep/}
