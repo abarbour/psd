@@ -265,7 +265,7 @@ NULL
 #'  \emph{Ground Water}, \strong{45}, 101–105,
 #'  doi: 10.1111/j.1745-6584.2006.00254.x
 #' 
-#' @source BETCO page: \url{http://www.hydrology.uga.edu/rasmussen/betco/}
+# @source BETCO page: http://www.hydrology.uga.edu/rasmussen/betco/
 #' @keywords datasets
 #' @examples
 #' data(wipp30)
