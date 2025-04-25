@@ -491,7 +491,8 @@ List resample_mvfft( const arma::cx_mat& fftz,
   //  - tapcap: integer -- the maximum number of tapers at any frequency
   //
   
-  int sc, nf, nr, nc, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
+  //int sc, nf, nr, nc, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
+  int sc, nf, nc, nt, ne, ne2, nhalf, m2, mleft1, mleft2, Kc, ki, j1, j2;
   double wi;
   
   
@@ -507,7 +508,7 @@ List resample_mvfft( const arma::cx_mat& fftz,
   }
   
   // even, double, and half lengths
-  nr = fftz.n_rows;
+  //nr = fftz.n_rows;
   nf = fftz.n_rows / sc; 
   nc = fftz.n_cols;
   nt = tapers.n_elem;

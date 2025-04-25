@@ -88,7 +88,7 @@ could lead to strange behavior though.
 \subsection{Spectral derivatives}{
 The parameter \code{Deriv.method} determines which method is used
 to estimate derivatives.
-\itemize{
+\describe{
 \item{\code{"local_qls"}}{ (\strong{default}) uses quadratic weighting and
 local least-squares estimation; this can be slower than \code{"spg"}.}
 \item{\code{"spg"}}{ uses \code{\link{splineGrad}}; then, additional arguments

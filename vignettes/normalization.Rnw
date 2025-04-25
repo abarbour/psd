@@ -680,7 +680,7 @@ so far as we know.
 
 \input{supp_specprogs}
 
-\section{Acknowlegements}
+\section{Acknowledgements}
 We thank Richard Gaal for catching a subtle error in the from-scratch example.
 
 %\pagebreak

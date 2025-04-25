@@ -69,8 +69,25 @@ Minimum bias multiple taper spectral estimation,
 \emph{Signal Processing, IEEE Transactions on}, \strong{43}(1), 188--195.
 }
 \seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/abarbour/psd}
+  \item \doi{10.1016/j.cageo.2013.09.015}
+  \item Report bugs at \url{https://github.com/abarbour/psd/issues}
+}
+
+
 \code{\link{pspectrum}} (main function); \code{\link{psdcore}} and \code{\link{riedsid}}
 }
 \author{
+\strong{Maintainer}: Andrew J. Barbour \email{andy.barbour@gmail.com} (\href{https://orcid.org/0000-0002-6890-2452}{ORCID})
+
+Authors:
+\itemize{
+  \item Jonathan Kennel (\href{https://orcid.org/0000-0003-4474-6886}{ORCID})
+  \item Robert L. Parker
+}
+
+
 Andrew J. Barbour <andy.barbour@gmail.com>, Jonathan Kennel, and Robert L. Parker
 }

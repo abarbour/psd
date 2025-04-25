@@ -44,7 +44,9 @@
 #' how these are computed.
 #' }
 #'
-#' @docType package
+"_PACKAGE"
+# docType package
+#'
 #' @name psd-package
 #' @aliases psd spec.psd
 #' 

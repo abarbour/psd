@@ -1,0 +1,5 @@
+CRAN_SUBMISSION is autogen after devtools::release()
+
+Vignette size: use "--compact-vignettes=both" `devtools::build(args=c('--compact-vignettes=both'))`
+
+/opt/gfortran build errors, use installer from https://mac.r-project.org/tools/

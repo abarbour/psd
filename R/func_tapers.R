@@ -132,7 +132,7 @@ NULL
 #' @rdname tapers-methods
 #' @export
 as.data.frame.tapers <- function(x, ...){
-  df <- as.data.frame.numeric(x)
+  df <- as.data.frame.vector(x)
   names(df) <- "n.tapers"
   return(df)
 }

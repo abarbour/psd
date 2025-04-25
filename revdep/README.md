@@ -1,26 +1,27 @@
 # Platform
 
-|field    |value                          |
-|:--------|:------------------------------|
-|version  |R version 4.1.2 (2021-11-01)   |
-|os       |macOS Mojave 10.14.6           |
-|system   |x86_64, darwin17.0             |
-|ui       |X11                            |
-|language |(EN)                           |
-|collate  |en_US.UTF-8                    |
-|ctype    |en_US.UTF-8                    |
-|tz       |UTC                            |
-|date     |2022-01-31                     |
-|pandoc   |2.10.1 @ /opt/local/bin/pandoc |
+|field    |value                         |
+|:--------|:-----------------------------|
+|version  |R version 4.5.0 (2025-04-11)  |
+|os       |macOS Monterey 12.7.6         |
+|system   |x86_64, darwin20              |
+|ui       |X11                           |
+|language |(EN)                          |
+|collate  |en_US.UTF-8                   |
+|ctype    |en_US.UTF-8                   |
+|tz       |UTC                           |
+|date     |2025-04-25                    |
+|pandoc   |3.6.2 @ /opt/local/bin/pandoc |
+|quarto   |NA                            |
 
 # Dependencies
 
-|package       |old        |new        |Δ  |
-|:-------------|:----------|:----------|:--|
-|psd           |2.1.0      |2.1.1      |*  |
-|RColorBrewer  |1.1-2      |1.1-2      |   |
-|Rcpp          |1.0.8      |1.0.8      |   |
-|RcppArmadillo |0.10.8.1.0 |0.10.8.1.0 |   |
+|package       |old      |new      |Δ  |
+|:-------------|:--------|:--------|:--|
+|psd           |2.1.1    |2.1.2    |*  |
+|RColorBrewer  |1.1-3    |1.1-3    |   |
+|Rcpp          |1.0.14   |1.0.14   |   |
+|RcppArmadillo |14.4.1-1 |14.4.1-1 |   |
 
 # Revdeps
 

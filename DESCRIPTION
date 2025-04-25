@@ -1,8 +1,8 @@
 Package: psd
 Type: Package
 Title: Adaptive, Sine-Multitaper Power Spectral Density and Cross Spectrum Estimation
-Version: 2.1.1
-Date: 2022-02-01
+Version: 2.1.2
+Date: 2025-04-25
 Authors@R:
     c(person(given = c("Andrew","J."),
              family = "Barbour",
@@ -25,8 +25,7 @@ Description: Produces power spectral density estimates through iterative
     analyses).
 License: GPL (>= 2)
 URL: https://github.com/abarbour/psd,
-    Barbour and Parker (2014): https://doi.org/10.1016/j.cageo.2013.09.015,
-    Riedel and Sidorenko (1995): https://doi.org/10.1109/78.365298
+    https://doi.org/10.1016/j.cageo.2013.09.015
 BugReports: https://github.com/abarbour/psd/issues
 Depends:
     R (>= 2.14.1)
@@ -51,4 +50,4 @@ Encoding: UTF-8
 Language: en-US
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

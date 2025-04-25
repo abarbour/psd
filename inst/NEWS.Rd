@@ -6,14 +6,12 @@
 \newcommand{\GITpkg}{\href{https://github.com/abarbour/#1}{github}}
 \newcommand{\CRANpkg}{\href{https://cran.r-project.org/package=#1}{CRAN}}
 \newcommand{\CODEcov}{\href{https://codecov.io/github/abarbour/#1?branch=master}{codecov.io}}
-\newcommand{\Appvey}{\href{https://ci.appveyor.com/project/abarbour/#1}{AppVeyor}}
-\newcommand{\Trav}{\href{https://travis-ci.org/abarbour/#1}{Travis-CI}}
 \newcommand{\psd}{\pkg{psd}}
 \newcommand{\gitpsd}{\GITpkg{psd} page}
 \newcommand{\citation}{\href{https://doi.org/10.1016/j.cageo.2013.09.015}{10.1016/j.cageo.2013.09.015}}
 
 \name{psd}
-\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \Trav{psd} -- \Appvey{psd} -- \CODEcov{psd}}
+\title{News for package \pkg{psd}: \CRANpkg{psd} -- \GITpkg{psd} -- \CODEcov{psd}}
 
 \encoding{UTF-8}
 
@@ -24,6 +22,13 @@
 %}
 %
 
+
+\section{CHANGES IN \psd{} VERSION 2.1.2 (2025-04-25)}{
+  \itemize{
+	\item Minor version bump do address cran check
+	\item CI is now through github actions
+  }
+}
 
 \section{CHANGES IN \psd{} VERSION 2.1.1 (2022-02-01)}{
   \itemize{
@@ -73,7 +78,7 @@
   \itemize{
     \item \code{ctap_simple_rcpp} replaces \code{ctap_simple}; associated .c code deprecated 
   	\item New \code{.travis.yml} and \CODEcov{psd} unit-test coverage 
-  	\item Windows CI with \Appvey{psd}
+  	\item Windows CI 
   	\item Fixing new NAMESPACE requirements with \code{importFrom} statements
   	\item Reverse-dependency checking in \code{revdep/}
   }
@@ -116,8 +121,6 @@
     the process of rewriting in c++, a minor bug in the c implementation was
     found (and fixed).
 
-    \item \Trav{psd} is now used to track builds; see also the \gitpsd{}.
-    
     \item Issues/pull-requests can be entered on the \href{https://github.com/abarbour/psd/issues}{Issues} page.
     
     \item Taper constraints: \code{ctap_simple_rcpp}/\code{ctap_simple} and \code{ctap_loess} gain
