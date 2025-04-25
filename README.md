@@ -16,6 +16,7 @@ by Andrew J Barbour, Jonathan Kennel, and Robert L Parker
 [![License](https://img.shields.io/badge/license-GPL-lightgrey.svg)](https://www.gnu.org/licenses/gpl-2.0.html) 
 [![Citation](https://img.shields.io/badge/published-CAGEO-red.svg)](https://doi.org/10.1016/j.cageo.2013.09.015)
 
+[![Codecov test coverage](https://codecov.io/gh/abarbour/psd/graph/badge.svg)](https://app.codecov.io/gh/abarbour/psd)
 <!-- badges: end -->
 
 ### **_Latest News_**

@@ -50,3 +50,4 @@ vignettes/yuml*
 ^appveyor\.yml$
 ^\.github$
 ^CRAN-SUBMISSION$
+^codecov\.yml$
