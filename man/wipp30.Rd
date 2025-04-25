@@ -14,9 +14,6 @@ A matrix with 13413 rows following 4 variables.
 \item{\code{et}}{Earth tide gravity potential (nanometers/second^2)}
 }
 }
-\source{
-BETCO page: \url{http://www.hydrology.uga.edu/rasmussen/betco/}
-}
 \description{
 Observed water levels and barometric pressure from
 well WIPP30 (WIPP: Waste Isolation Pilot Plant)
